@@ -1,0 +1,19 @@
+# vim: set ft=sh:
+pkgname=calculator
+pkgver=0.0.0-0
+pkgdesc="Calculator for the reMarkable"
+section=math
+maintainer="Mattéo Delabre <spam@delab.re>"
+license=GPL-v3
+
+origin=https://github.com/reHackable/Calculator.git
+revision=7b8be5de12f1536bc04b6216abbf26f998097bf4
+
+build() {
+    qmake Calculator.pro -spec linux-oe-g++
+    make
+}
+
+package() {
+    install -D -m 755 "$srcdir"/Calculator "$pkgdir"/usr/bin/calculator
+}
