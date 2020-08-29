@@ -1,35 +1,43 @@
-error() {
-    echo "$1" >&2
-    exit 1
-}
+#!/usr/bin/env bash
 
-rtar() {
-    tar --sort=name \
-        --owner=0 --group=0 --numeric-owner \
-        --mtime="1970-01-01T00:00Z" \
-        --pax-option=exthdr.name=%d/PaxHeaders/%f,delete=atime,delete=ctime \
-        $@
-}
+source ./lib
 
-[[ $# < 2 ]] && error "Missing arguments"
+usage="$(basename "$0") PACKAGE WORKDIR
+
+Build the package archive described in PACKAGE.
+The WORKDIR must be a non-existent directory in which the build is performed.
+
+Arguments:
+
+    -h, --help      Show this help message."
+
+if [[ $1 == "-h" ]] || [[ $1 == "--help" ]]; then
+    echo "$usage"
+    exit
+fi
+
+if [[ $# < 2 ]]; then
+    error "Missing arguments. Use the --help flag for more information."
+fi
 
 package="$1"
 workdir="$2"
 
 # Create working directories
 [[ -d $workdir ]] && error "Working directory already exists!"
+mkdir "$workdir"
 
 srcdir="$workdir"/src
-mkdir -p "$srcdir"
+mkdir "$srcdir"
 
 pkgdir="$workdir"/pkg
-mkdir -p "$pkgdir"
+mkdir "$pkgdir"
 
 ctldir="$workdir"/control
-mkdir -p "$ctldir"
+mkdir "$ctldir"
 
 ardir="$workdir"/ar
-mkdir -p "$ardir"
+mkdir "$ardir"
 
 # Load reMarkable toolchain
 source /usr/local/oecore-x86_64/environment-setup-cortexa9hf-neon-oe-linux-gnueabi
@@ -46,9 +54,11 @@ source "$(realpath "$package")"
 [[ -z $pkgdesc ]] && error "Missing or empty “description” variable"
 
 # Fetch source files
+status "Fetching source files"
 git clone --quiet --recursive "$origin" "$srcdir"
 
 # Run build script
+status "Building package"
 pushd "$srcdir" > /dev/null
 git checkout --quiet "$revision"
 build
@@ -58,6 +68,7 @@ popd > /dev/null
 package
 
 # Create archives
+status "Creating archive"
 pkgar="$ardir"/data.tar.gz
 ctlar="$ardir"/control.tar.gz
 versionar="$ardir"/debian-binary
@@ -80,3 +91,5 @@ echo "Description: $pkgdesc" >> "$ctlfile"
 
 rtar --transform="s/^${ctldir//\//\\\/}/./" -zcf "$ctlar" "$ctldir"
 rtar --transform="s/^${ardir//\//\\\/}/./" -zcf "$arar" "$ardir"
+
+status "Done. Result is in $arar"

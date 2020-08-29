@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+
+source ./lib
+
+usage="$(basename "$0") PACKAGESDIR WORKDIR REPODIR
+
+Build all packages described in PACKAGESDIR into a repository in REPODIR,
+using WORKDIR as a temporary build site.
+Both WORKDIR and REPODIR must be non-existent.
+
+Arguments:
+
+    -h, --help      Show this help message."
+
+if [[ $1 == "-h" ]] || [[ $1 == "--help" ]]; then
+    echo "$usage"
+    exit
+fi
+
+if [[ $# < 3 ]]; then
+    error "Missing arguments. Use the --help flag for more information."
+fi
+
+pkgsdir="$1"
+workdir="$2"
+repodir="$3"
+
+[[ -d $workdir ]] && error "Working directory already exists!"
+mkdir "$workdir"
+
+[[ -d $repodir ]] && error "Repository directory already exists!"
+mkdir "$repodir"
+
+for pkgpath in "$pkgsdir"/*
+do
+    pkgname="$(basename "$pkgpath")"
+    pkgworkdir="$workdir"/"$pkgname"
+    status "Building $pkgname in $pkgworkdir"
+
+    ./build-package "$pkgpath"/package "$pkgworkdir"
+    mv "$pkgworkdir"/*.ipk "$repodir"
+done
+
+opkg-make-index --checksum sha256 -p "$repodir"/Packages "$repodir"
+status "Done. Result is in $repodir"
