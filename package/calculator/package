@@ -1,6 +1,6 @@
 # vim: set ft=sh:
 pkgname=calculator
-pkgver=0.0.0-0
+pkgver=0.0.0-1
 pkgdesc="Calculator for the reMarkable"
 section=math
 maintainer="Mattéo Delabre <spam@delab.re>"
