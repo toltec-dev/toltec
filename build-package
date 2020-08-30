@@ -20,7 +20,7 @@ if [[ $# < 2 ]]; then
     error "Missing arguments. Use the --help flag for more information."
 fi
 
-package="$1"
+defdir="$1"
 workdir="$2"
 
 # Create working directories
@@ -43,7 +43,7 @@ mkdir "$ardir"
 source /usr/local/oecore-x86_64/environment-setup-cortexa9hf-neon-oe-linux-gnueabi
 
 # Load package info and script
-source "$(realpath "$package")"
+source "$defdir"/package
 
 [[ -z $pkgname ]] && error "Missing or empty “pkgname” variable"
 [[ -z $pkgver ]] && error "Missing or empty “pkgver” variable"
@@ -67,16 +67,6 @@ popd > /dev/null
 # Run packaging script
 package
 
-# Create archives
-status "Creating archive"
-pkgar="$ardir"/data.tar.gz
-ctlar="$ardir"/control.tar.gz
-versionar="$ardir"/debian-binary
-arar="$workdir/${pkgname}_${pkgver}_${arch}.ipk"
-
-echo "2.0" >> "$versionar"
-rtar --transform="s/^${pkgdir//\//\\\/}/./" -zcf "$pkgar" "$pkgdir"
-
 # Create control file and archive
 ctlfile="$ctldir"/control
 
@@ -89,6 +79,21 @@ echo "Maintainer: $maintainer" >> "$ctlfile"
 echo "Architecture: $arch" >> "$ctlfile"
 echo "Description: $pkgdesc" >> "$ctlfile"
 
+# Copy install scripts
+[[ -f "$defdir"/preinst ]] && install -D -m 755 "$defdir"/preinst "$ctldir"/preinst
+[[ -f "$defdir"/postinst ]] && install -D -m 755 "$defdir"/postinst "$ctldir"/postinst
+[[ -f "$defdir"/prerm ]] && install -D -m 755 "$defdir"/prerm "$ctldir"/prerm
+[[ -f "$defdir"/postrm ]] && install -D -m 755 "$defdir"/postrm "$ctldir"/postrm
+
+# Create archives
+status "Creating archive"
+pkgar="$ardir"/data.tar.gz
+ctlar="$ardir"/control.tar.gz
+versionar="$ardir"/debian-binary
+arar="$workdir/${pkgname}_${pkgver}_${arch}.ipk"
+
+echo "2.0" >> "$versionar"
+rtar --transform="s/^${pkgdir//\//\\\/}/./" -zcf "$pkgar" "$pkgdir"
 rtar --transform="s/^${ctldir//\//\\\/}/./" -zcf "$ctlar" "$ctldir"
 rtar --transform="s/^${ardir//\//\\\/}/./" -zcf "$arar" "$ardir"
 

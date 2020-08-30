@@ -19,11 +19,11 @@ A tar.gz archive containing two sub-archives:
 * data.tar.gz: Files of the package.
     - The structure mirrors that of the root filesystem.
 * control.tar.gz: Metadata about the package.
-    - Install scripts
-        - preinst: Executed before uncompressing the package (optional).
-        - postinst: Executed after uncompressing the package (optional).
-        - prerm: Executed before uninstalling the package (optional).
-        - postrm: Executed after uninstalling the package (optional).
+    - Install scripts (optional)
+        - preinst: Executed before uncompressing the data.
+        - postinst: Executed after the package has been installed.
+        - prerm: Executed before uninstalling the package.
+        - postrm: Executed after uninstalling the package.
     - Metadata files
         - control: Package description (required).
         - conffiles: Files to keep upon upgrading the package (optional).
@@ -35,7 +35,7 @@ Fields
 * Package: Name of the package (same as in the package archive name).
 * Priority: optional.
 * Depends: list of space-separated dependencies.
-* Section: ?.
+* Section: See <https://packages.debian.org/stable/> for a list of sections in Debian.
 * Description: Short description for the package.
 * Maintainer: Full Name <email@address.com>
 * Source: N/A
