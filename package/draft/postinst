@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+echo "Disabling xochitl and enabling draft"
+systemctl daemon-reload
+systemctl disable xochitl
+systemctl stop xochitl
+systemctl enable draft
+systemctl start draft

@@ -1,0 +1,27 @@
+# vim: set ft=sh:
+pkgname=draft
+pkgver=0.2.0-1
+pkgdesc="Launcher for the reMarkable tablet which wraps around the standard interface"
+section=launcher
+maintainer="Mattéo Delabre <spam@delab.re>"
+license=Apache
+
+origin=https://github.com/dixonary/draft-reMarkable.git
+revision=5bd660a2fd07eba166c6110d2b48cfc58ee67e58
+
+build() {
+    qmake draft.pro -spec linux-oe-g++
+    make
+}
+
+package() {
+    install -D -m 755 "$srcdir"/draft "$pkgdir"/usr/bin/draft
+
+    install -d "$pkgdir"/usr/share/draft
+    cp -R "$srcdir"/qml "$pkgdir"/usr/share/draft
+    cp -R "$srcdir"/js "$pkgdir"/usr/share/draft
+
+    install -d "$pkgdir"/etc
+    cp -R "$srcdir"/extra-files/draft "$pkgdir"/etc/draft
+    install -D -m 644 "$srcdir"/extra-files/draft.service "$pkgdir"/lib/systemd/system/draft.service
+}
