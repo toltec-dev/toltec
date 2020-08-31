@@ -64,6 +64,9 @@ source "$defdir"/package
 status "Fetching source files"
 git clone --quiet --recursive "$origin" "$srcdir"
 
+# Set atime and mtime to fixed timestamp for all files
+find "$srcdir" -exec touch --no-dereference --date="@${SOURCE_DATE_EPOCH}" {} +
+
 # Run build script
 status "Building package"
 pushd "$srcdir" > /dev/null || exit 1
