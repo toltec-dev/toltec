@@ -39,10 +39,10 @@ mkdir "$ctldir"
 ardir="$workdir"/ar
 mkdir "$ardir"
 
-# Define the SOURCE_DATE_EPOCH to the latest commit’s time if not defined
+# Define the SOURCE_DATE_EPOCH to 0 if not defined
 # See <https://reproducible-builds.org/docs/source-date-epoch/>
 if [[ -z "$SOURCE_DATE_EPOCH" ]]; then
-    SOURCE_DATE_EPOCH=$(git log -1 --pretty=%ct)
+    SOURCE_DATE_EPOCH=0
 fi
 
 export SOURCE_DATE_EPOCH
