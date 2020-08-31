@@ -39,9 +39,13 @@ mkdir "$ctldir"
 ardir="$workdir"/ar
 mkdir "$ardir"
 
-# Define the SOURCE_DATE_EPOCH to the latest commit’s time
+# Define the SOURCE_DATE_EPOCH to the latest commit’s time if not defined
 # See <https://reproducible-builds.org/docs/source-date-epoch/>
-export SOURCE_DATE_EPOCH=$(git log -1 --pretty=%ct)
+if [[ -z "$SOURCE_DATE_EPOCH" ]]; then
+    SOURCE_DATE_EPOCH=$(git log -1 --pretty=%ct)
+fi
+
+export SOURCE_DATE_EPOCH
 
 # Load reMarkable toolchain
 source /usr/local/oecore-x86_64/environment-setup-cortexa9hf-neon-oe-linux-gnueabi
