@@ -2,11 +2,10 @@
 
 source ./lib
 
-usage="$(basename "$0") PACKAGESDIR WORKDIR REPODIR
+usage="$(basename "$0") PACKAGESDIR WORKDIR
 
-Build all packages described in PACKAGESDIR into a repository in REPODIR,
-using WORKDIR as a temporary build site.
-Both WORKDIR and REPODIR must be non-existent.
+Build all packages described in PACKAGESDIR.
+The WORKDIR must be a non-existent directory in which the build is performed.
 
 Arguments:
 
@@ -17,27 +16,29 @@ if [[ $1 == "-h" ]] || [[ $1 == "--help" ]]; then
     exit
 fi
 
-if [[ $# < 3 ]]; then
+if [[ $# -lt 2 ]]; then
     error "Missing arguments. Use the --help flag for more information."
 fi
 
 pkgsdir="$1"
 workdir="$2"
-repodir="$3"
 
 [[ -d $workdir ]] && error "Working directory already exists!"
 mkdir "$workdir"
 
-[[ -d $repodir ]] && error "Repository directory already exists!"
+pkgsworkdir="$workdir"/package
+mkdir "$pkgsworkdir"
+
+repodir="$workdir"/repo
 mkdir "$repodir"
 
 for pkgpath in "$pkgsdir"/*
 do
     pkgname="$(basename "$pkgpath")"
-    pkgworkdir="$workdir"/"$pkgname"
+    pkgworkdir="$pkgsworkdir"/"$pkgname"
     status "Building $pkgname in $pkgworkdir"
 
-    ./build-package "$pkgpath"/package "$pkgworkdir"
+    ./build-package "$pkgpath" "$pkgworkdir"
     mv "$pkgworkdir"/*.ipk "$repodir"
 done
 

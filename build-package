@@ -16,7 +16,7 @@ if [[ $1 == "-h" ]] || [[ $1 == "--help" ]]; then
     exit
 fi
 
-if [[ $# < 2 ]]; then
+if [[ $# -lt 2 ]]; then
     error "Missing arguments. Use the --help flag for more information."
 fi
 
@@ -49,13 +49,16 @@ source /usr/local/oecore-x86_64/environment-setup-cortexa9hf-neon-oe-linux-gnuea
 # Load package info and script
 source "$defdir"/package
 
-[[ -z $pkgname ]] && error "Missing or empty “pkgname” variable"
-[[ -z $pkgver ]] && error "Missing or empty “pkgver” variable"
-[[ -z $license ]] && error "Missing or empty “license” variable"
-[[ -z $section ]] && error "Missing or empty “section” variable"
-[[ -z $maintainer ]] && error "Missing or empty “maintainer” variable"
+[[ -z $pkgname ]] && error "Missing or empty 'pkgname' variable"
+[[ -z $pkgver ]] && error "Missing or empty 'pkgver' variable"
+[[ -z $license ]] && error "Missing or empty 'license' variable"
+[[ -z $section ]] && error "Missing or empty 'section' variable"
+[[ -z $maintainer ]] && error "Missing or empty 'maintainer' variable"
 [[ -z $arch ]] && arch=armv7-3.2
-[[ -z $pkgdesc ]] && error "Missing or empty “description” variable"
+[[ -z $pkgdesc ]] && error "Missing or empty 'description' variable"
+
+[[ -z $origin ]] && error "Missing or empty 'origin' variable"
+[[ -z $revision ]] && error "Missing or empty 'revision' variable"
 
 # Fetch source files
 status "Fetching source files"
@@ -63,10 +66,10 @@ git clone --quiet --recursive "$origin" "$srcdir"
 
 # Run build script
 status "Building package"
-pushd "$srcdir" > /dev/null
+pushd "$srcdir" > /dev/null || exit 1
 git checkout --quiet "$revision"
 build
-popd > /dev/null
+popd > /dev/null || exit 1
 
 # Run packaging script
 package
@@ -74,14 +77,17 @@ package
 # Create control file and archive
 ctlfile="$ctldir"/control
 
-echo "Package: $pkgname" >> "$ctlfile"
-echo "Version: $pkgver" >> "$ctlfile"
-[[ ! -z $pkgdeps ]] && echo "Depends: $pkgdeps" >> "$ctlfile"
-echo "License: $license" >> "$ctlfile"
-echo "Section: $section" >> "$ctlfile"
-echo "Maintainer: $maintainer" >> "$ctlfile"
-echo "Architecture: $arch" >> "$ctlfile"
-echo "Description: $pkgdesc" >> "$ctlfile"
+{
+    echo "Package: $pkgname"
+    echo "Version: $pkgver"
+    echo "License: $license"
+    echo "Section: $section"
+    echo "Maintainer: $maintainer"
+    echo "Architecture: $arch"
+    echo "Description: $pkgdesc"
+    [[ -n $depends ]] && echo "Depends: $depends"
+    [[ -n $conflicts ]] && echo "Conflicts: $conflicts"
+} >> "$ctlfile"
 
 # Copy install scripts
 [[ -f "$defdir"/preinst ]] && install -D -m 755 "$defdir"/preinst "$ctldir"/preinst
