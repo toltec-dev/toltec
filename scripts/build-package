@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
-source ./lib
-
+source "${BASH_SOURCE%/*}"/lib
 usage="$(basename "$0") PACKAGE WORKDIR
 
 Build the package archive described in PACKAGE.

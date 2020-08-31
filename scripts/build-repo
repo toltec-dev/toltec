@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
-source ./lib
-
+source "${BASH_SOURCE%/*}"/lib
 usage="$(basename "$0") PACKAGESDIR WORKDIR
 
 Build all packages described in PACKAGESDIR.
@@ -38,7 +37,7 @@ do
     pkgworkdir="$pkgsworkdir"/"$pkgname"
     status "Building $pkgname in $pkgworkdir"
 
-    ./build-package "$pkgpath" "$pkgworkdir"
+    "${BASH_SOURCE%/*}"/build-package "$pkgpath" "$pkgworkdir"
     mv "$pkgworkdir"/*.ipk "$repodir"
 done
 
