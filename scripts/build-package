@@ -23,8 +23,9 @@ defdir="$1"
 workdir="$2"
 
 # Create working directories
-[[ -d $workdir ]] && error "Working directory already exists!"
-mkdir "$workdir"
+[[ -d $workdir ]] && files="$(ls -qA -- "$workdir")" && [[ -n $files ]] \
+    && error "Working directory exists and is not empty"
+mkdir -p "$workdir"
 
 srcdir="$workdir"/src
 mkdir "$srcdir"
