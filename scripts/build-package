@@ -105,8 +105,8 @@ versionar="$ardir"/debian-binary
 arar="$workdir/${pkgname}_${pkgver}_${arch}.ipk"
 
 echo "2.0" >> "$versionar"
-rtar --transform="s/^${pkgdir//\//\\\/}/./" -zcf "$pkgar" "$pkgdir"
-rtar --transform="s/^${ctldir//\//\\\/}/./" -zcf "$ctlar" "$ctldir"
-rtar --transform="s/^${ardir//\//\\\/}/./" -zcf "$arar" "$ardir"
+rtar -zcf "$pkgar" -C "$pkgdir" .
+rtar -zcf "$ctlar" -C "$ctldir" .
+rtar -zcf "$arar" -C "$ardir" .
 
 status "Done. Result is in $arar"
