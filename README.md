@@ -2,15 +2,10 @@
 
 opkg: Package manager used by Entware
 
-OpenEmbedded == Yocto Project
-
-openwrt.org
-
-https://openwrt.org/docs/guide-user/additional-software/opkg
-https://elinux.org/images/2/24/Opkg_debians_little_cousin.pdf
-https://git.yoctoproject.org/cgit/cgit.cgi/opkg
-
-https://git.yoctoproject.org/cgit/cgit.cgi/opkg-utils/
+* https://openwrt.org/docs/guide-user/additional-software/opkg
+* https://elinux.org/images/2/24/Opkg_debians_little_cousin.pdf
+* https://git.yoctoproject.org/cgit/cgit.cgi/opkg
+* https://git.yoctoproject.org/cgit/cgit.cgi/opkg-utils/
 
 ## Package format
 
