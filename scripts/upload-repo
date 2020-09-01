@@ -32,10 +32,10 @@ pkgsdir="$1"
 
 # Configure SSH access to the remote server
 eval $(ssh-agent -s)
-echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+echo -e "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
 mkdir -p ~/.ssh
 chmod 700 ~/.ssh
-echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
+echo -e "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
 
 # Upload results
 rsync -avz --delete "$pkgsdir" "$REMOTE_PATH"

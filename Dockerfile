@@ -6,6 +6,7 @@ RUN apt-get update && apt-get install -y \
     bsdtar \
     curl \
     git \
+    openssh-client \
     python3 \
     xz-utils \
     && rm -rf /var/lib/apt/lists/*
@@ -25,3 +26,10 @@ RUN git clone git://git.yoctoproject.org/opkg-utils /opkg-utils \
     && cd /opkg-utils \
     && git checkout 0.4.3 \
     && ln -s /opkg-utils/opkg-make-index /usr/local/bin
+
+# Copy building scripts and repository data
+COPY "./scripts" "/scripts"
+COPY "./package" "/package"
+
+# Run build
+CMD /scripts/build-repo /package /build && /scripts/upload-repo /build/repo
