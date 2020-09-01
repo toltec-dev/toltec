@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 source "${BASH_SOURCE%/*}"/lib
-usage="$(basename "$0") PACKAGE WORKDIR
+usage="$0 PACKAGE WORKDIR
 
 Build the package archive described in PACKAGE.
 The WORKDIR must be a non-existent directory in which the build is performed.

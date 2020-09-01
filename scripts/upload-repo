@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+
+source "${BASH_SOURCE%/*}"/lib
+usage="$0 WORKDIR
+
+Upload all packages in the WORKDIR directory to the remote server.
+
+Environment variables:
+
+    REMOTE_PATH         Fully qualified path to upload the results to
+    SSH_PRIVATE_KEY     Private SSH key used for authenticating to the server
+    SSH_KNOWN_HOSTS     Valid public keys of the server
+
+Arguments:
+
+    -h, --help      Show this help message."
+
+if [[ $1 == "-h" ]] || [[ $1 == "--help" ]]; then
+    echo "$usage"
+    exit
+fi
+
+if [[ $# -lt 1 ]]; then
+    error "Missing arguments. Use the --help flag for more information."
+fi
+
+pkgsdir="$1"
+
+[[ -z $REMOTE_PATH ]] && error "Missing or empty REMOTE_PATH env var"
+[[ -z $SSH_PRIVATE_KEY ]] && error "Missing or empty SSH_PRIVATE_KEY env var"
+[[ -z $SSH_KNOWN_HOSTS ]] && error "Missing or empty SSH_KNOWN_HOSTS env var"
+
+# Configure SSH access to the remote server
+eval $(ssh-agent -s)
+echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+mkdir -p ~/.ssh
+chmod 700 ~/.ssh
+echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
+
+# Upload results
+rsync -avz --delete "$pkgsdir" "$REMOTE_PATH"
