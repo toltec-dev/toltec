@@ -84,3 +84,5 @@ opkg-utils must be in PATH
 For reproducibility:
 
 - must be done under the same root path
+
+Automatically updated when commits are pushed to the master branch, via GitHub Actions.
