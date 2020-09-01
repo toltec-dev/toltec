@@ -32,6 +32,7 @@ mkdir "$pkgsworkdir"
 repodir="$workdir"/repo
 mkdir "$repodir"
 
+# Build each individual package
 for pkgpath in "$pkgsdir"/*
 do
     pkgname="$(basename "$pkgpath")"
@@ -42,5 +43,10 @@ do
     mv "$pkgworkdir"/*.ipk "$repodir"
 done
 
+# Build packages index
 opkg-make-index --checksum sha256 -p "$repodir"/Packages "$repodir"
+
+# Set atime and mtime to fixed timestamp for all files
+find "$repodir" -exec touch --no-dereference --date="@${SOURCE_DATE_EPOCH}" {} +
+
 status "Done. Result is in $repodir"
