@@ -33,4 +33,4 @@ COPY "./scripts" "/scripts"
 COPY "./package" "/package"
 
 # Run build
-CMD /scripts/build-repo /package /build && /scripts/upload-repo /build/repo
+CMD /scripts/build-repo /package /build && /scripts/publish-repo /build/repo
