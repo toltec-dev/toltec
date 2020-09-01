@@ -39,12 +39,9 @@ mkdir "$ctldir"
 ardir="$workdir"/ar
 mkdir "$ardir"
 
-# Define the SOURCE_DATE_EPOCH to 0 if not defined
+# Define the SOURCE_DATE_EPOCH to the date of latest commit
 # See <https://reproducible-builds.org/docs/source-date-epoch/>
-if [[ -z "$SOURCE_DATE_EPOCH" ]]; then
-    SOURCE_DATE_EPOCH=0
-fi
-
+SOURCE_DATE_EPOCH="$(git log -1 --pretty=%ct)"
 export SOURCE_DATE_EPOCH
 
 # Load reMarkable toolchain

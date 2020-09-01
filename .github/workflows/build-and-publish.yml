@@ -1,0 +1,16 @@
+name: Build and publish the repository
+on: push
+
+jobs:
+    build:
+        name: Build and publish the repository
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout the Git repository
+              uses: actions/checkout@v2
+            - name: Build and publish
+              uses: ./.github/actions/build-and-publish
+              env:
+                  REMOTE_PATH: ${{ secrets.REMOTE_PATH }}
+                  SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+                  SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}

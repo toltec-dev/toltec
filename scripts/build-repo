@@ -32,6 +32,11 @@ mkdir "$pkgsworkdir"
 repodir="$workdir"/repo
 mkdir "$repodir"
 
+# Define the SOURCE_DATE_EPOCH to the date of latest commit
+# See <https://reproducible-builds.org/docs/source-date-epoch/>
+SOURCE_DATE_EPOCH="$(git log -1 --pretty=%ct)"
+export SOURCE_DATE_EPOCH
+
 # Build each individual package
 for pkgpath in "$pkgsdir"/*
 do
