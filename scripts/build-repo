@@ -48,5 +48,4 @@ opkg-make-index --checksum sha256 -p "$repodir"/Packages "$repodir"
 
 # Set atime and mtime to fixed timestamp for all files
 find "$repodir" -exec touch --no-dereference --date="@${SOURCE_DATE_EPOCH}" {} +
-
 status "Done. Result is in $repodir"

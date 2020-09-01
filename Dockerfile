@@ -1,13 +1,14 @@
 FROM debian:buster
 
 # Download dependencies
-RUN apt-get update && apt-get install -y \
+RUN apt-get update -q && apt-get install -yq \
     build-essential \
     bsdtar \
     curl \
     git \
     openssh-client \
     python3 \
+    rsync \
     xz-utils \
     && rm -rf /var/lib/apt/lists/*
 

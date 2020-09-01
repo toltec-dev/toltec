@@ -38,4 +38,5 @@ chmod 700 ~/.ssh
 echo -e "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
 
 # Upload results
-rsync -avz --delete "$pkgsdir" "$REMOTE_PATH"
+status "Uploading repository to remote"
+rsync -avz --delete "$pkgsdir/" "$REMOTE_PATH"
