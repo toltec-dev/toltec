@@ -1,7 +1,4 @@
 #!/usr/bin/env bash
 
-echo "Disabling draft and restoring xochitl"
-systemctl disable draft
-systemctl stop draft
-systemctl enable xochitl
-systemctl start xochitl
+echo "Disabling draft"
+systemctl disable --now draft

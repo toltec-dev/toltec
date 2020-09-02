@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+systemctl daemon-reload
+echo ""
+echo "Run the following command to enable xochitl again"
+echo "$ systemctl enable --now xochitl"
+echo ""

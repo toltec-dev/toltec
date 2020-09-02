@@ -1,0 +1,14 @@
+[Unit]
+Description=Launcher for the reMarkable tablet which wraps around the standard interface
+StartLimitIntervalSec=600
+StartLimitBurst=4
+OnFailure=remarkable-fail.service
+After=home.mount
+
+[Service]
+ExecStart=/opt/bin/draft
+Restart=on-failure
+WatchdogSec=60
+
+[Install]
+WantedBy=multi-user.target

@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-echo "Disabling xochitl and enabling draft"
 systemctl daemon-reload
-systemctl disable xochitl
-systemctl stop xochitl
-systemctl enable draft
-systemctl start draft
+echo ""
+echo "Run the following commands to make draft your launcher"
+echo "$ systemctl disable --now xochitl"
+echo "$ systemctl enable --now draft"
+echo ""
