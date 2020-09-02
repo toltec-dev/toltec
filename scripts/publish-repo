@@ -39,6 +39,6 @@ chmod 600 $HOME/.ssh/*
 
 # Upload results
 status "Uploading repository to remote"
-rsync -avz --delete \
+rsync -avz \
     -e "ssh -i \"$HOME\"/.ssh/id_rsa -o UserKnownHostsFile=\"$HOME\"/.ssh/known_hosts" \
     "$pkgsdir/" "$REMOTE":"$REMOTE_PATH"
