@@ -8,7 +8,6 @@ After=home.mount
 [Service]
 ExecStart=/opt/bin/draft
 Restart=on-failure
-WatchdogSec=60
 
 [Install]
 WantedBy=multi-user.target
