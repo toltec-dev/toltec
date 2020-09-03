@@ -1,0 +1,4 @@
+FROM toltec:base
+
+WORKDIR /toltec
+COPY . /toltec/
