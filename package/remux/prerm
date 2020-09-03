@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+echo "Disabling remux"
+systemctl disable remux --now
+systemctl daemon-reload
+echo "Enabling xochitl"
+# just making sure we have xochitl enabled
+systemctl enable xochitl --now

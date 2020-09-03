@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+echo "Enabling remux"
+systemctl daemon-reload
+systemctl enable remux
+systemctl start remux

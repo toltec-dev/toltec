@@ -1,0 +1,44 @@
+# vim: set ft=sh:
+pkgname=rmkit
+pkgver=0.0.1-1
+pkgdesc="rmkit apps for the remarkable, includes harmony, mines and simple app script"
+section=remarkable
+maintainer="raisjn fan<of.raisjn@gmail.com>"
+license=MIT
+
+origin=https://github.com/rmkit-dev/rmkit
+revision=ddabce428a3e7f8561d58552581636a549d34923
+
+install_build_deps() {
+  apt-get update -q && apt-get install -yq \
+    zip \
+    python3-pip \
+    gcc \
+    g++ \
+    gcc-arm-linux-gnueabihf \
+    g++-arm-linux-gnueabihf \
+    && echo "done"
+  pip3 install okp
+}
+
+build() {
+    install_build_deps
+
+    make harmony
+    make minesweeper
+    make simple
+    make remux
+}
+
+package() {
+    # simple app script for building apps
+    install -D -m 755 "$srcdir"/src/build/simple.exe "$pkgdir"/opt/usr/bin/simple
+
+    # TODO: add installation of desktop files for each of these...
+    install -D -m 755 "$srcdir"/src/build/harmony.exe "$pkgdir"/opt/usr/bin/harmony
+    install -D -m 755 "$srcdir"/src/build/mines.exe "$pkgdir"/opt/usr/bin/mines
+
+    mkdir -p "$pkgdir"/opt/etc/draft/
+    install -D -m 755 "$srcdir"/src/harmony/harmony.draft "$pkgdir"/opt/etc/draft/
+    install -D -m 755 "$srcdir"/src/minesweeper/mines.draft "$pkgdir"/opt/etc/draft/
+}

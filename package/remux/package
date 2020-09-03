@@ -1,0 +1,35 @@
+# vim: set ft=sh:
+pkgname=remux
+pkgver=0.0.1-1
+pkgdesc="remux is an app launcher that supports multi-tasking applications"
+section=remarkable-launchers
+maintainer="raisjn fan<of.raisjn@gmail.com>"
+license=MIT
+depends=
+conflicts="oxide draft"
+origin=https://github.com/rmkit-dev/rmkit
+revision=ddabce428a3e7f8561d58552581636a549d34923
+
+install_build_deps() {
+  apt-get update -q && apt-get install -yq \
+    zip \
+    python3-pip \
+    gcc \
+    g++ \
+    gcc-arm-linux-gnueabihf \
+    g++-arm-linux-gnueabihf \
+    && echo "done"
+  pip3 install okp
+}
+
+build() {
+    install_build_deps
+    make remux
+}
+
+package() {
+    mkdir -p "$pkgdir"/opt/usr/bin/
+    install -D -m 755 "$srcdir"/src/build/remux.exe "$pkgdir"/opt/usr/bin/remux
+    install -D -m 755 "$srcdir"/src/remux/remux.service "$pkgdir"/etc/systemd/system/remux.service
+    sed -i 's_/home/root/apps/remux.exe_/opt/usr/bin/remux_' "$pkgdir"/etc/systemd/system/remux.service
+}
