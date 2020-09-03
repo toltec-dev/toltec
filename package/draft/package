@@ -1,6 +1,6 @@
 # vim: set ft=sh:
 pkgname=draft
-pkgver=0.2.0-3
+pkgver=0.2.0-4
 pkgdesc="Launcher for the reMarkable tablet which wraps around the standard interface"
 section=remarkable-launchers
 maintainer="Mattéo Delabre <spam@delab.re>"
@@ -25,6 +25,7 @@ package() {
     install -d "$pkgdir"/opt/etc/draft "$pkgdir"/etc
     ln -s /opt/etc/draft "$pkgdir"/etc/draft
     cp -R "$srcdir"/extra-files/draft/* "$pkgdir"/opt/etc/draft
+    sed -i 's,call=/usr,call=/opt,' "$pkgdir"/opt/etc/draft/02-fingerterm
 
     install -D -m 644 -t "$pkgdir"/lib/systemd/system "$defdir"/draft.service
 }
