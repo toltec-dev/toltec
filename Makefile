@@ -1,4 +1,5 @@
 PACKAGE?=draft
+HOST?=10.11.99.1
 
 default: repo
 repo:
@@ -12,7 +13,9 @@ package:
 	echo "BUILDING ${PACKAGE}"
 	PACKAGE=${PACKAGE} bash scripts/build-package-in-docker
 
-
+push_package:
+	ssh root@${HOST} mkdir -p .config/opkg/
+	PACKAGE=${PACKAGE} scp artifacts/package/${PACKAGE}/*.ipk root@${HOST}:.config/opkg/
 
 .PHONY: docker package
 
