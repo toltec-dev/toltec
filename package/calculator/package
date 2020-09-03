@@ -1,8 +1,8 @@
 # vim: set ft=sh:
 pkgname=calculator
-pkgver=0.0.0-2
+pkgver=0.0.0-3
 pkgdesc="Calculator for the reMarkable"
-section=math
+section=remarkable-apps
 maintainer="Mattéo Delabre <spam@delab.re>"
 license=GPL-v3
 
