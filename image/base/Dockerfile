@@ -1,4 +1,4 @@
-FROM debian:buster
+FROM debian:stretch
 
 RUN apt-get update -q && apt-get install -yq \
     build-essential \
