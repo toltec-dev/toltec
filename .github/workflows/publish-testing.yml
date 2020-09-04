@@ -1,0 +1,35 @@
+name: Publish the testing repository
+on:
+    push:
+        branches:
+            - testing
+jobs:
+    images:
+        name: Publish images
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout the Git repository
+              uses: actions/checkout@v2
+            - name: Publish images
+              uses: docker/build-push-action@v1
+              with:
+                  tags: testing
+                  username: ${{ github.actor }}
+                  password: ${{ secrets.GITHUB_TOKEN }}
+                  registry: docker.pkg.github.com
+                  repository: matteodelabre/toltec/base
+                  paths: image/base
+    packages:
+        needs: images
+        name: Publish packages
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout the Git repository
+              uses: actions/checkout@v2
+            - name: Publish packages
+              uses: ./.github/actions/publish-packages
+              env:
+                  REMOTE_PATH: /srv/toltec/testing
+                  REMOTE: ${{ secrets.REMOTE }}
+                  SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+                  SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}

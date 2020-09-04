@@ -1,4 +1,4 @@
-# Build and publish action
+# Action: Publish packages
 
 This action spawns a Docker container with the `matteodelabre/toltec` image, builds the whole repository, and uploads it to a remote server through rsync.
 

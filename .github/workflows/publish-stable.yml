@@ -1,9 +1,8 @@
-name: Build and publish on push to testing
+name: Build and publish on push to stable
 on:
     push:
         branches:
-            - testing
-
+            - stable
 jobs:
     build:
         name: Build and publish the repository
@@ -15,6 +14,6 @@ jobs:
               uses: ./.github/actions/build-and-publish
               env:
                   REMOTE: ${{ secrets.REMOTE }}
-                  REMOTE_PATH: /srv/toltec/testing
+                  REMOTE_PATH: /srv/toltec/stable
                   SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
                   SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
