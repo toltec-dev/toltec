@@ -7,7 +7,7 @@ maintainer="Linus K. <linus@cosmos-ink.net>"
 license=MIT
 
 origin=https://github.com/LinusCDE/retris.git
-revision=0.5.3-1
+revision=206f43c4b0f146622641cab22313cb8b27109cff
 
 build() {
     cargo build --release
