@@ -16,6 +16,6 @@ build() {
 
 package() {
     install -D -m 755 "$srcdir"/target/armv7-unknown-linux-gnueabihf/release/retris "$pkgdir"/opt/bin/retris
-    install -D -m 644 "$srcdir"/oxide "$pkgdir"/etc/draft/retris
-    install -D -m 644 "$srcdir"/icon.png "$pkgdir"/etc/draft/icons/retris.png
+    install -D -m 644 "$srcdir"/oxide "$pkgdir"/opt/etc/draft/retris
+    install -D -m 644 "$srcdir"/icon.png "$pkgdir"/opt/etc/draft/icons/retris.png
 }
