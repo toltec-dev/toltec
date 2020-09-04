@@ -21,7 +21,7 @@ jobs:
               uses: docker/build-push-action@v1
               with:
                   tags: testing
-                  build_args: BRANCH=testing,REPOSITORY=${{ github.repository }}
+                  build_args: BASE=docker.pkg.github.com/${{ github.repository }}/base:testing
                   username: ${{ github.actor }}
                   password: ${{ secrets.GITHUB_TOKEN }}
                   registry: docker.pkg.github.com
