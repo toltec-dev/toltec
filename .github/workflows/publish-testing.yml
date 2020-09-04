@@ -7,18 +7,26 @@ jobs:
     images:
         name: Publish images
         runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                image: [
+                    base,
+                    qt,
+                    rust
+                ]
         steps:
             - name: Checkout the Git repository
               uses: actions/checkout@v2
             - name: Publish images
               uses: docker/build-push-action@v1
               with:
-                  tags: testing
+                  tags: ${{ github.ref }}
+                  build_args: BRANCH=${{ github.ref }}
                   username: ${{ github.actor }}
                   password: ${{ secrets.GITHUB_TOKEN }}
                   registry: docker.pkg.github.com
-                  repository: matteodelabre/toltec/base
-                  path: image/base
+                  repository: ${{ github.repository }}/${{ matrix.image }}
+                  path: image/${{ matrix.image }}
     packages:
         needs: images
         name: Publish packages
@@ -29,7 +37,7 @@ jobs:
             - name: Publish packages
               uses: ./.github/actions/publish-packages
               env:
-                  REMOTE_PATH: /srv/toltec/testing
+                  REMOTE_PATH: /srv/toltec/${{ github.ref }}
                   REMOTE: ${{ secrets.REMOTE }}
                   SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
                   SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
