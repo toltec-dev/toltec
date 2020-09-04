@@ -1,6 +1,6 @@
 # vim: set ft=sh:
 pkgname=oxide
-pkgver=0.0.0-1
+pkgver=0.0.0-2
 pkgdesc="Launcher for the reMarkable tablet which wraps around the standard interface"
 section=launcher
 provides=launcher
@@ -9,18 +9,26 @@ maintainer="raisjn<of.rajsn@gmail.com>"
 license=Apache
 
 origin=https://github.com/Eeems/oxide
-revision=origin/master
+revision=c3e887820acdd0d5c2a943305699ccd96602b6da
 
 build_oxide() {
-    pushd applications/oxide/
+    pushd "$srcdir"/applications/oxide/
     qmake oxide.pro -spec linux-oe-g++
     make
     popd
 }
 
 build_button_capture() {
-    pushd applications/button-capture/
+    pushd "$srcdir"/applications/button-capture/
     qmake button-capture.pro -spec linux-oe-g++
+    make
+    popd
+}
+
+
+build_erode() {
+    pushd "$srcdir"/applications/process-manager/
+    qmake erode.pro -spec linux-oe-g++
     make
     popd
 }
@@ -28,11 +36,13 @@ build_button_capture() {
 build() {
   build_oxide
   build_button_capture
+  build_erode
 }
 
 package() {
-    install -D -m 755 "$srcdir"/applications/oxide/oxide "$pkgdir"/opt/usr/bin/oxide
-    install -D -m 755 "$srcdir"/applications/button-capture/button-capture "$pkgdir"/opt/usr/bin/button-capture
+    install -D -m 755 "$srcdir"/applications/oxide/oxide "$pkgdir"/opt/bin/oxide
+    install -D -m 755 "$srcdir"/applications/button-capture/button-capture "$pkgdir"/opt/bin/button-capture
+    install -D -m 755 "$srcdir"/applications/process-manager/erode "$pkgdir"/opt/bin/erode
 
     install -D -m 755 "$srcdir"/assets/etc/oxide.conf "$pkgdir"/opt/etc/oxide.conf
     install -D -m 755 "$srcdir"/assets/etc/draft/01-xochitl "$pkgdir"/opt/etc/draft/01-xochitl
