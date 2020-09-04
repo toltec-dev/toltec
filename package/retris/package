@@ -1,13 +1,13 @@
 # vim: set ft=sh:
 pkgname=retris
-pkgver=0.5.3
+pkgver=0.5.3-1
 pkgdesc="Implementation of rust tetris_core on the reMarkable using libremarkable"
 section=games
 maintainer="Linus K. <linus@cosmos-ink.net>"
 license=MIT
 
 origin=https://github.com/LinusCDE/retris.git
-revision=0.5.3
+revision=0.5.3-1
 
 build() {
     cargo build --release
@@ -16,4 +16,6 @@ build() {
 
 package() {
     install -D -m 755 "$srcdir"/target/armv7-unknown-linux-gnueabihf/release/retris "$pkgdir"/opt/bin/retris
+    install -D -m 644 "$srcdir"/oxide "$pkgdir"/etc/draft/retris
+    install -D -m 644 "$srcdir"/icon.png "$pkgdir"/etc/draft/icons/retris.png
 }
