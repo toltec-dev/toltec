@@ -20,8 +20,8 @@ jobs:
             - name: Publish images
               uses: docker/build-push-action@v1
               with:
-                  tags: ${{ github.ref }}
-                  build_args: BRANCH=${{ github.ref }}
+                  tags: testing
+                  build_args: BRANCH=testing,REPOSITORY=${{ github.repository }}
                   username: ${{ github.actor }}
                   password: ${{ secrets.GITHUB_TOKEN }}
                   registry: docker.pkg.github.com
@@ -37,7 +37,7 @@ jobs:
             - name: Publish packages
               uses: ./.github/actions/publish-packages
               env:
-                  REMOTE_PATH: /srv/toltec/${{ github.ref }}
+                  REMOTE_PATH: /srv/toltec/testing
                   REMOTE: ${{ secrets.REMOTE }}
                   SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
                   SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
