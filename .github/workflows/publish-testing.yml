@@ -18,7 +18,7 @@ jobs:
                   password: ${{ secrets.GITHUB_TOKEN }}
                   registry: docker.pkg.github.com
                   repository: matteodelabre/toltec/base
-                  paths: image/base
+                  path: image/base
     packages:
         needs: images
         name: Publish packages
