@@ -22,6 +22,11 @@ RUN curl https://remarkable.engineering/oecore-x86_64-cortexa9hf-neon-toolchain-
 RUN mkdir -p /usr/local/oecore-x86_64/sysroots/x86_64-oesdk-linux/usr/share/cmake \
     && curl https://raw.githubusercontent.com/openembedded/openembedded-core/uninative-2.9/meta/recipes-devtools/cmake/cmake/OEToolchainConfig.cmake -o /usr/local/oecore-x86_64/sysroots/x86_64-oesdk-linux/usr/share/cmake/OEToolchainConfig.cmake
 
+# Add rust nightly with armv7 target
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs \
+    | sh -s -- --default-toolchain nightly --target armv7-unknown-linux-gnueabihf --profile minimal -y -q
+ENV PATH="$PATH:/root/.cargo/bin"
+
 # Install opkg-utils
 RUN git clone git://git.yoctoproject.org/opkg-utils /opkg-utils \
     && cd /opkg-utils \
