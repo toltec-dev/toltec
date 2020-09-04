@@ -11,7 +11,6 @@ revision=0.5.3
 
 build() {
     cargo build --release
-    source /usr/local/oecore-x86_64/environment-setup-cortexa9hf-neon-oe-linux-gnueabi
     $STRIP target/armv7-unknown-linux-gnueabihf/release/retris
 }
 
