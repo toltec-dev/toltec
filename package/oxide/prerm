@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+echo "Disabling oxide and restoring xochitl"
+systemctl disable oxide
+systemctl stop oxide
+systemctl enable xochitl
+systemctl start xochitl

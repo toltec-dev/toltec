@@ -1,0 +1,12 @@
+#!/bin/sh
+
+info() { printf "\e[7;32m[Info]\e[0;7m %s\e[0m\n" "$@"; }
+
+MEDIA_DIR=/home/root/plato-media/
+
+# This directory should not be tracked by opkg
+# so its contents are kept after removing.
+if [ ! -d $MEDIA_DIR ]; then
+  mkdir $MEDIA_DIR
+  info "Place your media for plato here: $MEDIA_DIR"
+fi

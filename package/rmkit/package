@@ -1,6 +1,6 @@
 # vim: set ft=sh:
 pkgname=rmkit
-pkgver=0.0.1-1
+pkgver=0.0.1-2
 pkgdesc="rmkit apps for the remarkable, includes harmony, mines and simple app script"
 section=remarkable
 maintainer="raisjn fan<of.raisjn@gmail.com>"
@@ -8,7 +8,7 @@ license=MIT
 
 image=python
 origin=https://github.com/rmkit-dev/rmkit
-revision=ddabce428a3e7f8561d58552581636a549d34923
+revision=b88eee8aa4ffe1dfcc9b7346aebda7638a0750de
 
 build() {
     pip3 install okp
