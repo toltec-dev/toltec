@@ -1,6 +1,6 @@
 # vim: set ft=sh:
 pkgname=draft
-pkgver=0.2.0-4
+pkgver=0.2.0-5
 pkgdesc="Launcher for the reMarkable tablet which wraps around the standard interface"
 section=remarkable-launchers
 maintainer="Mattéo Delabre <spam@delab.re>"
@@ -11,7 +11,7 @@ origin=https://github.com/dixonary/draft-reMarkable.git
 revision=5bd660a2fd07eba166c6110d2b48cfc58ee67e58
 
 build() {
-    qmake draft.pro -spec linux-oe-g++
+    qmake draft.pro
     make
 }
 
