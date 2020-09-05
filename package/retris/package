@@ -6,16 +6,18 @@ section=games
 maintainer="Linus K. <linus@cosmos-ink.net>"
 license=MIT
 
+image=rust
 origin=https://github.com/LinusCDE/retris.git
 revision=206f43c4b0f146622641cab22313cb8b27109cff
 
 build() {
+    rm .cargo/config
     cargo build --release
-    $STRIP target/armv7-unknown-linux-gnueabihf/release/retris
+    arm-linux-gnueabihf-strip target/armv7-unknown-linux-gnueabihf/release/retris
 }
 
 package() {
-    install -D -m 755 "$srcdir"/target/armv7-unknown-linux-gnueabihf/release/retris "$pkgdir"/opt/bin/retris
+    install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/target/armv7-unknown-linux-gnueabihf/release/retris
     install -D -m 644 "$srcdir"/oxide "$pkgdir"/opt/etc/draft/retris
     install -D -m 644 "$srcdir"/icon.png "$pkgdir"/opt/etc/draft/icons/retris.png
 }

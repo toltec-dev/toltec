@@ -1,7 +1,0 @@
-OUTDIR=artifacts
-rm ${OUTDIR}/package/${PACKAGE} -fr
-mkdir ${OUTDIR} 2>/dev/null
-docker run -i --rm -v "${PWD}/${OUTDIR}:/packages/" toltec:build /bin/bash << COMMANDS
-scripts/build-package package/${PACKAGE} /packages/package/${PACKAGE}
-chown -R $(id -u):$(id -u) /packages/
-COMMANDS

@@ -6,6 +6,7 @@ section=remarkable-launchers
 maintainer="Mattéo Delabre <spam@delab.re>"
 license=Apache
 
+image=qt
 origin=https://github.com/dixonary/draft-reMarkable.git
 revision=5bd660a2fd07eba166c6110d2b48cfc58ee67e58
 
@@ -27,5 +28,5 @@ package() {
     cp -R "$srcdir"/extra-files/draft/* "$pkgdir"/opt/etc/draft
     sed -i 's,call=/usr,call=/opt,' "$pkgdir"/opt/etc/draft/02-fingerterm
 
-    install -D -m 644 -t "$pkgdir"/lib/systemd/system "$defdir"/draft.service
+    install -D -m 644 -t "$pkgdir"/lib/systemd/system "$recipedir"/draft.service
 }

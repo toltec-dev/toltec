@@ -6,6 +6,7 @@ section=remarkable-apps
 maintainer="Mattéo Delabre <spam@delab.re>"
 license=GPL2
 
+image=qt
 origin=https://github.com/dixonary/fingerterm-reMarkable.git
 revision=bd97bfb34b7ebebeed029fca0d72a10af0258884
 

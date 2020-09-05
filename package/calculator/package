@@ -6,6 +6,7 @@ section=remarkable-apps
 maintainer="Mattéo Delabre <spam@delab.re>"
 license=GPL-v3
 
+image=qt
 origin=https://github.com/reHackable/Calculator.git
 revision=7b8be5de12f1536bc04b6216abbf26f998097bf4
 

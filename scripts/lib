@@ -28,3 +28,36 @@ rtar() {
         --pax-option=exthdr.name=%d/PaxHeaders/%f,delete=atime,delete=ctime \
         "$@"
 }
+
+# Load information from a package recipe
+#
+# Arguments:
+#
+# $1 - Path to the package recipe
+load-recipe() {
+    source "$1"/package
+
+    [[ -z $pkgname ]] && error "Missing or empty 'pkgname' variable"
+    [[ -z $pkgver ]] && error "Missing or empty 'pkgver' variable"
+    [[ -z $license ]] && error "Missing or empty 'license' variable"
+    [[ -z $section ]] && error "Missing or empty 'section' variable"
+    [[ -z $maintainer ]] && error "Missing or empty 'maintainer' variable"
+    [[ -z $arch ]] && arch=armv7-3.2
+    [[ -z $pkgdesc ]] && error "Missing or empty 'description' variable"
+
+    [[ -z $image ]] && error "Missing or empty 'image' variable"
+    [[ -z $origin ]] && error "Missing or empty 'origin' variable"
+    [[ -z $revision ]] && error "Missing or empty 'revision' variable"
+
+    return 0
+}
+
+# Generate the archive name of a package
+#
+# Arguments:
+#
+# $1 - Path to the package recipe
+archive-name() {
+    (load-recipe "$1"
+     echo "${pkgname}_${pkgver}_${arch}.ipk")
+}

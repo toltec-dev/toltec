@@ -7,6 +7,8 @@ maintainer="raisjn fan<of.raisjn@gmail.com>"
 license=MIT
 depends=
 conflicts="oxide draft"
+
+image=base
 origin=https://github.com/rmkit-dev/rmkit
 revision=ddabce428a3e7f8561d58552581636a549d34923
 

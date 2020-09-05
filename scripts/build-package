@@ -1,10 +1,16 @@
 #!/usr/bin/env bash
 
+set -e
 source "${BASH_SOURCE%/*}"/lib
-usage="$0 PACKAGE WORKDIR
 
-Build the package archive described in PACKAGE.
+usage="$0 RECIPE WORKDIR
+
+Build a package following the recipe defined in RECIPE.
 The WORKDIR must be a non-existent directory in which the build is performed.
+
+Environment variables:
+
+    [DOCKER_PREFIX]     Tag prefix to the Docker images used for building.
 
 Arguments:
 
@@ -19,7 +25,7 @@ if [[ $# -lt 2 ]]; then
     error "Missing arguments. Use the --help flag for more information."
 fi
 
-defdir="$1"
+recipedir="$1"
 workdir="$2"
 
 # Create working directories
@@ -44,36 +50,32 @@ mkdir "$ardir"
 SOURCE_DATE_EPOCH="$(git log -1 --pretty=%ct)"
 export SOURCE_DATE_EPOCH
 
-# Load reMarkable toolchain
-source /usr/local/oecore-x86_64/environment-setup-cortexa9hf-neon-oe-linux-gnueabi
-
 # Load package info and script
-source "$defdir"/package
-
-[[ -z $pkgname ]] && error "Missing or empty 'pkgname' variable"
-[[ -z $pkgver ]] && error "Missing or empty 'pkgver' variable"
-[[ -z $license ]] && error "Missing or empty 'license' variable"
-[[ -z $section ]] && error "Missing or empty 'section' variable"
-[[ -z $maintainer ]] && error "Missing or empty 'maintainer' variable"
-[[ -z $arch ]] && arch=armv7-3.2
-[[ -z $pkgdesc ]] && error "Missing or empty 'description' variable"
-
-[[ -z $origin ]] && error "Missing or empty 'origin' variable"
-[[ -z $revision ]] && error "Missing or empty 'revision' variable"
+load-recipe "$recipedir"
 
 # Fetch source files
 status "Fetching source files"
 git clone --quiet --recursive "$origin" "$srcdir"
+pushd "$srcdir" > /dev/null
+git checkout --quiet "$revision"
+popd > /dev/null
 
-# Set atime and mtime to fixed timestamp for all files
+# Set atime and mtime to fixed timestamp for all source files
 find "$srcdir" -exec touch --no-dereference --date="@${SOURCE_DATE_EPOCH}" {} +
 
-# Run build script
+# Run build script inside a Docker container
 status "Building package"
-pushd "$srcdir" > /dev/null || exit 1
-git checkout --quiet "$revision"
-build
-popd > /dev/null || exit 1
+
+branch="$(git branch --show-current)"
+sudo docker run --interactive --rm \
+    --mount type=bind,src="$(realpath "$recipedir")",dst=/recipe \
+    --mount type=bind,src="$(realpath "$srcdir")",dst=/src \
+    "${DOCKER_PREFIX}toltec/${image}:${branch}" /bin/bash \
+<<CMDS
+    source /recipe/package
+    cd /src
+    build
+CMDS
 
 # Run packaging script
 package
@@ -94,17 +96,17 @@ ctlfile="$ctldir"/control
 } >> "$ctlfile"
 
 # Copy install scripts
-[[ -f "$defdir"/preinst ]] && install -D -m 755 "$defdir"/preinst "$ctldir"/preinst
-[[ -f "$defdir"/postinst ]] && install -D -m 755 "$defdir"/postinst "$ctldir"/postinst
-[[ -f "$defdir"/prerm ]] && install -D -m 755 "$defdir"/prerm "$ctldir"/prerm
-[[ -f "$defdir"/postrm ]] && install -D -m 755 "$defdir"/postrm "$ctldir"/postrm
+[[ -f "$recipedir"/preinst ]] && install -D -m 755 "$recipedir"/preinst "$ctldir"/preinst
+[[ -f "$recipedir"/postinst ]] && install -D -m 755 "$recipedir"/postinst "$ctldir"/postinst
+[[ -f "$recipedir"/prerm ]] && install -D -m 755 "$recipedir"/prerm "$ctldir"/prerm
+[[ -f "$recipedir"/postrm ]] && install -D -m 755 "$recipedir"/postrm "$ctldir"/postrm
 
 # Create archives
 status "Creating archive"
 pkgar="$ardir"/data.tar.gz
 ctlar="$ardir"/control.tar.gz
 versionar="$ardir"/debian-binary
-arar="$workdir/${pkgname}_${pkgver}_${arch}.ipk"
+arar="$workdir/$(archive-name "$recipedir")"
 
 echo "2.0" >> "$versionar"
 rtar -zcf "$pkgar" -C "$pkgdir" .
