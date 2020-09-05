@@ -12,6 +12,7 @@ jobs:
                 image: [
                     base,
                     qt,
+                    python,
                     rust
                 ]
             # Build images one at a time, since we can’t specify fine-grained

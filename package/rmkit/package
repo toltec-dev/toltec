@@ -6,25 +6,12 @@ section=remarkable
 maintainer="raisjn fan<of.raisjn@gmail.com>"
 license=MIT
 
-image=base
+image=python
 origin=https://github.com/rmkit-dev/rmkit
 revision=ddabce428a3e7f8561d58552581636a549d34923
 
-install_build_deps() {
-  apt-get update -q && apt-get install -yq \
-    zip \
-    python3-pip \
-    gcc \
-    g++ \
-    gcc-arm-linux-gnueabihf \
-    g++-arm-linux-gnueabihf \
-    && echo "done"
-  pip3 install okp
-}
-
 build() {
-    install_build_deps
-
+    pip3 install okp
     make harmony
     make minesweeper
     make simple
