@@ -8,4 +8,5 @@ RUN apt-get update -q && apt-get install -yq \
         curl \
         git \
         python \
+        python3 \
     && rm -rf /var/lib/apt/lists/*
