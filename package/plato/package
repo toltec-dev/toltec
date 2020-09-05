@@ -1,0 +1,52 @@
+# vim: set ft=sh:
+pkgname=plato
+pkgver=0.9.1-1
+pkgdesc="Port of the plato document reader to the reMarkable"
+section=remarkable-apps
+maintainer="Linus K. <linus@cosmos-ink.net>"
+license=AGPL-v3
+
+origin=https://github.com/LinusCDE/plato.git
+revision=014c935b4fb19918ce608c36ca45343dd3815b82
+
+build() {
+    # Get needed packages
+    apt-get update && apt-get -y install wget jq unzip imagemagick
+    
+    # cargo pkgid seems to output something different with most
+    # recent nightly builds. This adjusts the filtering.
+    sed -i 's/version=.*$/version=$(cargo pkgid | cut -d "#" -f 2 | cut -d ":" -f 2)/g' download.sh
+    
+    # Compile all to dist/
+    ./make_remarkable.sh
+    
+    # Create icon for oxide
+    convert artworks/plato.png \
+      -scale 500x500 \
+      -gravity center \
+      -background white \
+      -extent 500x500 \
+      plato_icon.png
+}
+
+package() {
+    # Copy dist/ to /opt/lib/plato/
+    mkdir -p "$pkgdir"/opt/lib/
+    cp -r "$srcdir"/dist/ "$pkgdir"/opt/lib/plato/
+    
+    # Link /opt/bin/plato to /opt/lib/plato/plato.sh
+    mkdir "$pkgdir"/opt/bin/
+    ln -s /opt/lib/plato/plato.sh "$pkgdir"/opt/bin/plato
+    
+    # Link media/ dir to /home/root/plato-media/
+    rmdir "$pkgdir"/opt/lib/plato/media/
+    # (Dir is created in postinst to prevent tracking)
+    ln -s /home/root/plato-media/ "$pkgdir"/opt/lib/plato/media
+    
+    # Link Settings.toml to /opt/etc/plato.toml
+    mkdir -p "$pkgdir"/opt/etc
+    ln -s /opt/etc/plato.toml "$pkgdir"/opt/lib/plato/Settings.toml
+    
+    install -D -m 644 "$srcdir"/oxide "$pkgdir"/opt/etc/draft/plato
+    install -D -m 644 "$srcdir"/plato_icon.png "$pkgdir"/opt/etc/draft/icons/plato.png
+}
