@@ -64,9 +64,8 @@ popd > /dev/null
 find "$srcdir" -exec touch --no-dereference --date="@${SOURCE_DATE_EPOCH}" {} +
 
 # Run build script inside a Docker container
-status "Building package"
 
-branch="$(git branch --show-current)"
+branch="$(git rev-parse --abbrev-ref HEAD)"
 sudo docker run --interactive --rm \
     --mount type=bind,src="$(realpath "$recipedir")",dst=/recipe \
     --mount type=bind,src="$(realpath "$srcdir")",dst=/src \
@@ -75,6 +74,7 @@ sudo docker run --interactive --rm \
     source /recipe/package
     cd /src
     build
+    chown -R $(id -u):$(id -u) /src/
 CMDS
 
 # Run packaging script
