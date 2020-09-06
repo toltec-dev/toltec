@@ -13,7 +13,8 @@ jobs:
                     base,
                     qt,
                     python,
-                    rust
+                    rust,
+                    rmkit
                 ]
             # Build images one at a time, since we can’t specify fine-grained
             # dependencies and all images depend on the 'base' one

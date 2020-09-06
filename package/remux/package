@@ -8,12 +8,11 @@ license=MIT
 depends=
 conflicts="oxide draft"
 
-image=python
+image=rmkit
 origin=https://github.com/rmkit-dev/rmkit
 revision=ddabce428a3e7f8561d58552581636a549d34923
 
 build() {
-    pip3 install okp
     make remux
 }
 

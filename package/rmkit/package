@@ -6,7 +6,7 @@ section=remarkable
 maintainer="raisjn fan<of.raisjn@gmail.com>"
 license=MIT
 
-image=python
+image=rmkit
 origin=https://github.com/rmkit-dev/rmkit
 revision=b88eee8aa4ffe1dfcc9b7346aebda7638a0750de
 
