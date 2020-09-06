@@ -1,6 +1,6 @@
 # vim: set ft=sh:
 pkgname=oxide
-pkgver=0.0.0-2
+pkgver=0.0.0-3
 pkgdesc="Launcher for the reMarkable tablet which wraps around the standard interface"
 section=launcher
 provides=launcher
@@ -8,35 +8,22 @@ conflicts=draft
 maintainer="raisjn<of.rajsn@gmail.com>"
 license=Apache
 
+image=qt
 origin=https://github.com/Eeems/oxide
 revision=c3e887820acdd0d5c2a943305699ccd96602b6da
 
-build_oxide() {
-    pushd "$srcdir"/applications/oxide/
-    qmake oxide.pro -spec linux-oe-g++
-    make
-    popd
-}
-
-build_button_capture() {
-    pushd "$srcdir"/applications/button-capture/
-    qmake button-capture.pro -spec linux-oe-g++
-    make
-    popd
-}
-
-
-build_erode() {
-    pushd "$srcdir"/applications/process-manager/
-    qmake erode.pro -spec linux-oe-g++
+build-app() {
+    pushd applications/"$1"
+    sed -i 's/linux-oe-g++/linux-arm-gnueabihf-g++/' "$1".pro
+    qmake "$1".pro
     make
     popd
 }
 
 build() {
-  build_oxide
-  build_button_capture
-  build_erode
+    build-app oxide
+    build-app button-capture
+    build-app erode
 }
 
 package() {
