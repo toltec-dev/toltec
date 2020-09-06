@@ -1,0 +1,22 @@
+# vim: set ft=sh:
+pkgname=rmservewacominput
+pkgver=0.2.5-1
+pkgdesc="Open a server on port 33333 and serve pen input"
+section=remarkable-apps
+depends=appmarkable
+maintainer="Linus K. <linus@cosmos-ink.net>"
+license=MIT
+
+origin=https://github.com/LinusCDE/rmWacomToMouse.git
+revision=d76dc54b0b3e0cc60b9cda87ccd40fd7dc3cb537
+
+build() {
+    cd c_implementation
+    make
+}
+
+package() {
+    install -D -m 755 "$srcdir"/c_implementation/rmServeWacomInput "$pkgdir"/opt/bin/rmservewacominput
+    install -D -m 644 "$srcdir"/oxide "$pkgdir"/opt/etc/draft/rmservewacominput
+    install -D -m 644 "$srcdir"/icon.png "$pkgdir"/opt/etc/draft/icons/rmservewacominput.png
+}
