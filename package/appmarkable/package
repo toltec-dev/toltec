@@ -1,13 +1,13 @@
 # vim: set ft=sh:
 pkgname=appmarkable
-pkgver=0.1.0-1
+pkgver=0.1.0-2
 pkgdesc="Turn your program into a very simple app for draft similar. "
 section=utilities
 maintainer="Linus K. <linus@cosmos-ink.net>"
 license=MIT
 
 origin=https://github.com/LinusCDE/appmarkable.git
-revision=aa588807f68b0ff667a5e810b71aaf587c66238f
+revision=43a18e7fee5c6fe7971d773f40e3ca2849169e35
 
 build() {
     cargo build --release
