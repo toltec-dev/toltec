@@ -10,7 +10,7 @@ license=Apache
 
 image=qt
 origin=https://github.com/Eeems/oxide
-revision=c3e887820acdd0d5c2a943305699ccd96602b6da
+revision=9c49b27ded32839db91837cef17f0260b74625cf
 
 build-app() {
     pushd applications/"$1"
