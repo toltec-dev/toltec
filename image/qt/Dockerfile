@@ -48,6 +48,45 @@ RUN export DEBIAN_FRONTEND=noninteractive \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
+# Build zlib and libpng targeting armhf
+RUN export DEBIAN_FRONTEND=noninteractive \
+    && apt-get update -y \
+    && apt-get install -y --no-install-recommends \
+        automake \
+        git \
+        libtool \
+        python \
+    && cd /root \
+    # Build static zlib
+    && git clone https://github.com/madler/zlib \
+    && cd zlib \
+    && git checkout v1.2.11 \
+    && CC=arm-linux-gnueabihf-gcc CFLAGS=-fPIC ./configure \
+        --static \
+        --prefix=/opt/x-tools/arm-remarkable-linux-gnueabihf/arm-remarkable-linux-gnueabihf \
+    && make \
+    && make install \
+    && cd .. \
+    # Build dynamic libpng
+    && git clone git://git.code.sf.net/p/libpng/code libpng \
+    && cd libpng \
+    && git checkout v1.6.34 \
+    && ./autogen.sh \
+    && ./configure \
+        --prefix=/opt/x-tools/arm-remarkable-linux-gnueabihf/arm-remarkable-linux-gnueabihf \
+        --host=arm-linux-gnueabihf \
+    && make \
+    && make install \
+    && cd .. \
+    && rm -rf zlib libpng \
+    && apt-get autoremove -y \
+        automake \
+        git \
+        libtool \
+        python \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
 # Add the closed-source libqsgepaper library
 RUN curl --proto '=https' --tlsv1.2 -sSf \
         https://toltec.delab.re/thirdparty/lib/libqsgepaper.a \
