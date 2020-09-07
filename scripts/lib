@@ -31,7 +31,7 @@ rtar() {
 
 # Curl command with flags suitable for scripting
 rcurl() {
-    curl --tlsv1.2 --proto '=https' "$@" --fail --silent
+    curl --proto '=https' "$@" --fail --silent--tlsv1.2 
 }
 
 # Load information from a package recipe
@@ -73,6 +73,6 @@ archive-name() {
 #
 # $1 - Short tag of the image
 image-name() {
-    branch="$(git branch --show-current)"
+    branch="$(git rev-parse --abbrev-ref HEAD)"
     echo "ghcr.io/matteodelabre/toltec-${1}:${branch}"
 }

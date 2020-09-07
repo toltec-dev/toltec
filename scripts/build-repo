@@ -57,7 +57,7 @@ repodir="$workdir"/repo
 mkdir -p "$repodir"
 
 # URL to the remote repository
-branch="$(git branch --show-current)"
+branch="$(git rev-parse --abbrev-ref HEAD)"
 remote="https://toltec.delab.re/$branch"
 
 # Define the SOURCE_DATE_EPOCH to the date of latest commit

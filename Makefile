@@ -15,7 +15,6 @@ repo:
 $(PACKAGES): %:
 	./scripts/build-package package/"$(@)" build/packages/"$(@)"
 
-
 $(PUSH_PACKAGES): %:
 	ssh root@"${HOST}" mkdir -p .cache/opkg/
 	scp build/packages/"$(@:push-%=%)"/*.ipk root@"${HOST}":.cache/opkg
