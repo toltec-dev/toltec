@@ -13,7 +13,7 @@ revision=1a45d3446c8bc11de04800a702576056016875ed
 
 build() {
     cd c_implementation
-    make
+    CC=arm-linux-gnueabihf-gcc make
 }
 
 package() {
