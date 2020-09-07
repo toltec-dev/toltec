@@ -7,6 +7,7 @@ depends=appmarkable
 maintainer="Linus K. <linus@cosmos-ink.net>"
 license=MIT
 
+image=base
 origin=https://github.com/LinusCDE/rmWacomToMouse.git
 revision=1a45d3446c8bc11de04800a702576056016875ed
 
