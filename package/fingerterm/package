@@ -1,6 +1,6 @@
 # vim: set ft=sh:
 pkgname=fingerterm
-pkgver=1.3.5-2
+pkgver=1.3.5-3
 pkgdesc="A terminal emulator with a custom virtual keyboard"
 section=remarkable-apps
 maintainer="Mattéo Delabre <spam@delab.re>"

@@ -1,6 +1,6 @@
 # vim: set ft=sh:
 pkgname=draft
-pkgver=0.2.0-5
+pkgver=0.2.0-6
 pkgdesc="Launcher for the reMarkable tablet which wraps around the standard interface"
 section=remarkable-launchers
 maintainer="Mattéo Delabre <spam@delab.re>"

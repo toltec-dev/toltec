@@ -1,6 +1,6 @@
 # vim: set ft=sh:
 pkgname=oxide
-pkgver=0.0.0-3
+pkgver=0.0.0-4
 pkgdesc="Launcher for the reMarkable tablet which wraps around the standard interface"
 section=launcher
 provides=launcher
@@ -8,33 +8,21 @@ conflicts=draft
 maintainer="raisjn<of.rajsn@gmail.com>"
 license=Apache
 
-image=rm_toolchain
+image=qt
 origin=https://github.com/Eeems/oxide
 revision=c3e887820acdd0d5c2a943305699ccd96602b6da
 
 build-app() {
     pushd applications/"$1"
-    qmake "$1".pro -spec linux-oe-g++
+    qmake "${2-$1}".pro
     make
     popd
-}
-
-build_erode() {
-    pushd applications/process-manager
-    qmake erode.pro -spec linux-oe-g++
-    make
-    popd
-
 }
 
 build() {
-    # Load reMarkable toolchain
-    apt update -yq && apt install libpng-dev
-    source /usr/local/oecore-x86_64/environment-setup-cortexa9hf-neon-oe-linux-gnueabi
-
     build-app oxide
     build-app button-capture
-    build_erode
+    build-app process-manager erode
 }
 
 package() {

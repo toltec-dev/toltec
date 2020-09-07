@@ -1,6 +1,6 @@
 # vim: set ft=sh:
 pkgname=remux
-pkgver=0.0.1-1
+pkgver=0.0.1-2
 pkgdesc="remux is an app launcher that supports multi-tasking applications"
 section=remarkable-launchers
 maintainer="raisjn fan<of.raisjn@gmail.com>"
@@ -8,7 +8,7 @@ license=MIT
 depends=
 conflicts="oxide draft"
 
-image=rmkit
+image=python
 origin=https://github.com/rmkit-dev/rmkit
 revision=2e083d32e2f5fbe712d3ac63c13b59b1bf0b299e
 
