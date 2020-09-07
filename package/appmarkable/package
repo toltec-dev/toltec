@@ -6,6 +6,7 @@ section=utilities
 maintainer="Linus K. <linus@cosmos-ink.net>"
 license=MIT
 
+image=rust
 origin=https://github.com/LinusCDE/appmarkable.git
 revision=b4226e896f441af9895ed5a4ff183af7f93b11ae
 
