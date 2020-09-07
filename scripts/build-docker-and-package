@@ -1,7 +1,0 @@
-PACKAGE=$1
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-IMAGE=`bash ${DIR}/get-image package/${PACKAGE}`
-
-make docker_build_${IMAGE}
-rm -fr artifacts/package/${PACKAGE}
-bash ${DIR}/build-package package/${PACKAGE} artifacts/package/${PACKAGE}

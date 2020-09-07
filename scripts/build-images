@@ -15,7 +15,6 @@ Options:
                     (you need to be logged in to ghcr.io with the appropriate
                     permissions for this to work)."
 
-
 helpflag=
 publishflag=
 
