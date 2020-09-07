@@ -10,20 +10,19 @@ Unchanged images will not be rebuilt.
 
 Options:
 
+    -h              Show this help message.
     -p              Publish each built image to the GitHub Container Registry
                     (you need to be logged in to ghcr.io with the appropriate
-                    permissions for this to work).
+                    permissions for this to work)."
 
-    -h              Show this help message."
 
-publishflag=
 helpflag=
-imagesdir=
+publishflag=
 
-while getopts ph name; do
+while getopts hp name; do
     case $name in
-        p) publishflag=1 ;;
         h) helpflag=1 ;;
+        p) publishflag=1 ;;
         *) error "Invalid option. Use the -h flag for more information." ;;
     esac
 done
@@ -67,12 +66,14 @@ docker-build base
 popd
 
 for imagepath in "$imagesdir"/*; do
-    imagename="$(basename "$imagepath")"
+    if [[ -d $imagepath ]]; then
+        imagename="$(basename "$imagepath")"
 
-    if [[ $imagename != base ]]; then
-        pushd "$imagepath"
-        docker-build "$imagename"
-        popd
+        if [[ $imagename != base ]]; then
+            pushd "$imagepath"
+            docker-build "$imagename"
+            popd
+        fi
     fi
 done
 

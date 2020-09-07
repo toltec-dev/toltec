@@ -5,43 +5,25 @@ on:
             - testing
 jobs:
     images:
-        name: Publish images
+        name: Build and publish images
         runs-on: ubuntu-latest
-        strategy:
-            matrix:
-                image: [
-                    base,
-                    qt,
-                    python,
-                    rust
-                ]
-            # Build images one at a time, since we can’t specify fine-grained
-            # dependencies and all images depend on the 'base' one
-            max-parallel: 1
         steps:
             - name: Checkout the Git repository
               uses: actions/checkout@v2
-            - name: Publish images
-              uses: docker/build-push-action@v1
-              with:
-                  tags: testing
-                  build_args: BASE=docker.pkg.github.com/${{ github.repository }}/base:testing
-                  username: ${{ github.actor }}
-                  password: ${{ secrets.GITHUB_TOKEN }}
-                  registry: docker.pkg.github.com
-                  repository: ${{ github.repository }}/${{ matrix.image }}
-                  path: image/${{ matrix.image }}
+            - name: Build and publish images
+              run: |
+                  echo ${{ secrets.CR_PAT }} | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
+                  ./scripts/build-images -p image
     packages:
         needs: images
-        name: Publish packages
+        name: Build and publish packages
         runs-on: ubuntu-latest
         steps:
             - name: Checkout the Git repository
               uses: actions/checkout@v2
-            - name: Publish packages
-              uses: ./.github/actions/publish-packages
-              env:
-                  REMOTE_PATH: /srv/toltec/testing
-                  REMOTE: ${{ secrets.REMOTE }}
-                  SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-                  SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
+            - name: Build packages
+              run: ./scripts/build-repo package build
+            - uses: actions/upload-artifact@v2
+              with:
+                name: repo
+                path: build/repo

@@ -29,6 +29,11 @@ rtar() {
         "$@"
 }
 
+# Curl command with flags suitable for scripting
+rcurl() {
+    curl --tlsv1.2 --proto '=https' "$@" --fail --silent
+}
+
 # Load information from a package recipe
 #
 # Arguments:

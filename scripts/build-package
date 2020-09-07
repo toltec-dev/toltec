@@ -29,11 +29,11 @@ if [[ -n $helpflag ]]; then
 fi
 
 if [[ $# -eq 0 ]]; then
-    error "Missing RECIPEDIR and WORKDIR arguments. Use the --help flag for more information."
+    error "Missing RECIPEDIR and WORKDIR arguments. Use the -h flag for more information."
 fi
 
 if [[ $# -eq 1 ]]; then
-    error "Missing WORKDIR argument. Use the --help flag for more information."
+    error "Missing WORKDIR argument. Use the -h flag for more information."
 fi
 
 if [[ $# -gt 2 ]]; then
@@ -45,7 +45,7 @@ workdir="$2"
 
 # Create working directories
 [[ -d $workdir ]] && files="$(ls -qA -- "$workdir")" && [[ -n $files ]] \
-    && error "Working directory exists and is not empty"
+    && error "Working directory '$workdir' exists and is not empty"
 mkdir -p "$workdir"
 
 srcdir="$workdir"/src
