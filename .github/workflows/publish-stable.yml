@@ -1,4 +1,4 @@
-name: Publish the stable repository
+name: stable
 on:
     push:
         branches:

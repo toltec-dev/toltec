@@ -1,4 +1,4 @@
-name: Publish the testing repository
+name: testing
 on:
     push:
         branches:
