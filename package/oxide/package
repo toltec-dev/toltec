@@ -14,7 +14,9 @@ revision=c3e887820acdd0d5c2a943305699ccd96602b6da
 
 build-app() {
     pushd applications/"$1"
-    qmake "${2-$1}".pro
+    projectfile="${2-$1}".pro
+    sed -i 's/linux-oe-g++/linux-arm-gnueabihf-g++/' "$projectfile"
+    qmake "$projectfile"
     make
     popd
 }
