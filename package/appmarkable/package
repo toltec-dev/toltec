@@ -11,10 +11,12 @@ origin=https://github.com/LinusCDE/appmarkable.git
 revision=b4226e896f441af9895ed5a4ff183af7f93b11ae
 
 build() {
-    cargo build --release
-    $STRIP target/armv7-unknown-linux-gnueabihf/release/appmarkable
+    rm -r .cargo/
+    cargo build --release --target=armv7-unknown-linux-gnueabihf
+    arm-linux-gnueabihf-strip target/armv7-unknown-linux-gnueabihf/release/appmarkable
 }
 
 package() {
     install -D -m 755 "$srcdir"/target/armv7-unknown-linux-gnueabihf/release/appmarkable "$pkgdir"/opt/bin/appmarkable
 }
+
