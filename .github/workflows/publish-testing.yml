@@ -23,7 +23,7 @@ jobs:
               uses: actions/checkout@v2
             - name: Build packages
               run: ./scripts/build-repo package build
-            - uses: actions/upload-artifact@v2
+            - name: Publish packages
               run: |
                 mkdir -p private
                 chmod 700 private
