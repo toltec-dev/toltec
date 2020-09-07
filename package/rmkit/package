@@ -8,7 +8,7 @@ license=MIT
 
 image=rmkit
 origin=https://github.com/rmkit-dev/rmkit
-revision=b88eee8aa4ffe1dfcc9b7346aebda7638a0750de
+revision=2e083d32e2f5fbe712d3ac63c13b59b1bf0b299e
 
 build() {
     pip3 install okp

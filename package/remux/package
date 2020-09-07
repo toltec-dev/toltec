@@ -10,7 +10,7 @@ conflicts="oxide draft"
 
 image=rmkit
 origin=https://github.com/rmkit-dev/rmkit
-revision=ddabce428a3e7f8561d58552581636a549d34923
+revision=2e083d32e2f5fbe712d3ac63c13b59b1bf0b299e
 
 build() {
     make remux

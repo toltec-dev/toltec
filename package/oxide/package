@@ -8,22 +8,33 @@ conflicts=draft
 maintainer="raisjn<of.rajsn@gmail.com>"
 license=Apache
 
-image=qt
+image=rm_toolchain
 origin=https://github.com/Eeems/oxide
 revision=c3e887820acdd0d5c2a943305699ccd96602b6da
 
 build-app() {
     pushd applications/"$1"
-    sed -i 's/linux-oe-g++/linux-arm-gnueabihf-g++/' "$1".pro
-    qmake "$1".pro
+    qmake "$1".pro -spec linux-oe-g++
     make
     popd
 }
 
+build_erode() {
+    pushd applications/process-manager
+    qmake erode.pro -spec linux-oe-g++
+    make
+    popd
+
+}
+
 build() {
+    # Load reMarkable toolchain
+    apt update -yq && apt install libpng-dev
+    source /usr/local/oecore-x86_64/environment-setup-cortexa9hf-neon-oe-linux-gnueabi
+
     build-app oxide
     build-app button-capture
-    build-app erode
+    build_erode
 }
 
 package() {

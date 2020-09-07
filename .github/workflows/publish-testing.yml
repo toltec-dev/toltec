@@ -12,6 +12,7 @@ jobs:
                 image: [
                     base,
                     qt,
+                    rm_toolchain,
                     python,
                     rust,
                     rmkit
