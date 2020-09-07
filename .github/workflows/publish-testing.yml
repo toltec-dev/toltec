@@ -12,8 +12,8 @@ jobs:
               uses: actions/checkout@v2
             - name: Build and publish images
               run: |
-                  echo ${{ secrets.CR_PAT }} | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
-                  ./scripts/build-images -p image
+                echo "${{ secrets.CR_PAT }}" | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
+                ./scripts/build-images -p image
     packages:
         needs: images
         name: Build and publish packages
@@ -24,6 +24,12 @@ jobs:
             - name: Build packages
               run: ./scripts/build-repo package build
             - uses: actions/upload-artifact@v2
-              with:
-                name: repo
-                path: build/repo
+              run: |
+                mkdir -p private
+                chmod 700 private
+                echo "${{ secrets.SSH_PRIVATE_KEY }}" > private/id_rsa
+                echo "${{ secrets.SSH_KNOWN_HOSTS }}" > private/known_hosts
+                chmod 600 private/*
+                rsync -avz \
+                    -e "ssh -i private/id_rsa -o UserKnownHostsFile=private/known_hosts" \
+                    build/repo/ "${{ secrets.REMOTE }}":/srv/toltec/testing
