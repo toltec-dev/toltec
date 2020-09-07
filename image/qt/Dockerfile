@@ -2,34 +2,56 @@
 ARG BASE
 FROM $BASE
 
-# Build Qt from source targeting armhf
-RUN cd /root \
+# Build Qt targeting armhf
+RUN export DEBIAN_FRONTEND=noninteractive \
+    && apt-get update -y \
+    && apt-get install -y --no-install-recommends \
+        git \
+        python \
+    && cd /root \
     && git clone https://code.qt.io/qt/qt5.git \
     && cd qt5 \
     && git checkout v5.11.3 \
     && perl init-repository --module-subset=default,-qtwebengine \
+    # Create a qmake configuration for the current setup
     && cp -R qtbase/mkspecs/linux-arm-gnueabi-g++ \
              qtbase/mkspecs/linux-arm-gnueabihf-g++ \
     && sed -i 's/arm-linux-gnueabi-/arm-linux-gnueabihf-/' \
               qtbase/mkspecs/linux-arm-gnueabihf-g++/qmake.conf \
+    # Fix compiling error of old Qt with recent GCC
+    # (see <https://bugreports.qt.io/browse/QTBUG-74196>)
+    && find . -type f \( -name "*.cpp" -o -name "*.h" \) -print0 | xargs -0 sed -ri 's/asm volatile ?\(/asm (/g' \
     && cd .. \
     && mkdir qt5-build \
     && cd qt5-build \
     && ../qt5/configure \
         -confirm-license \
-        -prefix /usr \
         -opensource \
+        # Place armhf libraries in the cross-compiling toolchain folder
+        -prefix /opt/x-tools/arm-remarkable-linux-gnueabihf/arm-remarkable-linux-gnueabihf \
+        -xplatform linux-arm-gnueabihf-g++ \
+        # Place x86 binaries (e.g. qmake) and libraries in the normal folder
+        -hostprefix /usr \
+        -platform linux-g++ \
+        # Disable unused features
         -nomake examples \
         -nomake tests  \
         -no-opengl \
-        -xplatform linux-arm-gnueabihf-g++ \
-        -platform linux-g++ \
         -reduce-exports \
     && make \
     && make install \
     && cd .. \
-    && rm -rf qt5 qt5-build
+    && rm -rf qt5 qt5-build \
+    && apt-get autoremove -y \
+        git \
+        python \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 # Add the closed-source libqsgepaper library
-RUN curl https://toltec.delab.re/thirdparty/lib/libqsgepaper.a -o /usr/lib/libqsgepaper.a \
-    && curl https://toltec.delab.re/thirdparty/include/epframebuffer.h -o /usr/include/epframebuffer.h
+RUN curl --proto '=https' --tlsv1.2 -sSf \
+        https://toltec.delab.re/thirdparty/lib/libqsgepaper.a \
+        -o /opt/x-tools/arm-remarkable-linux-gnueabihf/arm-remarkable-linux-gnueabihf/lib/libqsgepaper.a \
+    && curl --proto '=https' --tlsv1.2 -sSf \
+        https://toltec.delab.re/thirdparty/include/epframebuffer.h \
+        -o /opt/x-tools/arm-remarkable-linux-gnueabihf/arm-remarkable-linux-gnueabihf/include/epframebuffer.h

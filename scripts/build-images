@@ -1,0 +1,79 @@
+#!/usr/bin/env bash
+
+set -e
+source "${BASH_SOURCE%/*}"/lib
+
+usage="$0 [OPTION]... IMAGESDIR
+
+Build the Docker images under the IMAGESDIR directory.
+Unchanged images will not be rebuilt.
+
+Options:
+
+    -p              Publish each built image to the GitHub Container Registry
+                    (you need to be logged in to ghcr.io with the appropriate
+                    permissions for this to work).
+
+    -h              Show this help message."
+
+publishflag=
+helpflag=
+imagesdir=
+
+while getopts ph name; do
+    case $name in
+        p) publishflag=1 ;;
+        h) helpflag=1 ;;
+        *) error "Invalid option. Use the -h flag for more information." ;;
+    esac
+done
+
+shift $((OPTIND - 1))
+
+if [[ -n $helpflag ]]; then
+    echo "$usage"
+    exit
+fi
+
+if [[ $# -eq 0 ]]; then
+    error "Missing IMAGESDIR argument. Use the -h flag for more information."
+fi
+
+if [[ $# -gt 1 ]]; then
+    error "Extraneous arguments. Use the -h flag for more information."
+fi
+
+imagesdir="$1"
+
+# Enable BuildKit for better cache behavior
+# See <https://docs.docker.com/engine/reference/builder/#buildkit>
+export DOCKER_BUILDKIT=1
+
+docker-build() {
+    status "Building image '$1'"
+    docker image build \
+        --build-arg BUILDKIT_INLINE_CACHE=1 \
+        --build-arg BASE="$(image-name base)" \
+        --cache-from "$(image-name "$1")" \
+        --tag "$(image-name "$1")" .
+
+    if [[ -n $publishflag ]]; then
+        docker image push "$(image-name "$1")"
+    fi
+}
+
+pushd "$imagesdir"/base
+docker-build base
+popd
+
+for imagepath in "$imagesdir"/*; do
+    imagename="$(basename "$imagepath")"
+
+    if [[ $imagename != base ]]; then
+        pushd "$imagepath"
+        docker-build "$imagename"
+        popd
+    fi
+done
+
+status "Done."

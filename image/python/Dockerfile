@@ -2,7 +2,10 @@
 ARG BASE
 FROM $BASE
 
-RUN apt-get update -q && apt-get install -yq \
-        python-pip \
+RUN export DEBIAN_FRONTEND=noninteractive \
+    && apt-get update -y \
+    && cd /root \
+    && apt-get install -y \
         python3-pip \
+    && apt-get clean \
     && rm -rf /var/lib/apt/lists/*

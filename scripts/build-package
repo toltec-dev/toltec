@@ -3,26 +3,41 @@
 set -e
 source "${BASH_SOURCE%/*}"/lib
 
-usage="$0 RECIPE WORKDIR
+usage="$0 [OPTION]... RECIPEDIR WORKDIR
 
-Build a package following the recipe defined in RECIPE.
+Build a package following the recipe defined in RECIPEDIR.
 The WORKDIR must be a non-existent directory in which the build is performed.
-
-Environment variables:
-
-    [DOCKER_PREFIX]     Tag prefix to the Docker images used for building.
 
 Arguments:
 
-    -h, --help      Show this help message."
+    -h              Show this help message."
 
-if [[ $1 == "-h" ]] || [[ $1 == "--help" ]]; then
+helpflag=
+
+while getopts h name; do
+    case $name in
+        h) helpflag=1 ;;
+        *) error "Invalid option. Use the -h flag for more information." ;;
+    esac
+done
+
+shift $((OPTIND - 1))
+
+if [[ -n $helpflag ]]; then
     echo "$usage"
     exit
 fi
 
-if [[ $# -lt 2 ]]; then
-    error "Missing arguments. Use the --help flag for more information."
+if [[ $# -eq 0 ]]; then
+    error "Missing RECIPEDIR and WORKDIR arguments. Use the --help flag for more information."
+fi
+
+if [[ $# -eq 1 ]]; then
+    error "Missing WORKDIR argument. Use the --help flag for more information."
+fi
+
+if [[ $# -gt 2 ]]; then
+    error "Extraneous arguments. Use the -h flag for more information."
 fi
 
 recipedir="$1"
@@ -66,11 +81,10 @@ find "$srcdir" -exec touch --no-dereference --date="@${SOURCE_DATE_EPOCH}" {} +
 # Run build script inside a Docker container
 status "Building package"
 
-branch="$(git branch --show-current)"
-sudo docker run --interactive --rm \
+docker container run --interactive --rm \
     --mount type=bind,src="$(realpath "$recipedir")",dst=/recipe \
     --mount type=bind,src="$(realpath "$srcdir")",dst=/src \
-    "${DOCKER_PREFIX}toltec/${image}:${branch}" /bin/bash \
+    "$(image-name "$image")" /bin/bash \
 <<CMDS
     source /recipe/package
     cd /src

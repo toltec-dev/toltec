@@ -61,3 +61,13 @@ archive-name() {
     (load-recipe "$1"
      echo "${pkgname}_${pkgver}_${arch}.ipk")
 }
+
+# Get the full tag of a Docker image
+#
+# Arguments:
+#
+# $1 - Short tag of the image
+image-name() {
+    branch="$(git branch --show-current)"
+    echo "ghcr.io/matteodelabre/toltec-${1}:${branch}"
+}
