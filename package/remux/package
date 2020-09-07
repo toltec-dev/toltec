@@ -13,12 +13,13 @@ origin=https://github.com/rmkit-dev/rmkit
 revision=2e083d32e2f5fbe712d3ac63c13b59b1bf0b299e
 
 build() {
+    pip3 install okp
     make remux
 }
 
 package() {
     mkdir -p "$pkgdir"/opt/usr/bin/
-    install -D -m 755 "$srcdir"/src/build/remux.exe "$pkgdir"/opt/usr/bin/remux
+    install -D -m 755 "$srcdir"/src/build/remux.exe "$pkgdir"/opt/bin/remux
     install -D -m 755 "$srcdir"/src/remux/remux.service "$pkgdir"/etc/systemd/system/remux.service
-    sed -i 's_/home/root/apps/remux.exe_/opt/usr/bin/remux_' "$pkgdir"/etc/systemd/system/remux.service
+    sed -i 's_/home/root/apps/remux.exe_/opt/bin/remux_' "$pkgdir"/etc/systemd/system/remux.service
 }

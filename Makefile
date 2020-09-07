@@ -13,6 +13,7 @@ repo:
 	./scripts/build-repo package build
 
 $(PACKAGES): %:
+	rm build/packages/"${@}" -fr
 	./scripts/build-package package/"$(@)" build/packages/"$(@)"
 
 $(PUSH_PACKAGES): %:
