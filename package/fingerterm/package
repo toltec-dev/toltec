@@ -21,6 +21,6 @@ package() {
 
     install -d "$pkgdir"/opt/share/fingerterm
     install -D -m 644 -t "$pkgdir"/opt/share/fingerterm "$srcdir"/qml/*
-    cp -R "$srcdir"/icons "$pkgdir"/opt/share/fingerterm
-    cp -R "$srcdir"/data "$pkgdir"/opt/share/fingerterm
+    cp -r "$srcdir"/icons "$pkgdir"/opt/share/fingerterm
+    cp -r "$srcdir"/data "$pkgdir"/opt/share/fingerterm
 }

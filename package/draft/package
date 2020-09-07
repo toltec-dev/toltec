@@ -20,12 +20,12 @@ package() {
 
     install -d "$pkgdir"/opt/share/draft "$pkgdir"/usr/share
     ln -s /opt/share/draft "$pkgdir"/usr/share/draft
-    cp -R "$srcdir"/qml "$pkgdir"/opt/share/draft
-    cp -R "$srcdir"/js "$pkgdir"/opt/share/draft
+    cp -r "$srcdir"/qml "$pkgdir"/opt/share/draft
+    cp -r "$srcdir"/js "$pkgdir"/opt/share/draft
 
     install -d "$pkgdir"/opt/etc/draft "$pkgdir"/etc
     ln -s /opt/etc/draft "$pkgdir"/etc/draft
-    cp -R "$srcdir"/extra-files/draft/* "$pkgdir"/opt/etc/draft
+    cp -r "$srcdir"/extra-files/draft/* "$pkgdir"/opt/etc/draft
     sed -i 's,call=/usr,call=/opt,' "$pkgdir"/opt/etc/draft/02-fingerterm
 
     install -D -m 644 -t "$pkgdir"/lib/systemd/system "$recipedir"/draft.service

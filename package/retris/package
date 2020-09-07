@@ -11,7 +11,9 @@ origin=https://github.com/LinusCDE/retris.git
 revision=469c9525603ef86d676f79eb008fa4067526d0c2
 
 build() {
+    # Fall back to system-wide config
     rm .cargo/config
+
     cargo build --release
     arm-linux-gnueabihf-strip target/armv7-unknown-linux-gnueabihf/release/retris
 }

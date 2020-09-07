@@ -1,5 +1,5 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
-# Opkg doesn't seem to remove that.
+# opkg doesn't seem to remove that.
 # Or I've done something wrong (probably).
-rm -r /opt/lib/plato/
+rm -r /opt/lib/plato
