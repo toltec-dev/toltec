@@ -1,8 +1,13 @@
-## about
+# Toltec
 
-**Work in progress**
+![Status of the stable repository](https://github.com/matteodelabre/toltec/workflows/stable/badge.svg)
+![Status of the testing repository](https://github.com/matteodelabre/toltec/workflows/testing/badge.svg)
 
-toltec is a community maintained repository of software for the remarkable tablet.
+Toltec is a community-maintained repository of software for the reMarkable tablet.
+
+## Using
+
+## Building
 
 the core of toltec is this git repository, which contains instructions for
 building the packages found in the [toltec.delab.re opkg
