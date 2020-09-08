@@ -2,7 +2,7 @@
 ARG BASE
 FROM $BASE
 
-# Build Qt targeting armhf
+# Build Qt 5.11.3 targeting armhf
 RUN export DEBIAN_FRONTEND=noninteractive \
     && apt-get update -y \
     && apt-get install -y --no-install-recommends \
@@ -11,7 +11,7 @@ RUN export DEBIAN_FRONTEND=noninteractive \
     && cd /root \
     && git clone https://code.qt.io/qt/qt5.git \
     && cd qt5 \
-    && git checkout v5.11.3 \
+    && git checkout 1deea3debce6bfd0fd45545b3a8e1de80380a9a5 \
     && perl init-repository --module-subset=default,-qtwebengine \
     # Create a qmake configuration for the current setup
     && cp -R qtbase/mkspecs/linux-arm-gnueabi-g++ \
@@ -48,7 +48,7 @@ RUN export DEBIAN_FRONTEND=noninteractive \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Build zlib and libpng targeting armhf
+# Build zlib 1.2.11 and libpng 1.6.34 targeting armhf
 RUN export DEBIAN_FRONTEND=noninteractive \
     && apt-get update -y \
     && apt-get install -y --no-install-recommends \
@@ -60,7 +60,7 @@ RUN export DEBIAN_FRONTEND=noninteractive \
     # Build static zlib
     && git clone https://github.com/madler/zlib \
     && cd zlib \
-    && git checkout v1.2.11 \
+    && git checkout cacf7f1d4e3d44d871b605da3b647f07d718623f \
     && CC=arm-linux-gnueabihf-gcc CFLAGS=-fPIC ./configure \
         --static \
         --prefix=/opt/x-tools/arm-remarkable-linux-gnueabihf/arm-remarkable-linux-gnueabihf \
@@ -70,7 +70,7 @@ RUN export DEBIAN_FRONTEND=noninteractive \
     # Build dynamic libpng
     && git clone git://git.code.sf.net/p/libpng/code libpng \
     && cd libpng \
-    && git checkout v1.6.34 \
+    && git checkout b78804f9a2568b270ebd30eca954ef7447ba92f7 \
     && ./autogen.sh \
     && ./configure \
         --prefix=/opt/x-tools/arm-remarkable-linux-gnueabihf/arm-remarkable-linux-gnueabihf \
