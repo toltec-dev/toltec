@@ -1,6 +1,6 @@
 # vim: set ft=sh:
 pkgname=oxide
-pkgver=0.0.0-5
+pkgver=1.3~beta-1
 pkgdesc="A launcher application for the reMarkable tablet"
 section=launcher
 provides=launcher
