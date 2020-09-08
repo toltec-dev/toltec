@@ -9,9 +9,9 @@ Toltec is a community-maintained repository of free software for [the reMarkable
 
 ### Install it
 
-The Toltec repository works with the [Opkg](https://code.google.com/archive/p/opkg/) package manager, which is of widespread use in embedded devices.
+Toltec works with the [Opkg](https://code.google.com/archive/p/opkg/) package manager, which is of widespread use in embedded devices.
 Opkg is not available by default on the reMarkable, but you can install it by following the instructions described in [remarkable\_entware](https://github.com/evidlo/remarkable_entware).
-After installing Opkg on your device, add the Toltec repository to `/opt/etc/opkg.conf` and update the repository data:
+After installing Opkg on your device, add the Toltec repository to `/opt/etc/opkg.conf` and download the repository data:
 
 ```sh
 $ cat "src/gz toltec https://toltec.delab.re/stable" >> /opt/etc/opkg.conf
