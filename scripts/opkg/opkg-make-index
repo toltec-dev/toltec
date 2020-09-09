@@ -206,7 +206,7 @@ def main():
         pkgs_file.close()
         gzip_filename = ("%s.gz" % packages_filename)
         tmp_gzip_filename = ("%s.%d" % (gzip_filename, os.getpid()))
-        gzip_cmd = "gzip -9c < %s > %s" % (tmp_packages_filename, tmp_gzip_filename)
+        gzip_cmd = "gzip -9cn < %s > %s" % (tmp_packages_filename, tmp_gzip_filename)
         subprocess.call(gzip_cmd, shell=True)
         os.rename(tmp_packages_filename, packages_filename)
         os.rename(tmp_gzip_filename, gzip_filename)
