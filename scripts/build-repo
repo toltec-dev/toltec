@@ -70,8 +70,7 @@ for recipedir in "$recipesdir"/*; do
     load-recipe "$recipedir"
     arname="$(archive-name "$recipedir")"
 
-    if [[ -n $forceflag ]] || ! rcurl --remote-time \
-            "$remote"/"$arname" -o "$repodir"/"$arname"; then
+    if [[ -n $forceflag ]] || ! rcurl "$remote"/"$arname" -o "$repodir"/"$arname"; then
         pkgworkdir="$pkgsworkdir"/"$pkgname"
         status "Building $pkgname in $pkgworkdir"
         "${BASH_SOURCE%/*}"/build-package "$recipedir" "$pkgworkdir"
@@ -81,9 +80,15 @@ for recipedir in "$recipesdir"/*; do
     fi
 done
 
+# Set atime and mtime to fixed timestamp for all packages (needs to be done
+# before generating the package index because the index files include the
+# packages mtime)
+find "$repodir" -exec touch --no-dereference --date="@${SOURCE_DATE_EPOCH}" {} +
+
 # Build packages index
 "${BASH_SOURCE%/*}"/opkg/opkg-make-index --checksum sha256 -p "$repodir"/Packages "$repodir"
 
-# Set atime and mtime to fixed timestamp for all files
+# Set atime and mtime to fixed timestamp for all files (also needs to be done
+# after generating the index so that it itself has a fixed mtime)
 find "$repodir" -exec touch --no-dereference --date="@${SOURCE_DATE_EPOCH}" {} +
 status "Done. Result is in $repodir"
