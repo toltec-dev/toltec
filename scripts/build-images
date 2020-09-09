@@ -76,4 +76,4 @@ for imagepath in "$imagesdir"/*; do
     fi
 done
 
-status "Done."
+status "Done"
