@@ -39,7 +39,6 @@ jobs:
                     build/repo/ "${{ secrets.REMOTE }}":/srv/toltec/"$CHANNEL"
             - name: Set atime and mtime of published files
               run: |
-                SOURCE_DATE_EPOCH="$(git log -1 --pretty=%ct)"
                 ssh -i private/id_rsa -o UserKnownHostsFile=private/known_hosts \
                     "${{ secrets.REMOTE }}" -- \
                     find "/srv/toltec/$CHANNEL" -exec touch --no-dereference --date="@${SOURCE_DATE_EPOCH}" {} +
