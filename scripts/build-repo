@@ -70,7 +70,8 @@ for recipedir in "$recipesdir"/*; do
     load-recipe "$recipedir"
     arname="$(archive-name "$recipedir")"
 
-    if [[ -n $forceflag ]] || ! rcurl "$remote"/"$arname" -o "$repodir"/"$arname"; then
+    if [[ -n $forceflag ]] || ! rcurl --remote-time \
+            "$remote"/"$arname" -o "$repodir"/"$arname"; then
         pkgworkdir="$pkgsworkdir"/"$pkgname"
         status "Building $pkgname in $pkgworkdir"
         "${BASH_SOURCE%/*}"/build-package "$recipedir" "$pkgworkdir"
