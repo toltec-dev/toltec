@@ -24,7 +24,7 @@ jobs:
             - name: Build packages
               run: ./scripts/build-repo package build
             - name: Fetch current channel and source date epoch
-              run:
+              run: |
                 echo "::set-env name=CHANNEL::$(git rev-parse --abbrev-ref HEAD)"
                 echo "::set-env name=SOURCE_DATE_EPOCH::$(git log -1 --pretty=%ct)"
             - name: Transfer packages and index
