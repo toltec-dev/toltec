@@ -4,6 +4,8 @@
 
 ### Adding a new package
 
+See [instructions for creating a package recipe](package.md).
+
 * clone this repository
 * switch to `testing` branch
 * edit package/$PACKAGE/package, making sure to bump the version

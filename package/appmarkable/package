@@ -1,8 +1,10 @@
 # vim: set ft=sh:
 pkgname=appmarkable
-pkgver=0.1.1-1
-pkgdesc="Turn your program into a very simple app for draft similar. "
-section=utilities
+pkgdesc="Turn your program into a very simple app for draft similar"
+url=https://github.com/LinusCDE/appmarkable
+pkgver=0.0.0-1
+timestamp=2020-09-10T10:00Z
+section=utils
 maintainer="Linus K. <linus@cosmos-ink.net>"
 license=MIT
 

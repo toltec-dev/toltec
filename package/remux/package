@@ -1,15 +1,15 @@
 # vim: set ft=sh:
 pkgname=remux
-pkgver=0.0.1-3
-pkgdesc="remux is an app launcher that supports multi-tasking applications"
-section=remarkable-launchers
-maintainer="raisjn fan<of.raisjn@gmail.com>"
+pkgdesc="App launcher that supports multi-tasking applications"
+url=https://github.com/rmkit-dev/rmkit
+pkgver=0.0.1-4
+timestamp=2020-09-10T03:30Z
+section=launchers
+maintainer="raisjn <of.rajsn@gmail.com>"
 license=MIT
-depends=
-conflicts="oxide draft"
 
 image=python
-origin=https://github.com/rmkit-dev/rmkit
+origin=https://github.com/rmkit-dev/rmkit.git
 revision=d8b29baa477ab7a4117f5b5b3e4ded0d2d87bf87
 
 build() {

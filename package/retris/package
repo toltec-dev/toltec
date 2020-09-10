@@ -1,8 +1,10 @@
 # vim: set ft=sh:
 pkgname=retris
-pkgver=0.5.5-1
-pkgdesc="Implementation of rust tetris_core on the reMarkable using libremarkable"
-section=remarkable-apps
+pkgdesc="Tetris game"
+url=https://github.com/LinusCDE/retris
+pkgver=0.5.5-2
+timestamp=2020-09-09T15:20Z
+section=games
 maintainer="Linus K. <linus@cosmos-ink.net>"
 license=MIT
 

@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
-echo "Enabling remux"
 systemctl daemon-reload
-systemctl enable remux
-systemctl start remux
+echo ""
+echo "Run the following commands to make remux your launcher"
+echo "$ systemctl disable --now xochitl"
+echo "$ systemctl enable --now remux"
+echo ""

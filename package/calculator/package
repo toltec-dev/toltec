@@ -1,8 +1,10 @@
 # vim: set ft=sh:
 pkgname=calculator
-pkgver=0.0.0-5
-pkgdesc="Calculator for the reMarkable"
-section=remarkable-apps
+pkgdesc="Calculator"
+url=https://github.com/reHackable/Calculator
+pkgver=0.0.0-6
+timestamp=2020-09-10T10:00Z
+section=math
 maintainer="Mattéo Delabre <spam@delab.re>"
 license=GPL-v3
 

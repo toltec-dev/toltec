@@ -1,8 +1,10 @@
 # vim: set ft=sh:
 pkgname=plato
-pkgver=0.9.1-1
-pkgdesc="Port of the plato document reader to the reMarkable"
-section=remarkable-apps
+pkgdesc="Document reader"
+url=https://github.com/LinusCDE/plato
+pkgver=0.9.1-2
+timestamp=2020-09-05T01:45Z
+section=readers
 maintainer="Linus K. <linus@cosmos-ink.net>"
 license=AGPL-v3
 
