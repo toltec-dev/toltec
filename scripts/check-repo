@@ -44,7 +44,8 @@ if [[ $# -gt 2 ]]; then
     error "Extraneous arguments. Use the -h flag for more information."
 fi
 
-# Compare the Packages, Packages.gz and Packages.stamps files bit for bit
+differs=
+
 for repofile in "$repodir"/*; do
     file="$(realpath --relative-to="$repodir" "$repofile")"
     remotefile="$remoterepo"/"$file"
@@ -52,8 +53,13 @@ for repofile in "$repodir"/*; do
     status "Comparing $file"
 
     if ! rcurl "$remotefile" -o - | diff - "$repofile" > /dev/null; then
-        error "$file differs between the local and the remote repositories."
+        echo "! $file differs between the local and the remote repositories."
+        differs=yes
     fi
 done
 
-status "Done"
+if [[ -n $differs ]]; then
+    error "Some files differ"
+else
+    status "Done"
+fi
