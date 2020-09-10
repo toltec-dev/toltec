@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-echo "Disabling xochitl and enabling oxide"
 systemctl daemon-reload
-systemctl disable xochitl
-systemctl stop xochitl
-systemctl enable oxide
-systemctl start oxide
+echo ""
+echo "Run the following commands to make oxide your launcher"
+echo "$ systemctl disable --now xochitl"
+echo "$ systemctl enable --now oxide"
+echo ""
