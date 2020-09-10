@@ -1,6 +1,6 @@
 # vim: set ft=sh:
 pkgname=rmkit
-pkgver=0.0.1-3
+pkgver=0.0.1-4
 pkgdesc="rmkit apps for the remarkable, includes harmony, mines and simple app script"
 section=remarkable
 maintainer="raisjn fan<of.raisjn@gmail.com>"
@@ -8,24 +8,27 @@ license=MIT
 
 image=python
 origin=https://github.com/rmkit-dev/rmkit
-revision=2e083d32e2f5fbe712d3ac63c13b59b1bf0b299e
+revision=d8b29baa477ab7a4117f5b5b3e4ded0d2d87bf87
 
 build() {
     pip3 install okp
-    make harmony
-    make minesweeper
-    make simple
+    make -j$(nproc) harmony minesweeper simple nao
 }
 
 package() {
+    install -d "$pkgdir"/opt/bin
+
     # simple app script for building apps
-    install -D -m 755 "$srcdir"/src/build/simple.exe "$pkgdir"/opt/usr/bin/simple
+    install -D -m 755 "$srcdir"/src/build/simple.exe "$pkgdir"/opt/bin/simple
 
     # TODO: add installation of desktop files for each of these...
-    install -D -m 755 "$srcdir"/src/build/harmony.exe "$pkgdir"/opt/usr/bin/harmony
-    install -D -m 755 "$srcdir"/src/build/mines.exe "$pkgdir"/opt/usr/bin/mines
+    install -D -m 755 "$srcdir"/src/build/harmony.exe "$pkgdir"/opt/bin/harmony
+    install -D -m 755 "$srcdir"/src/build/mines.exe "$pkgdir"/opt/bin/mines
+    install -D -m 755 "$srcdir"/src/build/nao.sh "$pkgdir"/opt/bin/nao
+
 
     mkdir -p "$pkgdir"/opt/etc/draft/
     install -D -m 755 "$srcdir"/src/harmony/harmony.draft "$pkgdir"/opt/etc/draft/
     install -D -m 755 "$srcdir"/src/minesweeper/mines.draft "$pkgdir"/opt/etc/draft/
+    install -D -m 755 "$srcdir"/src/nao/nao.draft "$pkgdir"/opt/etc/draft/
 }
