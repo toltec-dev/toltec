@@ -2,17 +2,33 @@ HOST?=10.11.99.1
 PACKAGES=$(shell ls package/)
 PUSH_PACKAGES=$(foreach app, $(PACKAGES), push-$(app))
 
+define USAGE
+Available targets:
+
+    repo            Build the repository and reuse archives from the remote
+                    repository for existing package versions.
+    force-repo      Build the repository without reusing existing archives.
+    check           Compare the local repository to the remote one.
+    RECIPE          Build any package individually.
+    push-RECIPE     Push any built package to .cache/opkg on the reMarkable.
+                    (Plug in your reMarkable first!)
+
+Where RECIPE is one of the following available recipes:
+
+${PACKAGES}
+endef
+export USAGE
+
 help:
-	@echo "Available recipes: ${PACKAGES}"
-	@echo
-	@echo "Use 'make repo' to build all the packages and the index file"
-	@echo "Use 'make check' to compare the local repository to the remote one"
-	@echo "Use 'make <recipe>' to build any package individually"
-	@echo "Use 'make push-<recipe>' to push any built package to .cache/opkg on the reMarkable"
+	@echo "$$USAGE"
 
 repo:
 	rm build/repo -fr
 	./scripts/build-repo package build
+
+force-repo:
+	rm build/repo -fr
+	./scripts/build-repo -f package build
 
 check:
 	./scripts/check-repo build/repo
