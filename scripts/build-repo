@@ -60,11 +60,6 @@ mkdir -p "$repodir"
 branch="$(git rev-parse --abbrev-ref HEAD)"
 remote="https://toltec.delab.re/$branch"
 
-# Define the SOURCE_DATE_EPOCH to the date of latest commit
-# See <https://reproducible-builds.org/docs/source-date-epoch/>
-SOURCE_DATE_EPOCH="$(git log -1 --pretty=%ct)"
-export SOURCE_DATE_EPOCH
-
 # Build each package or get it from the remote server
 for recipedir in "$recipesdir"/*; do
     load-recipe "$recipedir"
@@ -80,15 +75,14 @@ for recipedir in "$recipesdir"/*; do
     fi
 done
 
-# Set atime and mtime to fixed timestamp for all packages (needs to be done
-# before generating the package index because the index files include the
-# packages mtime)
-find "$repodir" -exec touch --no-dereference --date="@${SOURCE_DATE_EPOCH}" {} +
-
 # Build packages index
 "${BASH_SOURCE%/*}"/opkg/opkg-make-index --checksum sha256 -p "$repodir"/Packages "$repodir"
 
-# Set atime and mtime to fixed timestamp for all files (also needs to be done
-# after generating the index so that it itself has a fixed mtime)
-find "$repodir" -exec touch --no-dereference --date="@${SOURCE_DATE_EPOCH}" {} +
+# Set atime and mtime to the date of latest commit for the packages index
+lastcommitdate="$(git log -1 --pretty=%ct)"
+touch --no-dereference --date="@$lastcommitdate" \
+    "$repodir"/Packages \
+    "$repodir"/Packages.gz \
+    "$repodir"/Packages.stamps
+
 status "Done. Result is in $repodir"

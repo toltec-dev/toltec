@@ -2,11 +2,11 @@
 pkgname=draft
 pkgdesc="Launcher which wraps around the standard interface"
 url=https://github.com/dixonary/draft-reMarkable
-pkgver=0.2.0-7
+pkgver=0.2.0-8
 timestamp=2020-07-20T10:23Z
 section=launchers
 maintainer="Mattéo Delabre <spam@delab.re>"
-license=Apache
+license=Apache-2.0
 
 image=qt
 origin=https://github.com/dixonary/draft-reMarkable.git

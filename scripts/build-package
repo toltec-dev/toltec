@@ -60,13 +60,13 @@ mkdir "$ctldir"
 ardir="$workdir"/ar
 mkdir "$ardir"
 
-# Define the SOURCE_DATE_EPOCH to the date of latest commit
-# See <https://reproducible-builds.org/docs/source-date-epoch/>
-SOURCE_DATE_EPOCH="$(git log -1 --pretty=%ct)"
-export SOURCE_DATE_EPOCH
-
 # Load package info and script
 load-recipe "$recipedir"
+
+# Use the declared timestamp as SOURCE_DATE_EPOCH
+# See <https://reproducible-builds.org/docs/source-date-epoch/>
+SOURCE_DATE_EPOCH="$(date --date="$timestamp" +%s)"
+export SOURCE_DATE_EPOCH
 
 # Fetch source files
 status "Fetching source files"
@@ -75,11 +75,10 @@ pushd "$srcdir" > /dev/null
 git checkout --quiet "$revision"
 popd > /dev/null
 
-# Set atime and mtime to fixed timestamp for all source files
+# Set atime and mtime to the SOURCE_DATE_EPOCH for all source files
 find "$srcdir" -exec touch --no-dereference --date="@${SOURCE_DATE_EPOCH}" {} +
 
 # Run build script inside a Docker container
-
 docker container run --interactive --rm \
     --mount type=bind,src="$(realpath "$recipedir")",dst=/recipe \
     --mount type=bind,src="$(realpath "$srcdir")",dst=/src \
@@ -99,12 +98,13 @@ ctlfile="$ctldir"/control
 
 {
     echo "Package: $pkgname"
+    echo "Description: $pkgdesc"
+    echo "Homepage: $url"
     echo "Version: $pkgver"
-    echo "License: $license"
     echo "Section: $section"
     echo "Maintainer: $maintainer"
+    echo "License: $license"
     echo "Architecture: $arch"
-    echo "Description: $pkgdesc"
     [[ -n $depends ]] && echo "Depends: $depends"
     [[ -n $conflicts ]] && echo "Conflicts: $conflicts"
 } >> "$ctlfile"
@@ -126,5 +126,8 @@ echo "2.0" >> "$versionar"
 rtar -zcf "$pkgar" -C "$pkgdir" .
 rtar -zcf "$ctlar" -C "$ctldir" .
 rtar -zcf "$arar" -C "$ardir" .
+
+# Set atime and mtime to the SOURCE_DATE_EPOCH for the final archive
+touch --no-dereference --date="@$SOURCE_DATE_EPOCH" "$arar"
 
 status "Done. Result is in $arar"

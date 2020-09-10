@@ -59,7 +59,13 @@ If the package does not fit into one of the existing sections, add a new one to 
 
 Comma-separated list of package names that must be installed for this package to work.
 
-See <https://www.debian.org/doc/debian-policy/ch-relationships.html>.
+See <https://www.debian.org/doc/debian-policy/ch-relationships.html#binary-dependencies-depends-recommends-suggests-enhances-pre-depends>.
+
+#### `conflicts` (optional)
+
+Comma-separated list of package names that must **NOT** be unpacked for this package to work.
+
+See <https://www.debian.org/doc/debian-policy/ch-relationships.html#conflicting-binary-packages-conflicts>.
 
 ### Build fields
 

@@ -2,7 +2,7 @@
 pkgname=retris
 pkgdesc="Tetris game"
 url=https://github.com/LinusCDE/retris
-pkgver=0.5.5-2
+pkgver=0.5.5-3
 timestamp=2020-09-09T15:20Z
 section=games
 maintainer="Linus K. <linus@cosmos-ink.net>"

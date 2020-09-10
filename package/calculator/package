@@ -2,11 +2,11 @@
 pkgname=calculator
 pkgdesc="Calculator"
 url=https://github.com/reHackable/Calculator
-pkgver=0.0.0-6
-timestamp=2020-09-10T10:00Z
+pkgver=0.0.0-7
+timestamp=2020-08-20T12:28Z
 section=math
 maintainer="Mattéo Delabre <spam@delab.re>"
-license=GPL-v3
+license=GPL-3.0-or-later
 
 image=qt
 origin=https://github.com/reHackable/Calculator.git

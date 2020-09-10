@@ -2,11 +2,11 @@
 pkgname=fingerterm
 pkgdesc="Terminal emulator with a custom virtual keyboard"
 url=https://github.com/dixonary/fingerterm-reMarkable
-pkgver=1.3.5-3
+pkgver=1.3.5-4
 timestamp=2017-12-08T15:40Z
 section=utils
 maintainer="Mattéo Delabre <spam@delab.re>"
-license=GPL2
+license=GPL-2.0-or-later
 
 image=qt
 origin=https://github.com/dixonary/fingerterm-reMarkable.git

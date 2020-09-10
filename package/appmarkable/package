@@ -2,8 +2,8 @@
 pkgname=appmarkable
 pkgdesc="Turn your program into a very simple app for draft similar"
 url=https://github.com/LinusCDE/appmarkable
-pkgver=0.0.0-1
-timestamp=2020-09-10T10:00Z
+pkgver=0.0.0-2
+timestamp=2020-09-07T00:16Z
 section=utils
 maintainer="Linus K. <linus@cosmos-ink.net>"
 license=MIT
@@ -21,4 +21,3 @@ build() {
 package() {
     install -D -m 755 "$srcdir"/target/armv7-unknown-linux-gnueabihf/release/appmarkable "$pkgdir"/opt/bin/appmarkable
 }
-

@@ -2,7 +2,7 @@
 pkgname=remux
 pkgdesc="App launcher that supports multi-tasking applications"
 url=https://github.com/rmkit-dev/rmkit
-pkgver=0.0.1-4
+pkgver=0.0.1-5
 timestamp=2020-09-10T03:30Z
 section=launchers
 maintainer="raisjn <of.rajsn@gmail.com>"

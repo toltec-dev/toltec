@@ -42,13 +42,15 @@ rcurl() {
 load-recipe() {
     source "$1"/package
 
-    [[ -z $pkgname ]] && error "Missing or empty 'pkgname' variable"
-    [[ -z $pkgver ]] && error "Missing or empty 'pkgver' variable"
-    [[ -z $license ]] && error "Missing or empty 'license' variable"
+    [[ -z $pkgname ]] && error "Missing or empty 'pkgname' field"
+    [[ -z $pkgdesc ]] && error "Missing or empty 'pkgdesc' field"
+    [[ -z $url ]] && error "Missing or empty 'url' field"
+    [[ -z $pkgver ]] && error "Missing or empty 'pkgver' field"
+    [[ -z $timestamp ]] && error "Missing or empty 'timestamp' field"
     [[ -z $section ]] && error "Missing or empty 'section' variable"
     [[ -z $maintainer ]] && error "Missing or empty 'maintainer' variable"
+    [[ -z $license ]] && error "Missing or empty 'license' variable"
     [[ -z $arch ]] && arch=armv7-3.2
-    [[ -z $pkgdesc ]] && error "Missing or empty 'description' variable"
 
     [[ -z $image ]] && error "Missing or empty 'image' variable"
     [[ -z $origin ]] && error "Missing or empty 'origin' variable"
