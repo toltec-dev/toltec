@@ -2,7 +2,7 @@
 pkgname=oxide
 pkgdesc="Launcher application"
 url=https://github.com/Eeems/oxide
-pkgver=1.3.2~beta-4
+pkgver=1.3.2~beta-5
 timestamp=2020-09-10T03:41Z
 section=launchers
 maintainer="raisjn <of.rajsn@gmail.com>"

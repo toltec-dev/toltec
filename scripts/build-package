@@ -123,9 +123,9 @@ versionar="$ardir"/debian-binary
 arar="$workdir/$(archive-name "$recipedir")"
 
 echo "2.0" >> "$versionar"
-rtar -zcf "$pkgar" -C "$pkgdir" .
-rtar -zcf "$ctlar" -C "$ctldir" .
-rtar -zcf "$arar" -C "$ardir" .
+rtar "$pkgar" "$pkgdir"
+rtar "$ctlar" "$ctldir"
+rtar "$arar" "$ardir"
 
 # Set atime and mtime to the SOURCE_DATE_EPOCH for the final archive
 touch --no-dereference --date="@$SOURCE_DATE_EPOCH" "$arar"

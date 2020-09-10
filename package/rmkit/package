@@ -2,7 +2,7 @@
 pkgname=rmkit
 pkgdesc="simple, harmony, mines and nao"
 url=https://github.com/rmkit-dev/rmkit
-pkgver=0.0.1-6
+pkgver=0.0.1-7
 timestamp=2020-09-10T03:30Z
 section=utils
 maintainer="raisjn <of.raisjn@gmail.com>"
