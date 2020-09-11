@@ -12,7 +12,7 @@ jobs:
               uses: actions/checkout@v2
             - name: Build and publish images
               run: |
-                echo "${{ secrets.CR_PAT }}" | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
+                echo "${{ secrets.CR_PAT }}" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
                 ./scripts/build-images -p image
     packages:
         needs: images
@@ -23,9 +23,9 @@ jobs:
               uses: actions/checkout@v2
             - name: Build packages
               run: ./scripts/build-repo package build
-            - name: Fetch current channel name
+            - name: Define current channel
               run: |
-                echo "::set-env name=CHANNEL::$(git rev-parse --abbrev-ref HEAD)"
+                echo "::set-env name=CHANNEL::stable"
             - name: Transfer packages and index
               run: |
                 mkdir -p private

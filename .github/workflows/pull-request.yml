@@ -8,6 +8,9 @@ jobs:
         steps:
             - name: Checkout the Git repository
               uses: actions/checkout@v2
+            - name: Define current channel
+              run: |
+                echo "::set-env name=CHANNEL::testing"
             - name: Build images locally
               run: |
                 ./scripts/build-images image

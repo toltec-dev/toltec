@@ -57,8 +57,7 @@ repodir="$workdir"/repo
 mkdir -p "$repodir"
 
 # URL to the remote repository
-branch="$(git rev-parse --abbrev-ref HEAD)"
-remote="https://toltec.delab.re/$branch"
+remote="https://toltec.delab.re/$(channel)"
 
 # Build each package or get it from the remote server
 for recipedir in "$recipesdir"/*; do
