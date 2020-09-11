@@ -22,7 +22,7 @@ build-app() {
 }
 
 build() {
-    make
+    make release
 }
 
 package() {
