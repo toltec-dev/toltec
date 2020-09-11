@@ -12,6 +12,8 @@ Available targets:
     RECIPE          Build any package individually.
     push-RECIPE     Push any built package to .cache/opkg on the reMarkable.
                     (Plug in your reMarkable first!)
+    images          Build the Docker images while reusing the remote cache
+                    when possible.
 
 Where RECIPE is one of the following available recipes:
 
@@ -40,5 +42,8 @@ $(PACKAGES): %:
 $(PUSH_PACKAGES): %:
 	ssh root@"${HOST}" mkdir -p .cache/opkg
 	scp build/packages/"$(@:push-%=%)"/*.ipk root@"${HOST}":.cache/opkg
+
+images:
+	./scripts/build-images image
 
 .PHONY: help repo check $(PACKAGES) $(PUSH_PACKAGES)
