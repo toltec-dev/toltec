@@ -26,5 +26,5 @@ build() {
 }
 
 package() {
-    cp -r release/* "$pkgdir"
+    cp -ar release/* "$pkgdir"
 }
