@@ -10,7 +10,7 @@ license=MIT
 
 image=qt
 origin=https://github.com/Eeems/oxide.git
-revision=e7ed6dfdc0aee24338aee4361ea0ba5a82abcb3e
+revision=e7df99cbdd7e5ed4c53f10a4311b779a28581490
 
 build-app() {
     pushd applications/"$1"
