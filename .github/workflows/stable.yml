@@ -10,8 +10,12 @@ jobs:
         steps:
             - name: Checkout the Git repository
               uses: actions/checkout@v2
+            - name: Install missing tools
+              run: |
+                sudo apt-get install bsdtar
             - name: Build packages
-              run: ./scripts/build-repo package build https://toltec.delab.re/stable
+              run: |
+                ./scripts/build-repo package build https://toltec.delab.re/stable
             - name: Transfer packages and index
               run: |
                 mkdir -p private
