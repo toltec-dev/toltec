@@ -6,7 +6,7 @@ source "${BASH_SOURCE%/*}"/lib
 usage="$0 [OPTION]... REPODIR [REMOTEREPO]
 
 Compare a local repository to an online published version.
-If REMOTEREPO is omitted 'https://toltec.delab.re/CURRENT-CHANNEL' is used.
+If REMOTEREPO is omitted 'https://toltec.delab.re/testing' is used.
 
 Options:
 
@@ -33,7 +33,7 @@ if [[ $# -eq 0 ]]; then
 fi
 
 repodir="$1"
-remoterepo="https://toltec.delab.re/$(channel)"
+remoterepo="https://toltec.delab.re/testing"
 
 if [[ $# -eq 2 ]]; then
     remoterepo="$2"

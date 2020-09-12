@@ -75,21 +75,11 @@ archive-name() {
      echo "${pkgname}_${pkgver}_${arch}.ipk")
 }
 
-# Get the name of the current channel
-channel() {
-    if [[ -n $CHANNEL ]]; then
-        echo "$CHANNEL"
-    else
-        # Use the current Git branch name by default
-        git rev-parse --abbrev-ref HEAD
-    fi
-}
-
 # Get the full tag of a Docker image
 #
 # Arguments:
 #
-# $1 - Short tag of the image
+# $1 - Name and version of the image (e.g. qt:v1.0)
 image-name() {
-    echo "ghcr.io/matteodelabre/toltec-${1}:$(channel)"
+    echo "ghcr.io/toltec-dev/$1"
 }

@@ -1,0 +1,17 @@
+name: pr
+on:
+    pull_request
+jobs:
+    pr:
+        name: Check that a pull request correctly builds
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout the Git repository
+              uses: actions/checkout@v2
+            - name: Build packages
+              run: ./scripts/build-repo package build https://toltec.delab.re/testing
+            - name: Save resulting packages as artifacts
+              uses: actions/upload-artifact@v2
+              with:
+                name: repo
+                path: build/repo

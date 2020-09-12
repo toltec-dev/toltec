@@ -3,10 +3,11 @@
 set -e
 source "${BASH_SOURCE%/*}"/lib
 
-usage="$0 [OPTION]... RECIPESDIR WORKDIR
+usage="$0 [OPTION]... RECIPESDIR WORKDIR [REMOTEREPO]
 
 Build new or updated packages defined in RECIPESDIR and create a package index.
 The WORKDIR must be a non-existent directory in which the builds are performed.
+If REMOTEREPO is omitted 'https://toltec.delab.re/testing' is used.
 
 Options:
 
@@ -40,7 +41,13 @@ if [[ $# -eq 1 ]]; then
     error "Missing WORKDIR argument. Use the -h flag for more information."
 fi
 
-if [[ $# -gt 2 ]]; then
+remoterepo="https://toltec.delab.re/testing"
+
+if [[ $# -eq 3 ]]; then
+    remoterepo="$3"
+fi
+
+if [[ $# -gt 3 ]]; then
     error "Extraneous arguments. Use the -h flag for more information."
 fi
 
@@ -56,21 +63,18 @@ repodir="$workdir"/repo
     && error "Repository directory '$repodir' exists and is not empty"
 mkdir -p "$repodir"
 
-# URL to the remote repository
-remote="https://toltec.delab.re/$(channel)"
-
 # Build each package or get it from the remote server
 for recipedir in "$recipesdir"/*; do
     load-recipe "$recipedir"
     arname="$(archive-name "$recipedir")"
 
-    if [[ -n $forceflag ]] || ! rcurl --remote-time "$remote"/"$arname" -o "$repodir"/"$arname"; then
+    if [[ -n $forceflag ]] || ! rcurl --remote-time "$remoterepo"/"$arname" -o "$repodir"/"$arname"; then
         pkgworkdir="$pkgsworkdir"/"$pkgname"
         status "Building $pkgname in $pkgworkdir"
         "${BASH_SOURCE%/*}"/build-package "$recipedir" "$pkgworkdir"
         mv "$pkgworkdir"/*.ipk "$repodir"
     else
-        status "Reusing already built $pkgname from remote"
+        status "Reusing already built $pkgname from $remoterepo"
     fi
 done
 

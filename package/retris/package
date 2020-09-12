@@ -2,13 +2,13 @@
 pkgname=retris
 pkgdesc="Tetris game"
 url=https://github.com/LinusCDE/retris
-pkgver=0.5.5-4
+pkgver=0.5.5-5
 timestamp=2020-09-09T15:20Z
 section=games
 maintainer="Linus K. <linus@cosmos-ink.net>"
 license=MIT
 
-image=rust
+image=rust:v1.0
 origin=https://github.com/LinusCDE/retris.git
 revision=29703b0926cdef5bddf142301593c0b1af6805df
 
