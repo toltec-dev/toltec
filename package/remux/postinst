@@ -3,6 +3,5 @@
 systemctl daemon-reload
 echo ""
 echo "Run the following commands to make remux your launcher"
-echo "$ systemctl disable --now xochitl"
 echo "$ systemctl enable --now remux"
 echo ""
