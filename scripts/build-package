@@ -79,6 +79,7 @@ popd > /dev/null
 find "$srcdir" -exec touch --no-dereference --date="@${SOURCE_DATE_EPOCH}" {} +
 
 # Run build script inside a Docker container
+status "Building"
 docker container run --interactive --rm \
     --mount type=bind,src="$(realpath "$recipedir")",dst=/recipe \
     --mount type=bind,src="$(realpath "$srcdir")",dst=/src \
@@ -91,6 +92,7 @@ docker container run --interactive --rm \
 CMDS
 
 # Run packaging script
+status "Packaging"
 package
 
 # Create control file and archive
@@ -114,6 +116,12 @@ ctlfile="$ctldir"/control
 [[ -f "$recipedir"/postinst ]] && install -D -m 755 "$recipedir"/postinst "$ctldir"/postinst
 [[ -f "$recipedir"/prerm ]] && install -D -m 755 "$recipedir"/prerm "$ctldir"/prerm
 [[ -f "$recipedir"/postrm ]] && install -D -m 755 "$recipedir"/postrm "$ctldir"/postrm
+
+# Show package contents
+if command -v tree &> /dev/null; then
+    status "Package contents:"
+    tree -np "$pkgdir" | tail +2
+fi
 
 # Create archives
 status "Creating archive"
