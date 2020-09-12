@@ -12,19 +12,11 @@ image=qt
 origin=https://github.com/Eeems/oxide.git
 revision=3d929a04075d684a9610c24d2a201d1f7fc6d134
 
-build-app() {
-    pushd applications/"$1"
-    projectfile="${2-$1}".pro
-    sed -i 's/linux-oe-g++/linux-arm-gnueabihf-g++/' "$projectfile"
-    qmake "$projectfile"
-    make
-    popd
-}
-
 build() {
+    sed -i 's/linux-oe-g++/linux-arm-gnueabihf-g++/' applications/*/*.pro
     make release
 }
 
 package() {
-    cp -ar release/* "$pkgdir"
+    cp -ar "$srcdir"/release/* "$pkgdir"
 }
