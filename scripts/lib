@@ -37,7 +37,12 @@ rtar() {
 
 # Curl command with flags suitable for scripting
 rcurl() {
-    curl --proto '=https' --fail --silent --tlsv1.2 "$@"
+    curl --fail --silent --tlsv1.2 "$@"
+}
+
+# Curl command with flags suitable for scripting, restricted to HTTPS
+rsecurl() {
+    rcurl --proto '=https' "$@"
 }
 
 # Load information from a package recipe
@@ -59,8 +64,8 @@ load-recipe() {
     [[ -z $arch ]] && arch=armv7-3.2
 
     [[ -z $image ]] && error "Missing or empty 'image' variable"
-    [[ -z $origin ]] && error "Missing or empty 'origin' variable"
-    [[ -z $revision ]] && error "Missing or empty 'revision' variable"
+    [[ -z $source ]] && error "Missing or empty 'source' variable"
+    [[ -z $sha256sums ]] && error "Missing or empty 'sha256sums' variable"
 
     return 0
 }

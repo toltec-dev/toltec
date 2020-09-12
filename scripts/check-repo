@@ -51,7 +51,7 @@ for repofile in "$repodir"/*; do
 
     status "Comparing $file"
 
-    if ! rcurl "$remotefile" -o - | diff - "$repofile" > /dev/null; then
+    if ! rsecurl "$remotefile" -o - | diff - "$repofile" > /dev/null; then
         echo "! $file differs between the local and the remote repositories."
         differs=yes
     fi

@@ -2,15 +2,15 @@
 pkgname=appmarkable
 pkgdesc="Turn your program into a very simple app for draft similar"
 url=https://github.com/LinusCDE/appmarkable
-pkgver=0.0.0-4
+pkgver=0.0.0-5
 timestamp=2020-09-07T00:16Z
 section=utils
 maintainer="Linus K. <linus@cosmos-ink.net>"
 license=MIT
 
 image=rust:v1.0
-origin=https://github.com/LinusCDE/appmarkable.git
-revision=b4226e896f441af9895ed5a4ff183af7f93b11ae
+source=(https://github.com/LinusCDE/appmarkable/archive/b4226e896f441af9895ed5a4ff183af7f93b11ae.zip)
+sha256sums=(0422cee28668d4e7ff554c26884e45ec63feff840eec92e6b8b2e8a7905a9d3b)
 
 build() {
     rm -r .cargo/

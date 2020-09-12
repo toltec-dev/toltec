@@ -70,9 +70,28 @@ export SOURCE_DATE_EPOCH
 
 # Fetch source files
 status "Fetching source files"
-git clone --quiet --recursive "$origin" "$srcdir"
 pushd "$srcdir" > /dev/null
-git checkout --quiet "$revision"
+
+for (( i=0; i < ${#source[@]}; ++i )); do
+    url="${source[i]}"
+    checksum="${sha256sums[i]}"
+
+    if [[ ! $url =~ ^[[:lower:]]+:// ]]; then
+        url="file:///$(realpath "$recipedir"/"$url")"
+    fi
+
+    file="$(basename $url)"
+    status "Fetching '$file'"
+
+    rcurl --remote-name --location "$url"
+
+    if ! sha256sum -c <(echo "$checksum $file") > /dev/null 2>&1; then
+        error "Checksum mismatch"
+    fi
+
+    bsdtar -x --strip-components 1 -f "$file"
+done
+
 popd > /dev/null
 
 # Set atime and mtime to the SOURCE_DATE_EPOCH for all source files

@@ -2,15 +2,15 @@
 pkgname=retris
 pkgdesc="Tetris game"
 url=https://github.com/LinusCDE/retris
-pkgver=0.5.5-5
+pkgver=0.5.5-6
 timestamp=2020-09-09T15:20Z
 section=games
 maintainer="Linus K. <linus@cosmos-ink.net>"
 license=MIT
 
 image=rust:v1.0
-origin=https://github.com/LinusCDE/retris.git
-revision=29703b0926cdef5bddf142301593c0b1af6805df
+source=(https://github.com/LinusCDE/retris/archive/0.5.5-1.zip)
+sha256sums=(f27154b86855d3c22f9df3421c881420e11d0876a876913cbc5b2f5b4a04c822)
 
 build() {
     # Fall back to system-wide config

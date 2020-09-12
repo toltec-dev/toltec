@@ -2,15 +2,15 @@
 pkgname=rmkit
 pkgdesc="simple, harmony, mines and nao"
 url=https://github.com/rmkit-dev/rmkit
-pkgver=0.0.1-8
+pkgver=0.0.1-9
 timestamp=2020-09-10T03:30Z
 section=utils
 maintainer="raisjn <of.raisjn@gmail.com>"
 license=MIT
 
 image=python:v1.0
-origin=https://github.com/rmkit-dev/rmkit.git
-revision=d8b29baa477ab7a4117f5b5b3e4ded0d2d87bf87
+source=(https://github.com/rmkit-dev/rmkit/archive/d8b29baa477ab7a4117f5b5b3e4ded0d2d87bf87.zip)
+sha256sums=(7ff8e78016cfa785d99bfd30997a349a7cd7a76d31a49c79e6b698b455160ac9)
 
 build() {
     pip3 install okp
@@ -29,7 +29,7 @@ package() {
     install -D -m 755 "$srcdir"/src/build/nao.sh "$pkgdir"/opt/bin/nao
 
     mkdir -p "$pkgdir"/opt/etc/draft/
-    install -D -m 755 "$srcdir"/src/harmony/harmony.draft "$pkgdir"/opt/etc/draft/
-    install -D -m 755 "$srcdir"/src/minesweeper/mines.draft "$pkgdir"/opt/etc/draft/
-    install -D -m 755 "$srcdir"/src/nao/nao.draft "$pkgdir"/opt/etc/draft/
+    install -D -m 644 "$srcdir"/src/harmony/harmony.draft "$pkgdir"/opt/etc/draft/harmony
+    install -D -m 644 "$srcdir"/src/minesweeper/mines.draft "$pkgdir"/opt/etc/draft/mines
+    install -D -m 644 "$srcdir"/src/nao/nao.draft "$pkgdir"/opt/etc/draft/nao
 }
