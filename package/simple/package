@@ -1,0 +1,26 @@
+# vim: set ft=sh:
+pkgname=simple
+pkgdesc="simple app script"
+url=https://github.com/rmkit-dev/rmkit
+pkgver=0.0.1-10
+timestamp=2020-09-10T03:30Z
+section=utils
+maintainer="raisjn <of.raisjn@gmail.com>"
+license=MIT
+conflicts=rmkit
+
+image=python:v1.0
+source=(https://github.com/rmkit-dev/rmkit/archive/f70f78eea2446958239c4b26fc2795fdd87f189e.zip)
+sha256sums=(71153c40d20e3982601fe6faa55e382a2f84e04280235ee4ee53ccd1be254437)
+
+build() {
+    pip3 install okp
+    make -j$(nproc) simple
+}
+
+package() {
+    install -d "$pkgdir"/opt/bin
+
+    # simple app script for building apps
+    install -D -m 755 "$srcdir"/src/build/simple "$pkgdir"/opt/bin/simple
+}
