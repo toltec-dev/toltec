@@ -2,7 +2,7 @@
 pkgname=nao
 pkgdesc="nao package manager"
 url=https://github.com/rmkit-dev/rmkit
-pkgver=0.0.1-11
+pkgver=0.0.1-12
 timestamp=2020-09-10T03:30Z
 section=utils
 maintainer="raisjn <of.raisjn@gmail.com>"
@@ -11,8 +11,8 @@ depends=simple
 conflicts=rmkit
 
 image=python:v1.0
-source=(https://github.com/rmkit-dev/rmkit/archive/9384ac888c4c0eeb0718c74165103c66bfe51f5a.zip)
-sha256sums=(be85254e1f4fd979b2932c77efdcb897ed81a610eee0d2e418c06c8e36372724)
+source=(https://github.com/rmkit-dev/rmkit/archive/9db1a508cc35ae55081b5d98cddae4e6eef29df5.zip)
+sha256sums=(b5b3791c7c3265725a9944141f1658c9759bbffa453f2686b6c5f5257ebe8bde)
 
 build() {
     pip3 install okp
