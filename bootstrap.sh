@@ -53,7 +53,7 @@ main() {
   # Select source for remarkable_entware repo
   if [ -z "$REMARKABLE_ENTWARE_REPO_AUTHOR" ]; then
     # Use LinusCDE's fork for the time beeing
-    # TODO: Switch to "Evidlo" as soon as PRs are merged
+    # TODO: Switch to a more official repo when it exists
     REMARKABLE_ENTWARE_REPO_AUTHOR=LinusCDE
   fi
 
