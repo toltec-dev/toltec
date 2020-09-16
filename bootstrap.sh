@@ -49,7 +49,6 @@ EOF
   fi
 }
 
-
 main() {
   # Select source for remarkable_entware repo
   if [ -z "$REMARKABLE_ENTWARE_REPO_AUTHOR" ]; then
@@ -97,6 +96,7 @@ main() {
   if [ $# -ge 1 ]; then
     install_packages $@ || throw "Failed to install requested packages"
   fi
+
 }
 
 
@@ -104,7 +104,7 @@ entware_install() {
   bootstrap_wget || throw "bootstrap_wget() failed!"
   (wget -O- "https://raw.githubusercontent.com/$REMARKABLE_ENTWARE_REPO_AUTHOR/remarkable_entware/master/entware_install.sh" | sh) \
     || throw "Failed to download and/or install remarkable_entware."
-  log INFO "Entware was installed successfully. PLEASE FOLLOW THE INSTRUCTIONS ABOVE."
+  log INFO "Entware was installed successfully."
 }
 
 
@@ -116,16 +116,30 @@ entware_reenable() {
 }
 
 
+ensure_opkg_available_from_bashrc() {
+  # Run by ensure_opkg_available
+  if ! grep '.*PATH=.*/opt/bin.*' /home/root/.bashrc | grep -v '^#' >/dev/null; then
+    # Path is not in .bashrc
+    echo -e '\n# Path added by bootstrap.sh' >> /home/root/.bashrc
+    echo 'PATH="/opt/bin:/opt/sbin:$PATH"' >> /home/root/.bashrc
+    log WARN '/opt/bin and /opt/sbin were not added to $PATH in ~/.bashrc. Fixed automatically.'
+  fi
+}
+
+
 ensure_opkg_available() {
   if ! which opkg >/dev/null 2>&1; then # opkg command not found
-    log WARN "Failed to find opkg command." \
-        "" \
-        "Pleae add /opt/bin & /opt/sbin to your PATH by executing" \
-        'ssh root@10.11.99.1 echo '\\\'\''PATH=/opt/bin:/opt/sbin:$PATH'\'\\\'\'' >> ~/.bashrc'\' \
-        ""
+    export PATH="/opt/bin/:/opt/sbin/:$PATH"
+    messages=`ensure_opkg_available_from_bashrc`
+    if [ ! -z "$messages" ]; then
+      echo "$messages" # Print the caught output
+      log WARN "Please re-connect to your reMarkable after this" \
+               "script is finished. Otherwise opkg and other" \
+               "installed binaries won't be recognized!"
+    fi
+  else
+    ensure_opkg_available_from_bashrc
   fi
-
-  export PATH="/opt/bin/:/opt/sbin/:$PATH"
 }
 
 
