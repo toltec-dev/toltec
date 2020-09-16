@@ -6,10 +6,10 @@
 #
 
 bootstrap_wget() {
-  if [ ! -d /home/root/.wget_bin ]
+  if [ ! -d /home/root/.cache/wget_bin ]
   then
       log INFO "Installing a current wget binary with better and current tls support" \
-          "to /home/root/.wget_bin/ for this installation..." \
+          "to /home/root/.cache/wget_bin/ for this installation..." \
           ""
       # Bootstrap a current version of wget
       WGET_BINARIES_PATH='http://static.cosmos-ink.net/remarkable/artifacts'
@@ -24,28 +24,28 @@ bootstrap_wget() {
           exit 1
       fi
 
-      # Ensure to /home/root/.wget_bin exists and is empty
-      if [ -d /home/root/.wget_bin ]
+      # Ensure to /home/root/.cache/wget_bin exists and is empty
+      if [ -d /home/root/.cache/wget_bin ]
       then
-          rm -rf /home/root/.wget_bin/*
+          rm -rf /home/root/.cache/wget_bin/*
       else
-          mkdir /home/root/.wget_bin
+          mkdir -p /home/root/.cache/wget_bin
       fi
-      # Unzip to /home/root/.wget_bin and remove downloaded file
-      unzip "/home/root/$WGET_BINARIES_FILENAME" -d /home/root/.wget_bin -q
+      # Unzip to /home/root/.cache/wget_bin and remove downloaded file
+      unzip "/home/root/$WGET_BINARIES_FILENAME" -d /home/root/.cache/wget_bin -q
       rm "/home/root/$WGET_BINARIES_FILENAME"
 
-      cat > /home/root/.wget_bin/wget <<EOF
+      cat > /home/root/.cache/wget_bin/wget <<EOF
 #!/bin/sh
-LD_LIBRARY_PATH="/home/root/.wget_bin/dist" /home/root/.wget_bin/dist/wget \$@
+LD_LIBRARY_PATH="/home/root/.cache/wget_bin/dist" /home/root/.cache/wget_bin/dist/wget \$@
 EOF
 
-      chmod +x /home/root/.wget_bin/wget
+      chmod +x /home/root/.cache/wget_bin/wget
   fi
 
   # Ensure this binary is used
-  if [ `which wget` != '/home/root/.wget_bin/wget' ]; then
-    PATH="/home/root/.wget_bin:$PATH"
+  if [ `which wget` != '/home/root/.cache/wget_bin/wget' ]; then
+    PATH="/home/root/.cache/wget_bin:$PATH"
   fi
 }
 
