@@ -57,19 +57,6 @@ main() {
     REMARKABLE_ENTWARE_REPO_AUTHOR=LinusCDE
   fi
 
-
-  # Verify internet connection
-  if ! ping -c1 1.1.1.1 >/dev/null; then
-    throw "Couldn't connect to the internet. Please ensure that your reMarkable is connected to a WiFi-Network with internet access."
-  fi
-
-
-  # Verify dns
-  if ! ping -c1 remarkable.com >/dev/null; then
-    throw "Failed to resolve DNS. You seem to have internet access, but not a working DNS configuration."
-  fi
-
-
   # Check status of installation and ensure installed
   if [ -d /home/root/.entware ]; then
     if [ -d /opt ] && [ `ls /opt | wc -l` -gt 0 ]; then # non-empty /opt found
