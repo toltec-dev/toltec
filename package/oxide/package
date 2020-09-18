@@ -2,15 +2,15 @@
 pkgname=oxide
 pkgdesc="Launcher application"
 url=https://github.com/Eeems/oxide
-pkgver=1.3.3~beta-3
+pkgver=2.0.0~alpha-1
 timestamp=2020-09-11T05:33Z
 section=launchers
 maintainer="raisjn <of.rajsn@gmail.com>"
 license=MIT
 
 image=qt:v1.0
-source=(https://github.com/Eeems/oxide/archive/v1.3.3-beta.zip)
-sha256sums=(83a0872c1757dd883b578145841987a11dcd6a274d8203b7c91e6fb61de3cc39)
+source=(https://github.com/Eeems/oxide/archive/v2.0-alpha.zip)
+sha256sums=(1ab9f205d15ecca93d320e01fa4fb421932a3cbe6622a801f657a02ab94d3f80)
 
 build() {
     sed -i 's/linux-oe-g++/linux-arm-gnueabihf-g++/' applications/*/*.pro
@@ -19,5 +19,4 @@ build() {
 
 package() {
     cp -ar "$srcdir"/release/* "$pkgdir"
-    mv "$pkgdir"/opt/etc/draft/{01-,}xochitl
 }
