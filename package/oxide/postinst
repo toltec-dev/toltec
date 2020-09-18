@@ -4,5 +4,5 @@ systemctl daemon-reload
 echo ""
 echo "Run the following commands to make oxide your launcher"
 echo "$ systemctl disable --now xochitl"
-echo "$ systemctl enable --now oxide"
+echo "$ systemctl enable --now tarnish"
 echo ""
