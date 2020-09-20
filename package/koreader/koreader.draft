@@ -1,0 +1,3 @@
+name=KOReader
+desc=ebook reader
+call=/opt/bin/koreader
