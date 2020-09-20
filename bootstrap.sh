@@ -50,6 +50,9 @@ EOF
 }
 
 main() {
+  # Allow changing the default branch
+  [ ! -z "$TOLTEC_BRANCH" ] || TOLTEC_BRANCH="stable"
+
   # Select source for remarkable_entware repo
   if [ -z "$REMARKABLE_ENTWARE_REPO_AUTHOR" ]; then
     # Use LinusCDE's fork for the time beeing
@@ -133,9 +136,9 @@ ensure_opkg_available() {
 ensure_toltec_repo_added() {
   if ! grep "^src/gz\b.*\bhttps://toltec\.delab\.re/" /opt/etc/opkg.conf >/dev/null 2>&1; then
     # No active toltec repo found in opkg.conf
-    echo "src/gz toltec https://toltec.delab.re/stable" >> /opt/etc/opkg.conf
-    opkg update || throw "Failed to update opkg after adding toltec stable repo"
-    log INFO "Added the toltec stable repo to opkg"
+    echo "src/gz toltec https://toltec.delab.re/$TOLTEC_BRANCH" >> /opt/etc/opkg.conf
+    opkg update || throw "Failed to update opkg after adding toltec $TOLTEC_BRANCH repo"
+    log INFO "Added the toltec $TOLTEC_BRANCH repo to opkg"
   fi
 }
 
