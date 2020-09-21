@@ -9,8 +9,8 @@ maintainer="raisjn <of.rajsn@gmail.com>"
 license=MIT
 
 image=python:v1.0
-source=(https://github.com/rmkit-dev/rmkit/archive/d8b29baa477ab7a4117f5b5b3e4ded0d2d87bf87.zip)
-sha256sums=(7ff8e78016cfa785d99bfd30997a349a7cd7a76d31a49c79e6b698b455160ac9)
+source=(https://github.com/rmkit-dev/rmkit/archive/d3ebde163c2d50fe9258142e2d190710a58eb954.zip)
+sha256sums=(157ad36bc6b345763a504b6d491a47bc3aecc828a99b1bf9fd42dab980f158a4)
 
 build() {
     pip3 install okp
