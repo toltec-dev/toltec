@@ -2,6 +2,7 @@
 
 ![Status of the stable repository](https://github.com/matteodelabre/toltec/workflows/stable/badge.svg)
 ![Status of the testing repository](https://github.com/matteodelabre/toltec/workflows/testing/badge.svg)
+[![Discord](https://img.shields.io/discord/463752820026376202.svg?label=reMarkable&logo=discord&logoColor=ffffff&color=7389D8&labelColor=6A7EC2)](https://discord.gg/ATqQGfu)
 
 Toltec is a community-maintained repository of free software for [the reMarkable tablet](https://remarkable.com/).
 
