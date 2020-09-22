@@ -2,15 +2,15 @@
 pkgname=plato
 pkgdesc="Document reader"
 url=https://github.com/LinusCDE/plato
-pkgver=0.9.1-6
-timestamp=2020-09-05T01:45Z
+pkgver=0.9.1-7
+timestamp=2020-09-21T18:40Z
 section=readers
 maintainer="Linus K. <linus@cosmos-ink.net>"
 license=AGPL-3.0-or-later
 
 image=rust:v1.0
-source=(https://github.com/LinusCDE/plato/archive/014c935b4fb19918ce608c36ca45343dd3815b82.zip)
-sha256sums=(27fa4a922b83fe51be5b5b4ceedad186f1ae966d52ddc6ffec3200d2becdfaed)
+source=(https://github.com/LinusCDE/plato/archive/9b18b76769751e7aa760ae3c31ff8dd263911b8d.zip)
+sha256sums=(478333e0f32096471950ef3f1f76d7cc42f6802dc417227518b6ffc5593b4457)
 
 build() {
     # Get needed build packages
@@ -59,11 +59,5 @@ package() {
     ln -s /opt/etc/plato.toml "$pkgdir"/opt/lib/plato/Settings.toml
 
     install -D -m 644 "$srcdir"/oxide "$pkgdir"/opt/etc/draft/plato
-    install -d "$pkgdir"/opt/etc/draft/icons
-    convert "$srcdir"/artworks/plato.png \
-        -scale 500x500 \
-        -gravity center \
-        -background white \
-        -extent 500x500 \
-        "$pkgdir"/opt/etc/draft/icons/plato.png
+    install -D -m 644 "$srcdir"/oxide-icon.png "$pkgdir"/opt/etc/draft/icons/plato.png
 }
