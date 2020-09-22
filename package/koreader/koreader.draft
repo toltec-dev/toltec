@@ -1,3 +1,4 @@
 name=KOReader
 desc=ebook reader
 call=/opt/bin/koreader
+term=killall -9 luajit
