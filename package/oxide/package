@@ -8,7 +8,7 @@ section=launchers
 maintainer="raisjn <of.rajsn@gmail.com>"
 license=MIT
 
-image=qt:v1.0
+image=qt:v1.1
 source=(https://github.com/Eeems/oxide/archive/045c16943c82ba8c30ee22b507d8b710754a74e0.zip)
 sha256sums=(b119b8e2d57715089c6f67240933236e8d0c63e6a8bed947fc51e29afc6149e3)
 
