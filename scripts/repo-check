@@ -44,7 +44,6 @@ if [[ $# -gt 2 ]]; then
 fi
 
 differs=
-subfiles=(./control.tar.gz ./data.tar.gz ./debian-binary)
 
 if [[ ! -f "$localrepo"/Packages ]]; then
     error "Local repository is missing packages index"

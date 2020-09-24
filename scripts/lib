@@ -82,7 +82,7 @@ tardiff() {
 
         # See if they contain the same files
         if ! diff=$(diff <(tar -tf "$1") <(tar -tf "$2")); then
-            echo "Archives $label1 and $label contain different files:"
+            echo "Archives $label1 and $label2 contain different files:"
             echo "$diff"
             return 1
         fi
