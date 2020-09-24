@@ -7,6 +7,7 @@ timestamp=2020-07-20T10:23Z
 section=launchers
 maintainer="Mattéo Delabre <spam@delab.re>"
 license=Apache-2.0
+depends=(xochitl)
 
 image=qt:v1.1
 source=(

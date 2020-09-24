@@ -7,6 +7,7 @@ timestamp=2020-09-11T05:33Z
 section=launchers
 maintainer="raisjn <of.rajsn@gmail.com>"
 license=MIT
+depends=(xochitl)
 
 image=qt:v1.1
 source=(https://github.com/Eeems/oxide/archive/045c16943c82ba8c30ee22b507d8b710754a74e0.zip)
