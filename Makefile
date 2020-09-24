@@ -24,18 +24,18 @@ help:
 
 repo:
 	rm -rf build
-	./scripts/build-repo package build
+	./scripts/repo-build package build
 
 repo-force:
 	rm -rf build
-	./scripts/build-repo -f package build
+	./scripts/repo-build -f package build
 
 repo-check:
-	./scripts/check-repo build/repo
+	./scripts/repo-check build/repo
 
 $(PACKAGES): %:
 	rm -rf build/packages/"${@}"
-	./scripts/build-package package/"${@}" build/packages/"${@}"
+	./scripts/package-build package/"${@}" build/packages/"${@}"
 
 $(PUSH_PACKAGES): %:
 	ssh root@"${HOST}" mkdir -p .cache/opkg
