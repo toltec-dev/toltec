@@ -2,8 +2,8 @@
 pkgname=simple
 pkgdesc="simple app script"
 url=https://github.com/rmkit-dev/rmkit
-pkgver=(0.0.1-13)
-timestamp=(2020-09-21T01:41+00:00)
+pkgver=0.0.1-14
+timestamp=2020-09-21T01:41+00:00
 section=utils
 maintainer="raisjn <of.raisjn@gmail.com>"
 license=MIT
