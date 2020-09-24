@@ -3,10 +3,10 @@
 set -e
 source "${BASH_SOURCE%/*}"/lib
 
-usage="$0 [OPTION]... REPODIR [REMOTEREPO]
+usage="$0 [OPTION]... LOCALREPO [REMOTEREPO]
 
-Compare a local repository to an online published version.
-If REMOTEREPO is omitted 'https://toltec.delab.re/testing' is used.
+Check that the LOCALREPO and REMOTEREPO repositories are identical.
+If REMOTEREPO is omitted, 'https://toltec.delab.re/testing' is used.
 
 Options:
 
@@ -29,10 +29,10 @@ if [[ -n $helpflag ]]; then
 fi
 
 if [[ $# -eq 0 ]]; then
-    error "Missing REPODIR argument. Use the -h flag for more information."
+    error "Missing LOCALREPO argument. Use the -h flag for more information."
 fi
 
-repodir="$1"
+localrepo="$1"
 remoterepo="https://toltec.delab.re/testing"
 
 if [[ $# -eq 2 ]]; then
@@ -44,17 +44,48 @@ if [[ $# -gt 2 ]]; then
 fi
 
 differs=
+subfiles=(./control.tar.gz ./data.tar.gz ./debian-binary)
 
-for repofile in "$repodir"/*; do
-    file="$(realpath --relative-to="$repodir" "$repofile")"
-    remotefile="$remoterepo"/"$file"
+for localfile in "$localrepo"/*; do
+    file="$(realpath --relative-to="$localrepo" "$localfile")"
+    remotefileurl="$remoterepo"/"$file"
 
     status "Comparing $file"
 
-    if ! rsecurl "$remotefile" -o - | diff - "$repofile" > /dev/null; then
+    remotefile="$(mktemp)"
+    rsecurl "$remotefileurl" -o "$remotefile"
+
+    if ! diff "$localfile" "$remotefile" > /dev/null; then
         echo "! $file differs between the local and the remote repositories."
+
+        if [[ $file =~ .ipk$ ]]; then
+            for subfile in "${subfiles[@]}"; do
+                # Compare non-archive subfiles normally
+                if [[ ! $subfile =~ .tar.gz$ ]]; then
+                    if ! diff > /dev/null \
+                            <(tar -axf "$localfile" "$subfile" -O) \
+                            <(tar -axf "$remotefile" "$subfile" -O); then
+                        echo "!> $subfile differs."
+                    fi
+                # First, compare the list of files in archive subfiles
+                elif ! filediff=$(diff \
+                        <(tar -axf "$localfile" "$subfile" -O | tar -tzvf -) \
+                        <(tar -axf "$remotefile" "$subfile" -O | tar -tzvf -)); then
+                    echo -n "!> The following files from $subfile inside $file differ:\n"
+                    echo "$filediff\n"
+                # Otherwise, compare them as binary
+                elif ! diff > /dev/null \
+                        <(tar -axf "$localfile" "$subfile" -O) \
+                        <(tar -axf "$remotefile" "$subfile" -O); then
+                    echo "!> Files from $subfile inside $file are the same but the archives differ."
+                fi
+            done
+        fi
+
         differs=yes
     fi
+
+    rm "$remotefile"
 done
 
 if [[ -n $differs ]]; then
