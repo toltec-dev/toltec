@@ -76,7 +76,7 @@ for (( i=0; i < ${#source[@]}; ++i )); do
     checksum="${sha256sums[i]}"
 
     if [[ ! $srcurl =~ ^[[:lower:]]+:// ]]; then
-        srcurl="file:///$(realpath "$recipedir"/"$srcurl")"
+        srcurl="file://$(realpath "$recipedir"/"$srcurl")"
     fi
 
     srcfile="$(basename "$srcurl")"
