@@ -13,7 +13,7 @@ jobs:
                 sudo apt-get install bsdtar tree
             - name: Build packages
               run: |
-                ./scripts/build-repo package build https://toltec.delab.re/testing
+                ./scripts/repo-build package build https://toltec.delab.re/testing
             - name: Save resulting packages as artifacts
               uses: actions/upload-artifact@v2
               with:
