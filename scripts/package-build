@@ -72,28 +72,28 @@ export SOURCE_DATE_EPOCH
 section "Fetching source files"
 
 for (( i=0; i < ${#source[@]}; ++i )); do
-    url="${source[i]}"
+    srcurl="${source[i]}"
     checksum="${sha256sums[i]}"
 
-    if [[ ! $url =~ ^[[:lower:]]+:// ]]; then
-        url="file:///$(realpath "$recipedir"/"$url")"
+    if [[ ! $srcurl =~ ^[[:lower:]]+:// ]]; then
+        srcurl="file:///$(realpath "$recipedir"/"$srcurl")"
     fi
 
-    file="$(basename "$url")"
-    status "$file"
+    srcfile="$(basename "$srcurl")"
+    status "$srcfile"
 
-    rcurl --location "$url" -o "$srcdir"/"$file"
+    rcurl --location "$srcurl" -o "$srcdir"/"$srcfile"
 
     if [[ $checksum != SKIP ]] && \
-            ! sha256sum -c <(echo "$checksum $srcdir/$file") > /dev/null 2>&1; then
-        error "Checksum mismatch while fetching $file"
+            ! sha256sum -c <(echo "$checksum $srcdir/$srcfile") > /dev/null 2>&1; then
+        error "Checksum mismatch while fetching $srcfile"
     fi
 
-    if [[ $srcdir/$file =~ \.(zip|tar\.gz)$ ]]; then
+    if [[ $srcdir/$srcfile =~ \.(zip|tar\.gz)$ ]]; then
         bsdtar -x \
             --strip-components 1 \
             --directory "$srcdir" \
-            --file "$srcdir"/"$file"
+            --file "$srcdir"/"$srcfile"
     fi
 done
 
