@@ -1,22 +1,36 @@
 # vim: set ft=sh:
 
+bold="$(tput bold)"
+red="$(tput setaf 1)"
+green="$(tput setaf 2)"
+reset="$(tput sgr0)"
+
 # Print an error message to error output then exit
 #
 # Arguments:
 #
 # $1 - Error message to print
 error() {
-    echo "Error: $1" >&2
+    echo "$bold$red==> ERROR:$reset$bold $1$reset" >&2
     exit 1
+}
+
+# Start a section
+#
+# Arguments:
+#
+# $1 - Section name
+section() {
+    echo "$bold$green==>$reset$bold $1$reset" >&2
 }
 
 # Print a status message
 #
 # Arguments:
 #
-# $1 - Current status message
+# $1 - Status message
 status() {
-    echo "=> $1" >&2
+    echo "$1" >&2
 }
 
 # Make a reproducible tar archive for a directory

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 set -e
-source "${BASH_SOURCE%/*}"/lib
+source scripts/lib
 
 usage="$0 [OPTION]... RECIPESDIR WORKDIR [REMOTEREPO]
 

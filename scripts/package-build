@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 set -e
-source "${BASH_SOURCE%/*}"/lib
+source scripts/lib
 
 usage="$0 [OPTION]... RECIPEDIR WORKDIR
 
@@ -69,8 +69,7 @@ SOURCE_DATE_EPOCH="$(date --date="$timestamp" +%s)"
 export SOURCE_DATE_EPOCH
 
 # Fetch source files
-status "Fetching source files"
-pushd "$srcdir" > /dev/null
+section "Fetching source files"
 
 for (( i=0; i < ${#source[@]}; ++i )); do
     url="${source[i]}"
@@ -80,25 +79,29 @@ for (( i=0; i < ${#source[@]}; ++i )); do
         url="file:///$(realpath "$recipedir"/"$url")"
     fi
 
-    file="$(basename $url)"
-    status "Fetching '$file'"
+    file="$(basename "$url")"
+    status "$file"
 
-    rcurl --remote-name --location "$url"
+    rcurl --location "$url" -o "$srcdir"/"$file"
 
-    if ! sha256sum -c <(echo "$checksum $file") > /dev/null 2>&1; then
-        error "Checksum mismatch"
+    if [[ $checksum != SKIP ]] && \
+            ! sha256sum -c <(echo "$checksum $srcdir/$file") > /dev/null 2>&1; then
+        error "Checksum mismatch while fetching $file"
     fi
 
-    bsdtar -x --strip-components 1 -f "$file"
+    if [[ $srcdir/$file =~ \.(zip|tar\.gz)$ ]]; then
+        bsdtar -x \
+            --strip-components 1 \
+            --directory "$srcdir" \
+            --file "$srcdir"/"$file"
+    fi
 done
-
-popd > /dev/null
 
 # Set atime and mtime to the SOURCE_DATE_EPOCH for all source files
 find "$srcdir" -exec touch --no-dereference --date="@${SOURCE_DATE_EPOCH}" {} +
 
 # Run build script inside a Docker container
-status "Building"
+section "Building binaries"
 docker container run --interactive --rm \
     --mount type=bind,src="$(realpath "$recipedir")",dst=/recipe \
     --mount type=bind,src="$(realpath "$srcdir")",dst=/src \
@@ -111,7 +114,7 @@ docker container run --interactive --rm \
 CMDS
 
 # Run packaging script
-status "Packaging"
+section "Preparing package files"
 package
 
 # Create control file and archive
@@ -138,12 +141,11 @@ ctlfile="$ctldir"/control
 
 # Show package contents
 if command -v tree &> /dev/null; then
-    status "Package contents:"
     tree -np "$pkgdir" | tail +2
 fi
 
 # Create archives
-status "Creating archive"
+section "Creating archives"
 pkgar="$ardir"/data.tar.gz
 ctlar="$ardir"/control.tar.gz
 versionar="$ardir"/debian-binary
@@ -157,4 +159,4 @@ rtar "$arar" "$ardir"
 # Set atime and mtime to the SOURCE_DATE_EPOCH for the final archive
 touch --no-dereference --date="@$SOURCE_DATE_EPOCH" "$arar"
 
-status "Done. Result is in $arar"
+section "Done. Result is in $arar"

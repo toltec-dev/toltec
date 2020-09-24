@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 set -e
-source "${BASH_SOURCE%/*}"/lib
+source scripts/lib
 
 usage="$0 [OPTION]... LOCALREPO [REMOTEREPO]
 
@@ -58,10 +58,10 @@ for localfile in "$localrepo"/*; do
     if ! diff "$localfile" "$remotefile" > /dev/null; then
         echo "! $file differs between the local and the remote repositories."
 
-        if [[ $file =~ .ipk$ ]]; then
+        if [[ $file =~ \.ipk$ ]]; then
             for subfile in "${subfiles[@]}"; do
                 # Compare non-archive subfiles normally
-                if [[ ! $subfile =~ .tar.gz$ ]]; then
+                if [[ ! $subfile =~ \.tar\.gz$ ]]; then
                     if ! diff > /dev/null \
                             <(tar -axf "$localfile" "$subfile" -O) \
                             <(tar -axf "$remotefile" "$subfile" -O); then
@@ -71,8 +71,8 @@ for localfile in "$localrepo"/*; do
                 elif ! filediff=$(diff \
                         <(tar -axf "$localfile" "$subfile" -O | tar -tzvf -) \
                         <(tar -axf "$remotefile" "$subfile" -O | tar -tzvf -)); then
-                    echo -n "!> The following files from $subfile inside $file differ:\n"
-                    echo "$filediff\n"
+                    printf "!> The following files from %s inside %s differ:\n\n%s\n\n" \
+                        "$subfile" "$file" "$filediff"
                 # Otherwise, compare them as binary
                 elif ! diff > /dev/null \
                         <(tar -axf "$localfile" "$subfile" -O) \
