@@ -69,7 +69,7 @@ Where URL is the feed root
 
 ## Building
 
-`build-repo`
+`repo-build`
 
 Date of latest commit
 

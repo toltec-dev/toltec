@@ -71,7 +71,7 @@ for recipedir in "$recipesdir"/*; do
     if [[ -n $forceflag ]] || ! rsecurl --remote-time "$remoterepo"/"$arname" -o "$repodir"/"$arname"; then
         pkgworkdir="$pkgsworkdir"/"$pkgname"
         status "Building $pkgname in $pkgworkdir"
-        "${BASH_SOURCE%/*}"/build-package "$recipedir" "$pkgworkdir"
+        "${BASH_SOURCE%/*}"/package-build "$recipedir" "$pkgworkdir"
         mv "$pkgworkdir"/*.ipk "$repodir"
     else
         status "Reusing already built $pkgname from $remoterepo"
