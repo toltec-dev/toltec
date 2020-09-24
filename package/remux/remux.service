@@ -1,0 +1,15 @@
+[Unit]
+Description=App launcher that supports multi-tasking applications
+After=xochitl.service opt.mount
+StartLimitInterval=30
+StartLimitBurst=5
+Conflicts=draft.service tarnish.service
+
+[Service]
+ExecStart=/opt/bin/remux
+Restart=on-failure
+RestartSec=5
+Environment="HOME=/home/root"
+
+[Install]
+WantedBy=multi-user.target
