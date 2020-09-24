@@ -12,7 +12,7 @@ bootstrap_wget() {
           "to /home/root/.cache/wget_bin/ for this installation..." \
           ""
       # Bootstrap a current version of wget
-      WGET_BINARIES_PATH='http://static.cosmos-ink.net/remarkable/artifacts'
+      WGET_BINARIES_PATH='http://github.com/LinusCDE/wget-remarkable-pipeline/releases/download/job254'
       WGET_BINARIES_FILENAME='wget-remarkable-pipeline_job245_wget1.20.3.zip'
       WGET_BINARIES_SHA256='84185a5934e34e25794d439c78dc9f1590e4df12fbf369236f6a8749bf14d67f'
 
