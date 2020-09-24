@@ -1,0 +1,5 @@
+name=xochitl
+desc=Read documents and take notes
+call=/usr/bin/xochitl
+term=killall xochitl
+imgFile=xochitl
