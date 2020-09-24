@@ -68,17 +68,19 @@ for recipedir in "$recipesdir"/*; do
     load-recipe "$recipedir"
     arname="$(archive-name "$recipedir")"
 
+    section "Building $pkgname $pkgver"
+
     if [[ -n $forceflag ]] || ! rsecurl --remote-time "$remoterepo"/"$arname" -o "$repodir"/"$arname"; then
         pkgworkdir="$pkgsworkdir"/"$pkgname"
-        status "Building $pkgname in $pkgworkdir"
         "${BASH_SOURCE%/*}"/package-build "$recipedir" "$pkgworkdir"
         mv "$pkgworkdir"/*.ipk "$repodir"
     else
-        status "Reusing already built $pkgname from $remoterepo"
+        status "Reusing already built version from $remoterepo"
     fi
 done
 
 # Build packages index
+section "Making packages index"
 "${BASH_SOURCE%/*}"/opkg/opkg-make-index --checksum sha256 -p "$repodir"/Packages "$repodir"
 
 # Set atime and mtime to the date of latest commit for the packages index
@@ -88,4 +90,4 @@ touch --no-dereference --date="@$lastcommitdate" \
     "$repodir"/Packages.gz \
     "$repodir"/Packages.stamps
 
-status "Done. Result is in $repodir"
+section "Done. Result is in $repodir"

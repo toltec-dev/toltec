@@ -46,42 +46,20 @@ fi
 differs=
 subfiles=(./control.tar.gz ./data.tar.gz ./debian-binary)
 
+if [[ ! -f "$localrepo"/Packages ]]; then
+    error "Local repository is missing packages index"
+fi
+
 for localfile in "$localrepo"/*; do
     file="$(realpath --relative-to="$localrepo" "$localfile")"
     remotefileurl="$remoterepo"/"$file"
 
-    status "Comparing $file"
+    section "Checking $file"
 
     remotefile="$(mktemp)"
     rsecurl "$remotefileurl" -o "$remotefile"
 
-    if ! diff "$localfile" "$remotefile" > /dev/null; then
-        echo "! $file differs between the local and the remote repositories."
-
-        if [[ $file =~ \.ipk$ ]]; then
-            for subfile in "${subfiles[@]}"; do
-                # Compare non-archive subfiles normally
-                if [[ ! $subfile =~ \.tar\.gz$ ]]; then
-                    if ! diff > /dev/null \
-                            <(tar -axf "$localfile" "$subfile" -O) \
-                            <(tar -axf "$remotefile" "$subfile" -O); then
-                        echo "!> $subfile differs."
-                    fi
-                # First, compare the list of files in archive subfiles
-                elif ! filediff=$(diff \
-                        <(tar -axf "$localfile" "$subfile" -O | tar -tzvf -) \
-                        <(tar -axf "$remotefile" "$subfile" -O | tar -tzvf -)); then
-                    printf "!> The following files from %s inside %s differ:\n\n%s\n\n" \
-                        "$subfile" "$file" "$filediff"
-                # Otherwise, compare them as binary
-                elif ! diff > /dev/null \
-                        <(tar -axf "$localfile" "$subfile" -O) \
-                        <(tar -axf "$remotefile" "$subfile" -O); then
-                    echo "!> Files from $subfile inside $file are the same but the archives differ."
-                fi
-            done
-        fi
-
+    if ! tardiff "$localfile" "$remotefile" "local $file" "remote $file"; then
         differs=yes
     fi
 
@@ -91,5 +69,5 @@ done
 if [[ -n $differs ]]; then
     error "Some files differ"
 else
-    status "Done"
+    section "Successful"
 fi
