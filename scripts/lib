@@ -1,9 +1,10 @@
 # vim: set ft=sh:
 
-bold="$(tput bold)"
-red="$(tput setaf 1)"
-green="$(tput setaf 2)"
-reset="$(tput sgr0)"
+# Allow using colors when inside a terminal
+[[ -t 1 ]] && setbold="$(tput bold)"
+[[ -t 1 ]] && setred="$(tput setaf 1)"
+[[ -t 1 ]] && setgreen="$(tput setaf 2)"
+[[ -t 1 ]] && reset="$(tput sgr0)"
 
 # Print an error message to error output then exit
 #
@@ -11,7 +12,7 @@ reset="$(tput sgr0)"
 #
 # $1 - Error message to print
 error() {
-    echo "$bold$red==> ERROR:$reset$bold $1$reset" >&2
+    echo "$setbold$setred==> ERROR:$reset$setbold $1$reset" >&2
     exit 1
 }
 
@@ -21,7 +22,7 @@ error() {
 #
 # $1 - Section name
 section() {
-    echo "$bold$green==>$reset$bold $1$reset" >&2
+    echo "$setbold$setgreen==>$reset$setbold $1$reset" >&2
 }
 
 # Print a status message
