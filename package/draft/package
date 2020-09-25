@@ -7,6 +7,7 @@ timestamp=2020-07-20T10:23Z
 section=launchers
 maintainer="Mattéo Delabre <spam@delab.re>"
 license=Apache-2.0
+depends=(xochitl)
 
 image=qt:v1.1
 source=(
@@ -34,8 +35,10 @@ package() {
     install -d "$pkgdir"/opt/etc/draft "$pkgdir"/etc
     ln -s /opt/etc/draft "$pkgdir"/etc/draft
     cp -r "$srcdir"/extra-files/draft/* "$pkgdir"/opt/etc/draft
-    mv "$pkgdir"/opt/etc/draft/{01-,}xochitl
+    rm "$pkgdir"/opt/etc/draft/01-xochitl
+    rm "$pkgdir"/opt/etc/draft/icons/xochitl.png
     rm "$pkgdir"/opt/etc/draft/02-fingerterm
+    rm "$pkgdir"/opt/etc/draft/icons/fingerterm.png
     mv "$pkgdir"/opt/etc/draft/{99-,}shutdown
 
     install -D -m 644 -t "$pkgdir"/lib/systemd/system "$srcdir"/draft.service

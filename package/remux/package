@@ -9,8 +9,14 @@ maintainer="raisjn <of.rajsn@gmail.com>"
 license=MIT
 
 image=python:v1.1
-source=(https://github.com/rmkit-dev/rmkit/archive/d3ebde163c2d50fe9258142e2d190710a58eb954.zip)
-sha256sums=(157ad36bc6b345763a504b6d491a47bc3aecc828a99b1bf9fd42dab980f158a4)
+source=(
+    https://github.com/rmkit-dev/rmkit/archive/d3ebde163c2d50fe9258142e2d190710a58eb954.zip
+    remux.service
+)
+sha256sums=(
+    157ad36bc6b345763a504b6d491a47bc3aecc828a99b1bf9fd42dab980f158a4
+    SKIP
+)
 
 build() {
     pip3 install okp
@@ -20,7 +26,7 @@ build() {
 package() {
     install -d "$pkgdir"/opt/usr/bin
     install -D -m 755 "$srcdir"/src/build/remux "$pkgdir"/opt/bin/remux
-    install -D -m 644 "$srcdir"/src/remux/remux.service "$pkgdir"/etc/systemd/system/remux.service
+    install -D -m 644 "$srcdir"/remux.service "$pkgdir"/lib/systemd/system/remux.service
 }
 
 # Check whether a systemd unit exists and is enabled
