@@ -117,7 +117,7 @@ CMDS
 section "Preparing package files"
 package
 
-# Create control file and archive
+# Create control file
 ctlfile="$ctldir"/control
 
 {
@@ -133,11 +133,37 @@ ctlfile="$ctldir"/control
     [[ -n $conflicts ]] && echo "Conflicts: $conflicts"
 } >> "$ctlfile"
 
-# Copy install scripts
-[[ -f "$recipedir"/preinst ]] && install -D -m 755 "$recipedir"/preinst "$ctldir"/preinst
-[[ -f "$recipedir"/postinst ]] && install -D -m 755 "$recipedir"/postinst "$ctldir"/postinst
-[[ -f "$recipedir"/prerm ]] && install -D -m 755 "$recipedir"/prerm "$ctldir"/prerm
-[[ -f "$recipedir"/postrm ]] && install -D -m 755 "$recipedir"/postrm "$ctldir"/postrm
+# Create maintainer scripts
+genscript() {
+    cat <(printf "#!/usr/bin/env bash\nset -e\n") \
+        "$recipedir/package" - \
+        > "$ctldir"/"$1"
+    chmod 755 "$ctldir"/"$1"
+}
+
+genscript preinst <<SCRIPT
+if [[ \$1 = install ]] && [[ \$(type -t preinstall) = function ]]; then
+    preinstall
+fi
+SCRIPT
+
+for step in pre post; do
+    genscript "$step"rm <<SCRIPT
+if [[ \$1 = remove ]] && [[ \$(type -t "$step"remove) = function ]]; then
+    "$step"remove
+fi
+
+if [[ \$1 = upgrade ]] && [[ \$(type -t "$step"upgrade) = function ]]; then
+    "$step"upgrade "\$2"
+fi
+SCRIPT
+done
+
+genscript postinst <<SCRIPT
+if [[ \$1 = configure ]] && [[ \$(type -t configure) = function ]]; then
+    configure
+fi
+SCRIPT
 
 # Show package contents
 if command -v tree &> /dev/null; then

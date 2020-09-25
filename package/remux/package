@@ -2,7 +2,7 @@
 pkgname=remux
 pkgdesc="App launcher that supports multi-tasking applications"
 url=https://github.com/rmkit-dev/rmkit
-pkgver=0.0.1-14
+pkgver=0.0.1-15
 timestamp=2020-09-21T01:41+00:00
 section=launchers
 maintainer="raisjn <of.rajsn@gmail.com>"
@@ -21,4 +21,60 @@ package() {
     install -d "$pkgdir"/opt/usr/bin
     install -D -m 755 "$srcdir"/src/build/remux "$pkgdir"/opt/bin/remux
     install -D -m 644 "$srcdir"/src/remux/remux.service "$pkgdir"/etc/systemd/system/remux.service
+}
+
+# Check whether a systemd unit exists and is enabled
+#
+# Arguments:
+#
+# $1 - Full name of the systemd unit, e.g. "xochitl.service"
+#
+# Exit code:
+#
+# 0 if the unit exists and is enabled, 1 otherwise
+is-enabled() {
+    # Note that we must invert the condition so that the exit code indicates
+    # a failure when the unit exists and is disabled or when the unit does
+    # not exist
+    ! systemctl list-unit-files "$1" | awk "/$1/{exit \$2 == \"enabled\"}"
+}
+
+# Get a list of systemd units with which the given unit conflicts
+#
+# Arguments:
+#
+# $1 - Full name of the systemd unit, e.g. "xochitl.service"
+#
+# Output:
+#
+# List of conflicting units
+get-conflicts() {
+    systemctl show "$1" | awk -F'=' '/^Conflicts=/{print $2}'
+}
+
+configure() {
+    systemctl daemon-reload
+
+    if ! is-enabled "$pkgname.service"; then
+        echo ""
+        echo "Run the following command(s) to use $pkgname as your launcher"
+
+        for conflict in $(get-conflicts "$pkgname.service"); do
+            if is-enabled "$conflict"; then
+                echo "$ systemctl disable --now ${conflict/.service/}"
+            fi
+        done
+
+        echo "$ systemctl enable --now $pkgname"
+        echo ""
+    fi
+}
+
+preremove() {
+    echo "Disabling $pkgname"
+    systemctl disable --now "$pkgname"
+}
+
+postremove() {
+    systemctl daemon-reload
 }

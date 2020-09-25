@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-
-# opkg doesn't seem to remove that.
-# Or I've done something wrong (probably).
-rm -r /opt/lib/plato
