@@ -23,6 +23,6 @@ jobs:
                 echo "${{ secrets.SSH_PRIVATE_KEY }}" > private/id_rsa
                 echo "${{ secrets.SSH_KNOWN_HOSTS }}" > private/known_hosts
                 chmod 600 private/*
-                rsync -avz \
+                rsync --archive --verbose --compress --delete \
                     -e "ssh -i private/id_rsa -o UserKnownHostsFile=private/known_hosts" \
                     build/repo/ "${{ secrets.REMOTE }}":/srv/toltec/stable
