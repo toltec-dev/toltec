@@ -3,7 +3,7 @@ Description=Launcher which wraps around the standard interface
 After=home.mount
 StartLimitIntervalSec=600
 StartLimitBurst=4
-Conflicts=remux.service tarnish.service
+Conflicts=remux.service tarnish.service xochitl.service
 
 [Service]
 ExecStart=/opt/bin/draft

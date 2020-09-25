@@ -3,7 +3,7 @@ Description=App launcher that supports multi-tasking applications
 After=xochitl.service opt.mount
 StartLimitInterval=30
 StartLimitBurst=5
-Conflicts=draft.service tarnish.service
+Conflicts=draft.service tarnish.service xochitl.service
 
 [Service]
 ExecStart=/opt/bin/remux
