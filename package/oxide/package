@@ -2,15 +2,22 @@
 pkgname=oxide
 pkgdesc="Launcher application"
 url=https://github.com/Eeems/oxide
-pkgver=2.0~alpha-2
+pkgver=2.0~alpha-3
 timestamp=2020-09-11T05:33Z
 section=launchers
 maintainer="raisjn <of.rajsn@gmail.com>"
 license=MIT
+depends=(xochitl)
 
 image=qt:v1.1
-source=(https://github.com/Eeems/oxide/archive/045c16943c82ba8c30ee22b507d8b710754a74e0.zip)
-sha256sums=(b119b8e2d57715089c6f67240933236e8d0c63e6a8bed947fc51e29afc6149e3)
+source=(
+    https://github.com/Eeems/oxide/archive/045c16943c82ba8c30ee22b507d8b710754a74e0.zip
+    tarnish.service
+)
+sha256sums=(
+    b119b8e2d57715089c6f67240933236e8d0c63e6a8bed947fc51e29afc6149e3
+    SKIP
+)
 
 build() {
     sed -i 's/linux-oe-g++/linux-arm-gnueabihf-g++/' applications/*/*.pro
@@ -19,4 +26,10 @@ build() {
 
 package() {
     cp -ar "$srcdir"/release/* "$pkgdir"
+
+    install -D -m 644 -t "$pkgdir"/lib/systemd/system "$srcdir"/tarnish.service
+    rm -r "$pkgdir"/etc/systemd
+
+    rm "$pkgdir"/opt/etc/draft/xochitl.draft
+    rm "$pkgdir"/opt/etc/draft/icons/xochitl.png
 }
