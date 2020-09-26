@@ -2,15 +2,15 @@
 pkgname=plato
 pkgdesc="Document reader"
 url=https://github.com/LinusCDE/plato
-pkgver=0.9.1-9
-timestamp=2020-09-21T18:40Z
+pkgver=0.9.1-10
+timestamp=2020-09-26T02:41Z
 section=readers
 maintainer="Linus K. <linus@cosmos-ink.net>"
 license=AGPL-3.0-or-later
 
 image=rust:v1.1
-source=(https://github.com/LinusCDE/plato/archive/9b18b76769751e7aa760ae3c31ff8dd263911b8d.zip)
-sha256sums=(478333e0f32096471950ef3f1f76d7cc42f6802dc417227518b6ffc5593b4457)
+source=(https://github.com/LinusCDE/plato/archive/d8536f8f90ddbd9ac54a787ee5c2d9d966d08c0f.zip)
+sha256sums=(c78eed996a82286c82dd7a68484ee9f8ceaed7cc0842a59dc710724a45605a71)
 
 build() {
     # Get needed build packages
