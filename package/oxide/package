@@ -10,8 +10,8 @@ license=MIT
 depends=(xochitl)
 
 image=qt:v1.1
-source=(https://github.com/Eeems/oxide/archive/e2316d84063ffefc37cbd383078b578a30553de1.zip)
-sha256sums=(6560758e76ebe7a36690992ffadcb9d2eecad7287b36b7592528f8bbb51a302d)
+source=(https://github.com/Eeems/oxide/archive/3ebf6ee73a7e67d6525d0dc3e303a3889daf57fd.zip)
+sha256sums=(82f38b404cf22dffa4fbae34ed41400a73a1f67fdd15b3d5006a6cd5a574885b)
 
 build() {
     sed -i 's/linux-oe-g++/linux-arm-gnueabihf-g++/' applications/*/*.pro
