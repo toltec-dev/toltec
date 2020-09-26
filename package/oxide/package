@@ -26,7 +26,7 @@ build() {
 package() {
     cp -ar "$srcdir"/release/* "$pkgdir"
 
-    install -D -m 644 -t "$pkgdir"/lib/systemd/system "$pkgdir"/etc/systemd/tarnish.service
+    install -D -m 644 -t "$pkgdir"/lib/systemd/system "$pkgdir"/etc/systemd/system/tarnish.service
     rm -r "$pkgdir"/etc/systemd
 
     rm "$pkgdir"/opt/etc/draft/xochitl.draft
