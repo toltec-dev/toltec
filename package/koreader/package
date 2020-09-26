@@ -6,7 +6,7 @@ pkgver=2020.09-1
 timestamp=2020-09-25T01:42Z
 section=utils
 maintainer="raisjn <of.raisjn@gmail.com>"
-license=AGPL3
+license=AGPL-3.0-or-later
 
 image=base
 source=(https://github.com/koreader/koreader/releases/download/v2020.09/koreader-remarkable-v2020.09.zip)
