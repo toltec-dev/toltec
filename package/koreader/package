@@ -2,15 +2,15 @@
 pkgname=koreader
 pkgdesc="KOReader"
 url=https://github.com/koreader/koreader
-pkgver=2020.08.01-1
-timestamp=2020-09-19T03:30Z
+pkgver=2020.09-1
+timestamp=2020-09-25T01:42Z
 section=utils
 maintainer="raisjn <of.raisjn@gmail.com>"
 license=AGPL3
 
 image=base
-source=(https://github.com/koreader/koreader/releases/download/v2020.08.1/koreader-remarkable-v2020.08.1.zip)
-sha256sums=(447c151e11bf56d71145cecc731dfa2a39eb026fcce4c4d0571cc8e431d5c491)
+source=(https://github.com/koreader/koreader/releases/download/v2020.09/koreader-remarkable-v2020.09.zip)
+sha256sums=(fea9014e5f277362785922110cd979ec6a8c264838a5541a08c77f96540c8b75)
 
 build() {
   # Using prebuilt binaries for koreader
