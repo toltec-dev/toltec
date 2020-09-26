@@ -1,10 +1,10 @@
 # vim: set ft=sh:
 pkgname=koreader
-pkgdesc="KOReader"
+pkgdesc="An ebook reader application supporting PDF, DjVu, EPUB, FB2 and many more formats"
 url=https://github.com/koreader/koreader
 pkgver=2020.09-1
-timestamp=2020-09-25T01:42Z
-section=utils
+timestamp=2020-09-17T01:52Z
+section=readers
 maintainer="raisjn <of.raisjn@gmail.com>"
 license=AGPL-3.0-or-later
 
