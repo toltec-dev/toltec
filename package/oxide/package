@@ -14,6 +14,11 @@ source=(https://github.com/Eeems/oxide/archive/f32207cc7e191dd81c71e8134f9eb1a10
 sha256sums=(64aa64edd881248938dd0f17e14f053a528fe07e425adb11d7a68933664155c0)
 
 build() {
+    rm shared/dbussettings.h
+    pushd shared
+    ln -s ../applications/system-service/dbussettings.h .
+    popd
+
     sed -i 's/linux-oe-g++/linux-arm-gnueabihf-g++/' applications/*/*.pro
     make release
 }
