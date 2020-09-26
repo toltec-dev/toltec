@@ -10,14 +10,8 @@ license=MIT
 depends=(xochitl)
 
 image=qt:v1.1
-source=(
-    https://github.com/Eeems/oxide/archive/f32207cc7e191dd81c71e8134f9eb1a10403f852.zip
-    tarnish.service
-)
-sha256sums=(
-    64aa64edd881248938dd0f17e14f053a528fe07e425adb11d7a68933664155c0
-    SKIP
-)
+source=(https://github.com/Eeems/oxide/archive/f32207cc7e191dd81c71e8134f9eb1a10403f852.zip)
+sha256sums=(64aa64edd881248938dd0f17e14f053a528fe07e425adb11d7a68933664155c0)
 
 build() {
     sed -i 's/linux-oe-g++/linux-arm-gnueabihf-g++/' applications/*/*.pro
@@ -27,7 +21,7 @@ build() {
 package() {
     cp -ar "$srcdir"/release/* "$pkgdir"
 
-    install -D -m 644 -t "$pkgdir"/lib/systemd/system "$srcdir"/tarnish.service
+    install -D -m 644 -t "$pkgdir"/lib/systemd/system ""$pkgdir"/etc/systemd/tarnish.service
     rm -r "$pkgdir"/etc/systemd
 
     rm "$pkgdir"/opt/etc/draft/xochitl.draft
