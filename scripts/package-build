@@ -187,8 +187,8 @@ for step in pre post; do
             if [[ $(type -t "$step"upgrade) = function ]]; then
                 declare -f "$step"upgrade
                 cat <<SCRIPT
-if [[ \$1 = remove ]]; then
-    "$step"remove
+if [[ \$1 = upgrade ]]; then
+    "$step"upgrade
 fi
 SCRIPT
             fi
@@ -196,8 +196,8 @@ SCRIPT
             if [[ $(type -t "$step"remove) = function ]]; then
                 declare -f "$step"remove
                 cat <<SCRIPT
-if [[ \$1 = upgrade ]]; then
-    "$step"upgrade "\$2"
+if [[ \$1 = remove ]]; then
+    "$step"remove "\$2"
 fi
 SCRIPT
             fi
