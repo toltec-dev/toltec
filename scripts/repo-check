@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 set -e
-source scripts/lib
+source scripts/package-lib
 
 usage="$0 [OPTION]... LOCALREPO [REMOTEREPO]
 

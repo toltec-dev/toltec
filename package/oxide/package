@@ -24,35 +24,6 @@ package() {
     rm "$pkgdir"/opt/etc/draft/icons/xochitl.png
 }
 
-# Check whether a systemd unit exists and is enabled
-#
-# Arguments:
-#
-# $1 - Full name of the systemd unit, e.g. "xochitl.service"
-#
-# Exit code:
-#
-# 0 if the unit exists and is enabled, 1 otherwise
-is-enabled() {
-    # Note that we must invert the condition so that the exit code indicates
-    # a failure when the unit exists and is disabled or when the unit does
-    # not exist
-    ! systemctl list-unit-files "$1" | awk "/$1/{exit \$2 == \"enabled\"}"
-}
-
-# Get a list of systemd units with which the given unit conflicts
-#
-# Arguments:
-#
-# $1 - Full name of the systemd unit, e.g. "xochitl.service"
-#
-# Output:
-#
-# List of conflicting units
-get-conflicts() {
-    systemctl show "$1" | awk -F'=' '/^Conflicts=/{print $2}'
-}
-
 configure() {
     systemctl daemon-reload
 
