@@ -2,7 +2,7 @@
 pkgname=oxide
 pkgdesc="Launcher application"
 url=https://github.com/Eeems/oxide
-pkgver=2.0~beta-2
+pkgver=2.0~beta-3
 timestamp=2020-09-26T20:53Z
 section=launchers
 maintainer="Eeems <eeems@eeems.email>"
@@ -20,4 +20,24 @@ package() {
 
     rm "$pkgdir"/opt/etc/draft/xochitl.draft
     rm "$pkgdir"/opt/etc/draft/icons/xochitl.png
+}
+
+configure() {
+    systemctl daemon-reload
+
+    if ! is-enabled "$pkgname.service"; then
+        echo ""
+        echo "Run the following command(s) to use $pkgname as your launcher"
+        how-to-enable "tarnish.service"
+        echo ""
+    fi
+}
+
+preremove() {
+    echo "Disabling $pkgname"
+    systemctl disable --now tarnish
+}
+
+postremove() {
+    systemctl daemon-reload
 }

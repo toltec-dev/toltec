@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 set -e
-source scripts/lib
+source scripts/package-lib
 
 usage="$0 [OPTION]... RECIPEDIR WORKDIR
 
@@ -119,7 +119,12 @@ fi
 section "Preparing package files"
 package
 
-# Create control file and archive
+# Show package contents
+if command -v tree &> /dev/null; then
+    tree -np "$pkgdir" | tail +2
+fi
+
+# Create control file
 ctlfile="$ctldir"/control
 
 {
@@ -135,16 +140,71 @@ ctlfile="$ctldir"/control
     [[ -n $conflicts ]] && echo "Conflicts: $conflicts"
 } >> "$ctlfile"
 
-# Copy install scripts
-[[ -f "$recipedir"/preinst ]] && install -D -m 755 "$recipedir"/preinst "$ctldir"/preinst
-[[ -f "$recipedir"/postinst ]] && install -D -m 755 "$recipedir"/postinst "$ctldir"/postinst
-[[ -f "$recipedir"/prerm ]] && install -D -m 755 "$recipedir"/prerm "$ctldir"/prerm
-[[ -f "$recipedir"/postrm ]] && install -D -m 755 "$recipedir"/postrm "$ctldir"/postrm
+# Create maintainer scripts
+maintainer-script-header() {
+    cat <<'SCRIPT'
+#!/usr/bin/env bash
+set -e
+SCRIPT
+    dump-metadata
+    cat scripts/install-lib
+}
 
-# Show package contents
-if command -v tree &> /dev/null; then
-    tree -np "$pkgdir" | tail +2
+# Generate preinst
+if [[ $(type -t preinstall) = function ]]; then
+    {
+        maintainer-script-header
+        declare -f preinstall
+        cat <<'SCRIPT'
+if [[ $1 = install ]]; then
+    preinstall
 fi
+SCRIPT
+    } >> "$ctldir"/preinst
+    chmod 755 "$ctldir"/preinst
+fi
+
+# Generate postinst
+if [[ $(type -t configure) = function ]]; then
+    {
+        maintainer-script-header
+        declare -f configure
+        cat <<'SCRIPT'
+if [[ $1 = configure ]]; then
+    configure
+fi
+SCRIPT
+    } >> "$ctldir"/postinst
+    chmod 755 "$ctldir"/postinst
+fi
+
+# Generate {pre,post}rm
+for step in pre post; do
+    if [[ $(type -t "$step"upgrade) = function ]] || [[ $(type -t "$step"remove) = function ]]; then
+        {
+            maintainer-script-header
+
+            if [[ $(type -t "$step"upgrade) = function ]]; then
+                declare -f "$step"upgrade
+                cat <<SCRIPT
+if [[ \$1 = upgrade ]]; then
+    "$step"upgrade
+fi
+SCRIPT
+            fi
+
+            if [[ $(type -t "$step"remove) = function ]]; then
+                declare -f "$step"remove
+                cat <<SCRIPT
+if [[ \$1 = remove ]]; then
+    "$step"remove "\$2"
+fi
+SCRIPT
+            fi
+        } >> "$ctldir"/"$step"rm
+        chmod 755 "$ctldir"/"$step"rm
+    fi
+done
 
 # Create archives
 section "Creating archives"

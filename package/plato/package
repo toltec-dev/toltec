@@ -2,7 +2,7 @@
 pkgname=plato
 pkgdesc="Document reader"
 url=https://github.com/LinusCDE/plato
-pkgver=0.9.1-9
+pkgver=0.9.1-10
 timestamp=2020-09-26T02:41Z
 section=readers
 maintainer="Linus K. <linus@cosmos-ink.net>"
@@ -58,6 +58,19 @@ package() {
     install -d "$pkgdir"/opt/etc
     ln -s /opt/etc/plato.toml "$pkgdir"/opt/lib/plato/Settings.toml
 
-    install -D -m 644 "$srcdir"/oxide "$pkgdir"/opt/etc/draft/plato
+    install -D -m 644 "$srcdir"/oxide "$pkgdir"/opt/etc/draft/plato.draft
     install -D -m 644 "$srcdir"/oxide-icon.png "$pkgdir"/opt/etc/draft/icons/plato.png
+}
+
+configure() {
+    local mediadir=/home/root/plato-media
+
+    # This directory should not be tracked by opkg
+    # so that its contents are kept after removing
+    if [ ! -d $mediadir ]; then
+        mkdir $mediadir
+        echo ""
+        echo "Place your media files for plato in '$mediadir'"
+        echo ""
+    fi
 }

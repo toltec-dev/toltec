@@ -1,5 +1,11 @@
 # vim: set ft=sh:
 
+#
+# package-lib
+#
+# Common functions used by the packaging scripts
+#
+
 # Allow using colors when inside a terminal
 [[ -t 1 ]] && setbold="$(tput bold)"
 [[ -t 1 ]] && setred="$(tput setaf 1)"
@@ -59,7 +65,7 @@ rtar() {
 # $3 (optional) - Display name for the first file
 # $4 (optional) - Display name for the second file
 #
-# Return value:
+# Exit code:
 #
 # 0 if no difference, 1 if there is a difference
 tardiff() {
@@ -113,7 +119,7 @@ rsecurl() {
     rcurl --proto '=https' "$@"
 }
 
-# Load information from a package recipe
+# Load metadata and functions defined in a package recipe
 #
 # Arguments:
 #
@@ -135,6 +141,26 @@ load-recipe() {
     [[ -z $sha256sums ]] && error "Missing or empty 'sha256sums' variable"
 
     return 0
+}
+
+# Dump metadata of a package recipe that is currently loaded
+dump-metadata() {
+    declare -p \
+        pkgname \
+        pkgdesc \
+        url \
+        pkgver \
+        timestamp \
+        section \
+        maintainer \
+        license \
+        depends \
+        arch \
+        conflicts \
+        image \
+        source \
+        sha256sums \
+    2>/dev/null || true
 }
 
 # Generate the archive name of a package

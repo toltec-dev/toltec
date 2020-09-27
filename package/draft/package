@@ -2,7 +2,7 @@
 pkgname=draft
 pkgdesc="Launcher which wraps around the standard interface"
 url=https://github.com/dixonary/draft-reMarkable
-pkgver=0.2.0-13
+pkgver=0.2.0-14
 timestamp=2020-07-20T10:23Z
 section=launchers
 maintainer="Mattéo Delabre <spam@delab.re>"
@@ -42,4 +42,24 @@ package() {
     mv "$pkgdir"/opt/etc/draft/{99-,}shutdown
 
     install -D -m 644 -t "$pkgdir"/lib/systemd/system "$srcdir"/draft.service
+}
+
+configure() {
+    systemctl daemon-reload
+
+    if ! is-enabled "$pkgname.service"; then
+        echo ""
+        echo "Run the following command(s) to use $pkgname as your launcher"
+        how-to-enable "$pkgname.service"
+        echo ""
+    fi
+}
+
+preremove() {
+    echo "Disabling $pkgname"
+    systemctl disable --now "$pkgname"
+}
+
+postremove() {
+    systemctl daemon-reload
 }

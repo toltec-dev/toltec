@@ -2,7 +2,7 @@
 pkgname=remux
 pkgdesc="App launcher that supports multi-tasking applications"
 url=https://github.com/rmkit-dev/rmkit
-pkgver=0.0.1-15
+pkgver=0.0.1-16
 timestamp=2020-09-21T01:41+00:00
 section=launchers
 maintainer="raisjn <of.rajsn@gmail.com>"
@@ -27,4 +27,24 @@ package() {
     install -d "$pkgdir"/opt/usr/bin
     install -D -m 755 "$srcdir"/src/build/remux "$pkgdir"/opt/bin/remux
     install -D -m 644 "$srcdir"/remux.service "$pkgdir"/lib/systemd/system/remux.service
+}
+
+configure() {
+    systemctl daemon-reload
+
+    if ! is-enabled "$pkgname.service"; then
+        echo ""
+        echo "Run the following command(s) to use $pkgname as your launcher"
+        how-to-enable "$pkgname.service"
+        echo ""
+    fi
+}
+
+preremove() {
+    echo "Disabling $pkgname"
+    systemctl disable --now "$pkgname"
+}
+
+postremove() {
+    systemctl daemon-reload
 }
