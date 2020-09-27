@@ -2,24 +2,20 @@
 pkgname=oxide
 pkgdesc="Launcher application"
 url=https://github.com/Eeems/oxide
-pkgver=2.0~beta~1
+pkgver=2.0~beta~2
 timestamp=2020-09-26T20:53Z
 section=launchers
 maintainer="Eeems <eeems@eeems.email>"
 license=MIT
 depends=(xochitl)
 
-image=qt:v1.1
-source=(https://github.com/Eeems/oxide/archive/3ebf6ee73a7e67d6525d0dc3e303a3889daf57fd.zip)
-sha256sums=(82f38b404cf22dffa4fbae34ed41400a73a1f67fdd15b3d5006a6cd5a574885b)
-
-build() {
-    sed -i 's/linux-oe-g++/linux-arm-gnueabihf-g++/' applications/*/*.pro
-    make release
-}
+source=(https://github.com/Eeems/oxide/releases/download/v2.0-beta/oxide.zip)
+sha256sums=(d3bac44b96c78726fcbfbd8f7a23d3bd4e4ae3f1f794714190100ebe602a8433)
 
 package() {
-    cp -ar "$srcdir"/release/* "$pkgdir"
+    unzip "$srcdir"/oxide.zip -d "$pkgdir"
+
+    tree "$pkgdir"
 
     install -D -m 644 -t "$pkgdir"/lib/systemd/system "$pkgdir"/etc/systemd/system/tarnish.service
     rm -r "$pkgdir"/etc/systemd
