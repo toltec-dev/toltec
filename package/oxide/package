@@ -15,8 +15,6 @@ sha256sums=(d3bac44b96c78726fcbfbd8f7a23d3bd4e4ae3f1f794714190100ebe602a8433)
 package() {
     unzip "$srcdir"/oxide.zip -d "$pkgdir"
 
-    tree "$pkgdir"
-
     install -D -m 644 -t "$pkgdir"/lib/systemd/system "$pkgdir"/etc/systemd/system/tarnish.service
     rm -r "$pkgdir"/etc/systemd
 
