@@ -30,14 +30,7 @@ configure() {
     if ! is-enabled "$pkgname.service"; then
         echo ""
         echo "Run the following command(s) to use $pkgname as your launcher"
-
-        for conflict in $(get-conflicts "tarnish.service"); do
-            if is-enabled "$conflict"; then
-                echo "$ systemctl disable --now ${conflict/.service/}"
-            fi
-        done
-
-        echo "$ systemctl enable --now tarnish"
+        how-to-enable "tarnish.service"
         echo ""
     fi
 }

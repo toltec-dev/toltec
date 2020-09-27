@@ -50,14 +50,7 @@ configure() {
     if ! is-enabled "$pkgname.service"; then
         echo ""
         echo "Run the following command(s) to use $pkgname as your launcher"
-
-        for conflict in $(get-conflicts "$pkgname.service"); do
-            if is-enabled "$conflict"; then
-                echo "$ systemctl disable --now ${conflict/.service/}"
-            fi
-        done
-
-        echo "$ systemctl enable --now $pkgname"
+        how-to-enable "$pkgname.service"
         echo ""
     fi
 }
