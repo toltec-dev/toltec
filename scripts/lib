@@ -131,7 +131,6 @@ load-recipe() {
     [[ -z $license ]] && error "Missing or empty 'license' variable"
     [[ -z $arch ]] && arch=armv7-3.2
 
-    [[ -z $image ]] && error "Missing or empty 'image' variable"
     [[ -z $source ]] && error "Missing or empty 'source' variable"
     [[ -z $sha256sums ]] && error "Missing or empty 'sha256sums' variable"
 

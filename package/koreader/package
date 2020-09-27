@@ -1,27 +1,22 @@
 # vim: set ft=sh:
 pkgname=koreader
-pkgdesc="KOReader"
+pkgdesc="An ebook reader application supporting PDF, DjVu, EPUB, FB2 and many more formats"
 url=https://github.com/koreader/koreader
-pkgver=2020.08.01-1
-timestamp=2020-09-19T03:30Z
-section=utils
+pkgver=2020.09-2
+timestamp=2020-09-17T01:52Z
+section=readers
 maintainer="raisjn <of.raisjn@gmail.com>"
-license=AGPL3
+license=AGPL-3.0-or-later
 
-image=base
-source=(https://github.com/koreader/koreader/releases/download/v2020.08.1/koreader-remarkable-v2020.08.1.zip)
-sha256sums=(447c151e11bf56d71145cecc731dfa2a39eb026fcce4c4d0571cc8e431d5c491)
-
-build() {
-  # Using prebuilt binaries for koreader
-  return
-}
+source=(https://github.com/koreader/koreader/releases/download/v2020.09/koreader-remarkable-v2020.09.zip)
+sha256sums=(fea9014e5f277362785922110cd979ec6a8c264838a5541a08c77f96540c8b75)
 
 package() {
-  install -d "$pkgdir"/opt/koreader
-  cp -R "$srcdir"/* "$pkgdir"/opt/koreader/
+    install -d "$pkgdir"/opt/koreader
+    cp -R "$srcdir"/* "$pkgdir"/opt/koreader/
+    rm "$pkgdir"/opt/koreader/koreader*zip
 
-  install -D -m 644 -t "$pkgdir"/opt/etc/draft/ "$recipedir"/koreader.draft
-  install -D -m 644 -t "$pkgdir"/opt/etc/draft/icons/ "$srcdir"/resources/koreader.png
-  install -D -m 755 -t "$pkgdir"/opt/bin/ "$recipedir"/koreader
+    install -D -m 644 -t "$pkgdir"/opt/etc/draft/ "$recipedir"/koreader.draft
+    install -D -m 644 -t "$pkgdir"/opt/etc/draft/icons/ "$srcdir"/resources/koreader.png
+    install -D -m 755 -t "$pkgdir"/opt/bin/ "$recipedir"/koreader
 }
