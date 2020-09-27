@@ -84,9 +84,10 @@ Comma-separated list of package names that must **NOT** be unpacked for this pac
 
 See <https://www.debian.org/doc/debian-policy/ch-relationships.html#conflicting-binary-packages-conflicts>.
 
-#### `image` (required)
+#### `image` (optional)
 
 Docker image used for building this package.
+It can be omitted only for packages which do not require a build step (see [below](#build-section-optional)).
 
 #### `source` (required)
 
@@ -96,11 +97,12 @@ Docker image used for building this package.
 
 **TODO:** Documentation.
 
-### Build section (required)
+### Build section (optional)
 
 The build section is made up of a function called `build()` which runs in the context of a Docker container with the chosen `image`.
 This function has access to all the metadata fields declared above.
 The working directory is already populated with all the sources declared in `sources`.
+It can be omitted for packages which do not require a build step.
 
 ### Package section (required)
 
@@ -115,7 +117,7 @@ The `package()` function populates the `$pkgdir` directory with the files and di
 The install section can contain additional functions to customize the behaviour of the package when it is installed, removed or upgraded on the device.
 Those functions are `preinstall()`, `configure()`, `preremove()`, `postremove()`, `preupgrade()` and `postupgrade()`.
 Unlike the previous functions, all the install functions **run in the context of the target device.**
-They have access to all the metadata fields.
+They have access to all the metadata fields, but not to other functions.
 
 When installing a new package, the following happens:
 
