@@ -118,6 +118,7 @@ The install section can contain additional functions to customize the behaviour 
 Those functions are `preinstall()`, `configure()`, `preremove()`, `postremove()`, `preupgrade()` and `postupgrade()`.
 Unlike the previous functions, all the install functions **run in the context of the target device.**
 They have access to all the metadata fields, but not to other functions.
+They can also use functions from the [install library](scripts/install-lib).
 
 When installing a new package, the following happens:
 
