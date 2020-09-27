@@ -13,6 +13,8 @@ source=(https://github.com/Eeems/oxide/releases/download/v2.0-beta/oxide.zip)
 sha256sums=(d3bac44b96c78726fcbfbd8f7a23d3bd4e4ae3f1f794714190100ebe602a8433)
 
 package() {
+    tree "$srcdir"
+
     cp -ar "$srcdir"/* "$pkgdir"
     rm "$pkgdir"/oxide.zip
     
