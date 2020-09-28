@@ -12,7 +12,7 @@ jobs:
               uses: actions/checkout@v2
             - name: Install missing tools
               run: |
-                sudo apt-get install bsdtar inkscape tree
+                sudo apt-get install bsdtar tree
             - name: Build packages
               run: |
                 ./scripts/repo-build package build https://toltec.delab.re/stable
