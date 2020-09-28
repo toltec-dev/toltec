@@ -33,5 +33,5 @@ package() {
     install -D -m 644 -t "$pkgdir"/opt/etc/draft "$srcdir"/calculator.draft
     install -d "$pkgdir"/opt/etc/draft/icons
     inkscape --export-filename="$pkgdir"/opt/etc/draft/icons/calculator.png \
-        "$srcdir"/calculator.svg 2>/dev/null
+        "$srcdir"/calculator.svg
 }
