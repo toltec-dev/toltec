@@ -12,7 +12,7 @@ image=qt:v1.1
 source=(
     https://github.com/reHackable/Calculator/archive/7b8be5de12f1536bc04b6216abbf26f998097bf4.zip
     calculator.draft
-    calculator.png
+    calculator.svg
 )
 sha256sums=(
     02116d385983f6c816374eb6d8b67e53a4a9650e42b0733ab2e145e8dcf87557
@@ -29,5 +29,7 @@ package() {
     install -D -m 755 "$srcdir"/Calculator "$pkgdir"/opt/bin/calculator
 
     install -D -m 644 -t "$pkgdir"/opt/etc/draft "$srcdir"/calculator.draft
-    install -D -m 644 -t "$pkgdir"/opt/etc/draft/icons "$srcdir"/calculator.png
+    install -d "$pkgdir"/opt/etc/draft/icons
+    inkscape --export-filename="$pkgdir"/opt/etc/draft/icons/calculator.png \
+        "$srcdir"/calculator.svg 2>/dev/null
 }
