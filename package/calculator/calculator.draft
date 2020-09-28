@@ -1,0 +1,5 @@
+name=calculator
+desc=Touch-based calculator
+call=/opt/bin/calculator
+term=:
+imgFile=calculator
