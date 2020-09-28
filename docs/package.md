@@ -66,7 +66,9 @@ If the package does not fit into one of the existing sections, add a new one to 
 
 #### `maintainer` (required)
 
-**TODO:** Documentation.
+The package maintainer’s name and current email address, in RFC822 format (e.g. `John Doe <doe@example.org>`).
+This is the person in charge of reviewing any pull request regarding the package.
+This field may be equal to `None <none@example.org>` if a package is orphaned or when a package is initially proposed.
 
 #### `license` (required)
 
