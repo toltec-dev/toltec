@@ -27,8 +27,11 @@ build() {
     # Get needed build packages
     export DEBIAN_FRONTEND=noninteractive
     apt-get update -y
-    apt-get install -y inkscape
-    inkscape --export-type=png calculator.svg
+    apt-get install -y \
+        --no-install-recommends \
+        -o Dpkg::Options::="--force-confdef" \
+        imagemagick librsvg2-bin
+    convert +set date:create +set date:modify calculator.{svg,png}
 }
 
 package() {
