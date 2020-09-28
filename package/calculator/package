@@ -21,9 +21,6 @@ sha256sums=(
 )
 
 build() {
-    qmake Calculator.pro
-    make
-
     # Get needed build packages
     export DEBIAN_FRONTEND=noninteractive
     apt-get update -y
@@ -31,6 +28,10 @@ build() {
         --no-install-recommends \
         -o Dpkg::Options::="--force-confdef" \
         imagemagick librsvg2-bin
+
+    qmake Calculator.pro
+    make
+
     convert +set date:create +set date:modify calculator.{svg,png}
 }
 
