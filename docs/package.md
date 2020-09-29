@@ -89,11 +89,11 @@ See <https://www.debian.org/doc/debian-policy/ch-relationships.html#conflicting-
 Docker image used for building this package.
 It can be omitted only for packages which do not require a build step (see [below](#build-section-optional)).
 
-#### `source` (required)
+#### `source` (optional)
 
 **TODO:** Documentation.
 
-#### `sha256sums` (required)
+#### `sha256sums` (optional)
 
 **TODO:** Documentation.
 

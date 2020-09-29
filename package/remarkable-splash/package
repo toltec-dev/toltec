@@ -7,12 +7,11 @@ timestamp=2019-12-31T10:07Z
 section=utils
 maintainer="Eeems <eeems@eeems.email>"
 license=MIT
-depends=()
 
+image=qt:v1.1
 source=(https://github.com/ddvk/remarkable-splash/archive/e6e0b1e1f3604ab99fb7b476cd290b19c5644025.zip)
 sha256sums=(4aa3988707f9b66752ec9ec2f407cce2ac6e433ae7f06affea9f26957d206b4a)
 
-image=qt:v1.1
 build() {
     qmake
     make
