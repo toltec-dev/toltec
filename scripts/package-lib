@@ -185,7 +185,7 @@ load-recipe() {
     check-field sha256sums array optional || sha256sums=()
 
     # Make fields read-only
-    readonly \
+    readonly 2>/dev/null \
         pkgname \
         pkgdesc \
         url \
@@ -200,6 +200,7 @@ load-recipe() {
         image \
         source \
         sha256sums \
+    || true
 
     # Check required functions
     if ! declare -F package >/dev/null 2>&1; then
@@ -235,9 +236,8 @@ dump-fields() {
         arch \
         image \
         source \
-        sha256sums
-
-    return 0
+        sha256sums \
+    || true
 }
 
 # Generate the archive name of the currently loaded package
