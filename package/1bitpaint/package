@@ -14,7 +14,7 @@ sha256sums=(4acdc2034dca91b3cc2da4ae22ac4bf8c48d25b3e83b171c7617cdee81bb59a6)
 
 image=qt:v1.1
 build() {
-    echo "LIBS += -lqsgepaper" >> 1bitpaint.pro
+    sed -i 's/linux-oe-g++/linux-arm-gnueabihf-g++/' 1bitpaint.pro
     qmake
     make
 }
