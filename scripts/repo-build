@@ -64,6 +64,7 @@ repodir="$workdir"/repo
 mkdir -p "$repodir"
 
 # Build each package or get it from the remote server
+# Each recipe is loaded in a subshell to avoid leaking metadata fields
 for recipedir in "$recipesdir"/*; do
     (
         load-recipe "$recipedir"
