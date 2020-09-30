@@ -1,0 +1,23 @@
+# vim: set ft=sh:
+pkgname=recrossable
+pkgdesc="Crossword game with simplistic handwriting recognition and automatic generation of crosswords"
+url=https://github.com/sandsmark/recrossable
+pkgver=0.0.0-1
+timestamp=2019-01-08T17:41Z
+section=games
+maintainer="Mattéo Delabre <spam@delab.re>"
+license=GPL-2.0-or-later
+
+image=qt:v1.2
+source=(https://github.com/sandsmark/recrossable/archive/6c2c8b1d3d2ec3f3978078f941b09d8cc525f4c6.zip)
+sha256sums=(d2596134f33ecbbf629fb05ca7740e2d89c4cdc41454fe56ee8c33ba4c4f6147)
+
+build() {
+    sed -i 's/linux-oe-g++/linux-arm-gnueabihf-g++/' recrossable.pro
+    qmake
+    make
+}
+
+package() {
+    install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/recrossable
+}
