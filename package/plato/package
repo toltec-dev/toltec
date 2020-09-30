@@ -2,15 +2,15 @@
 pkgname=plato
 pkgdesc="Document reader"
 url=https://github.com/LinusCDE/plato
-pkgver=0.9.1-6
-timestamp=2020-09-05T01:45Z
+pkgver=0.9.1-10
+timestamp=2020-09-26T02:41Z
 section=readers
 maintainer="Linus K. <linus@cosmos-ink.net>"
 license=AGPL-3.0-or-later
 
-image=rust:v1.0
-source=(https://github.com/LinusCDE/plato/archive/014c935b4fb19918ce608c36ca45343dd3815b82.zip)
-sha256sums=(27fa4a922b83fe51be5b5b4ceedad186f1ae966d52ddc6ffec3200d2becdfaed)
+image=rust:v1.1
+source=(https://github.com/LinusCDE/plato/archive/d8536f8f90ddbd9ac54a787ee5c2d9d966d08c0f.zip)
+sha256sums=(c78eed996a82286c82dd7a68484ee9f8ceaed7cc0842a59dc710724a45605a71)
 
 build() {
     # Get needed build packages
@@ -58,12 +58,19 @@ package() {
     install -d "$pkgdir"/opt/etc
     ln -s /opt/etc/plato.toml "$pkgdir"/opt/lib/plato/Settings.toml
 
-    install -D -m 644 "$srcdir"/oxide "$pkgdir"/opt/etc/draft/plato
-    install -d "$pkgdir"/opt/etc/draft/icons
-    convert "$srcdir"/artworks/plato.png \
-        -scale 500x500 \
-        -gravity center \
-        -background white \
-        -extent 500x500 \
-        "$pkgdir"/opt/etc/draft/icons/plato.png
+    install -D -m 644 "$srcdir"/oxide "$pkgdir"/opt/etc/draft/plato.draft
+    install -D -m 644 "$srcdir"/oxide-icon.png "$pkgdir"/opt/etc/draft/icons/plato.png
+}
+
+configure() {
+    local mediadir=/home/root/plato-media
+
+    # This directory should not be tracked by opkg
+    # so that its contents are kept after removing
+    if [ ! -d $mediadir ]; then
+        mkdir $mediadir
+        echo ""
+        echo "Place your media files for plato in '$mediadir'"
+        echo ""
+    fi
 }

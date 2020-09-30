@@ -1,16 +1,16 @@
 HOST?=10.11.99.1
 PACKAGES=$(shell ls package/)
-PUSH_PACKAGES=$(foreach app, $(PACKAGES), push-$(app))
+PUSH_PACKAGES=$(foreach app, $(PACKAGES), $(app)-push)
 
 define USAGE
 Available targets:
 
     repo            Build the repository and reuse archives from the remote
                     repository for existing package versions.
-    force-repo      Build the repository without reusing existing archives.
-    check           Compare the local repository to the remote one.
+    repo-force      Build the repository without reusing existing archives.
+    repo-check      Compare the local repository to the remote one.
     RECIPE          Build any package individually.
-    push-RECIPE     Push any built package to .cache/opkg on the reMarkable.
+    RECIPE-push     Push any built package to .cache/opkg on the reMarkable.
                     (Plug in your reMarkable first!)
 
 Where RECIPE is one of the following available recipes:
@@ -23,22 +23,22 @@ help:
 	@echo "$$USAGE"
 
 repo:
-	rm build/repo -fr
-	./scripts/build-repo package build
+	rm -rf build
+	./scripts/repo-build package build
 
-force-repo:
-	rm build/repo -fr
-	./scripts/build-repo -f package build
+repo-force:
+	rm -rf build
+	./scripts/repo-build -f package build
 
-check:
-	./scripts/check-repo build/repo
+repo-check:
+	./scripts/repo-check build/repo
 
 $(PACKAGES): %:
-	rm build/packages/"${@}" -fr
-	./scripts/build-package package/"${@}" build/packages/"${@}"
+	rm -rf build/packages/"${@}"
+	./scripts/package-build package/"${@}" build/packages/"${@}"
 
 $(PUSH_PACKAGES): %:
 	ssh root@"${HOST}" mkdir -p .cache/opkg
-	scp build/packages/"$(@:push-%=%)"/*.ipk root@"${HOST}":.cache/opkg
+	scp build/packages/"$(@:%-push=%)"/*.ipk root@"${HOST}":.cache/opkg
 
-.PHONY: help repo check $(PACKAGES) $(PUSH_PACKAGES)
+.PHONY: help repo repo-force repo-check $(PACKAGES) $(PUSH_PACKAGES)

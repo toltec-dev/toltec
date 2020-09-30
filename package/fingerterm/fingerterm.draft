@@ -1,0 +1,5 @@
+name=fingerterm
+desc=Terminal emulator with an on-screen touch keyboard
+call=/opt/bin/fingerterm
+term=:
+imgFile=fingerterm

@@ -1,0 +1,5 @@
+name=KOReader
+desc=ebook reader
+imgFile=koreader
+call=/opt/bin/koreader
+term=killall -9 luajit
