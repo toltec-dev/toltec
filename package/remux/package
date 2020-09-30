@@ -2,19 +2,19 @@
 pkgname=remux
 pkgdesc="App launcher that supports multi-tasking applications"
 url=https://github.com/rmkit-dev/rmkit
-pkgver=0.0.1-17
-timestamp=2020-09-27T01:41+00:00
+pkgver=0.0.1-18
+timestamp=2020-09-29T01:41+00:00
 section=launchers
 maintainer="raisjn <of.rajsn@gmail.com>"
 license=MIT
 
 image=python:v1.1
 source=(
-    https://github.com/rmkit-dev/rmkit/archive/ebcee8f32a701bc34e1be4d9f8fde106743ab692.zip
+    https://github.com/rmkit-dev/rmkit/archive/e6180947b84bd226d8daf9543c272c4c88fbbdee.zip
     remux.service
 )
 sha256sums=(
-    f8e8fce8ef7ef968fda6b4d83fe0d8160534b1bdc808e5960422075f8c8754fe
+    ba50f8f4ed68c6f543f18f94b5f71e6e3f0554deb8070f3b31ac5809451c7ea8
     SKIP
 )
 
