@@ -46,14 +46,14 @@ EOF
     fi
 
     # Ensure this binary is used
-    if [ `which wget` != '/home/root/.cache/wget_bin/wget' ]; then
+    if [[ $(command -v wget) != /home/root/.cache/wget_bin/wget ]]; then
         PATH="/home/root/.cache/wget_bin:$PATH"
     fi
 }
 
 main() {
     # Allow changing the default branch
-    [ ! -z "$TOLTEC_BRANCH" ] || TOLTEC_BRANCH="stable"
+    [[ -n "$TOLTEC_BRANCH" ]] || TOLTEC_BRANCH="stable"
 
     # Select source for remarkable_entware repo
     if [ -z "$REMARKABLE_ENTWARE_REPO_AUTHOR" ]; then
@@ -64,7 +64,7 @@ main() {
 
     # Check status of installation and ensure installed
     if [ -d /home/root/.entware ]; then
-        if [ -d /opt ] && [ `ls /opt | wc -l` -gt 0 ]; then # non-empty /opt found
+        if [[ -d /opt ]] && files="$(ls -qA -- /opt)" && [[ -n $files ]]; then
             # Entware is installed and active
             log INFO "Entware is installed and active"
         else
@@ -86,7 +86,7 @@ main() {
     ensure_toltec_repo_added
 
     if [ $# -ge 1 ]; then
-        install_packages $@ || throw "Failed to install requested packages"
+        install_packages "$@" || throw "Failed to install requested packages"
     fi
 }
 
@@ -115,10 +115,10 @@ ensure_opkg_available_from_bashrc() {
 }
 
 ensure_opkg_available() {
-    if ! which opkg >/dev/null 2>&1; then # opkg command not found
+    if command -v opkg &> /dev/null; then # opkg command not found
         export PATH="/opt/bin/:/opt/sbin/:$PATH"
-        messages=`ensure_opkg_available_from_bashrc`
-        if [ ! -z "$messages" ]; then
+        messages="$(ensure_opkg_available_from_bashrc)"
+        if [[ -n $messages ]]; then
             echo "$messages" # Print the caught output
             log WARN "Please re-connect to your reMarkable after this" \
                      "script is finished. Otherwise opkg and other" \
@@ -141,12 +141,12 @@ ensure_toltec_repo_added() {
 ensure_opt_wget_and_ca_certs_installed() {
     # Those packages might miss if someone had already
     # installed entware before.
-    packages=""
-    [ -d /opt/etc/ssl/certs ] || packages="$packages ca-certificates"
-    [ -f /opt/bin/wget ] || packages="$packages wget"
+    packages=()
+    [ -d /opt/etc/ssl/certs ] || packages+=(ca-certificates)
+    [ -f /opt/bin/wget ] || packages+=(wget)
 
-    if [ ! -z "$packages" ]; then
-        opkg update && opkg install $packages || throw "Failed to install packages for better https support"
+    if [[ ${#packages[@]} -gt 0 ]]; then
+        opkg update && opkg install "${packages[@]}" || throw "Failed to install packages for better https support"
         log INFO "Installed missing recommended packages for better https support"
     fi
 }
@@ -157,10 +157,10 @@ install_packages() {
     if [ $# -eq 1 ]; then
         log INFO "Installing package: $1"
     else
-        log INFO "Installing packages: $@"
+        log INFO "Installing packages: $*"
     fi
 
-    opkg install $@
+    opkg install "$@"
 }
 
 log() {
@@ -197,4 +197,4 @@ throw() {
     exit 1
 }
 
-main $@
+main "$@"
