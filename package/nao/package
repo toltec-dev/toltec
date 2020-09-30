@@ -1,7 +1,7 @@
 # vim: set ft=sh:
 pkgname=nao
 pkgdesc="nao package manager"
-url=https://github.com/rmkit-dev/rmkit
+url="https://rmkit.dev/apps/nao"
 pkgver=0.0.1-15
 timestamp=2020-09-27T01:41+00:00
 section=utils
