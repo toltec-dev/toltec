@@ -119,6 +119,47 @@ rsecurl() {
     rcurl --proto '=https' "$@"
 }
 
+# Check that a field is defined with the required type
+#
+# If an error occurs, this function prints an error message and exits the
+# script immediately. If the third argument is not 'optional', it is an error
+# if the field is not defined. If the third argument is 'nonempty', it is an
+# error if the field is an empty string.
+#
+# Arguments:
+#
+# $1 - Name of the field
+# $2 - Expected type of the field, 'string', 'array' or 'map'
+# $3 (optional) - Either 'nonempty' or 'optional'
+check-field() {
+    local signature="$(declare -p "$1" 2>/dev/null)"
+    local vartype=undefined
+
+    if [[ $signature =~ ^declare\ -- ]]; then
+        vartype=string
+    elif [[ $signature =~ ^declare\ -a ]]; then
+        vartype=array
+    elif [[ $signature =~ ^declare\ -A ]]; then
+        vartype=map
+    fi
+
+    if [[ $vartype = undefined ]]; then
+        if [[ $3 = optional ]]; then
+            return 1
+        else
+            error "The '$1' variable is not defined"
+        fi
+    else
+        if [[ $vartype != $2 ]]; then
+            error "The '$1' variable should be of type '$2', not '$vartype'"
+        fi
+
+        if [[ $3 = nonempty ]] && [[ -z ${!1} ]]; then
+            error "The '$1' variable should not be empty"
+        fi
+    fi
+}
+
 # Load metadata and functions defined in a package recipe
 #
 # Arguments:
@@ -127,25 +168,24 @@ rsecurl() {
 load-recipe() {
     source "$1"/package
 
-    [[ -z $pkgname ]] && error "Missing or empty 'pkgname' field"
-    [[ -z $pkgdesc ]] && error "Missing or empty 'pkgdesc' field"
-    [[ -z $url ]] && error "Missing or empty 'url' field"
-    [[ -z $pkgver ]] && error "Missing or empty 'pkgver' field"
-    [[ -z $timestamp ]] && error "Missing or empty 'timestamp' field"
-    [[ -z $section ]] && error "Missing or empty 'section' variable"
-    [[ -z $maintainer ]] && error "Missing or empty 'maintainer' variable"
-    [[ -z $license ]] && error "Missing or empty 'license' variable"
-    [[ -z $arch ]] && arch=armv7-3.2
+    # Check fields types
+    check-field pkgname string nonempty
+    check-field pkgdesc string nonempty
+    check-field url string nonempty
+    check-field pkgver string nonempty
+    check-field timestamp string nonempty
+    check-field section string nonempty
+    check-field maintainer string nonempty
+    check-field license string nonempty
+    check-field depends array optional || depends=()
+    check-field conflicts array optional || conflicts=()
+    check-field arch string optional || arch=armv7-3.2
+    check-field image string optional || image=
+    check-field source array optional || source=()
+    check-field sha256sums array optional || sha256sums=()
 
-    [[ -z $source ]] && error "Missing or empty 'source' variable"
-    [[ -z $sha256sums ]] && error "Missing or empty 'sha256sums' variable"
-
-    return 0
-}
-
-# Dump metadata of a package recipe that is currently loaded
-dump-metadata() {
-    declare -p \
+    # Make fields read-only
+    readonly 2>/dev/null \
         pkgname \
         pkgdesc \
         url \
@@ -155,22 +195,54 @@ dump-metadata() {
         maintainer \
         license \
         depends \
-        arch \
         conflicts \
+        arch \
         image \
         source \
         sha256sums \
-    2>/dev/null || true
+    || true
+
+    # Check required functions
+    if ! declare -F package >/dev/null 2>&1; then
+        error "The 'package()' function is not defined"
+    fi
+
+    # Make defined functions read-only
+    readonly -f 2>/dev/null \
+        build \
+        package \
+        preinstall \
+        configure \
+        preremove \
+        postremove \
+        preupgrade \
+        postupgrade \
+    || true
 }
 
-# Generate the archive name of a package
-#
-# Arguments:
-#
-# $1 - Path to the package recipe
+# Dump metadata of the currently loaded package recipe
+dump-fields() {
+    declare -p 2>/dev/null \
+        pkgname \
+        pkgdesc \
+        url \
+        pkgver \
+        timestamp \
+        section \
+        maintainer \
+        license \
+        depends \
+        conflicts \
+        arch \
+        image \
+        source \
+        sha256sums \
+    || true
+}
+
+# Generate the archive name of the currently loaded package
 archive-name() {
-    (load-recipe "$1"
-     echo "${pkgname}_${pkgver}_${arch}.ipk")
+    echo "${pkgname}_${pkgver}_${arch}.ipk"
 }
 
 # Get the full tag of a Docker image
