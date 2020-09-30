@@ -7,7 +7,7 @@ timestamp=2020-09-27T01:41+00:00
 section=utils
 maintainer="raisjn <of.raisjn@gmail.com>"
 license=MIT
-conflicts=rmkit
+conflicts=(rmkit)
 
 image=python:v1.1
 source=(https://github.com/rmkit-dev/rmkit/archive/ebcee8f32a701bc34e1be4d9f8fde106743ab692.zip)

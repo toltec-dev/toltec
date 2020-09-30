@@ -5,9 +5,9 @@ url=https://github.com/rmkit-dev/rmkit
 pkgver=0.0.1-14
 timestamp=2020-09-21T01:41+00:00
 section=games
-conflicts=rmkit
 maintainer="raisjn <of.raisjn@gmail.com>"
 license=MIT
+conflicts=(rmkit)
 
 image=python:v1.1
 source=(https://github.com/rmkit-dev/rmkit/archive/d3ebde163c2d50fe9258142e2d190710a58eb954.zip)

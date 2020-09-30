@@ -107,12 +107,12 @@ if [[ -n $image ]]; then
         --mount type=bind,src="$(realpath "$recipedir")",dst=/recipe \
         --mount type=bind,src="$(realpath "$srcdir")",dst=/src \
         "$(image-name "$image")" /bin/bash \
-    <<CMDS
-        source /recipe/package
-        cd /src
-        build
-        chown -R $(id -u):$(id -u) /src/
-CMDS
+    <<SCRIPT
+source /recipe/package
+cd /src
+build
+chown -R $(id -u):$(id -u) /src/
+SCRIPT
 fi
 
 # Run packaging script
@@ -146,7 +146,7 @@ maintainer-script-header() {
 #!/usr/bin/env bash
 set -e
 SCRIPT
-    dump-metadata
+    dump-fields
     cat scripts/install-lib
 }
 
@@ -211,7 +211,7 @@ section "Creating archives"
 pkgar="$ardir"/data.tar.gz
 ctlar="$ardir"/control.tar.gz
 versionar="$ardir"/debian-binary
-arar="$workdir/$(archive-name "$recipedir")"
+arar="$workdir/$(archive-name)"
 
 echo "2.0" >> "$versionar"
 rtar "$pkgar" "$pkgdir"
