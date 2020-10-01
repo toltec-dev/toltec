@@ -6,6 +6,13 @@
 # Install and configure Opkg for use with Entware and Toltec
 #
 
+cleanup() {
+  if [ -d /home/root/.cache/wget_bin ]; then
+    rm -r /home/root/.cache/wget_bin && \
+        log DEBUG "Removed wget binary cache"
+  fi
+}
+
 bootstrap_wget() {
     if [ ! -d /home/root/.cache/wget_bin ]
     then
@@ -86,6 +93,8 @@ main() {
     if [ $# -ge 1 ]; then
         install_packages "$@" || throw "Failed to install requested packages"
     fi
+    
+    cleanup
 }
 
 entware_install() {
@@ -194,6 +203,7 @@ throw() {
         "https://github.com/toltec-dev/toltec/issues" \
         "(Please also include these error logs to help solving the" \
         "problem faster. Thank you!)"
+    cleanup
     exit 1
 }
 
