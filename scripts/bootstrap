@@ -13,13 +13,13 @@ bootstrap_wget() {
             "to /home/root/.cache/wget_bin/ for this installation..." \
             ""
         # Bootstrap a current version of wget
-        WGET_BINARIES_PATH='http://github.com/LinusCDE/wget-remarkable-pipeline/releases/download/job254'
-        WGET_BINARIES_FILENAME='wget-remarkable-pipeline_job245_wget1.20.3.zip'
-        WGET_BINARIES_SHA256='84185a5934e34e25794d439c78dc9f1590e4df12fbf369236f6a8749bf14d67f'
+        local wget_binaries_path='http://github.com/LinusCDE/wget-remarkable-pipeline/releases/download/job254'
+        local wget_binaries_filename='wget-remarkable-pipeline_job245_wget1.20.3.zip'
+        local wget_binaries_sha256='84185a5934e34e25794d439c78dc9f1590e4df12fbf369236f6a8749bf14d67f'
 
         # Download and compare to hash
-        wget "$WGET_BINARIES_PATH/$WGET_BINARIES_FILENAME" -O "/home/root/$WGET_BINARIES_FILENAME"
-        if ! echo "$WGET_BINARIES_SHA256  /home/root/$WGET_BINARIES_FILENAME" | sha256sum -c -
+        wget "$wget_binaries_path/$wget_binaries_filename" -O "/home/root/$wget_binaries_filename"
+        if ! echo "$wget_binaries_sha256  /home/root/$wget_binaries_filename" | sha256sum -c -
         then
             echo "FATAL: Invalid hash" >&2
             exit 1
@@ -34,8 +34,8 @@ bootstrap_wget() {
         fi
 
         # Unzip to /home/root/.cache/wget_bin and remove downloaded file
-        unzip "/home/root/$WGET_BINARIES_FILENAME" -d /home/root/.cache/wget_bin -q
-        rm "/home/root/$WGET_BINARIES_FILENAME"
+        unzip "/home/root/$wget_binaries_filename" -d /home/root/.cache/wget_bin -q
+        rm "/home/root/$wget_binaries_filename"
 
         cat > /home/root/.cache/wget_bin/wget <<EOF
 #!/bin/sh
@@ -117,7 +117,7 @@ ensure_opkg_available_from_bashrc() {
 ensure_opkg_available() {
     if command -v opkg &> /dev/null; then # opkg command not found
         export PATH="/opt/bin/:/opt/sbin/:$PATH"
-        messages="$(ensure_opkg_available_from_bashrc)"
+        local messages="$(ensure_opkg_available_from_bashrc)"
         if [[ -n $messages ]]; then
             echo "$messages" # Print the caught output
             log WARN "Please re-connect to your reMarkable after this" \
@@ -141,7 +141,7 @@ ensure_toltec_repo_added() {
 ensure_opt_wget_and_ca_certs_installed() {
     # Those packages might miss if someone had already
     # installed entware before.
-    packages=()
+    local packages=()
     [ -d /opt/etc/ssl/certs ] || packages+=(ca-certificates)
     [ -f /opt/bin/wget ] || packages+=(wget)
 
@@ -166,8 +166,9 @@ install_packages() {
 log() {
     [ $# -ge 2 ] || throw "log() invalid usage: at least 2 parameters needed. Usage: log <type> <message_line>..."
 
-    log_type="$1"
-    fd=1 # To stdout
+    local log_type="$1"
+    local fd=1 # To stdout
+    local colored_prefix
 
     case "$log_type" in
         'info'  | 'INFO'  | 'Info' ) colored_prefix='\e[32mINFO:\e[0m  ';;
@@ -180,6 +181,7 @@ log() {
     echo -e "${colored_prefix}$2" >&$fd
     # Extra lines to print indented
     shift 2
+    local line
     for line in "$@"; do
         echo -e "       $line" >&$fd
     done
