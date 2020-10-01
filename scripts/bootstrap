@@ -9,6 +9,10 @@
 bootstrap_wget() {
     if [ ! -d /home/root/.cache/wget_bin ]
     then
+        if [ -e /home/root/.cache/wget_bin ]; then
+          log FATAL '"/home/root/.cache/wget_bin" exists, but is not a directory!'
+	fi
+	
         log INFO "Installing a current wget binary with better and current tls support" \
             "to /home/root/.cache/wget_bin/ for this installation..." \
             ""
@@ -25,13 +29,7 @@ bootstrap_wget() {
             exit 1
         fi
 
-        # Ensure to /home/root/.cache/wget_bin exists and is empty
-        if [ -d /home/root/.cache/wget_bin ]
-        then
-            rm -rf /home/root/.cache/wget_bin/*
-        else
-            mkdir -p /home/root/.cache/wget_bin
-        fi
+	mkdir -p /home/root/.cache/wget_bin
 
         # Unzip to /home/root/.cache/wget_bin and remove downloaded file
         unzip "/home/root/$wget_binaries_filename" -d /home/root/.cache/wget_bin -q
