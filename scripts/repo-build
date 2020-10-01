@@ -71,7 +71,7 @@ for recipedir in "$recipesdir"/*; do
         arname="$(archive-name)"
         section "Building $pkgname $pkgver"
 
-        if [[ -n $forceflag ]] || ! rsecurl --remote-time "$remoterepo"/"$arname" -o "$repodir"/"$arname"; then
+        if [[ -n $forceflag ]] || ! curlcheck --remote-time "$remoterepo"/"$arname" -o "$repodir"/"$arname"; then
             pkgworkdir="$pkgsworkdir"/"$pkgname"
             "${BASH_SOURCE%/*}"/package-build "$recipedir" "$pkgworkdir"
             mv "$pkgworkdir"/*.ipk "$repodir"

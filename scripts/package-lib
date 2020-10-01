@@ -119,6 +119,18 @@ rsecurl() {
     rcurl --proto '=https' "$@"
 }
 
+# checks if a file exists by issuing HEAD request
+# this avoids downloading the request body
+curlcheck() {
+    response=$(curl -n --silent -X HEAD "$@" --write-out "\n%{http_code}\n" -D /dev/null)
+    status_code=$(echo "$response" | sed -n '$p')
+    if [[ ${status_code} -eq "200" ]]; then
+      return 0
+    fi
+
+    return 1
+}
+
 # Check that a field is defined with the required type
 #
 # If an error occurs, this function prints an error message and exits the
