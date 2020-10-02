@@ -240,9 +240,12 @@ dump-fields() {
     || true
 }
 
-# Generate the archive name of the currently loaded package
-archive-name() {
-    echo "${pkgname}_${pkgver}_${arch}.ipk"
+# Generate a ID for the currently loaded package recipe
+#
+# This name uniquely identifies the current version and target architecture
+# of the package recipe. It is used to name the resulting package.
+package-id() {
+    echo "${pkgname}_${pkgver}_${arch}"
 }
 
 # Get the full tag of a Docker image
