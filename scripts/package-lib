@@ -240,7 +240,7 @@ dump-fields() {
     || true
 }
 
-# Generate a ID for the currently loaded package recipe
+# Generate an ID for the currently loaded package recipe
 #
 # This name uniquely identifies the current version and target architecture
 # of the package recipe. It is used to name the resulting package.
