@@ -77,7 +77,7 @@ for recipedir in "$recipesdir"/*; do
                 scripts/package-build "$recipedir" "$workdir"
                 cp "$workdir"/"$pkgid"/"$pkgid".ipk "$repodir"
             else
-                status "Reusing $pkgid from $remoterepo"
+                section "Reusing $pkgid from $remoterepo"
             fi
         fi
     )
