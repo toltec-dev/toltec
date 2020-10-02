@@ -49,7 +49,7 @@ fi
 remoterepo="https://toltec.delab.re/testing"
 
 if [[ $# -eq 4 ]]; then
-    remoterepo="$3"
+    remoterepo="$4"
 fi
 
 if [[ $# -gt 4 ]]; then
