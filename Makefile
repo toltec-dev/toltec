@@ -8,7 +8,7 @@ Available targets:
     repo            Build the repository and reuse archives from the remote
                     repository for existing package versions.
     repo-local      Build the repository without using existing archives from
-		    the remote repository.
+                    the remote repository.
     repo-check      Compare the local repository to the remote one.
     RECIPE          Build any package individually.
     RECIPE-push     Push any built package to .cache/opkg on the reMarkable.
