@@ -47,7 +47,7 @@ workdir="$2"
 pkgsworkdir="$workdir"/
 mkdir -p "$pkgsworkdir"
 
-cat > "${pkgsworkdir}/index.html" << WEBS
+cat >"${pkgsworkdir}/index.html" <<WEBS
 <html>
 <head>
 <meta charset="utf-8">
@@ -100,17 +100,15 @@ for recipedir in "$recipesdir"/*; do
         status "Adding table entry for $pkgname $pkgver"
 
         pkgworkdir="$pkgsworkdir"/"$pkgname"
-        if [ -z "${url}" ]; then
-          href="${url}";
+        if [[ -z "${url}" ]]; then
+            href="${url}"
         else
-          href="<a target='_new' href='${url}'>${pkgname}</a>"
+            href="<a target='_new' href='${url}'>${pkgname}</a>"
         fi
 
-cat >> "${workdir}/index.html" <<WEBS
+        cat >>"${workdir}/index.html" <<WEBS
 <tr>
-  <td>
-    ${href}
-  </td>
+  <td>${href}</td>
   <td>${pkgdesc}</td>
   <td>${pkgver}</td>
   <td>${section}</td>
@@ -121,7 +119,7 @@ WEBS
 
 done
 
-cat >> "${pkgsworkdir}/index.html" << WEBS
+cat >>"${pkgsworkdir}/index.html" <<WEBS
 </table>
 </body>
 </html>
