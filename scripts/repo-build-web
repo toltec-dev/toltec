@@ -15,7 +15,7 @@ Options:
 
 helpflag=
 
-while getopts hf name; do
+while getopts h name; do
     case $name in
         h) helpflag=1 ;;
         *) error "Invalid option. Use the -h flag for more information." ;;
