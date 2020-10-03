@@ -1,6 +1,6 @@
 # vim: set ft=sh:
 pkgname=nao
-pkgdesc="nao package manager"
+pkgdesc="Nao Package Manager: opkg UI built with SAS"
 url="https://rmkit.dev/apps/nao"
 pkgver=0.0.1-15
 timestamp=2020-09-27T01:41+00:00

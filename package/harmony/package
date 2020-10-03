@@ -1,6 +1,6 @@
 # vim: set ft=sh:
 pkgname=harmony
-pkgdesc="harmony sketching app"
+pkgdesc="Procedural sketching app"
 url="https://rmkit.dev/apps/harmony"
 pkgver=0.0.1-14
 timestamp=2020-09-21T01:41+00:00

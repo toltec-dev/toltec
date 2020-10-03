@@ -1,6 +1,6 @@
 # vim: set ft=sh:
 pkgname=simple
-pkgdesc="simple app script"
+pkgdesc="Simple app script for writing scripted applications"
 url="https://rmkit.dev/apps/sas"
 pkgver=0.0.1-15
 timestamp=2020-09-27T01:41+00:00
