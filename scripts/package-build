@@ -6,7 +6,7 @@ source scripts/package-lib
 usage="$0 [OPTION]... RECIPEDIR WORKDIR
 
 Build a package following the recipe defined in RECIPEDIR.
-The WORKDIR must be a non-existent directory in which the build is performed.
+The build is carried out in subdirectories of WORKDIR.
 
 Arguments:
 
@@ -43,25 +43,28 @@ fi
 recipedir="$1"
 workdir="$2"
 
-# Create working directories
-[[ -d $workdir ]] && files="$(ls -qA -- "$workdir")" && [[ -n $files ]] \
-    && error "Working directory '$workdir' exists and is not empty"
-mkdir -p "$workdir"
-
-srcdir="$workdir"/src
-mkdir "$srcdir"
-
-pkgdir="$workdir"/pkg
-mkdir "$pkgdir"
-
-ctldir="$workdir"/control
-mkdir "$ctldir"
-
-ardir="$workdir"/ar
-mkdir "$ardir"
-
 # Load package info and script
 load-recipe "$recipedir"
+
+pkgid="$(package-id)"
+worksubdir="$workdir"/"$pkgid"
+
+# Create working directories
+[[ -d $worksubdir ]] && files="$(ls -qA -- "$worksubdir")" && [[ -n $files ]] \
+    && error "Working directory '$worksubdir' exists and is not empty"
+mkdir -p "$worksubdir"
+
+srcdir="$worksubdir"/src
+mkdir "$srcdir"
+
+pkgdir="$worksubdir"/pkg
+mkdir "$pkgdir"
+
+ctldir="$worksubdir"/control
+mkdir "$ctldir"
+
+ardir="$worksubdir"/ar
+mkdir "$ardir"
 
 # Use the declared timestamp as SOURCE_DATE_EPOCH
 # See <https://reproducible-builds.org/docs/source-date-epoch/>
@@ -211,7 +214,7 @@ section "Creating archives"
 pkgar="$ardir"/data.tar.gz
 ctlar="$ardir"/control.tar.gz
 versionar="$ardir"/debian-binary
-arar="$workdir/$(archive-name)"
+arar="$worksubdir/$pkgid.ipk"
 
 echo "2.0" >> "$versionar"
 rtar "$pkgar" "$pkgdir"
