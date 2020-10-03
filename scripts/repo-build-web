@@ -3,17 +3,15 @@
 set -e
 source scripts/package-lib
 
-usage="$0 [OPTION]... RECIPESDIR WORKDIR [REMOTEREPO]
+usage="$0 [OPTION]... RECIPESDIR WORKDIR
 
-Build new or updated packages defined in RECIPESDIR and create a package index.
+Builds the package listing as a webpage
+
 The WORKDIR must be a non-existent directory in which the builds are performed.
-If REMOTEREPO is omitted 'https://toltec.delab.re/testing' is used.
 
 Options:
 
-    -h              Show this help message.
-    -f              Force building all the packages, even those for which
-                    an already built version exists on the remote."
+    -h              Show this help message."
 
 helpflag=
 
@@ -52,6 +50,7 @@ mkdir -p "$pkgsworkdir"
 cat > "${pkgsworkdir}/index.html" << WEBS
 <html>
 <head>
+<meta charset="utf-8">
 <style>
   body {
     font-family: monospace;
@@ -85,18 +84,20 @@ cat > "${pkgsworkdir}/index.html" << WEBS
 <h1>Toltec Package Listing</h1>
 <table>
 
-<thead> <th>Name</th> <th>Description</th> <th>Version</th> <th>Category</th> <th>License</th> </thead>
+<thead> <tr>
+  <th>Name</th> <th>Description</th> <th>Version</th> <th>Category</th> <th>License</th>
+</tr></thead>
 WEBS
 
 # Build packages index
-section "Making packages index", "${pkgsworkdir}/index.html"
+section "Making packages index ${pkgsworkdir}/index.html"
 
 # Build each package or get it from the remote server
 for recipedir in "$recipesdir"/*; do
     (
         load-recipe "$recipedir"
 
-        section "Adding table entry for $pkgname $pkgver"
+        status "Adding table entry for $pkgname $pkgver"
 
         pkgworkdir="$pkgsworkdir"/"$pkgname"
         if [ -z "${url}" ]; then
@@ -113,7 +114,7 @@ cat >> "${workdir}/index.html" <<WEBS
   <td>${pkgdesc}</td>
   <td>${pkgver}</td>
   <td>${section}</td>
-  <td>${license}</td>
+  <td><a href='https://spdx.org/licenses/$license.html'>${license}</a></td>
 </tr>
 WEBS
     )

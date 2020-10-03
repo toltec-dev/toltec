@@ -1,7 +1,7 @@
 # vim: set ft=sh:
 pkgname=minesweeper
 pkgdesc="Mine detection game"
-url=https://github.com/rmkit-dev/rmkit
+url=https://rmkit.dev/apps/minesweeper
 pkgver=0.0.1-14
 timestamp=2020-09-21T01:41+00:00
 section=games

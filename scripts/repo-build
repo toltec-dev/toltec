@@ -92,8 +92,8 @@ touch --no-dereference --date="@$lastcommitdate" \
     "$repodir"/Packages.gz \
     "$repodir"/Packages.stamps
 
-section "Done. Result is in $repodir"
 
 section "Making packages web listing"
-echo "${BASH_SOURCE%/*}"/repo-build-web "$recipesdir" "$repodir"
-"${BASH_SOURCE%/*}"/repo-build-web "$recipesdir" "$repodir"
+scripts/repo-build-web "$recipesdir" "$repodir"
+
+section "Done. Result is in $repodir"
