@@ -1,0 +1,27 @@
+# vim: set ft=sh:
+pkgname=retris
+pkgdesc="Tetris game"
+url=https://github.com/LinusCDE/retris
+pkgver=0.5.8-2
+timestamp=2020-09-21T17:59Z
+section=games
+maintainer="Linus K. <linus@cosmos-ink.net>"
+license=MIT
+
+image=rust:v1.1
+source=(https://github.com/LinusCDE/retris/archive/0.5.8-1.zip)
+sha256sums=(6a892cea5e0cabed94c8bc4e960314ec2af992a37ea419e5ec3e7c533bc9474b)
+
+build() {
+    # Fall back to system-wide config
+    rm .cargo/config
+
+    cargo build --release
+    arm-linux-gnueabihf-strip target/armv7-unknown-linux-gnueabihf/release/retris
+}
+
+package() {
+    install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/target/armv7-unknown-linux-gnueabihf/release/retris
+    install -D -m 644 "$srcdir"/oxide "$pkgdir"/opt/etc/draft/retris
+    install -D -m 644 "$srcdir"/icon.png "$pkgdir"/opt/etc/draft/icons/retris.png
+}

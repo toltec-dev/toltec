@@ -1,0 +1,27 @@
+# vim: set ft=sh:
+pkgname=minesweeper
+pkgdesc="Mine detection game"
+url=https://rmkit.dev/apps/minesweeper
+pkgver=0.0.1-14
+timestamp=2020-09-21T01:41+00:00
+section=games
+maintainer="raisjn <of.raisjn@gmail.com>"
+license=MIT
+conflicts=(rmkit)
+
+image=python:v1.1
+source=(https://github.com/rmkit-dev/rmkit/archive/d3ebde163c2d50fe9258142e2d190710a58eb954.zip)
+sha256sums=(157ad36bc6b345763a504b6d491a47bc3aecc828a99b1bf9fd42dab980f158a4)
+
+build() {
+    pip3 install okp
+    make -j$(nproc) minesweeper
+}
+
+package() {
+    install -d "$pkgdir"/opt/bin
+    install -D -m 755 "$srcdir"/src/build/mines "$pkgdir"/opt/bin/mines
+
+    mkdir -p "$pkgdir"/opt/etc/draft/
+    install -D -m 644 "$srcdir"/src/minesweeper/mines.draft "$pkgdir"/opt/etc/draft/mines.draft
+}

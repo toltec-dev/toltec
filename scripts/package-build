@@ -1,0 +1,227 @@
+#!/usr/bin/env bash
+
+set -e
+source scripts/package-lib
+
+usage="$0 [OPTION]... RECIPEDIR WORKDIR
+
+Build a package following the recipe defined in RECIPEDIR.
+The build is carried out in subdirectories of WORKDIR.
+
+Arguments:
+
+    -h              Show this help message."
+
+helpflag=
+
+while getopts h name; do
+    case $name in
+        h) helpflag=1 ;;
+        *) error "Invalid option. Use the -h flag for more information." ;;
+    esac
+done
+
+shift $((OPTIND - 1))
+
+if [[ -n $helpflag ]]; then
+    echo "$usage"
+    exit
+fi
+
+if [[ $# -eq 0 ]]; then
+    error "Missing RECIPEDIR and WORKDIR arguments. Use the -h flag for more information."
+fi
+
+if [[ $# -eq 1 ]]; then
+    error "Missing WORKDIR argument. Use the -h flag for more information."
+fi
+
+if [[ $# -gt 2 ]]; then
+    error "Extraneous arguments. Use the -h flag for more information."
+fi
+
+recipedir="$1"
+workdir="$2"
+
+# Load package info and script
+load-recipe "$recipedir"
+
+pkgid="$(package-id)"
+worksubdir="$workdir"/"$pkgid"
+
+# Create working directories
+[[ -d $worksubdir ]] && files="$(ls -qA -- "$worksubdir")" && [[ -n $files ]] \
+    && error "Working directory '$worksubdir' exists and is not empty"
+mkdir -p "$worksubdir"
+
+srcdir="$worksubdir"/src
+mkdir "$srcdir"
+
+pkgdir="$worksubdir"/pkg
+mkdir "$pkgdir"
+
+ctldir="$worksubdir"/control
+mkdir "$ctldir"
+
+ardir="$worksubdir"/ar
+mkdir "$ardir"
+
+# Use the declared timestamp as SOURCE_DATE_EPOCH
+# See <https://reproducible-builds.org/docs/source-date-epoch/>
+SOURCE_DATE_EPOCH="$(date --date="$timestamp" +%s)"
+export SOURCE_DATE_EPOCH
+
+# Fetch source files
+section "Fetching source files"
+
+for (( i=0; i < ${#source[@]}; ++i )); do
+    srcurl="${source[i]}"
+    checksum="${sha256sums[i]}"
+
+    if [[ ! $srcurl =~ ^[[:lower:]]+:// ]]; then
+        srcurl="file://$(realpath "$recipedir"/"$srcurl")"
+    fi
+
+    srcfile="$(basename "$srcurl")"
+    status "$srcfile"
+
+    rcurl --location "$srcurl" -o "$srcdir"/"$srcfile"
+
+    if [[ $checksum != SKIP ]] && \
+            ! sha256sum -c <(echo "$checksum $srcdir/$srcfile") > /dev/null 2>&1; then
+        error "Checksum mismatch while fetching $srcfile"
+    fi
+
+    if [[ $srcdir/$srcfile =~ \.(zip|tar\.gz)$ ]]; then
+        bsdtar -x \
+            --strip-components 1 \
+            --directory "$srcdir" \
+            --file "$srcdir"/"$srcfile"
+    fi
+done
+
+# Set atime and mtime to the SOURCE_DATE_EPOCH for all source files
+find "$srcdir" -exec touch --no-dereference --date="@${SOURCE_DATE_EPOCH}" {} +
+
+# Run build script inside a Docker container
+if [[ -n $image ]]; then
+    section "Building binaries"
+    docker container run --interactive --rm \
+        --mount type=bind,src="$(realpath "$recipedir")",dst=/recipe \
+        --mount type=bind,src="$(realpath "$srcdir")",dst=/src \
+        "$(image-name "$image")" /bin/bash \
+    <<SCRIPT
+source /recipe/package
+cd /src
+build
+chown -R $(id -u):$(id -u) /src/
+SCRIPT
+fi
+
+# Run packaging script
+section "Preparing package files"
+package
+
+# Show package contents
+if command -v tree &> /dev/null; then
+    tree -np "$pkgdir" | tail +2
+fi
+
+# Create control file
+ctlfile="$ctldir"/control
+
+{
+    echo "Package: $pkgname"
+    echo "Description: $pkgdesc"
+    echo "Homepage: $url"
+    echo "Version: $pkgver"
+    echo "Section: $section"
+    echo "Maintainer: $maintainer"
+    echo "License: $license"
+    echo "Architecture: $arch"
+    [[ -n $depends ]] && echo "Depends: $depends"
+    [[ -n $conflicts ]] && echo "Conflicts: $conflicts"
+} >> "$ctlfile"
+
+# Create maintainer scripts
+maintainer-script-header() {
+    cat <<'SCRIPT'
+#!/usr/bin/env bash
+set -e
+SCRIPT
+    dump-fields
+    cat scripts/install-lib
+}
+
+# Generate preinst
+if [[ $(type -t preinstall) = function ]]; then
+    {
+        maintainer-script-header
+        declare -f preinstall
+        cat <<'SCRIPT'
+if [[ $1 = install ]]; then
+    preinstall
+fi
+SCRIPT
+    } >> "$ctldir"/preinst
+    chmod 755 "$ctldir"/preinst
+fi
+
+# Generate postinst
+if [[ $(type -t configure) = function ]]; then
+    {
+        maintainer-script-header
+        declare -f configure
+        cat <<'SCRIPT'
+if [[ $1 = configure ]]; then
+    configure
+fi
+SCRIPT
+    } >> "$ctldir"/postinst
+    chmod 755 "$ctldir"/postinst
+fi
+
+# Generate {pre,post}rm
+for step in pre post; do
+    if [[ $(type -t "$step"upgrade) = function ]] || [[ $(type -t "$step"remove) = function ]]; then
+        {
+            maintainer-script-header
+
+            if [[ $(type -t "$step"upgrade) = function ]]; then
+                declare -f "$step"upgrade
+                cat <<SCRIPT
+if [[ \$1 = upgrade ]]; then
+    "$step"upgrade
+fi
+SCRIPT
+            fi
+
+            if [[ $(type -t "$step"remove) = function ]]; then
+                declare -f "$step"remove
+                cat <<SCRIPT
+if [[ \$1 = remove ]]; then
+    "$step"remove "\$2"
+fi
+SCRIPT
+            fi
+        } >> "$ctldir"/"$step"rm
+        chmod 755 "$ctldir"/"$step"rm
+    fi
+done
+
+# Create archives
+section "Creating archives"
+pkgar="$ardir"/data.tar.gz
+ctlar="$ardir"/control.tar.gz
+versionar="$ardir"/debian-binary
+arar="$worksubdir/$pkgid.ipk"
+
+echo "2.0" >> "$versionar"
+rtar "$pkgar" "$pkgdir"
+rtar "$ctlar" "$ctldir"
+rtar "$arar" "$ardir"
+
+# Set atime and mtime to the SOURCE_DATE_EPOCH for the final archive
+touch --no-dereference --date="@$SOURCE_DATE_EPOCH" "$arar"
+
+section "Done. Result is in $arar"

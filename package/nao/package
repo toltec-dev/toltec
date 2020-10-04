@@ -1,0 +1,29 @@
+# vim: set ft=sh:
+pkgname=nao
+pkgdesc="Nao Package Manager: opkg UI built with SAS"
+url="https://rmkit.dev/apps/nao"
+pkgver=0.0.1-15
+timestamp=2020-09-27T01:41+00:00
+section=utils
+maintainer="raisjn <of.raisjn@gmail.com>"
+license=MIT
+depends=(simple)
+conflicts=(rmkit)
+
+image=python:v1.1
+source=(https://github.com/rmkit-dev/rmkit/archive/ebcee8f32a701bc34e1be4d9f8fde106743ab692.zip)
+sha256sums=(f8e8fce8ef7ef968fda6b4d83fe0d8160534b1bdc808e5960422075f8c8754fe)
+
+build() {
+    pip3 install okp
+    make -j$(nproc) nao
+}
+
+package() {
+    install -d "$pkgdir"/opt/bin
+
+    install -D -m 755 "$srcdir"/src/build/nao.sh "$pkgdir"/opt/bin/nao
+
+    mkdir -p "$pkgdir"/opt/etc/draft/
+    install -D -m 644 "$srcdir"/src/nao/nao.draft "$pkgdir"/opt/etc/draft/nao.draft
+}
