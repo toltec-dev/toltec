@@ -7,19 +7,18 @@
 #
 
 cleanup() {
-  if [ -d /home/root/.cache/wget_bin ]; then
-    rm -r /home/root/.cache/wget_bin && \
-        log DEBUG "Removed wget binary cache"
-  fi
+    if [ -d /home/root/.cache/wget_bin ]; then
+        rm -r /home/root/.cache/wget_bin \
+            && log DEBUG "Removed wget binary cache"
+    fi
 }
 
 bootstrap_wget() {
-    if [ ! -d /home/root/.cache/wget_bin ]
-    then
+    if [ ! -d /home/root/.cache/wget_bin ]; then
         if [ -e /home/root/.cache/wget_bin ]; then
-          log FATAL '"/home/root/.cache/wget_bin" exists, but is not a directory!'
-	fi
-	
+            log FATAL '"/home/root/.cache/wget_bin" exists, but is not a directory!'
+        fi
+
         log INFO "Installing a current wget binary with better and current tls support" \
             "to /home/root/.cache/wget_bin/ for this installation..." \
             ""
@@ -30,19 +29,18 @@ bootstrap_wget() {
 
         # Download and compare to hash
         wget "$wget_binaries_path/$wget_binaries_filename" -O "/home/root/$wget_binaries_filename"
-        if ! echo "$wget_binaries_sha256  /home/root/$wget_binaries_filename" | sha256sum -c -
-        then
+        if ! echo "$wget_binaries_sha256  /home/root/$wget_binaries_filename" | sha256sum -c -; then
             echo "FATAL: Invalid hash" >&2
             exit 1
         fi
 
-	mkdir -p /home/root/.cache/wget_bin
+        mkdir -p /home/root/.cache/wget_bin
 
         # Unzip to /home/root/.cache/wget_bin and remove downloaded file
         unzip "/home/root/$wget_binaries_filename" -d /home/root/.cache/wget_bin -q
         rm "/home/root/$wget_binaries_filename"
 
-        cat > /home/root/.cache/wget_bin/wget <<EOF
+        cat > /home/root/.cache/wget_bin/wget << EOF
 #!/bin/sh
 LD_LIBRARY_PATH="/home/root/.cache/wget_bin/dist" /home/root/.cache/wget_bin/dist/wget \$@
 EOF
@@ -93,7 +91,7 @@ main() {
     if [ $# -ge 1 ]; then
         install_packages "$@" || throw "Failed to install requested packages"
     fi
-    
+
     cleanup
 }
 
@@ -113,23 +111,27 @@ entware_reenable() {
 
 ensure_opkg_available_from_bashrc() {
     # Run by ensure_opkg_available
-    if ! grep '.*PATH=.*/opt/bin.*' /home/root/.bashrc | grep -v '^#' >/dev/null; then
+    if ! grep '.*PATH=.*/opt/bin.*' /home/root/.bashrc | grep -v '^#' > /dev/null; then
         # Path is not in .bashrc
         echo -e '\n# Path added by bootstrap.sh' >> /home/root/.bashrc
-        echo 'PATH="/opt/bin:/opt/sbin:$PATH"' >> /home/root/.bashrc
-        log WARN '/opt/bin and /opt/sbin were not added to $PATH in ~/.bashrc. Fixed automatically.'
+        # shellcheck disable=SC2016
+        {
+            echo 'PATH="/opt/bin:/opt/sbin:$PATH"' >> /home/root/.bashrc
+            log WARN '/opt/bin and /opt/sbin were not added to $PATH in ~/.bashrc. Fixed automatically.'
+        }
     fi
 }
 
 ensure_opkg_available() {
     if command -v opkg &> /dev/null; then # opkg command not found
         export PATH="/opt/bin/:/opt/sbin/:$PATH"
-        local messages="$(ensure_opkg_available_from_bashrc)"
+        local messages
+        messages="$(ensure_opkg_available_from_bashrc)"
         if [[ -n $messages ]]; then
             echo "$messages" # Print the caught output
             log WARN "Please re-connect to your reMarkable after this" \
-                     "script is finished. Otherwise opkg and other" \
-                     "installed binaries won't be recognized!"
+                "script is finished. Otherwise opkg and other" \
+                "installed binaries won't be recognized!"
         fi
     else
         ensure_opkg_available_from_bashrc
@@ -137,7 +139,7 @@ ensure_opkg_available() {
 }
 
 ensure_toltec_repo_added() {
-    if ! grep "^src/gz\b.*\bhttps://toltec\.delab\.re/" /opt/etc/opkg.conf >/dev/null 2>&1; then
+    if ! grep "^src/gz\b.*\bhttps://toltec\.delab\.re/" /opt/etc/opkg.conf > /dev/null 2>&1; then
         # No active toltec repo found in opkg.conf
         echo "src/gz toltec https://toltec.delab.re/$TOLTEC_BRANCH" >> /opt/etc/opkg.conf
         opkg update || throw "Failed to update opkg after adding toltec $TOLTEC_BRANCH repo"
@@ -153,7 +155,9 @@ ensure_opt_wget_and_ca_certs_installed() {
     [ -f /opt/bin/wget ] || packages+=(wget)
 
     if [[ ${#packages[@]} -gt 0 ]]; then
-        opkg update && opkg install "${packages[@]}" || throw "Failed to install packages for better https support"
+        if ! opkg update || ! opkg install "${packages[@]}"; then
+            throw "Failed to install packages for better https support"
+        fi
         log INFO "Installed missing recommended packages for better https support"
     fi
 }
@@ -178,11 +182,17 @@ log() {
     local colored_prefix
 
     case "$log_type" in
-        'info'  | 'INFO'  | 'Info' ) colored_prefix='\e[32mINFO:\e[0m  ';;
-        'warn'  | 'WARN'  | 'Warn' ) colored_prefix='\e[33mWARN:\e[0m  ';;
-        'error' | 'ERROR' | 'Error') colored_prefix='\e[31mERROR:\e[0m '; fd=2;;
-        'fatal' | 'FATAL' | 'Fatal') colored_prefix='\e[31mFATAL:\e[0m '; fd=2;;
-        * ) throw "log() invalid usage: Unknown type: $log_type";;
+        'info' | 'INFO' | 'Info') colored_prefix='\e[32mINFO:\e[0m  ' ;;
+        'warn' | 'WARN' | 'Warn') colored_prefix='\e[33mWARN:\e[0m  ' ;;
+        'error' | 'ERROR' | 'Error')
+            colored_prefix='\e[31mERROR:\e[0m '
+            fd=2
+            ;;
+        'fatal' | 'FATAL' | 'Fatal')
+            colored_prefix='\e[31mFATAL:\e[0m '
+            fd=2
+            ;;
+        *) throw "log() invalid usage: Unknown type: $log_type" ;;
     esac
 
     echo -e "${colored_prefix}$2" >&$fd
