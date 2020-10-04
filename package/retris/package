@@ -1,4 +1,4 @@
-# vim: set ft=sh:
+#!/usr/bin/env bash
 pkgname=retris
 pkgdesc="Tetris game"
 url=https://github.com/LinusCDE/retris

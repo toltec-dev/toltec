@@ -1,0 +1,24 @@
+# Style guide for Toltec
+# See <https://editorconfig.org/>
+root = true
+
+[*]
+# Options that apply to all source files
+indent_style = space
+indent_size = 4
+end_of_line = lf
+charset = utf-8
+trim_trailing_whitespace = true
+insert_final_newline = true
+max_line_length = 80
+
+# Options for shell scripts
+shell_variant = bash
+binary_next_line = true
+switch_case_indent = true
+space_redirects = true
+keep_padding = false
+function_next_line = false
+
+[build/**]
+ignore = true

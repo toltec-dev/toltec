@@ -1,0 +1,20 @@
+22c22
+< #if (QT_VERSION < QT_VERSION_CHECK(5, 7, 0))
+---
+> /* #if (QT_VERSION < QT_VERSION_CHECK(5, 7, 0)) */
+68,70c68,70
+< #else
+< typedef QQuickWindow TabletWindow ;
+< #endif
+---
+> /* #else */
+> /* typedef QQuickWindow TabletWindow ; */
+> /* #endif */
+102c102
+< #if (QT_VERSION >= QT_VERSION_CHECK(5, 7, 0))
+---
+> /* #if (QT_VERSION >= QT_VERSION_CHECK(5, 7, 0)) */
+104c104
+< #endif
+---
+> /* #endif */

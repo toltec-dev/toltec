@@ -1,4 +1,4 @@
-# vim: set ft=sh:
+#!/usr/bin/env bash
 pkgname=fingerterm
 pkgdesc="Terminal emulator with an on-screen touch keyboard"
 url=https://github.com/dixonary/fingerterm-reMarkable

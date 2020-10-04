@@ -3,9 +3,7 @@
 A **package recipe** is a Bash script containing metadata and instructions for building and installing a package.
 This recipe is used by the packaging script to generate installable archives for the Opkg package manager.
 
-> **Note:** A recipe is not executable and does not start with a shebang line (`#!/…`).
-> It is not meant to be executed directly, but rather sourced by the packaging script.
-> To enable syntax highlighting, the file should start with the following modeline: `# vim: set ft=sh:`.
+> **Note:** Recipes should not be marked as executable because they are not meant to be executed directly, but rather to be sourced by the packaging script.
 
 Sourcing a package recipe must have no side-effects, i.e. the metadata section can only execute commands which do not modify the system state, and stateful commands must be confined inside functions.
 
@@ -16,24 +14,68 @@ For consistency, those fields must be declared in the order they are described b
 
 > **Note:** The field names and semantics is inspired both by the [Debian control file format](https://www.debian.org/doc/debian-policy/ch-controlfields.html) and the [Arch Linux PKGBUILD format](https://wiki.archlinux.org/index.php/PKGBUILD).
 
-#### `pkgname` (required)
+#### `pkgname`
+
+<table>
+    <tr>
+        <th>Required?</th>
+        <td>Yes</th>
+    </tr>
+    <tr>
+        <th>Type</th>
+        <td>String</td>
+    </tr>
+</table>
 
 Name of the built package.
 Must only contain ASCII lowercase letters, digits and dashes.
 Should match the upstream name as closely as possible.
 
-#### `pkgdesc` (required)
+#### `pkgdesc`
+
+<table>
+    <tr>
+        <th>Required?</th>
+        <td>Yes</th>
+    </tr>
+    <tr>
+        <th>Type</th>
+        <td>String</td>
+    </tr>
+</table>
 
 Non-technical description for the package.
 This should help a potential user decide if the packaged application will be useful to them.
 Must start with a name (e.g. “Scientific calculator” instead of “A scientific calculator”).
 Do not explicit the fact that the package is for the reMarkable, because it is redundant (e.g. avoid “Scientific calculator ~~for the reMarkable~~”).
 
-#### `url` (required)
+#### `url`
+
+<table>
+    <tr>
+        <th>Required?</th>
+        <td>Yes</th>
+    </tr>
+    <tr>
+        <th>Type</th>
+        <td>URL (string)</td>
+    </tr>
+</table>
 
 Link to the project home page, where sources and documentation may be found.
 
-#### `pkgver` (required)
+#### `pkgver`
+
+<table>
+    <tr>
+        <th>Required?</th>
+        <td>Yes</th>
+    </tr>
+    <tr>
+        <th>Type</th>
+        <td>Debian-style version number (string)</td>
+    </tr>
+</table>
 
 Current version of the package.
 This is a Debian-style version number, that is equal to the concatenation of Arch-style versioning fields: `$epoch:$pkgver-$pkgrel`.
@@ -45,16 +87,38 @@ The [deb-version rules](https://manpages.debian.org/wheezy/dpkg-dev/deb-version.
     - Use the version number `0.0.0` if upstream has no versioning scheme, and then only use the package revision number for increasing the version number.
     - Use the `~beta` suffix for beta versions. `~` has a special meaning in Debian version numbers that makes it sort lower than any other character, even the empty string.
 
-#### `timestamp` (required)
+#### `timestamp`
+
+<table>
+    <tr>
+        <th>Required?</th>
+        <td>Yes</th>
+    </tr>
+    <tr>
+        <th>Type</th>
+        <td>ISO-8601 timestamp (string)</td>
+    </tr>
+</table>
 
 ISO-8601-formatted date of publication of the packaged upstream release.
 Note that increasing the package version (the part after the final `-`) does not require updating the `timestamp`, as it should only reflect the last modification of the source code.
 
-#### `section` (required)
+#### `section`
+
+<table>
+    <tr>
+        <th>Required?</th>
+        <td>Yes</th>
+    </tr>
+    <tr>
+        <th>Type</th>
+        <td>String</td>
+    </tr>
+</table>
 
 Choose one of the following sections:
 
-Section name    | Description
+Section         | Description
 ----------------|----------------------------------
 games           |
 launchers       | Automatically started after boot. Presents to the user a list of other apps that can be launched.
@@ -64,38 +128,115 @@ utils           | System tools.
 
 If the package does not fit into one of the existing sections, add a new one to this document. 
 
-#### `maintainer` (required)
+#### `maintainer`
+
+<table>
+    <tr>
+        <th>Required?</th>
+        <td>Yes</th>
+    </tr>
+    <tr>
+        <th>Type</th>
+        <td>String</td>
+    </tr>
+</table>
 
 The package maintainer’s name and current email address, in RFC822 format (e.g. `John Doe <doe@example.org>`).
 This is the person in charge of reviewing any pull request regarding the package.
 This field may be equal to `None <none@example.org>` if a package is orphaned or when a package is initially proposed.
 
-#### `license` (required)
+#### `license`
+
+<table>
+    <tr>
+        <th>Required?</th>
+        <td>Yes</th>
+    </tr>
+    <tr>
+        <th>Type</th>
+        <td>SPDX identifier (string)</td>
+    </tr>
+</table>
 
 [SPDX identifier](https://spdx.org/licenses/) of the license under which the upstream allows distribution. Note that this may be different from the license of the recipe file itself.
 
-#### `depends` (optional)
+#### `depends`
 
-Comma-separated list of package names that must be installed for this package to work.
+<table>
+    <tr>
+        <th>Required?</th>
+        <td>No, defaults to <code>()</code></th>
+    </tr>
+    <tr>
+        <th>Type</th>
+        <td>Array of strings</td>
+    </tr>
+</table>
+
+List of package names that must be installed for this package to work.
 
 See <https://www.debian.org/doc/debian-policy/ch-relationships.html#binary-dependencies-depends-recommends-suggests-enhances-pre-depends>.
 
-#### `conflicts` (optional)
+#### `conflicts`
 
-Comma-separated list of package names that must **NOT** be unpacked for this package to work.
+<table>
+    <tr>
+        <th>Required?</th>
+        <td>No, defaults to <code>()</code></th>
+    </tr>
+    <tr>
+        <th>Type</th>
+        <td>Array of strings</td>
+    </tr>
+</table>
+
+List of package names that must **NOT** be unpacked for this package to work.
 
 See <https://www.debian.org/doc/debian-policy/ch-relationships.html#conflicting-binary-packages-conflicts>.
 
-#### `image` (optional)
+#### `image`
+
+<table>
+    <tr>
+        <th>Required?</th>
+        <td>No, defaults to none</th>
+    </tr>
+    <tr>
+        <th>Type</th>
+        <td>String</td>
+    </tr>
+</table>
 
 Docker image used for building this package.
 It can be omitted only for packages which do not require a build step (see [below](#build-section-optional)).
 
-#### `source` (required)
+#### `source` 
+
+<table>
+    <tr>
+        <th>Required?</th>
+        <td>No, defaults to <code>()</code></th>
+    </tr>
+    <tr>
+        <th>Type</th>
+        <td>Array of strings</td>
+    </tr>
+</table>
 
 **TODO:** Documentation.
 
-#### `sha256sums` (required)
+#### `sha256sums`
+
+<table>
+    <tr>
+        <th>Required?</th>
+        <td>No, defaults to <code>()</code></th>
+    </tr>
+    <tr>
+        <th>Type</th>
+        <td>Array of SHA-256 sums (strings)</td>
+    </tr>
+</table>
 
 **TODO:** Documentation.
 

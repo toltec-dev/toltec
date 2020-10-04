@@ -52,10 +52,10 @@ This repository is automatically built and published every time that a commit is
 Since all the packaged software in Toltec is free, you can also **build them from source yourself** instead of using the pre-built binaries.
 The build process is fully [reproducible](https://reproducible-builds.org/), which means that you can verify that the published packages have not been tampered with during the automated build process.
 
-[Learn how to build the repository from source →](docs/build.md)
+[Learn how to build the repository from source →](docs/building.md)
 
 ### Improve it
 
 Your contribution is welcome for adding new packages, updating existing ones or improving the build tooling.
 
-[Learn how to contribute to Toltec →](docs/contribute.md)
+[Learn how to contribute to Toltec →](docs/contributing.md)
