@@ -3,11 +3,10 @@
 set -e
 source scripts/package-lib
 
-usage="$0 [OPTION]... RECIPESDIR WORKDIR
+usage="$0 [OPTION]... RECIPESDIR REPODIR
 
-Builds the package listing as a webpage
-
-The WORKDIR must be a non-existent directory in which the builds are performed.
+Build the package listing for packages defined in RECIPESDIR.
+The resulting listing is written to REPODIR.
 
 Options:
 
@@ -30,11 +29,11 @@ if [[ -n $helpflag ]]; then
 fi
 
 if [[ $# -eq 0 ]]; then
-    error "Missing RECIPESDIR and WORKDIR arguments. Use the -h flag for more information."
+    error "Missing RECIPESDIR and REPODIR arguments. Use the -h flag for more information."
 fi
 
 if [[ $# -eq 1 ]]; then
-    error "Missing WORKDIR argument. Use the -h flag for more information."
+    error "Missing REPODIR argument. Use the -h flag for more information."
 fi
 
 if [[ $# -gt 2 ]]; then
@@ -42,86 +41,93 @@ if [[ $# -gt 2 ]]; then
 fi
 
 recipesdir="$1"
-workdir="$2"
+repodir="$2"
+mkdir -p "$repodir"
 
-pkgsworkdir="$workdir"/
-mkdir -p "$pkgsworkdir"
+cat > "$repodir/index.html" << WEBS
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Toltec Package Listing</title>
 
-cat >"${pkgsworkdir}/index.html" <<WEBS
-<html>
-<head>
-<meta charset="utf-8">
-<style>
-  body {
-    font-family: monospace;
-    background-color: #f8fcf8;
-  }
-  table {
-    width: 100%;
-  }
-  table td {
-    padding: 0 20px;
-  }
-  table tr:nth-child(even) {
-    background-color: #dcdfdc;
-  }
+        <style>
+            body {
+                font-family: monospace;
+                background-color: #f8fcf8;
+            }
 
-  table thead {
-    border-bottom: 1px dotted gray;
-  }
+            table {
+                width: 100%;
+            }
 
-  table th {
-    text-align: left;
-    padding-left: 20px;
-  }
-</style>
-</head>
+            table td {
+                padding: 0 20px;
+            }
 
-<body>
+            table tr:nth-child(even) {
+                background-color: #dcdfdc;
+            }
 
-<a href="../">Back to Repository Home Page</a>
+            table thead {
+                border-bottom: 1px dotted gray;
+            }
 
-<h1>Toltec Package Listing</h1>
-<table>
+            table th {
+                text-align: left;
+                padding-left: 20px;
+            }
+        </style>
+    </head>
+    <body>
+        <a href="../">Back to Repository Home Page</a>
+        <h1>Toltec Package Listing</h1>
 
-<thead> <tr>
-  <th>Name</th> <th>Description</th> <th>Version</th> <th>Category</th> <th>License</th>
-</tr></thead>
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Version</th>
+                    <th>Category</th>
+                    <th>License</th>
+                </tr>
+            </thead>
 WEBS
 
 # Build packages index
-section "Making packages index ${pkgsworkdir}/index.html"
+section "Making packages index"
 
-# Build each package or get it from the remote server
 for recipedir in "$recipesdir"/*; do
     (
         load-recipe "$recipedir"
+        pkgid="$(package-id)"
 
-        status "Adding table entry for $pkgname $pkgver"
+        status "Adding entry for $pkgid"
 
-        pkgworkdir="$pkgsworkdir"/"$pkgname"
-        if [[ -z "${url}" ]]; then
-            href="${url}"
+        if [[ -z $url ]]; then
+            href="$url"
         else
-            href="<a target='_new' href='${url}'>${pkgname}</a>"
+            href="<a href=\"$url\">$pkgname</a>"
         fi
 
-        cat >>"${workdir}/index.html" <<WEBS
-<tr>
-  <td>${href}</td>
-  <td>${pkgdesc}</td>
-  <td>${pkgver}</td>
-  <td>${section}</td>
-  <td><a href='https://spdx.org/licenses/$license.html'>${license}</a></td>
-</tr>
+        cat >> "$repodir/index.html" << WEBS
+            <tr>
+                <td>$href</td>
+                <td>$pkgdesc</td>
+                <td>$pkgver</td>
+                <td>$section</td>
+                <td><a href='https://spdx.org/licenses/$license.html'>$license</a></td>
+            </tr>
 WEBS
     )
 
 done
 
-cat >>"${pkgsworkdir}/index.html" <<WEBS
-</table>
-</body>
+cat >> "$repodir/index.html" << WEBS
+        </table>
+    </body>
 </html>
 WEBS
-section "Done. Result is in ${pkgsworkdir}"
+
+status "Done. Result is in $repodir/index.html"

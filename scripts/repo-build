@@ -71,8 +71,8 @@ for recipedir in "$recipesdir"/*; do
         load-recipe "$recipedir"
         pkgid="$(package-id)"
 
-        if [[ ! -f "$repodir"/"$pkgid.ipk" ]]; then
-            if [[ -n $localflag ]] || ! rsecurl --remote-time "$remoterepo"/"$pkgid.ipk" -o "$repodir"/"$pkgid.ipk"; then
+        if [[ ! -f "$repodir/$pkgid.ipk" ]]; then
+            if [[ -n $localflag ]] || ! rsecurl --remote-time "$remoterepo/$pkgid.ipk" -o "$repodir/$pkgid.ipk"; then
                 section "Building $pkgid"
                 scripts/package-build "$recipedir" "$workdir"
                 cp "$workdir"/"$pkgid"/"$pkgid".ipk "$repodir"
@@ -93,7 +93,6 @@ touch --no-dereference --date="@$lastcommitdate" \
     "$repodir"/Packages \
     "$repodir"/Packages.gz \
     "$repodir"/Packages.stamps
-
 
 section "Making packages web listing"
 scripts/repo-build-web "$recipesdir" "$repodir"

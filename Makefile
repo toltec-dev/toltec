@@ -13,6 +13,12 @@ Available targets:
     RECIPE          Build any package individually.
     RECIPE-push     Push any built package to .cache/opkg on the reMarkable.
                     (Plug in your reMarkable first!)
+    format          Check that the source code formatting follows
+                    the style guide.
+    format-fix      Automatically reformat the source code to follow
+                    the style guide.
+    lint            Perform static analysis on the source code to find
+                    erroneous constructs.
     clean           Remove all build artifacts.
 
 Where RECIPE is one of the following available recipes:
@@ -40,7 +46,29 @@ $(PUSH_PACKAGES): %:
 	ssh root@"${HOST}" mkdir -p .cache/opkg
 	scp build/packages/"$(@:%-push=%)"/*.ipk root@"${HOST}":.cache/opkg
 
+format:
+	$(info ==> Checking the formatting of shell scripts)
+	shfmt -d .
+
+format-fix:
+	$(info ==> Fixing the formatting of shell scripts)
+	shfmt -l -w .
+
+lint:
+	$(info ==> Linting shell scripts)
+	shellcheck $$(shfmt -f .)
+
 clean:
 	rm -rf build
 
-.PHONY: help repo repo-local repo-check $(PACKAGES) $(PUSH_PACKAGES) clean
+.PHONY: \
+    help \
+    repo \
+    repo-local \
+    repo-check \
+    $(PACKAGES) \
+    $(PUSH_PACKAGES) \
+    format \
+    format-fix \
+    lint \
+    clean
