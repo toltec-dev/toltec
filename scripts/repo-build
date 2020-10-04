@@ -94,4 +94,8 @@ touch --no-dereference --date="@$lastcommitdate" \
     "$repodir"/Packages.gz \
     "$repodir"/Packages.stamps
 
+
+section "Making packages web listing"
+scripts/repo-build-web "$recipesdir" "$repodir"
+
 section "Done. Result is in $repodir"
