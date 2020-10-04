@@ -1,8 +1,0 @@
-#!/usr/bin/env bash
-
-systemctl daemon-reload
-echo ""
-echo "Run the following commands to make draft your launcher"
-echo "$ systemctl disable --now xochitl"
-echo "$ systemctl enable --now draft"
-echo ""

@@ -1,7 +1,0 @@
-#!/usr/bin/env bash
-
-systemctl daemon-reload
-echo ""
-echo "Run the following commands to make remux your launcher"
-echo "$ systemctl enable --now remux"
-echo ""

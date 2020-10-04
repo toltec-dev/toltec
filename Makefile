@@ -7,11 +7,19 @@ Available targets:
 
     repo            Build the repository and reuse archives from the remote
                     repository for existing package versions.
-    repo-force      Build the repository without reusing existing archives.
+    repo-local      Build the repository without using existing archives from
+                    the remote repository.
     repo-check      Compare the local repository to the remote one.
     RECIPE          Build any package individually.
     RECIPE-push     Push any built package to .cache/opkg on the reMarkable.
                     (Plug in your reMarkable first!)
+    format          Check that the source code formatting follows
+                    the style guide.
+    format-fix      Automatically reformat the source code to follow
+                    the style guide.
+    lint            Perform static analysis on the source code to find
+                    erroneous constructs.
+    clean           Remove all build artifacts.
 
 Where RECIPE is one of the following available recipes:
 
@@ -23,22 +31,44 @@ help:
 	@echo "$$USAGE"
 
 repo:
-	rm -rf build
-	./scripts/repo-build package build
+	./scripts/repo-build package build/packages build/repo
 
-repo-force:
-	rm -rf build
-	./scripts/repo-build -f package build
+repo-local:
+	./scripts/repo-build -l package build/packages build/repo
 
 repo-check:
 	./scripts/repo-check build/repo
 
 $(PACKAGES): %:
-	rm -rf build/packages/"${@}"
-	./scripts/package-build package/"${@}" build/packages/"${@}"
+	./scripts/package-build package/"${@}" build/packages
 
 $(PUSH_PACKAGES): %:
 	ssh root@"${HOST}" mkdir -p .cache/opkg
 	scp build/packages/"$(@:%-push=%)"/*.ipk root@"${HOST}":.cache/opkg
 
-.PHONY: help repo repo-force repo-check $(PACKAGES) $(PUSH_PACKAGES)
+format:
+	$(info ==> Checking the formatting of shell scripts)
+	shfmt -d .
+
+format-fix:
+	$(info ==> Fixing the formatting of shell scripts)
+	shfmt -l -w .
+
+lint:
+	$(info ==> Linting shell scripts)
+	shellcheck $$(shfmt -f .)
+
+clean:
+	rm -rf build
+
+.PHONY: \
+    help \
+    repo \
+    repo-local \
+    repo-check \
+    $(PACKAGES) \
+    $(PUSH_PACKAGES) \
+    format \
+    format-fix \
+    lint \
+    clean
