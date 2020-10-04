@@ -1,0 +1,260 @@
+#!/usr/bin/env bash
+
+#
+# package-lib
+#
+# Common functions used by the packaging scripts
+#
+
+# Allow using colors when inside a terminal
+[[ -t 1 ]] && setbold="$(tput bold)"
+[[ -t 1 ]] && setred="$(tput setaf 1)"
+[[ -t 1 ]] && setgreen="$(tput setaf 2)"
+[[ -t 1 ]] && reset="$(tput sgr0)"
+
+# Print an error message to error output then exit
+#
+# Arguments:
+#
+# $1 - Error message to print
+error() {
+    echo "$setbold$setred==> ERROR:$reset$setbold $1$reset" >&2
+    exit 1
+}
+
+# Start a section
+#
+# Arguments:
+#
+# $1 - Section name
+section() {
+    echo "$setbold$setgreen==>$reset$setbold $1$reset" >&2
+}
+
+# Print a status message
+#
+# Arguments:
+#
+# $1 - Status message
+status() {
+    echo "$1" >&2
+}
+
+# Make a reproducible tar archive for a directory
+# See <https://reproducible-builds.org/docs/archives/>
+#
+# Arguments:
+#
+# $1 - Name of the resulting archive file
+# $2 - Path to the directory to archive
+rtar() {
+    tar --sort=name \
+        --owner=0 --group=0 --numeric-owner \
+        --mtime="@${SOURCE_DATE_EPOCH}" \
+        --pax-option=exthdr.name=%d/PaxHeaders/%f,delete=atime,delete=ctime \
+        --create --file - --directory "$2" . \
+        | gzip -9 --no-name - > "$1"
+}
+
+# Recursively compares two files, entering inside tar archives when possible
+#
+# Arguments:
+#
+# $1 - First file or tar archive to compare
+# $2 - Second file or tar archive to compare
+# $3 (optional) - Display name for the first file
+# $4 (optional) - Display name for the second file
+#
+# Exit code:
+#
+# 0 if no difference, 1 if there is a difference
+tardiff() {
+    label1="${3:-$1}"
+    label2="${4:-$2}"
+
+    # Compare non-archive files
+    if ! tar -tf "$1" > /dev/null 2>&1; then
+        if ! diff=$(diff "$1" --label "$label1" "$2" --label "$label2"); then
+            echo "Files $label1 and $label2 differ:"
+            echo "$diff"
+            return 1
+        fi
+    # Compare tar archives
+    else
+        # See if they are equal byte to byte
+        if diff "$1" "$2" > /dev/null 2>&1; then
+            return 0
+        fi
+
+        # See if they contain the same files
+        if ! diff=$(diff <(tar -tf "$1") <(tar -tf "$2")); then
+            echo "Archives $label1 and $label2 contain different files:"
+            echo "$diff"
+            return 1
+        fi
+
+        # See if each file pair is identical
+        while IFS= read -r subfile; do
+            subfile1="$(mktemp)"
+            subfile2="$(mktemp)"
+
+            tar -xf "$1" "$subfile" -O > "$subfile1"
+            tar -xf "$2" "$subfile" -O > "$subfile2"
+
+            (tardiff \
+                "$subfile1" "$subfile2" \
+                "$label1" "$label2 -> $subfile")
+            rm "$subfile1" "$subfile2"
+        done < <(tar -tf "$1" | grep -e "[^/]$")
+    fi
+}
+
+# Curl command with flags suitable for scripting
+rcurl() {
+    curl --fail --silent --tlsv1.2 "$@"
+}
+
+# Curl command with flags suitable for scripting, restricted to HTTPS
+rsecurl() {
+    rcurl --proto '=https' "$@"
+}
+
+# Check that a field is defined with the required type
+#
+# If an error occurs, this function prints an error message and exits the
+# script immediately. If the third argument is not 'optional', it is an error
+# if the field is not defined. If the third argument is 'nonempty', it is an
+# error if the field is an empty string.
+#
+# Arguments:
+#
+# $1 - Name of the field
+# $2 - Expected type of the field, 'string', 'array' or 'map'
+# $3 (optional) - Either 'nonempty' or 'optional'
+check-field() {
+    local signature
+    signature="$(declare -p "$1" 2> /dev/null)"
+    local vartype=undefined
+
+    if [[ $signature =~ ^declare\ -- ]]; then
+        vartype=string
+    elif [[ $signature =~ ^declare\ -a ]]; then
+        vartype=array
+    elif [[ $signature =~ ^declare\ -A ]]; then
+        vartype=map
+    fi
+
+    if [[ $vartype = undefined ]]; then
+        if [[ $3 = optional ]]; then
+            return 1
+        else
+            error "The '$1' variable is not defined"
+        fi
+    else
+        if [[ $vartype != "$2" ]]; then
+            error "The '$1' variable should be of type '$2', not '$vartype'"
+        fi
+
+        if [[ $3 = nonempty ]] && [[ -z ${!1} ]]; then
+            error "The '$1' variable should not be empty"
+        fi
+    fi
+}
+
+# Load metadata and functions defined in a package recipe
+#
+# Arguments:
+#
+# $1 - Path to the package recipe
+load-recipe() {
+    # shellcheck disable=SC1090
+    source "$1"/package
+
+    # Check fields types
+    check-field pkgname string nonempty
+    check-field pkgdesc string nonempty
+    check-field url string nonempty
+    check-field pkgver string nonempty
+    check-field timestamp string nonempty
+    check-field section string nonempty
+    check-field maintainer string nonempty
+    check-field license string nonempty
+    check-field depends array optional || depends=()
+    check-field conflicts array optional || conflicts=()
+    check-field arch string optional || arch=armv7-3.2
+    check-field image string optional || image=
+    check-field source array optional || source=()
+    check-field sha256sums array optional || sha256sums=()
+
+    # Make fields read-only
+    readonly \
+        pkgname \
+        pkgdesc \
+        url \
+        pkgver \
+        timestamp \
+        section \
+        maintainer \
+        license \
+        depends \
+        conflicts \
+        arch \
+        image \
+        source \
+        sha256sums \
+        2> /dev/null || true
+
+    # Check required functions
+    if ! declare -F package > /dev/null 2>&1; then
+        error "The 'package()' function is not defined"
+    fi
+
+    # Make defined functions read-only
+    readonly -f \
+        build \
+        package \
+        preinstall \
+        configure \
+        preremove \
+        postremove \
+        preupgrade \
+        postupgrade \
+        2> /dev/null || true
+}
+
+# Dump metadata of the currently loaded package recipe
+dump-fields() {
+    declare -p \
+        pkgname \
+        pkgdesc \
+        url \
+        pkgver \
+        timestamp \
+        section \
+        maintainer \
+        license \
+        depends \
+        conflicts \
+        arch \
+        image \
+        source \
+        sha256sums \
+        2> /dev/null || true
+}
+
+# Generate an ID for the currently loaded package recipe
+#
+# This name uniquely identifies the current version and target architecture
+# of the package recipe. It is used to name the resulting package.
+package-id() {
+    echo "${pkgname}_${pkgver}_${arch}"
+}
+
+# Get the full tag of a Docker image
+#
+# Arguments:
+#
+# $1 - Name and version of the image (e.g. qt:v1.0)
+image-name() {
+    echo "ghcr.io/toltec-dev/$1"
+}

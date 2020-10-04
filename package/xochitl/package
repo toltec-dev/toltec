@@ -1,4 +1,4 @@
-# vim: set ft=sh:
+#!/usr/bin/env bash
 pkgname=xochitl
 pkgdesc="Read documents and take notes"
 url=https://remarkable.com
@@ -8,7 +8,6 @@ section=readers
 maintainer="Mattéo Delabre <spam@delab.re>"
 license=Apache-2.0
 
-image=base:v1.1
 source=(
     xochitl.png
     xochitl.draft
@@ -17,10 +16,6 @@ sha256sums=(
     SKIP
     SKIP
 )
-
-build() {
-    return
-}
 
 package() {
     install -d "$pkgdir"/opt/etc/draft "$pkgdir"/opt/etc/draft/icons

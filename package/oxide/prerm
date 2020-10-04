@@ -1,4 +1,0 @@
-#!/usr/bin/env bash
-
-echo "Disabling oxide"
-systemctl disable --now tarnish

@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+
+#
+# install-lib
+#
+# Common functions used by the install scripts
+#
+
+# Check whether a systemd unit exists and is enabled
+#
+# Arguments:
+#
+# $1 - Full name of the systemd unit, e.g. "xochitl.service"
+#
+# Exit code:
+#
+# 0 if the unit exists and is enabled, 1 otherwise
+is-enabled() {
+    # Note that we must invert the condition so that the exit code indicates
+    # a failure when the unit exists and is disabled or when the unit does
+    # not exist
+    ! systemctl list-unit-files "$1" | awk "/$1/{exit \$2 == \"enabled\"}"
+}
+
+# Get a list of systemd units with which the given unit conflicts
+#
+# Arguments:
+#
+# $1 - Full name of the systemd unit, e.g. "xochitl.service"
+#
+# Output:
+#
+# List of conflicting units
+get-conflicts() {
+    systemctl show "$1" | awk -F'=' '/^Conflicts=/{print $2}'
+}
+
+# Print instructions about how to enable a given systemd service and disable
+# the services that conflict with it
+#
+# Arguments:
+#
+# $1 - Full name of the systemd unit, e.g. "draft.service"
+#
+# Output:
+#
+# Commands to run to achieve the desired result
+how-to-enable() {
+    for conflict in $(get-conflicts "$1"); do
+        if is-enabled "$conflict"; then
+            echo "$ systemctl disable --now ${conflict/.service/}"
+        fi
+    done
+
+    echo "$ systemctl enable --now ${1/.service/}"
+}

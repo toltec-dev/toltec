@@ -1,4 +1,0 @@
-#!/usr/bin/env bash
-
-echo "Disabling draft"
-systemctl disable --now draft

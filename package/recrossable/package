@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+pkgname=recrossable
+pkgdesc="Solve crossword puzzles"
+url=https://github.com/sandsmark/recrossable
+pkgver=0.0.0-1
+timestamp=2019-01-08T17:41Z
+section=games
+maintainer="Mattéo Delabre <spam@delab.re>"
+license=GPL-2.0-or-later
+
+image=qt:v1.2
+source=(
+    https://github.com/sandsmark/recrossable/archive/6c2c8b1d3d2ec3f3978078f941b09d8cc525f4c6.zip
+    synthesize-pen-events.patch
+    recrossable.draft
+    recrossable.svg
+)
+sha256sums=(
+    d2596134f33ecbbf629fb05ca7740e2d89c4cdc41454fe56ee8c33ba4c4f6147
+    SKIP
+    SKIP
+    SKIP
+)
+
+build() {
+    # Get needed build packages
+    export DEBIAN_FRONTEND=noninteractive
+    apt-get update -y
+    apt-get install -y \
+        --no-install-recommends \
+        -o Dpkg::Options::="--force-confdef" \
+        imagemagick librsvg2-bin
+
+    patch main.cpp synthesize-pen-events.patch
+    sed -i 's/linux-oe-g++/linux-arm-gnueabihf-g++/' recrossable.pro
+    qmake
+    make
+
+    convert +set date:create +set date:modify recrossable.{svg,png}
+}
+
+package() {
+    install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/recrossable
+
+    install -D -m 644 -t "$pkgdir"/opt/etc/draft "$srcdir"/recrossable.draft
+    install -D -m 644 -t "$pkgdir"/opt/etc/draft/icons "$srcdir"/recrossable.png
+}

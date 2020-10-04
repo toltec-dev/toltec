@@ -1,27 +1,28 @@
 #!/usr/bin/env bash
 
 set -e
-source scripts/lib
+source scripts/package-lib
 
-usage="$0 [OPTION]... RECIPESDIR WORKDIR [REMOTEREPO]
+usage="$0 [OPTION]... RECIPESDIR WORKDIR REPODIR [REMOTEREPO]
 
 Build new or updated packages defined in RECIPESDIR and create a package index.
-The WORKDIR must be a non-existent directory in which the builds are performed.
-If REMOTEREPO is omitted 'https://toltec.delab.re/testing' is used.
+Packages are built in subdirectories of WORKDIR and resulting artifacts are
+gathered in REPODIR.  If REMOTEREPO is omitted,
+'https://toltec.delab.re/testing' is used.
 
 Options:
 
     -h              Show this help message.
-    -f              Force building all the packages, even those for which
-                    an already built version exists on the remote."
+    -l              Only build packages locally, do not reuse existing packages
+                    from the publishing server."
 
 helpflag=
-forceflag=
+localflag=
 
-while getopts hf name; do
+while getopts hl name; do
     case $name in
         h) helpflag=1 ;;
-        f) forceflag=1 ;;
+        l) localflag=1 ;;
         *) error "Invalid option. Use the -h flag for more information." ;;
     esac
 done
@@ -34,49 +35,52 @@ if [[ -n $helpflag ]]; then
 fi
 
 if [[ $# -eq 0 ]]; then
-    error "Missing RECIPESDIR and WORKDIR arguments. Use the -h flag for more information."
+    error "Missing RECIPESDIR, WORKDIR and REPODIR arguments. Use the -h flag for more information."
 fi
 
 if [[ $# -eq 1 ]]; then
-    error "Missing WORKDIR argument. Use the -h flag for more information."
+    error "Missing WORKDIR and REPODIR arguments. Use the -h flag for more information."
+fi
+
+if [[ $# -eq 2 ]]; then
+    error "Missing REPODIR argument. Use the -h flag for more information."
 fi
 
 remoterepo="https://toltec.delab.re/testing"
 
-if [[ $# -eq 3 ]]; then
-    remoterepo="$3"
+if [[ $# -eq 4 ]]; then
+    remoterepo="$4"
 fi
 
-if [[ $# -gt 3 ]]; then
+if [[ $# -gt 4 ]]; then
     error "Extraneous arguments. Use the -h flag for more information."
 fi
 
 recipesdir="$1"
+
 workdir="$2"
+mkdir -p "$workdir"
 
-pkgsworkdir="$workdir"/packages
-mkdir -p "$pkgsworkdir"
-
-repodir="$workdir"/repo
-
-[[ -d $repodir ]] && files="$(ls -qA -- "$repodir")" && [[ -n $files ]] \
-    && error "Repository directory '$repodir' exists and is not empty"
+repodir="$3"
 mkdir -p "$repodir"
 
-# Build each package or get it from the remote server
+# Build missing packages or get them from the remote server
+# Each recipe is loaded in a subshell to avoid leaking metadata fields
 for recipedir in "$recipesdir"/*; do
-    load-recipe "$recipedir"
-    arname="$(archive-name "$recipedir")"
+    (
+        load-recipe "$recipedir"
+        pkgid="$(package-id)"
 
-    section "Building $pkgname $pkgver"
-
-    if [[ -n $forceflag ]] || ! rsecurl --remote-time "$remoterepo"/"$arname" -o "$repodir"/"$arname"; then
-        pkgworkdir="$pkgsworkdir"/"$pkgname"
-        "${BASH_SOURCE%/*}"/package-build "$recipedir" "$pkgworkdir"
-        mv "$pkgworkdir"/*.ipk "$repodir"
-    else
-        status "Reusing already built version from $remoterepo"
-    fi
+        if [[ ! -f "$repodir/$pkgid.ipk" ]]; then
+            if [[ -n $localflag ]] || ! rsecurl --remote-time "$remoterepo/$pkgid.ipk" -o "$repodir/$pkgid.ipk"; then
+                section "Building $pkgid"
+                scripts/package-build "$recipedir" "$workdir"
+                cp "$workdir"/"$pkgid"/"$pkgid".ipk "$repodir"
+            else
+                section "Reusing $pkgid from $remoterepo"
+            fi
+        fi
+    )
 done
 
 # Build packages index
@@ -89,5 +93,8 @@ touch --no-dereference --date="@$lastcommitdate" \
     "$repodir"/Packages \
     "$repodir"/Packages.gz \
     "$repodir"/Packages.stamps
+
+section "Making packages web listing"
+scripts/repo-build-web "$recipesdir" "$repodir"
 
 section "Done. Result is in $repodir"

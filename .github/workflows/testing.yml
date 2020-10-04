@@ -15,7 +15,7 @@ jobs:
                 sudo apt-get install bsdtar tree
             - name: Build packages
               run: |
-                ./scripts/repo-build package build https://toltec.delab.re/testing
+                ./scripts/repo-build package build/packages build/repo https://toltec.delab.re/testing
             - name: Transfer packages and index
               run: |
                 mkdir -p private
