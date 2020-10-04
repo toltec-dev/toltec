@@ -1,4 +1,4 @@
-# vim: set ft=sh:
+#!/usr/bin/env bash
 pkgname=plato
 pkgdesc="Document reader"
 url=https://github.com/LinusCDE/plato
@@ -27,7 +27,7 @@ build() {
 
     # 'cargo pkgid' seems to output something different with most
     # recent nightly builds. This adjusts the filtering.
-    sed -i 's/version=.*$/version=$(cargo pkgid | cut -d "#" -f 2 | cut -d ":" -f 2)/g' download.sh
+    sed -i "s/version=.*$/version=\'$(cargo pkgid | cut -d "#" -f 2 | cut -d ":" -f 2)\'/g" download.sh
 
     # Use our toolchain
     export AR=arm-linux-gnueabihf-ar

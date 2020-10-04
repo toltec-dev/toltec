@@ -3,9 +3,7 @@
 A **package recipe** is a Bash script containing metadata and instructions for building and installing a package.
 This recipe is used by the packaging script to generate installable archives for the Opkg package manager.
 
-> **Note:** A recipe is not executable and does not start with a shebang line (`#!/…`).
-> It is not meant to be executed directly, but rather sourced by the packaging script.
-> To enable syntax highlighting, the file should start with the following modeline: `# vim: set ft=sh:`.
+> **Note:** Recipes should not be marked as executable because they are not meant to be executed directly, but rather to be sourced by the packaging script.
 
 Sourcing a package recipe must have no side-effects, i.e. the metadata section can only execute commands which do not modify the system state, and stateful commands must be confined inside functions.
 

@@ -1,4 +1,4 @@
-# vim: set ft=sh:
+#!/usr/bin/env bash
 pkgname=remarkable-splash
 pkgdesc="show a splashscreen + shutdown replacement that does not clear the screen"
 url=https://github.com/ddvk/remarkable-splash

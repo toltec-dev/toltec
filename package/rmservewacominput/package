@@ -1,4 +1,4 @@
-# vim: set ft=sh:
+#!/usr/bin/env bash
 pkgname=rmservewacominput
 pkgdesc="Serve pen input on port 33333"
 url=https://github.com/LinusCDE/rmWacomToMouse

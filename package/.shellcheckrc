@@ -1,0 +1,15 @@
+# vim: set ft=sh:
+# Configuration for Shellcheck in package recipes
+# See <https://github.com/koalaman/shellcheck/blob/master/shellcheck.1.md#rc-files>
+
+# Do not warn about unguarded `cd`s since recipes are always executed
+# with the -e flag set
+disable=SC2164
+
+# Do not warn about unused variables since metadata fields are expected to
+# not necessarily be used in the recipes
+disable=SC2034
+
+# Do not warn about undeclared variables since recipes may use build variables
+# such as `srcdir` or `pkgdir`
+disable=SC2154
