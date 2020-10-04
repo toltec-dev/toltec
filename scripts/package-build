@@ -6,7 +6,7 @@ source scripts/package-lib
 usage="$0 [OPTION]... RECIPEDIR WORKDIR
 
 Build a package following the recipe defined in RECIPEDIR.
-The WORKDIR must be a non-existent directory in which the build is performed.
+The build is carried out in subdirectories of WORKDIR.
 
 Arguments:
 
@@ -43,25 +43,28 @@ fi
 recipedir="$1"
 workdir="$2"
 
-# Create working directories
-[[ -d $workdir ]] && files="$(ls -qA -- "$workdir")" && [[ -n $files ]] \
-    && error "Working directory '$workdir' exists and is not empty"
-mkdir -p "$workdir"
-
-srcdir="$workdir"/src
-mkdir "$srcdir"
-
-pkgdir="$workdir"/pkg
-mkdir "$pkgdir"
-
-ctldir="$workdir"/control
-mkdir "$ctldir"
-
-ardir="$workdir"/ar
-mkdir "$ardir"
-
 # Load package info and script
 load-recipe "$recipedir"
+
+pkgid="$(package-id)"
+worksubdir="$workdir"/"$pkgid"
+
+# Create working directories
+[[ -d $worksubdir ]] && files="$(ls -qA -- "$worksubdir")" && [[ -n $files ]] \
+    && error "Working directory '$worksubdir' exists and is not empty"
+mkdir -p "$worksubdir"
+
+srcdir="$worksubdir"/src
+mkdir "$srcdir"
+
+pkgdir="$worksubdir"/pkg
+mkdir "$pkgdir"
+
+ctldir="$worksubdir"/control
+mkdir "$ctldir"
+
+ardir="$worksubdir"/ar
+mkdir "$ardir"
 
 # Use the declared timestamp as SOURCE_DATE_EPOCH
 # See <https://reproducible-builds.org/docs/source-date-epoch/>
@@ -71,7 +74,7 @@ export SOURCE_DATE_EPOCH
 # Fetch source files
 section "Fetching source files"
 
-for (( i=0; i < ${#source[@]}; ++i )); do
+for ((i = 0; i < ${#source[@]}; ++i)); do
     srcurl="${source[i]}"
     checksum="${sha256sums[i]}"
 
@@ -84,8 +87,8 @@ for (( i=0; i < ${#source[@]}; ++i )); do
 
     rcurl --location "$srcurl" -o "$srcdir"/"$srcfile"
 
-    if [[ $checksum != SKIP ]] && \
-            ! sha256sum -c <(echo "$checksum $srcdir/$srcfile") > /dev/null 2>&1; then
+    if [[ $checksum != SKIP ]] \
+        && ! sha256sum -c <(echo "$checksum $srcdir/$srcfile") > /dev/null 2>&1; then
         error "Checksum mismatch while fetching $srcfile"
     fi
 
@@ -107,12 +110,12 @@ if [[ -n $image ]]; then
         --mount type=bind,src="$(realpath "$recipedir")",dst=/recipe \
         --mount type=bind,src="$(realpath "$srcdir")",dst=/src \
         "$(image-name "$image")" /bin/bash \
-    <<CMDS
-        source /recipe/package
-        cd /src
-        build
-        chown -R $(id -u):$(id -u) /src/
-CMDS
+        << SCRIPT
+source /recipe/package
+cd /src
+build
+chown -R $(id -u):$(id -u) /src/
+SCRIPT
 fi
 
 # Run packaging script
@@ -142,11 +145,11 @@ ctlfile="$ctldir"/control
 
 # Create maintainer scripts
 maintainer-script-header() {
-    cat <<'SCRIPT'
+    cat << 'SCRIPT'
 #!/usr/bin/env bash
 set -e
 SCRIPT
-    dump-metadata
+    dump-fields
     cat scripts/install-lib
 }
 
@@ -155,7 +158,7 @@ if [[ $(type -t preinstall) = function ]]; then
     {
         maintainer-script-header
         declare -f preinstall
-        cat <<'SCRIPT'
+        cat << 'SCRIPT'
 if [[ $1 = install ]]; then
     preinstall
 fi
@@ -169,7 +172,7 @@ if [[ $(type -t configure) = function ]]; then
     {
         maintainer-script-header
         declare -f configure
-        cat <<'SCRIPT'
+        cat << 'SCRIPT'
 if [[ $1 = configure ]]; then
     configure
 fi
@@ -186,7 +189,7 @@ for step in pre post; do
 
             if [[ $(type -t "$step"upgrade) = function ]]; then
                 declare -f "$step"upgrade
-                cat <<SCRIPT
+                cat << SCRIPT
 if [[ \$1 = upgrade ]]; then
     "$step"upgrade
 fi
@@ -195,7 +198,7 @@ SCRIPT
 
             if [[ $(type -t "$step"remove) = function ]]; then
                 declare -f "$step"remove
-                cat <<SCRIPT
+                cat << SCRIPT
 if [[ \$1 = remove ]]; then
     "$step"remove "\$2"
 fi
@@ -211,7 +214,7 @@ section "Creating archives"
 pkgar="$ardir"/data.tar.gz
 ctlar="$ardir"/control.tar.gz
 versionar="$ardir"/debian-binary
-arar="$workdir/$(archive-name "$recipedir")"
+arar="$worksubdir/$pkgid.ipk"
 
 echo "2.0" >> "$versionar"
 rtar "$pkgar" "$pkgdir"

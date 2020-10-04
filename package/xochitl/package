@@ -1,4 +1,4 @@
-# vim: set ft=sh:
+#!/usr/bin/env bash
 pkgname=xochitl
 pkgdesc="Read documents and take notes"
 url=https://remarkable.com
