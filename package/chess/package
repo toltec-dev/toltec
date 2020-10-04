@@ -1,0 +1,27 @@
+# vim: set ft=sh:
+pkgname=chess
+pkgdesc="Chess"
+url=https://github.com/LinusCDE/chess
+pkgver=0.3.1-1
+timestamp=2020-10-04T18:16Z
+section=games
+maintainer="Linus K. <linus@cosmos-ink.net>"
+license=MIT
+
+image=rust:v1.1
+source=(https://github.com/LinusCDE/chess/archive/42238084b07592f56908cd11f6a8c676365b2d4e.zip)
+sha256sums=(16ccc549d584c98788360cd741675e242b778e6efd27c06234ebc7e9149d28f9)
+
+build() {
+    # Fall back to system-wide config
+    rm .cargo/config
+
+    cargo build --release
+    arm-linux-gnueabihf-strip target/armv7-unknown-linux-gnueabihf/release/chess
+}
+
+package() {
+    install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/target/armv7-unknown-linux-gnueabihf/release/chess
+    install -D -m 644 "$srcdir"/oxide "$pkgdir"/opt/etc/draft/chess
+    install -D -m 644 "$srcdir"/icon.png "$pkgdir"/opt/etc/draft/icons/chess.png
+}
