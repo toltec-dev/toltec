@@ -74,7 +74,7 @@ export SOURCE_DATE_EPOCH
 # Fetch source files
 section "Fetching source files"
 
-for (( i=0; i < ${#source[@]}; ++i )); do
+for ((i = 0; i < ${#source[@]}; ++i)); do
     srcurl="${source[i]}"
     checksum="${sha256sums[i]}"
 
@@ -87,8 +87,8 @@ for (( i=0; i < ${#source[@]}; ++i )); do
 
     rcurl --location "$srcurl" -o "$srcdir"/"$srcfile"
 
-    if [[ $checksum != SKIP ]] && \
-            ! sha256sum -c <(echo "$checksum $srcdir/$srcfile") > /dev/null 2>&1; then
+    if [[ $checksum != SKIP ]] \
+        && ! sha256sum -c <(echo "$checksum $srcdir/$srcfile") > /dev/null 2>&1; then
         error "Checksum mismatch while fetching $srcfile"
     fi
 
@@ -110,7 +110,7 @@ if [[ -n $image ]]; then
         --mount type=bind,src="$(realpath "$recipedir")",dst=/recipe \
         --mount type=bind,src="$(realpath "$srcdir")",dst=/src \
         "$(image-name "$image")" /bin/bash \
-    <<SCRIPT
+        << SCRIPT
 source /recipe/package
 cd /src
 build
@@ -145,7 +145,7 @@ ctlfile="$ctldir"/control
 
 # Create maintainer scripts
 maintainer-script-header() {
-    cat <<'SCRIPT'
+    cat << 'SCRIPT'
 #!/usr/bin/env bash
 set -e
 SCRIPT
@@ -158,7 +158,7 @@ if [[ $(type -t preinstall) = function ]]; then
     {
         maintainer-script-header
         declare -f preinstall
-        cat <<'SCRIPT'
+        cat << 'SCRIPT'
 if [[ $1 = install ]]; then
     preinstall
 fi
@@ -172,7 +172,7 @@ if [[ $(type -t configure) = function ]]; then
     {
         maintainer-script-header
         declare -f configure
-        cat <<'SCRIPT'
+        cat << 'SCRIPT'
 if [[ $1 = configure ]]; then
     configure
 fi
@@ -189,7 +189,7 @@ for step in pre post; do
 
             if [[ $(type -t "$step"upgrade) = function ]]; then
                 declare -f "$step"upgrade
-                cat <<SCRIPT
+                cat << SCRIPT
 if [[ \$1 = upgrade ]]; then
     "$step"upgrade
 fi
@@ -198,7 +198,7 @@ SCRIPT
 
             if [[ $(type -t "$step"remove) = function ]]; then
                 declare -f "$step"remove
-                cat <<SCRIPT
+                cat << SCRIPT
 if [[ \$1 = remove ]]; then
     "$step"remove "\$2"
 fi

@@ -1,4 +1,4 @@
-# vim: set ft=sh:
+#!/usr/bin/env bash
 pkgname=remux
 pkgdesc="App launcher that supports multi-tasking applications"
 url="https://rmkit.dev/apps/remux"

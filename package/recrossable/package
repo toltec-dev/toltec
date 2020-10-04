@@ -1,4 +1,4 @@
-# vim: set ft=sh:
+#!/usr/bin/env bash
 pkgname=recrossable
 pkgdesc="Solve crossword puzzles"
 url=https://github.com/sandsmark/recrossable
