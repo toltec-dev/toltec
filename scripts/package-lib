@@ -1,4 +1,4 @@
-# vim: set ft=sh:
+#!/usr/bin/env bash
 
 #
 # package-lib
@@ -132,7 +132,8 @@ rsecurl() {
 # $2 - Expected type of the field, 'string', 'array' or 'map'
 # $3 (optional) - Either 'nonempty' or 'optional'
 check-field() {
-    local signature="$(declare -p "$1" 2>/dev/null)"
+    local signature
+    signature="$(declare -p "$1" 2> /dev/null)"
     local vartype=undefined
 
     if [[ $signature =~ ^declare\ -- ]]; then
@@ -150,7 +151,7 @@ check-field() {
             error "The '$1' variable is not defined"
         fi
     else
-        if [[ $vartype != $2 ]]; then
+        if [[ $vartype != "$2" ]]; then
             error "The '$1' variable should be of type '$2', not '$vartype'"
         fi
 
@@ -166,6 +167,7 @@ check-field() {
 #
 # $1 - Path to the package recipe
 load-recipe() {
+    # shellcheck disable=SC1090
     source "$1"/package
 
     # Check fields types
@@ -185,7 +187,7 @@ load-recipe() {
     check-field sha256sums array optional || sha256sums=()
 
     # Make fields read-only
-    readonly 2>/dev/null \
+    readonly \
         pkgname \
         pkgdesc \
         url \
@@ -200,15 +202,15 @@ load-recipe() {
         image \
         source \
         sha256sums \
-    || true
+        2> /dev/null || true
 
     # Check required functions
-    if ! declare -F package >/dev/null 2>&1; then
+    if ! declare -F package > /dev/null 2>&1; then
         error "The 'package()' function is not defined"
     fi
 
     # Make defined functions read-only
-    readonly -f 2>/dev/null \
+    readonly -f \
         build \
         package \
         preinstall \
@@ -217,12 +219,12 @@ load-recipe() {
         postremove \
         preupgrade \
         postupgrade \
-    || true
+        2> /dev/null || true
 }
 
 # Dump metadata of the currently loaded package recipe
 dump-fields() {
-    declare -p 2>/dev/null \
+    declare -p \
         pkgname \
         pkgdesc \
         url \
@@ -237,12 +239,15 @@ dump-fields() {
         image \
         source \
         sha256sums \
-    || true
+        2> /dev/null || true
 }
 
-# Generate the archive name of the currently loaded package
-archive-name() {
-    echo "${pkgname}_${pkgver}_${arch}.ipk"
+# Generate an ID for the currently loaded package recipe
+#
+# This name uniquely identifies the current version and target architecture
+# of the package recipe. It is used to name the resulting package.
+package-id() {
+    echo "${pkgname}_${pkgver}_${arch}"
 }
 
 # Get the full tag of a Docker image

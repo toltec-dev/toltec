@@ -1,7 +1,7 @@
-# vim: set ft=sh:
+#!/usr/bin/env bash
 pkgname=minesweeper
-pkgdesc="mine detection game"
-url=https://github.com/rmkit-dev/rmkit
+pkgdesc="Mine detection game"
+url=https://rmkit.dev/apps/minesweeper
 pkgver=0.0.1-14
 timestamp=2020-09-21T01:41+00:00
 section=games
@@ -15,7 +15,7 @@ sha256sums=(157ad36bc6b345763a504b6d491a47bc3aecc828a99b1bf9fd42dab980f158a4)
 
 build() {
     pip3 install okp
-    make -j$(nproc) minesweeper
+    make -j"$(nproc)" minesweeper
 }
 
 package() {
