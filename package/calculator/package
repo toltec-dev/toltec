@@ -1,4 +1,4 @@
-# vim: set ft=sh:
+#!/usr/bin/env bash
 pkgname=calculator
 pkgdesc="Touch-based calculator"
 url=https://github.com/reHackable/Calculator

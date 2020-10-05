@@ -1,4 +1,4 @@
-# vim: set ft=sh:
+#!/usr/bin/env bash
 pkgname=harmony
 pkgdesc="Procedural sketching app"
 url="https://rmkit.dev/apps/harmony"
@@ -15,7 +15,7 @@ sha256sums=(157ad36bc6b345763a504b6d491a47bc3aecc828a99b1bf9fd42dab980f158a4)
 
 build() {
     pip3 install okp
-    make -j$(nproc) harmony
+    make -j"$(nproc)" harmony
 }
 
 package() {

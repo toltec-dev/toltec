@@ -1,4 +1,4 @@
-# vim: set ft=sh:
+#!/usr/bin/env bash
 pkgname=nao
 pkgdesc="Nao Package Manager: opkg UI built with SAS"
 url="https://rmkit.dev/apps/nao"
@@ -16,7 +16,7 @@ sha256sums=(f8e8fce8ef7ef968fda6b4d83fe0d8160534b1bdc808e5960422075f8c8754fe)
 
 build() {
     pip3 install okp
-    make -j$(nproc) nao
+    make -j"$(nproc)" nao
 }
 
 package() {
