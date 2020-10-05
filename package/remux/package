@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+pkgname=remux
+pkgdesc="App launcher that supports multi-tasking applications"
+url="https://rmkit.dev/apps/remux"
+pkgver=0.0.1-18
+timestamp=2020-09-29T01:41+00:00
+section=launchers
+maintainer="raisjn <of.rajsn@gmail.com>"
+license=MIT
+
+image=python:v1.1
+source=(
+    https://github.com/rmkit-dev/rmkit/archive/e6180947b84bd226d8daf9543c272c4c88fbbdee.zip
+    remux.service
+)
+sha256sums=(
+    ba50f8f4ed68c6f543f18f94b5f71e6e3f0554deb8070f3b31ac5809451c7ea8
+    SKIP
+)
+
+build() {
+    pip3 install okp
+    make remux
+}
+
+package() {
+    install -d "$pkgdir"/opt/usr/bin
+    install -D -m 755 "$srcdir"/src/build/remux "$pkgdir"/opt/bin/remux
+    install -D -m 644 "$srcdir"/remux.service "$pkgdir"/lib/systemd/system/remux.service
+}
+
+configure() {
+    systemctl daemon-reload
+
+    if ! is-enabled "$pkgname.service"; then
+        echo ""
+        echo "Run the following command(s) to use $pkgname as your launcher"
+        how-to-enable "$pkgname.service"
+        echo ""
+    fi
+}
+
+preremove() {
+    echo "Disabling $pkgname"
+    systemctl disable --now "$pkgname"
+}
+
+postremove() {
+    systemctl daemon-reload
+}

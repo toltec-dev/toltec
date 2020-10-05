@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+pkgname=rmservewacominput
+pkgdesc="Serve pen input on port 33333"
+url=https://github.com/LinusCDE/rmWacomToMouse
+pkgver=0.2.5-8
+timestamp=2020-09-06T23:23Z
+section=utils
+maintainer="Linus K. <linus@cosmos-ink.net>"
+license=MIT
+depends=(appmarkable)
+
+image=base:v1.1
+source=(https://github.com/LinusCDE/rmWacomToMouse/archive/1a45d3446c8bc11de04800a702576056016875ed.zip)
+sha256sums=(4d51ff9d6b8f57fe4970b4a0adebafe3513ddeb521a2707b81a42d32f73dadb1)
+
+build() {
+    cd c_implementation
+    CC=arm-linux-gnueabihf-gcc make
+}
+
+package() {
+    install -D -m 755 "$srcdir"/c_implementation/rmServeWacomInput "$pkgdir"/opt/bin/rmservewacominput
+    install -D -m 644 "$srcdir"/oxide "$pkgdir"/opt/etc/draft/rmservewacominput
+    install -D -m 644 "$srcdir"/icon.png "$pkgdir"/opt/etc/draft/icons/rmservewacominput.png
+}

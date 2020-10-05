@@ -1,0 +1,5 @@
+name=recrossable
+desc=Solve crossword puzzles
+call=/opt/bin/recrossable
+term=:
+imgFile=recrossable

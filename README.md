@@ -1,83 +1,61 @@
-**Work in progress**
+## Toltec
 
-opkg: Package manager used by Entware
+![Status of the stable repository](https://github.com/matteodelabre/toltec/workflows/stable/badge.svg)
+![Status of the testing repository](https://github.com/matteodelabre/toltec/workflows/testing/badge.svg)
+[![Discord](https://img.shields.io/discord/463752820026376202.svg?label=reMarkable&logo=discord&logoColor=ffffff&color=7389D8&labelColor=6A7EC2)](https://discord.gg/ATqQGfu)
 
-* https://openwrt.org/docs/guide-user/additional-software/opkg
-* https://elinux.org/images/2/24/Opkg_debians_little_cousin.pdf
-* https://git.yoctoproject.org/cgit/cgit.cgi/opkg
-* https://git.yoctoproject.org/cgit/cgit.cgi/opkg-utils/
+Toltec is a community-maintained repository of free software for [the reMarkable tablet](https://remarkable.com/).
 
-## Package format
+[Browse the list of available packages →](https://toltec.delab.re/stable)
 
-**ipk**
+### Install it
 
-Inherited from the legacy ipkg tool. Similar to deb.
+Toltec works with the [Opkg](https://code.google.com/archive/p/opkg/) package manager, which is in widespread use in embedded devices.
+Opkg is not available by default on the reMarkable, but you can install it by following the instructions described in [remarkable\_entware](https://github.com/evidlo/remarkable_entware).
+After installing Opkg on your device, add the Toltec repository to `/opt/etc/opkg.conf` and download the repository data by running the following commands:
 
-A tar.gz archive containing two sub-archives:
-
-* data.tar.gz: Files of the package.
-    - The structure mirrors that of the root filesystem.
-* control.tar.gz: Metadata about the package.
-    - Install scripts (optional)
-        - preinst: Executed before uncompressing the data.
-        - postinst: Executed after the package has been installed.
-        - prerm: Executed before uninstalling the package.
-        - postrm: Executed after uninstalling the package.
-    - Metadata files
-        - control: Package description (required).
-        - conffiles: Files to keep upon upgrading the package (optional).
-
-### Control file
-
-Fields
-
-* Package: Name of the package (same as in the package archive name).
-* Priority: optional.
-* Depends: list of space-separated dependencies.
-* Section: See <https://packages.debian.org/stable/> for a list of sections in Debian.
-* Description: Short description for the package.
-* Maintainer: Full Name <email@address.com>
-* Source: N/A
-* Version: Package version
-
-### See also
-
-* <https://raymii.org/s/tutorials/Building_IPK_packages_by_hand.html>
-* <https://bitsum.com/creating_ipk_packages.htm>
-* <https://artisan.karma-lab.net/comprendre-paquets-ipk>
-
-## Repository format
-
-Also called a feed.
-
-Directory with list of packages and a `Packages` file
-
-Package naming: `appname_version_arch.ipk`
-
-Config `/opt/etc/opkg.conf`
-
-```
-src NAME URL
-src/gz NAME URL
+```sh
+$ cat "src/gz toltec https://toltec.delab.re/stable" >> /opt/etc/opkg.conf
+$ opkg update
 ```
 
-Where URL is the feed root
+You now have access to all of the Toltec packages!
 
-### See also
+### Use it
 
-* <https://jumpnowtek.com/yocto/Managing-a-private-opkg-repository.html>
-* <https://jumpnowtek.com/yocto/Using-your-build-workstation-as-a-remote-package-repository.html>
+To install a package:
 
-## Building
+```sh
+$ opkg install calculator
+```
 
-`build-repo`
+To remove a package:
 
-Date of latest commit
+```sh
+$ opkg remove calculator
+```
 
-opkg-utils must be in PATH
+To update all packages:
 
-For reproducibility:
+```sh
+$ opkg update
+$ opkg upgrade
+```
 
-- must be done under the same root path
+[See information about advanced Opkg commands →](https://openwrt.org/docs/guide-user/additional-software/opkg)\
+[Choose between the _stable_ and _testing_ channels →](docs/channels.md)
 
-Automatically updated when commits are pushed to the master branch, via GitHub Actions.
+### Build it
+
+This Git repository contains all the tools and recipes required to build the packages published on the package repository.
+This repository is automatically built and published every time that a commit is pushed to Git, using [Github Actions](https://docs.github.com/en/actions).
+Since all the packaged software in Toltec is free, you can also **build them from source yourself** instead of using the pre-built binaries.
+The build process is fully [reproducible](https://reproducible-builds.org/), which means that you can verify that the published packages have not been tampered with during the automated build process.
+
+[Learn how to build the repository from source →](docs/building.md)
+
+### Improve it
+
+Your contribution is welcome for adding new packages, updating existing ones or improving the build tooling.
+
+[Learn how to contribute to Toltec →](docs/contributing.md)

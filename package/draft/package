@@ -1,16 +1,26 @@
-# vim: set ft=sh:
+#!/usr/bin/env bash
 pkgname=draft
-pkgver=0.2.0-4
-pkgdesc="Launcher for the reMarkable tablet which wraps around the standard interface"
-section=remarkable-launchers
+pkgdesc="Launcher which wraps around the standard interface"
+url=https://github.com/dixonary/draft-reMarkable
+pkgver=0.2.0-14
+timestamp=2020-07-20T10:23Z
+section=launchers
 maintainer="Mattéo Delabre <spam@delab.re>"
-license=Apache
+license=Apache-2.0
+depends=(xochitl)
 
-origin=https://github.com/dixonary/draft-reMarkable.git
-revision=5bd660a2fd07eba166c6110d2b48cfc58ee67e58
+image=qt:v1.1
+source=(
+    https://github.com/dixonary/draft-reMarkable/archive/5bd660a2fd07eba166c6110d2b48cfc58ee67e58.zip
+    draft.service
+)
+sha256sums=(
+    c41d7a4fd537c54d787018fd764421dbf7dd64306ca800875283e05eef99173e
+    SKIP
+)
 
 build() {
-    qmake draft.pro -spec linux-oe-g++
+    qmake draft.pro
     make
 }
 
@@ -19,13 +29,37 @@ package() {
 
     install -d "$pkgdir"/opt/share/draft "$pkgdir"/usr/share
     ln -s /opt/share/draft "$pkgdir"/usr/share/draft
-    cp -R "$srcdir"/qml "$pkgdir"/opt/share/draft
-    cp -R "$srcdir"/js "$pkgdir"/opt/share/draft
+    cp -r "$srcdir"/qml "$pkgdir"/opt/share/draft
+    cp -r "$srcdir"/js "$pkgdir"/opt/share/draft
 
     install -d "$pkgdir"/opt/etc/draft "$pkgdir"/etc
     ln -s /opt/etc/draft "$pkgdir"/etc/draft
-    cp -R "$srcdir"/extra-files/draft/* "$pkgdir"/opt/etc/draft
-    sed -i 's,call=/usr,call=/opt,' "$pkgdir"/opt/etc/draft/02-fingerterm
+    cp -r "$srcdir"/extra-files/draft/* "$pkgdir"/opt/etc/draft
+    rm "$pkgdir"/opt/etc/draft/01-xochitl
+    rm "$pkgdir"/opt/etc/draft/icons/xochitl.png
+    rm "$pkgdir"/opt/etc/draft/02-fingerterm
+    rm "$pkgdir"/opt/etc/draft/icons/fingerterm.png
+    mv "$pkgdir"/opt/etc/draft/{99-,}shutdown
 
-    install -D -m 644 -t "$pkgdir"/lib/systemd/system "$defdir"/draft.service
+    install -D -m 644 -t "$pkgdir"/lib/systemd/system "$srcdir"/draft.service
+}
+
+configure() {
+    systemctl daemon-reload
+
+    if ! is-enabled "$pkgname.service"; then
+        echo ""
+        echo "Run the following command(s) to use $pkgname as your launcher"
+        how-to-enable "$pkgname.service"
+        echo ""
+    fi
+}
+
+preremove() {
+    echo "Disabling $pkgname"
+    systemctl disable --now "$pkgname"
+}
+
+postremove() {
+    systemctl daemon-reload
 }

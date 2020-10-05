@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+KO_DONT_GRAB_INPUT=1 bash /opt/koreader/koreader.sh

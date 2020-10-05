@@ -1,0 +1,76 @@
+#!/usr/bin/env bash
+pkgname=plato
+pkgdesc="Document reader"
+url=https://github.com/LinusCDE/plato
+pkgver=0.9.1-10
+timestamp=2020-09-26T02:41Z
+section=readers
+maintainer="Linus K. <linus@cosmos-ink.net>"
+license=AGPL-3.0-or-later
+
+image=rust:v1.1
+source=(https://github.com/LinusCDE/plato/archive/d8536f8f90ddbd9ac54a787ee5c2d9d966d08c0f.zip)
+sha256sums=(c78eed996a82286c82dd7a68484ee9f8ceaed7cc0842a59dc710724a45605a71)
+
+build() {
+    # Get needed build packages
+    export DEBIAN_FRONTEND=noninteractive
+    apt-get update -y
+    apt-get install -y \
+        jq \
+        patchelf \
+        unzip \
+        wget
+
+    # Fall back to system-wide config
+    rm .cargo/config
+
+    # 'cargo pkgid' seems to output something different with most
+    # recent nightly builds. This adjusts the filtering.
+    sed -i "s/version=.*$/version=\'$(cargo pkgid | cut -d "#" -f 2 | cut -d ":" -f 2)\'/g" download.sh
+
+    # Use our toolchain
+    export AR=arm-linux-gnueabihf-ar
+    export CC=arm-linux-gnueabihf-gcc
+    export STRIP=arm-linux-gnueabihf-strip
+    sed -i '/source \/usr\/local\/oecore-x86_64/d' src/mupdf_wrapper/build-kobo.sh
+
+    # Compile all to dist/
+    ./clean.sh
+    ./build.sh
+    ./dist.sh
+}
+
+package() {
+    # Install plato data in /opt/lib/plato
+    install -d "$pkgdir"/opt/lib
+    cp -r "$srcdir"/dist "$pkgdir"/opt/lib/plato
+
+    # Link /opt/bin/plato to /opt/lib/plato/plato.sh
+    install -d "$pkgdir"/opt/bin
+    ln -s /opt/lib/plato/plato.sh "$pkgdir"/opt/bin/plato
+
+    # Link media dir to /home/root/plato-media
+    rmdir "$pkgdir"/opt/lib/plato/media
+    ln -s /home/root/plato-media "$pkgdir"/opt/lib/plato/media
+
+    # Link Settings.toml to /opt/etc/plato.toml
+    install -d "$pkgdir"/opt/etc
+    ln -s /opt/etc/plato.toml "$pkgdir"/opt/lib/plato/Settings.toml
+
+    install -D -m 644 "$srcdir"/oxide "$pkgdir"/opt/etc/draft/plato.draft
+    install -D -m 644 "$srcdir"/oxide-icon.png "$pkgdir"/opt/etc/draft/icons/plato.png
+}
+
+configure() {
+    local mediadir=/home/root/plato-media
+
+    # This directory should not be tracked by opkg
+    # so that its contents are kept after removing
+    if [ ! -d $mediadir ]; then
+        mkdir $mediadir
+        echo ""
+        echo "Place your media files for plato in '$mediadir'"
+        echo ""
+    fi
+}
