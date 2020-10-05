@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+pkgname=chessmarkable
+pkgdesc="A chess game for the reMarkable"
+url=https://github.com/LinusCDE/chessmarkable
+pkgver=0.3.3-1
+timestamp=2020-10-05T00:33Z
+section=games
+maintainer="Linus K. <linus@cosmos-ink.net>"
+license=MIT
+
+image=rust:v1.1
+source=(https://github.com/LinusCDE/chessmarkable/archive/5571e594f6fd9175be7c0cbe9a2d20e3012d49a9.zip)
+sha256sums=(81b165f836d305374f205389d06852cffb61bace9b82ae6fe25495d14f4ffb24)
+
+build() {
+    # Fall back to system-wide config
+    rm .cargo/config
+
+    cargo build --release
+    arm-linux-gnueabihf-strip target/armv7-unknown-linux-gnueabihf/release/chessmarkable
+}
+
+package() {
+    install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/target/armv7-unknown-linux-gnueabihf/release/chessmarkable
+    install -D -m 644 "$srcdir"/oxide "$pkgdir"/opt/etc/draft/chessmarkable
+    install -D -m 644 "$srcdir"/icon.png "$pkgdir"/opt/etc/draft/icons/chessmarkable.png
+}
