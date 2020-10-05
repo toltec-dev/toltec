@@ -89,10 +89,6 @@ cat > "$indexfile" << 'WEBS'
                 cursor: pointer;
             }
 
-            .sortable th:not(.sort-asc):not(.sort-desc)::after {
-                content: " ⇅";
-            }
-
             .sortable th.sort-asc::after {
                 content: " ↓";
             }
