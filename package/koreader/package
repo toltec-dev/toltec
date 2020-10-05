@@ -22,7 +22,7 @@ package() {
 }
 
 configure() {
-    if systemctl list-units --full -all | grep -Fq "tarnish.service";then
+    if systemctl list-units --full -all | grep -Fq "tarnish.service"; then
         echo "KOReader has an outstanding bug where it doesn't resize the screen properly when returning to Oxide. See Oxide's release notes for a workaround."
     fi
 }
