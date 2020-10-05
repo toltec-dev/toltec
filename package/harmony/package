@@ -27,5 +27,5 @@ package() {
 }
 
 configure() {
-    mkdir -p /home/root/harmony 2> /dev/null
+    mkdir -p /home/root/harmony
 }
