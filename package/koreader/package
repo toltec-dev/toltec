@@ -2,7 +2,7 @@
 pkgname=koreader
 pkgdesc="An ebook reader application supporting PDF, DjVu, EPUB, FB2 and many more formats"
 url=https://github.com/koreader/koreader
-pkgver=2020.09.29-1
+pkgver=2020.09.29-2
 timestamp=2020-09-29T01:52Z
 section=readers
 maintainer="raisjn <of.raisjn@gmail.com>"
@@ -19,4 +19,10 @@ package() {
     install -D -m 644 -t "$pkgdir"/opt/etc/draft/ "$recipedir"/koreader.draft
     install -D -m 644 -t "$pkgdir"/opt/etc/draft/icons/ "$srcdir"/resources/koreader.png
     install -D -m 755 -t "$pkgdir"/opt/bin/ "$recipedir"/koreader
+}
+
+configure() {
+    if systemctl list-units --full -all | grep -Fq "tarnish.service"; then
+        echo "KOReader has an outstanding bug where it doesn't resize the screen properly when returning to Oxide. See Oxide's release notes for a workaround."
+    fi
 }
