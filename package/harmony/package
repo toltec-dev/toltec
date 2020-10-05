@@ -25,3 +25,7 @@ package() {
     mkdir -p "$pkgdir"/opt/etc/draft/
     install -D -m 644 "$srcdir"/src/harmony/harmony.draft "$pkgdir"/opt/etc/draft/harmony.draft
 }
+
+configure() {
+    mkdir -p /home/root/harmony 2> /dev/null
+}
