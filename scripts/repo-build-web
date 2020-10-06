@@ -44,7 +44,9 @@ recipesdir="$1"
 repodir="$2"
 mkdir -p "$repodir"
 
-cat > "$repodir/index.html" << WEBS
+indexfile="$repodir/index.html"
+
+cat > "$indexfile" << 'WEBS'
 <!doctype html>
 <html lang="en">
     <head>
@@ -57,25 +59,42 @@ cat > "$repodir/index.html" << WEBS
                 background-color: #f8fcf8;
             }
 
-            table {
+            .listing {
                 width: 100%;
+                table-layout: fixed;
             }
 
-            table td {
+            .listing td {
                 padding: 0 20px;
             }
 
-            table tr:nth-child(even) {
+            .listing tr:nth-child(even) {
                 background-color: #dcdfdc;
             }
 
-            table thead {
-                border-bottom: 1px dotted gray;
-            }
-
-            table th {
+            .listing th {
                 text-align: left;
                 padding-left: 20px;
+            }
+
+            .listing-name, .listing-version, .listing-license {
+                width: 15%;
+            }
+
+            .listing-desc {
+                width: 45%;
+            }
+
+            .sortable th {
+                cursor: pointer;
+            }
+
+            .sortable th.sort-asc::after {
+                content: " ↓";
+            }
+
+            .sortable th.sort-desc::after {
+                content: " ↑";
             }
         </style>
     </head>
@@ -83,51 +102,138 @@ cat > "$repodir/index.html" << WEBS
         <a href="../">Back to Repository Home Page</a>
         <h1>Toltec Package Listing</h1>
 
-        <table>
+WEBS
+
+section "Indexing sections"
+declare -A pkgsections
+
+for recipedir in "$recipesdir"/*; do
+    section="$(
+        load-recipe "$recipedir"
+        echo "$section"
+    )"
+    pkgsections["$section"]=1
+done
+
+for cursection in "${!pkgsections[@]}"; do
+    section "Making $cursection index"
+
+    cat >> "$indexfile" << WEBS
+        <h2>$cursection</h2>
+
+        <table class="listing sortable">
             <thead>
                 <tr>
                     <th>Name</th>
                     <th>Description</th>
                     <th>Version</th>
-                    <th>Category</th>
                     <th>License</th>
                 </tr>
             </thead>
+
+            <colgroup>
+                <col class="listing-name">
+                <col class="listing-desc">
+                <col class="listing-version">
+                <col class="listing-license">
+            </colgroup>
 WEBS
 
-# Build packages index
-section "Making packages index"
+    for recipedir in "$recipesdir"/*; do
+        (
+            load-recipe "$recipedir"
 
-for recipedir in "$recipesdir"/*; do
-    (
-        load-recipe "$recipedir"
-        pkgid="$(package-id)"
+            if [[ $section = "$cursection" ]]; then
+                pkgid="$(package-id)"
 
-        status "Adding entry for $pkgid"
+                status "Adding entry for $pkgid"
 
-        if [[ -z $url ]]; then
-            href="$url"
-        else
-            href="<a href=\"$url\">$pkgname</a>"
-        fi
+                if [[ -z $url ]]; then
+                    href="$url"
+                else
+                    href="<a href=\"$url\">$pkgname</a>"
+                fi
 
-        cat >> "$repodir/index.html" << WEBS
+                cat >> "$indexfile" << WEBS
             <tr>
                 <td>$href</td>
                 <td>$pkgdesc</td>
                 <td>$pkgver</td>
-                <td>$section</td>
                 <td><a href='https://spdx.org/licenses/$license.html'>$license</a></td>
             </tr>
 WEBS
-    )
+            fi
+        )
+    done
 
+    cat >> "$indexfile" << 'WEBS'
+        </table>
+WEBS
 done
 
-cat >> "$repodir/index.html" << WEBS
-        </table>
+cat >> "$indexfile" << 'WEBS'
+        <script>
+            const selectCell = (index, row) =>
+                row.querySelector(`td:nth-child(${index + 1})`);
+
+            const compareRows = (index, asc, row1, row2) => {
+                const direction = asc ? 1 : -1;
+                const cell1 = selectCell(index, row1);
+                const cell2 = selectCell(index, row2);
+                return (direction
+                    * (cell1.textContent < cell2.textContent ? -1 : 1));
+            };
+
+            const makeSortable = table => {
+                const heads = table.querySelectorAll('thead th');
+                const body = table.querySelector('tbody');
+                const rows = body.querySelectorAll('tr');
+
+                let currentHead = null;
+                let currentSortAsc = true;
+
+                const sortBy = (index) => {
+                    const head = heads[index];
+
+                    if (currentHead === null || currentHead !== head) {
+                        if (currentHead) {
+                            currentHead.classList.remove('sort-asc');
+                            currentHead.classList.remove('sort-desc');
+                        }
+
+                        currentHead = head;
+                        currentSortAsc = true;
+                        head.classList.add('sort-asc');
+                    } else {
+                        currentSortAsc = !currentSortAsc;
+
+                        if (currentSortAsc) {
+                            head.classList.add('sort-asc');
+                            head.classList.remove('sort-desc');
+                        } else {
+                            head.classList.add('sort-desc');
+                            head.classList.remove('sort-asc');
+                        }
+                    }
+
+                    Array.from(rows)
+                        .sort(compareRows.bind(null, index, currentSortAsc))
+                        .forEach(row => body.appendChild(row));
+                };
+
+                heads.forEach((head, index) => {
+                    head.addEventListener('click', () => {
+                        sortBy(index);
+                    });
+                });
+
+                sortBy(0);
+            };
+
+            document.querySelectorAll('table.sortable').forEach(makeSortable);
+        </script>
     </body>
 </html>
 WEBS
 
-status "Done. Result is in $repodir/index.html"
+status "Done. Result is in $indexfile"
