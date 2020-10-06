@@ -15,7 +15,7 @@ Opkg is not available by default on the reMarkable, but you can install it by fo
 After installing Opkg on your device, add the Toltec repository to `/opt/etc/opkg.conf` and download the repository data by running the following commands:
 
 ```sh
-$ cat "src/gz toltec https://toltec.delab.re/stable" >> /opt/etc/opkg.conf
+$ echo "src/gz toltec https://toltec.delab.re/stable" >> /opt/etc/opkg.conf
 $ opkg update
 ```
 
