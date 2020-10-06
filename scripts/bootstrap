@@ -67,7 +67,7 @@ main() {
 
     # Check status of installation and ensure installed
     if [ -d /home/root/.entware ]; then
-        if [[ -d /opt ]] && files="$(ls -qA -- /opt)" && [[ -n $files ]]; then
+        if [[ -d /opt ]] && files="$(ls -A -- /opt)" && [[ -n $files ]]; then
             # Entware is installed and active
             log INFO "Entware is installed and active"
         else
