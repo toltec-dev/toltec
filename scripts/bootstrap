@@ -195,8 +195,9 @@ entware-install() {
     fi
 
     # Add Opkg binaries to the PATH before all others
+    # shellcheck disable=SC2016
     if ! grep '.*PATH="\?/opt/bin:/opt/sbin:\$PATH"\?$' /home/root/.bashrc \
-            | grep -v '^#' > /dev/null; then
+        | grep -v '^#' > /dev/null; then
         log INFO "Adding /opt/bin to the PATH"
 
         cat >> /home/root/.bashrc << 'SHELL'
