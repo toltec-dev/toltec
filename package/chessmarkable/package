@@ -2,15 +2,15 @@
 pkgname=chessmarkable
 pkgdesc="A chess game for the reMarkable"
 url=https://github.com/LinusCDE/chessmarkable
-pkgver=0.3.3-1
-timestamp=2020-10-05T00:33Z
+pkgver=0.4.0-1
+timestamp=2020-10-06T00:17Z
 section=games
 maintainer="Linus K. <linus@cosmos-ink.net>"
 license=MIT
 
 image=rust:v1.1
-source=(https://github.com/LinusCDE/chessmarkable/archive/5571e594f6fd9175be7c0cbe9a2d20e3012d49a9.zip)
-sha256sums=(81b165f836d305374f205389d06852cffb61bace9b82ae6fe25495d14f4ffb24)
+source=(https://github.com/LinusCDE/chessmarkable/archive/fd4a03db6022ce42f49bd33b68b0fc96217b619b.zip)
+sha256sums=(c426c40f1ec59ec077a9356ce60b289c3abe63ec043e4341694686243db4dfeb)
 
 build() {
     # Fall back to system-wide config
