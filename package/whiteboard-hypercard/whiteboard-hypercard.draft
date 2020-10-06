@@ -1,0 +1,4 @@
+name=whiteboard
+desc=live whiteboard
+call=/opt/bin/whiteboard
+term=killall -q -9 whiteboard
