@@ -34,7 +34,6 @@ cleanup() {
     fi
 }
 
-trap cleanup EXIT
 
 # Remove unfinished installation after error
 error-cleanup() {
@@ -56,8 +55,6 @@ error-cleanup() {
         systemctl daemon-reload
     fi
 }
-
-trap error-cleanup ERR
 
 # Install a local wget binary which supports TLS (the original one
 # installed on the reMarkable does not) in the PATH
@@ -288,37 +285,44 @@ throw() {
     exit 1
 }
 
-if [[ -d $entware_path ]]; then
-    if [[ -d /opt ]] && files="$(ls -A -- /opt)" && [[ -n $files ]]; then
-        log INFO "Entware is already installed and active"
+main() {
+    trap cleanup EXIT
+    trap error-cleanup ERR
+
+    if [[ -d $entware_path ]]; then
+        if [[ -d /opt ]] && files="$(ls -A -- /opt)" && [[ -n $files ]]; then
+            log INFO "Entware is already installed and active"
+        else
+            log INFO "Re-enabling existing Entware install"
+            entware-mount
+        fi
     else
-        log INFO "Re-enabling existing Entware install"
+        # Use a secure wget for installing Entware
+        log INFO "Fetching secure wget"
+        wget-bootstrap
+
+        log INFO "Creating $entware_path and mounting to /opt"
         entware-mount
+        entware-install
     fi
-else
-    # Use a secure wget for installing Entware
-    log INFO "Fetching secure wget"
-    wget-bootstrap
 
-    log INFO "Creating $entware_path and mounting to /opt"
-    entware-mount
-    entware-install
-fi
+    toltec-install "$@"
 
-toltec-install "$@"
+    if ! command -v opkg > /dev/null; then
+        log WARN "Please run '. \$HOME/.bashrc' to use Toltec"
+    fi
 
-if ! command -v opkg > /dev/null; then
-    log WARN "Please run '. \$HOME/.bashrc' to use Toltec"
-fi
+    if [[ ! -x $reenable_path ]]; then
+        {
+            echo "#!/usr/bin/env bash"
+            declare -p entware_path systemd_mount_path
+            declare -f entware-mount
+            echo "entware-mount"
+        } >> "$reenable_path"
 
-if [[ ! -x $reenable_path ]]; then
-    {
-        echo "#!/usr/bin/env bash"
-        declare -p entware_path systemd_mount_path
-        declare -f entware-mount
-        echo "entware-mount"
-    } >> "$reenable_path"
+        chmod +x "$reenable_path"
+        log WARN "Use '$reenable_path' to re-enable Toltec after a system update"
+    fi
+}
 
-    chmod +x "$reenable_path"
-    log WARN "Use '$reenable_path' to re-enable Toltec after a system update"
-fi
+main "$@"
