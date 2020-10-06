@@ -6,51 +6,45 @@
 # Install and configure Opkg for use with Entware and Toltec
 #
 
+set -e
+wget_path=/home/root/.local/bin/wget
+
+# Remove all temporary files
 cleanup() {
-    if [ -d /home/root/.cache/wget_bin ]; then
-        rm -r /home/root/.cache/wget_bin \
-            && log DEBUG "Removed wget binary cache"
+    if [[ -x $wget_path ]]; then
+        rm "$wget_path"
+        log INFO "Removed local wget binary"
     fi
 }
 
-bootstrap_wget() {
-    if [ ! -d /home/root/.cache/wget_bin ]; then
-        if [ -e /home/root/.cache/wget_bin ]; then
-            log FATAL '"/home/root/.cache/wget_bin" exists, but is not a directory!'
-        fi
+trap cleanup EXIT
 
-        log INFO "Installing a current wget binary with better and current tls support" \
-            "to /home/root/.cache/wget_bin/ for this installation..." \
-            ""
-        # Bootstrap a current version of wget
-        local wget_binaries_path='http://github.com/LinusCDE/wget-remarkable-pipeline/releases/download/job254'
-        local wget_binaries_filename='wget-remarkable-pipeline_job245_wget1.20.3.zip'
-        local wget_binaries_sha256='84185a5934e34e25794d439c78dc9f1590e4df12fbf369236f6a8749bf14d67f'
+# Install a local wget binary which supports TLS (the original one
+# installed on the reMarkable does not) in the PATH
+wget-bootstrap() {
+    local wget_remote=https://toltec.delab.re/thirdparty/bin/wget-v1.20.3
+    local wget_checksum=8d447c6eb0a39e705f45bea900b12eef07142ea3da0809aca4dd44fe4110cdfd
+
+    if [[ ! -x $wget_path ]]; then
+        if [[ -e $wget_path ]]; then
+            throw "'$wget_path' exists, but is not executable"
+        fi
 
         # Download and compare to hash
-        wget "$wget_binaries_path/$wget_binaries_filename" -O "/home/root/$wget_binaries_filename"
-        if ! echo "$wget_binaries_sha256  /home/root/$wget_binaries_filename" | sha256sum -c -; then
-            echo "FATAL: Invalid hash" >&2
-            exit 1
+        mkdir -p "$(dirname "$wget_path")"
+        wget --quiet "$wget_remote" --output-document "$wget_path" 2> /dev/null
+
+        if ! sha256sum -c <(echo "$wget_checksum  $wget_path") > /dev/null 2>&1; then
+            throw "Invalid checksum for the local wget binary"
+            rm "$wget_path"
         fi
 
-        mkdir -p /home/root/.cache/wget_bin
-
-        # Unzip to /home/root/.cache/wget_bin and remove downloaded file
-        unzip "/home/root/$wget_binaries_filename" -d /home/root/.cache/wget_bin -q
-        rm "/home/root/$wget_binaries_filename"
-
-        cat > /home/root/.cache/wget_bin/wget << EOF
-#!/bin/sh
-LD_LIBRARY_PATH="/home/root/.cache/wget_bin/dist" /home/root/.cache/wget_bin/dist/wget \$@
-EOF
-
-        chmod +x /home/root/.cache/wget_bin/wget
+        chmod +x "$wget_path"
     fi
 
-    # Ensure this binary is used
-    if [[ $(command -v wget) != /home/root/.cache/wget_bin/wget ]]; then
-        PATH="/home/root/.cache/wget_bin:$PATH"
+    # Ensure the local binary is used
+    if [[ $(command -v wget) != $wget_path ]]; then
+        export PATH="$(dirname "$wget_path"):$PATH"
     fi
 }
 
@@ -64,6 +58,10 @@ main() {
         # TODO: Switch to a more official repo when it exists
         REMARKABLE_ENTWARE_REPO_AUTHOR=LinusCDE
     fi
+
+    # Use a secure wget in case Entware or Entware’s wget is not installed
+    log INFO "Fetching secure wget"
+    wget-bootstrap
 
     # Check status of installation and ensure installed
     if [ -d /home/root/.entware ]; then
@@ -83,27 +81,25 @@ main() {
 
     # Ensure opkg is in PATH
     ensure_opkg_available
+
     # Ensure wget is installed as opkg package
     ensure_opt_wget_and_ca_certs_installed
+
     # Add toltec repo if mising
     ensure_toltec_repo_added
 
     if [ $# -ge 1 ]; then
         install_packages "$@" || throw "Failed to install requested packages"
     fi
-
-    cleanup
 }
 
 entware_install() {
-    bootstrap_wget || throw "bootstrap_wget() failed!"
     (wget -O- "https://raw.githubusercontent.com/$REMARKABLE_ENTWARE_REPO_AUTHOR/remarkable_entware/master/entware_install.sh" | sh) \
         || throw "Failed to download and/or install remarkable_entware."
     log INFO "Entware was installed successfully."
 }
 
 entware_reenable() {
-    bootstrap_wget || throw "bootstrap_wget() failed!"
     (wget -O- "https://raw.githubusercontent.com/$REMARKABLE_ENTWARE_REPO_AUTHOR/remarkable_entware/master/entware_reenable.sh" | sh) \
         || throw "Failed to download and/or install remarkable_entware."
     log INFO "Entware was reenabled successfully."
@@ -213,7 +209,6 @@ throw() {
         "https://github.com/toltec-dev/toltec/issues" \
         "(Please also include these error logs to help solving the" \
         "problem faster. Thank you!)"
-    cleanup
     exit 1
 }
 
