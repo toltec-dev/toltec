@@ -34,7 +34,6 @@ cleanup() {
     fi
 }
 
-
 # Remove unfinished installation after error
 error-cleanup() {
     # Get out of /opt so it can be unmounted
