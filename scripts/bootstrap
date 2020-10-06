@@ -43,8 +43,9 @@ wget-bootstrap() {
     fi
 
     # Ensure the local binary is used
-    if [[ $(command -v wget) != $wget_path ]]; then
-        export PATH="$(dirname "$wget_path"):$PATH"
+    if [[ $(command -v wget) != "$wget_path" ]]; then
+        export PATH
+        PATH="$(dirname "$wget_path"):$PATH"
     fi
 }
 
