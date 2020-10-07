@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# Copyright (c) 2020 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
 pkgname=oxide
 pkgdesc="Launcher application"
 url=https://github.com/Eeems/oxide

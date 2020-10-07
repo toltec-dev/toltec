@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# Copyright (c) 2020 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
 pkgname=xochitl
 pkgdesc="Read documents and take notes"
 url=https://remarkable.com

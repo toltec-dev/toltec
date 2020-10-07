@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# Copyright (c) 2020 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
 pkgname=nao
 pkgdesc="Nao Package Manager: opkg UI built with SAS"
 url="https://rmkit.dev/apps/nao"
