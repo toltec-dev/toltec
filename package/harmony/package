@@ -5,16 +5,16 @@
 pkgname=harmony
 pkgdesc="Procedural sketching app"
 url="https://rmkit.dev/apps/harmony"
-pkgver=0.0.1-15
-timestamp=2020-09-21T01:41+00:00
-section=utils
+pkgver=0.0.1-16
+timestamp=2020-10-05T01:41+00:00
+section=drawing
 maintainer="raisjn <of.raisjn@gmail.com>"
 license=MIT
 conflicts=(rmkit)
 
 image=python:v1.1
-source=(https://github.com/rmkit-dev/rmkit/archive/d3ebde163c2d50fe9258142e2d190710a58eb954.zip)
-sha256sums=(157ad36bc6b345763a504b6d491a47bc3aecc828a99b1bf9fd42dab980f158a4)
+source=(https://github.com/rmkit-dev/rmkit/archive/8e56c61385fa5da73fbe4aefa1d7991ab82dfb89.zip)
+sha256sums=(b921b0c826475859e7f9c2a80d0bdc683d6cd9e0f315a97c554d1c3b2d064677)
 
 build() {
     pip3 install okp
