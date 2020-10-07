@@ -50,3 +50,7 @@ You may also check it manually by running `make format` (or `make format-fix` to
 
 Compliance of shell scripts to Shellcheck will also automatically be checked.
 To check it manually, run `make lint` at the root of the repository (you need to have Shellcheck installed on your computer for this to work).
+
+### License
+
+By contributing to Toltec, you agree to place your contributions under the MIT license.
