@@ -3,14 +3,14 @@
 #
 # bootstrap
 #
-# Install and configure Opkg for use with Entware and Toltec
+# Install and configure Opkg, Entware and Toltec
 #
 # Based on Evan Widloski’s remarkable_entware (2019-03-21)
 # Based on the Entware installer from
 # <http://bin.entware.net/armv7sf-k3.2/installer/generic.sh>
 #
 
-set -e
+set -eE
 
 # Path for the temporary local wget used in this installer
 [[ -z $wget_path ]] && wget_path=/home/root/.local/bin/wget
@@ -34,8 +34,11 @@ cleanup() {
     fi
 }
 
-# Remove unfinished installation after error
+# Remove unfinished installation after unexpected error
 error-cleanup() {
+    read -ra trace < <(caller 0)
+    log ERROR "Unexpected error on line ${trace[2]}:${trace[0]} in function ${trace[1]}"
+
     # Get out of /opt so it can be unmounted
     cd /home/root
 
@@ -49,10 +52,18 @@ error-cleanup() {
     fi
 
     if [[ -f $systemd_mount_path ]]; then
-        systemctl disable opt.mount
+        systemctl disable --now opt.mount 2> /dev/null
         rm "$systemd_mount_path"
         systemctl daemon-reload
     fi
+
+    log ERROR "This script failed to install. If you can't solve the above" \
+        "issue yourself, please report it at:" \
+        "" \
+        "   https://github.com/toltec-dev/toltec/issues" \
+       "" \
+        "(Please also include these error logs to help solving the" \
+        "problem faster. Thank you!)"
 }
 
 # Install a local wget binary which supports TLS (the original one
@@ -63,7 +74,9 @@ wget-bootstrap() {
 
     if [[ ! -x $wget_path ]]; then
         if [[ -e $wget_path ]]; then
-            throw "'$wget_path' exists, but is not executable"
+            log ERROR "'$wget_path' exists, but is not executable"
+            error-cleanup
+            exit 1
         fi
 
         # Download and compare to hash
@@ -74,8 +87,9 @@ wget-bootstrap() {
         wget --quiet "$wget_remote" --output-document "$wget_path" 2> /dev/null
 
         if ! sha256sum -c <(echo "$wget_checksum  $wget_path") > /dev/null 2>&1; then
-            throw "Invalid checksum for the local wget binary"
-            rm "$wget_path"
+            log ERROR "Invalid checksum for the local wget binary"
+            error-cleanup
+            exit 1
         fi
     fi
 
@@ -110,24 +124,23 @@ WantedBy=local-fs.target
 UNIT
 
     systemctl daemon-reload
-    systemctl enable --now opt.mount
+    systemctl enable --now opt.mount 2> /dev/null
 }
 
 # Install Entware to /opt
 entware-install() {
-    # Create basic folders, entware-opt package creates the rest
-    log INFO "Initializing /opt"
+    log "Installing Entware to /opt"
 
+    # Create basic folders, entware-opt package creates the rest
     for folder in bin etc lib lib/opkg tmp var var/lock; do
         if [ -d "/opt/$folder" ]; then
-            log WARN "Folder /opt/$folder exists!"
-            log WARN "If something goes wrong please clean the /opt folder and try again."
+            log WARN "Folder /opt/$folder exists!" \
+                "If something goes wrong please clean the /opt folder and try again."
         else
             mkdir "/opt/$folder"
         fi
     done
 
-    log INFO "Installing Entware to /opt"
     local dynamic_loader="ld-linux.so.3"
     local entware_remote=https://bin.entware.net/armv7sf-k3.2/installer
 
@@ -145,7 +158,6 @@ entware-install() {
     ln -s libc-2.27.so libc.so.6
     ln -s libpthread-2.27.so libpthread.so.0
 
-    log INFO "Installing basic Entware packages"
     /opt/bin/opkg update
     /opt/bin/opkg install entware-opt
 
@@ -194,7 +206,7 @@ entware-install() {
     # shellcheck disable=SC2016
     if ! grep '.*PATH="\?/opt/bin:/opt/sbin:\$PATH"\?$' /home/root/.bashrc \
         | grep -v '^#' > /dev/null; then
-        log INFO "Adding /opt/bin to the PATH"
+        log "Adding /opt/bin to the PATH"
 
         cat >> /home/root/.bashrc << 'SHELL'
 # Path added by Toltec’s bootstrap
@@ -209,7 +221,7 @@ SHELL
 toltec-install() {
     # Make sure that Opkg is configured to fetch the Toltec repo
     if ! grep "^src/gz\b.*\bhttps://toltec\.delab\.re/" /opt/etc/opkg.conf > /dev/null 2>&1; then
-        log INFO "Installing the Toltec $toltec_branch repo"
+        log "Installing the Toltec $toltec_branch repo"
         echo "src/gz toltec https://toltec.delab.re/$toltec_branch" >> /opt/etc/opkg.conf
         /opt/bin/opkg update
     fi
@@ -236,52 +248,44 @@ toltec-install() {
 #
 # Arguments:
 #
-# $1 - Log level: 'info', 'warn', 'error' or 'fatal'
-# $2 - Message to show
+# [$1] - Log level: INFO, WARN or ERROR (default: INFO)
+# $2... - Messages to print, each argument goes to a separate line
 log() {
-    [ $# -ge 2 ] || throw "log() invalid usage: at least 2 parameters needed. Usage: log <type> <message_line>..."
-
-    local log_type="$1"
-    local fd=1 # To stdout
+    # Output stream where the messages will be sent
+    local log_type="INFO"
+    local fd=1
     local colored_prefix
 
+    if [[ $# -ge 2 ]]; then
+        case "$1" in
+            INFO | WARN | ERROR)
+                log_type="$1"
+                shift
+                ;;
+        esac
+    fi
+
     case "$log_type" in
-        'info' | 'INFO' | 'Info') colored_prefix='\e[32mINFO:\e[0m  ' ;;
-        'warn' | 'WARN' | 'Warn') colored_prefix='\e[33mWARN:\e[0m  ' ;;
-        'error' | 'ERROR' | 'Error')
+        INFO) colored_prefix='\e[32mINFO:\e[0m  ' ;;
+        WARN)
+            colored_prefix='\e[33mWARN:\e[0m  '
+            fd=2
+            ;;
+        ERROR)
             colored_prefix='\e[31mERROR:\e[0m '
             fd=2
             ;;
-        'fatal' | 'FATAL' | 'Fatal')
-            colored_prefix='\e[31mFATAL:\e[0m '
-            fd=2
-            ;;
-        *) throw "log() invalid usage: Unknown type: $log_type" ;;
     esac
 
-    echo -e "${colored_prefix}$2" >&$fd
+    echo -e "${colored_prefix}$1" >&$fd
+
     # Extra lines to print indented
-    shift 2
+    shift
     local line
+
     for line in "$@"; do
         echo -e "       $line" >&$fd
     done
-}
-
-# Print fatal error and quit
-#
-# Arguments:
-#
-# $1 - Message to show
-throw() {
-    log FATAL "$@" \
-        "" \
-        "This script failed to install. If you can't solve the above" \
-        "issue yourself, please report it at: " \
-        "https://github.com/toltec-dev/toltec/issues " \
-        "(Please also include these error logs to help solving the" \
-        "problem faster. Thank you!)"
-    exit 1
 }
 
 main() {
@@ -290,17 +294,17 @@ main() {
 
     if [[ -d $entware_path ]]; then
         if [[ -d /opt ]] && files="$(ls -A -- /opt)" && [[ -n $files ]]; then
-            log INFO "Entware is already installed and active"
+            log "Entware is already installed and active"
         else
-            log INFO "Re-enabling existing Entware install"
+            log "Re-enabling existing Entware install"
             entware-mount
         fi
     else
         # Use a secure wget for installing Entware
-        log INFO "Fetching secure wget"
+        log "Fetching secure wget"
         wget-bootstrap
 
-        log INFO "Creating $entware_path and mounting to /opt"
+        log "Creating $entware_path and mounting to /opt"
         entware-mount
         entware-install
     fi
@@ -308,7 +312,7 @@ main() {
     toltec-install "$@"
 
     if ! command -v opkg > /dev/null; then
-        log WARN "Please run '. \$HOME/.bashrc' to use Toltec"
+        log "Please run '. \$HOME/.bashrc' to use Toltec"
     fi
 
     if [[ ! -x $reenable_path ]]; then
@@ -320,7 +324,7 @@ main() {
         } >> "$reenable_path"
 
         chmod +x "$reenable_path"
-        log WARN "Use '$reenable_path' to re-enable Toltec after a system update"
+        log "Use '$reenable_path' to re-enable Toltec after a system update"
     fi
 }
 
