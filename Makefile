@@ -1,3 +1,6 @@
+# Copyright (c) 2020 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
 HOST?=10.11.99.1
 PACKAGES=$(shell ls package/)
 PUSH_PACKAGES=$(foreach app, $(PACKAGES), $(app)-push)
