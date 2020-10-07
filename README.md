@@ -6,20 +6,33 @@
 
 Toltec is a community-maintained repository of free software for [the reMarkable tablet](https://remarkable.com/).
 
-[Browse the list of available packages →](https://toltec.delab.re/stable)
-
 ### Install it
 
-Toltec works with the [Opkg](https://code.google.com/archive/p/opkg/) package manager, which is in widespread use in embedded devices.
-Opkg is not available by default on the reMarkable, but you can install it by following the instructions described in [remarkable\_entware](https://github.com/evidlo/remarkable_entware).
-After installing Opkg on your device, add the Toltec repository to `/opt/etc/opkg.conf` and download the repository data by running the following commands:
+Toltec works on top of the [Opkg](https://code.google.com/archive/p/opkg/) package manager and the [Entware](https://github.com/Entware/Entware) distribution, which are in widespread use in embedded devices.
+To automatically install Opkg, Entware and Toltec, run the bootstrap script in a [SSH session](https://remarkablewiki.com/tech/ssh) on your reMarkable:
 
 ```sh
-$ echo "src/gz toltec https://toltec.delab.re/stable" >> /opt/etc/opkg.conf
-$ opkg update
+$ wget http://toltec.delab.re/bootstrap
+$ echo "01d7458a7afc9e6db244cf21a947cd593b7288e4817e782a5787a6d5c8068cd2  bootstrap" | sha256sum -c
+$ bash bootstrap
 ```
 
-You now have access to all of the Toltec packages!
+> **Warning:**
+> Make sure to run the second line above, which verifies the integrity of the downloaded script before running it.
+> Since the built-in wget binary does not implement TLS, _you will expose yourself to MITM attacks if you skip this step!_
+> The bootstrap script takes care of replacing the built-in wget with a safer version.
+
+> **What does this script do?**
+> This script will create a `.entware` folder in your home directory, containing a complete Entware distribution (fetched from <https://bin.entware.net/armv7sf-k3.2/>), and permanently mount it to `/opt`.
+> It will then configure Opkg for use with Toltec and configure your system to automatically find binaries from `/opt`.
+> You are encouraged to audit the script yourself if you can.
+
+> **Compatibility with [remarkable_entware](https://github.com/evidlo/remarkable_entware).**
+> If you have already installed Entware through Evidlo’s remarkable\_entware, this script will detect the existing install and configure Toltec on top of it.
+
+You now have access to all of the Toltec and Entware packages!
+
+[Browse the list of available packages →](https://toltec.delab.re/stable)
 
 ### Use it
 
