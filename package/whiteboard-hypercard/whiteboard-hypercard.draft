@@ -1,0 +1,7 @@
+# Copyright (c) 2020 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+name=whiteboard
+desc=live whiteboard
+call=/opt/bin/whiteboard
+term=killall -q -9 whiteboard
