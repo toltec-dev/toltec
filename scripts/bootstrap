@@ -61,7 +61,7 @@ error-cleanup() {
         "issue yourself, please report it at:" \
         "" \
         "   https://github.com/toltec-dev/toltec/issues" \
-       "" \
+        "" \
         "(Please also include these error logs to help solving the" \
         "problem faster. Thank you!)"
 }
