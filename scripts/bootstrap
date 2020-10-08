@@ -7,6 +7,8 @@
 #
 # Install and configure Opkg, Entware and Toltec
 #
+# Arguments: Additional packages to install after setting up Toltec
+#
 # Based on Evan Widloski’s remarkable_entware (2019-03-21)
 # Based on the Entware installer from
 # <http://bin.entware.net/armv7sf-k3.2/installer/generic.sh>
@@ -203,7 +205,7 @@ entware-install() {
 # Arguments: List of additional packages to install, one package per argument
 toltec-install() {
     # Make sure that Opkg is configured to fetch the chosen Toltec branch
-    if grep "^src/gz\b.*\bhttps://toltec\.delab\.re/$toltec_branch$" /opt/etc/opkg.conf; then
+    if grep -q "^src/gz\b.*\bhttps://toltec\.delab\.re/$toltec_branch$" /opt/etc/opkg.conf; then
         log "Already on the Toltec $toltec_branch branch"
     else
         log "Adding the Toltec $toltec_branch repository"
