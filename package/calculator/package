@@ -2,7 +2,7 @@
 # Copyright (c) 2020 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
-pkgname=calculator
+pkgnames=(calculator)
 pkgdesc="Touch-based calculator"
 url=https://github.com/reHackable/Calculator
 pkgver=0.0.0-12

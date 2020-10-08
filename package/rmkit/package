@@ -1,0 +1,111 @@
+#!/usr/bin/env bash
+# Copyright (c) 2020 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgnames=(harmony mines nao remux simple)
+timestamp=2020-10-10T01:41+00:00
+maintainer="raisjn <of.raisjn@gmail.com>"
+license=MIT
+
+image=python:v1.1
+source=(
+    https://github.com/rmkit-dev/rmkit/archive/3d8fef0274a59f672c136aae741ad4ddcf4fd8fc.zip
+    remux.service
+)
+sha256sums=(
+    f7a436335a768b1d786babb07af49646735a3ca7f6f75cb91359b32a8626cb54
+    SKIP
+)
+
+build() {
+    pip3 install okp
+    make
+}
+
+harmony() {
+    pkgdesc="Procedural sketching app"
+    url="https://rmkit.dev/apps/harmony"
+    pkgver=0.0.1-17
+    section=drawing
+    conflicts=(rmkit)
+
+    package() {
+        install -D -m 755 "$srcdir"/src/build/harmony "$pkgdir"/opt/bin/harmony
+        install -D -m 644 "$srcdir"/src/harmony/harmony.draft "$pkgdir"/opt/etc/draft/harmony.draft
+    }
+
+    configure() {
+        mkdir -p /home/root/harmony
+    }
+}
+
+mines() {
+    pkgdesc="Mine detection game"
+    url="https://rmkit.dev/apps/minesweeper"
+    pkgver=0.0.1-16
+    section=games
+    conflicts=(rmkit)
+
+    package() {
+        install -D -m 755 "$srcdir"/src/build/mines "$pkgdir"/opt/bin/mines
+        install -D -m 644 "$srcdir"/src/minesweeper/mines.draft "$pkgdir"/opt/etc/draft/mines.draft
+    }
+}
+
+nao() {
+    pkgdesc="Nao Package Manager: opkg UI built with SAS"
+    url="https://rmkit.dev/apps/nao"
+    pkgver=0.0.1-16
+    section=utils
+    depends=(simple)
+    conflicts=(rmkit)
+
+    package() {
+        install -D -m 755 "$srcdir"/src/build/nao.sh "$pkgdir"/opt/bin/nao
+        install -D -m 644 "$srcdir"/src/nao/nao.draft "$pkgdir"/opt/etc/draft/nao.draft
+    }
+}
+
+remux() {
+    pkgdesc="App launcher that supports multi-tasking applications"
+    url="https://rmkit.dev/apps/remux"
+    pkgver=0.0.1-23
+    section=launchers
+
+    package() {
+        install -D -m 755 "$srcdir"/src/build/remux "$pkgdir"/opt/bin/remux
+        install -D -m 644 "$srcdir"/remux.service "$pkgdir"/lib/systemd/system/remux.service
+    }
+
+    configure() {
+        systemctl daemon-reload
+
+        if ! is-enabled "$pkgname.service"; then
+            echo ""
+            echo "Run the following command(s) to use $pkgname as your launcher"
+            how-to-enable "$pkgname.service"
+            echo ""
+        fi
+    }
+
+    preremove() {
+        echo "Disabling $pkgname"
+        systemctl disable --now "$pkgname"
+    }
+
+    postremove() {
+        systemctl daemon-reload
+    }
+}
+
+simple() {
+    pkgdesc="Simple app script for writing scripted applications"
+    url="https://rmkit.dev/apps/sas"
+    pkgver=0.0.1-16
+    section=utils
+    conflicts=(rmkit)
+
+    package() {
+        install -D -m 755 "$srcdir"/src/build/simple "$pkgdir"/opt/bin/simple
+    }
+}

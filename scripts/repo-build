@@ -7,7 +7,7 @@ source scripts/package-lib
 
 usage="$0 [OPTION]... RECIPESDIR WORKDIR REPODIR [REMOTEREPO]
 
-Build new or updated packages defined in RECIPESDIR and create a package index.
+Build new or updated packages from RECIPESDIR and create a package index.
 Packages are built in subdirectories of WORKDIR and resulting artifacts are
 gathered in REPODIR.  If REMOTEREPO is omitted,
 'https://toltec-dev.org/testing' is used.
@@ -50,7 +50,7 @@ fi
 
 remoterepo="https://toltec-dev.org/testing"
 
-if [[ $# -eq 4 ]]; then
+if [[ $# -eq 4 ]] && [[ -n $4 ]]; then
     remoterepo="$4"
 fi
 
@@ -70,17 +70,37 @@ mkdir -p "$repodir"
 # Each recipe is loaded in a subshell to avoid leaking metadata fields
 for recipedir in "$recipesdir"/*; do
     (
-        load-recipe "$recipedir"
-        pkgid="$(package-id)"
+        readonly recipename="$(basename "$recipedir")"
+        load-recipe-header "$recipedir"
 
-        if [[ ! -f "$repodir/$pkgid.ipk" ]]; then
-            if [[ -n $localflag ]] || ! rsecurl --remote-time "$remoterepo/$pkgid.ipk" -o "$repodir/$pkgid.ipk"; then
-                section "Building $pkgid"
-                scripts/package-build "$recipedir" "$workdir"
-                cp "$workdir"/"$pkgid"/"$pkgid".ipk "$repodir"
-            else
-                section "Reusing $pkgid from $remoterepo"
+        section "Processing $recipename"
+        missingpkgs=()
+
+        for pkgname in "${pkgnames[@]}"; do
+            if (
+                load-recipe-pkg "$pkgname"
+                pkgid="$(package-id)"
+
+                # A package is missing if it’s not in the local build folder
+                # and, when the -l flag is not set, if it’s not on the
+                # remote server either
+                [[ ! -f "$repodir/$pkgid.ipk" ]] && {
+                    [[ -n $localflag ]] \
+                        || ! rsecurl --remote-time \
+                            "$remoterepo/$pkgid.ipk" -o "$repodir/$pkgid.ipk" \
+                            2> /dev/null
+                }
+            ); then
+                missingpkgs+=("$pkgname")
             fi
+        done
+
+        if [[ ${#missingpkgs[@]} -gt 0 ]]; then
+            scripts/package-build "$recipedir" "$workdir/$recipename" "${missingpkgs[@]}"
+
+            for package in "$workdir/$recipename/"*/*.ipk; do
+                cp -p "$package" "$repodir"
+            done
         fi
     )
 done
