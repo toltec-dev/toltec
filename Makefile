@@ -6,7 +6,7 @@ PACKAGES=$(shell ls package/)
 PUSH_PACKAGES=$(foreach app, $(PACKAGES), $(app)-push)
 
 define USAGE
-Available targets:
+Building packages:
 
     repo            Build the repository and reuse archives from the remote
                     repository for existing package versions.
@@ -16,17 +16,19 @@ Available targets:
     RECIPE          Build any package individually.
     RECIPE-push     Push any built package to .cache/opkg on the reMarkable.
                     (Plug in your reMarkable first!)
+
+Checking for errors:
+
     format          Check that the source code formatting follows
                     the style guide.
     format-fix      Automatically reformat the source code to follow
                     the style guide.
     lint            Perform static analysis on the source code to find
                     erroneous constructs.
+
+Housekeeping:
+
     clean           Remove all build artifacts.
-
-Where RECIPE is one of the following available recipes:
-
-${PACKAGES}
 endef
 export USAGE
 
@@ -50,16 +52,18 @@ $(PUSH_PACKAGES): %:
 	scp build/packages/"$(@:%-push=%)"/*.ipk root@"${HOST}":.cache/opkg
 
 format:
-	$(info ==> Checking the formatting of shell scripts)
+	@echo "==> Checking the formatting of shell scripts"
 	shfmt -d .
 
 format-fix:
-	$(info ==> Fixing the formatting of shell scripts)
+	@echo "==> Fixing the formatting of shell scripts"
 	shfmt -l -w .
 
 lint:
-	$(info ==> Linting shell scripts)
+	@echo "==> Linting shell scripts"
 	shellcheck $$(shfmt -f .)
+	@echo "==> Verifying that the bootstrap checksum is correct"
+	./scripts/bootstrap/checksum-check
 
 clean:
 	rm -rf build
