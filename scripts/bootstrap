@@ -8,6 +8,7 @@
 # Install and configure Opkg, Entware and Toltec
 #
 # Arguments: Additional packages to install after setting up Toltec
+# Example: ./bootstrap harmony draft
 #
 # Based on Evan Widloski’s remarkable_entware (2019-03-21)
 # Based on the Entware installer from
