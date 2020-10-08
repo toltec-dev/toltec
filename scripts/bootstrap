@@ -202,9 +202,12 @@ entware-install() {
 #
 # Arguments: List of additional packages to install, one package per argument
 toltec-install() {
-    # Make sure that Opkg is configured to fetch the Toltec repo
-    if ! grep "^src/gz\b.*\bhttps://toltec\.delab\.re/" /opt/etc/opkg.conf > /dev/null 2>&1; then
-        log "Installing the Toltec $toltec_branch repo"
+    # Make sure that Opkg is configured to fetch the chosen Toltec branch
+    if grep "^src/gz\b.*\bhttps://toltec\.delab\.re/$toltec_branch$" /opt/etc/opkg.conf
+        log "Already on the Toltec $toltec_branch branch"
+    else
+        log "Adding the Toltec $toltec_branch repository"
+        sed -i '/^src\/gz\b.*\bhttps:\/\/toltec\.delab\.re\//d' /opt/etc/opkg.conf
         echo "src/gz toltec https://toltec.delab.re/$toltec_branch" >> /opt/etc/opkg.conf
         /opt/bin/opkg update
     fi
