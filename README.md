@@ -13,7 +13,7 @@ To automatically install Opkg, Entware and Toltec, run the bootstrap script in a
 
 ```sh
 $ wget http://toltec.delab.re/bootstrap
-$ echo "67a09abc6a0d1a35bf82f3ff2a6a66f7307f31fcba0ecf65c73e3d4d793bc619  bootstrap" | sha256sum -c
+$ echo "605c3236fbb5abbd137f862fdec7a9959c2ace36af467d40271a300101935f38  bootstrap" | sha256sum -c
 $ bash bootstrap
 ```
 
