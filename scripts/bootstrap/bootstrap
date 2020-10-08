@@ -89,7 +89,7 @@ wget-bootstrap() {
         touch "$wget_path"
         chmod +x "$wget_path"
 
-        wget --quiet "$wget_remote" --output-document "$wget_path" 2> /dev/null
+        wget "$wget_remote" --output-document "$wget_path" 2> /dev/null
 
         if ! sha256sum -c <(echo "$wget_checksum  $wget_path") > /dev/null 2>&1; then
             log ERROR "Invalid checksum for the local wget binary"
@@ -149,13 +149,13 @@ entware-install() {
     local dynamic_loader="ld-linux.so.3"
     local entware_remote=https://bin.entware.net/armv7sf-k3.2/installer
 
-    wget --quiet "$entware_remote/opkg" -O /opt/bin/opkg
+    wget --no-verbose "$entware_remote/opkg" -O /opt/bin/opkg
     chmod 755 /opt/bin/opkg
-    wget --quiet "$entware_remote/opkg.conf" -O /opt/etc/opkg.conf
-    wget --quiet "$entware_remote/ld-2.27.so" -O /opt/lib/ld-2.27.so
-    wget --quiet "$entware_remote/libc-2.27.so" -O /opt/lib/libc-2.27.so
-    wget --quiet "$entware_remote/libgcc_s.so.1" -O /opt/lib/libgcc_s.so.1
-    wget --quiet "$entware_remote/libpthread-2.27.so" -O /opt/lib/libpthread-2.27.so
+    wget --no-verbose "$entware_remote/opkg.conf" -O /opt/etc/opkg.conf
+    wget --no-verbose "$entware_remote/ld-2.27.so" -O /opt/lib/ld-2.27.so
+    wget --no-verbose "$entware_remote/libc-2.27.so" -O /opt/lib/libc-2.27.so
+    wget --no-verbose "$entware_remote/libgcc_s.so.1" -O /opt/lib/libgcc_s.so.1
+    wget --no-verbose "$entware_remote/libpthread-2.27.so" -O /opt/lib/libpthread-2.27.so
 
     cd /opt/lib
     chmod 755 ld-2.27.so
