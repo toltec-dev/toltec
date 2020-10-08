@@ -203,7 +203,7 @@ entware-install() {
 # Arguments: List of additional packages to install, one package per argument
 toltec-install() {
     # Make sure that Opkg is configured to fetch the chosen Toltec branch
-    if grep "^src/gz\b.*\bhttps://toltec\.delab\.re/$toltec_branch$" /opt/etc/opkg.conf
+    if grep "^src/gz\b.*\bhttps://toltec\.delab\.re/$toltec_branch$" /opt/etc/opkg.conf; then
         log "Already on the Toltec $toltec_branch branch"
     else
         log "Adding the Toltec $toltec_branch repository"
@@ -223,10 +223,28 @@ toltec-install() {
         /opt/bin/opkg install "${tls_packages[@]}"
     fi
 
-    # Installing additional packages
+    # Install additional packages
     if [[ $# -gt 0 ]]; then
         /opt/bin/opkg update
         /opt/bin/opkg install "$@"
+    fi
+
+    # Remove existing PATH definitions where the binaries in /opt/bin and
+    # /opt/sbin have lesser priority than the others
+    # shellcheck disable=SC2016
+    if [[ -e /home/root/.bashrc ]]; then
+        sed -i '/^\(export \)\?PATH="\?\$PATH:\/opt\/bin:\/opt\/sbin"\?$/d' /home/root/.bashrc
+    fi
+
+    # Add binaries in /opt/bin and /opt/sbin to the PATH before any others
+    # shellcheck disable=SC2016
+    if [[ ! -e /home/root/.bashrc ]] \
+        || ! grep -q '^\(export \)\?PATH="\?/opt/bin:/opt/sbin:\$PATH"\?$' /home/root/.bashrc; then
+        log "Adding /opt/bin and /opt/sbin to your PATH"
+        cat >> /home/root/.bashrc << 'SHELL'
+# Path added by Toltec bootstrap
+PATH="/opt/bin:/opt/sbin:$PATH"
+SHELL
     fi
 }
 
@@ -296,25 +314,6 @@ main() {
     fi
 
     toltec-install "$@"
-
-    # Remove existing PATH definitions where the /opt binaries have
-    # lesser priority over the system ones
-    # shellcheck disable=SC2016
-    if [[ -e /home/root/.bashrc ]]; then
-        sed -i '/PATH="\?\$PATH:\/opt\/bin:\/opt\/sbin"\?$/d' /home/root/.bashrc
-    fi
-
-    # Add /opt binaries to the PATH before any other
-    # shellcheck disable=SC2016
-    if [[ ! -e /home/root/.bashrc ]] \
-        || ! grep '.*PATH="\?/opt/bin:/opt/sbin:\$PATH"\?$' /home/root/.bashrc | grep -v '^#' > /dev/null; then
-        log "Adding /opt/bin to the PATH"
-
-        cat >> /home/root/.bashrc << 'SHELL'
-# Path added by Toltec’s bootstrap
-export PATH="/opt/bin:/opt/sbin:$PATH"
-SHELL
-    fi
 
     if ! command -v opkg > /dev/null; then
         log "Please run '. \$HOME/.bashrc' to use Toltec"
