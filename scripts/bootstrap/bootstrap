@@ -299,6 +299,11 @@ main() {
     trap cleanup EXIT
     trap error-cleanup ERR
 
+    if [[ "$(command -v wget)" == /usr/bin/wget ]]; then
+        log "Fetching secure wget"
+        wget-bootstrap
+    fi
+
     if [[ -d $entware_path ]]; then
         if [[ -d /opt ]] && files="$(ls -A -- /opt)" && [[ -n $files ]]; then
             log "Entware is already installed and active"
@@ -307,10 +312,6 @@ main() {
             entware-mount
         fi
     else
-        # Use a secure wget for installing Entware
-        log "Fetching secure wget"
-        wget-bootstrap
-
         log "Creating $entware_path and mounting to /opt"
         entware-mount
         entware-install
