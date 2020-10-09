@@ -148,7 +148,7 @@ tarprefix() {
 
 # Curl command with flags suitable for scripting
 rcurl() {
-    curl --fail --silent --tlsv1.2 "$@"
+    curl --fail --silent --show-error --tlsv1.2 "$@"
 }
 
 # Curl command with flags suitable for scripting, restricted to HTTPS
