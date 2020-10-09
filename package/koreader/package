@@ -11,7 +11,7 @@ section=readers
 maintainer="raisjn <of.raisjn@gmail.com>"
 license=AGPL-3.0-or-later
 
-source=(https://build.koreader.rocks/download/nightly/v${pkgver%-[[:alnum:]]*}-gb8fa553_${timestamp:0:10}/koreader-remarkable-v${pkgver%-[[:alnum:]]*}-gb8fa553_${timestamp:0:10}.zip)
+source=("https://build.koreader.rocks/download/nightly/v${pkgver%-[[:alnum:]]*}-gb8fa553_${timestamp:0:10}/koreader-remarkable-v${pkgver%-[[:alnum:]]*}-gb8fa553_${timestamp:0:10}.zip")
 sha256sums=(51052d0f45617009aebbeb964c5c9ab4ab329dce710fa894715a94217db297d9)
 
 package() {
