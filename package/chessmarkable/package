@@ -5,21 +5,21 @@
 pkgname=chessmarkable
 pkgdesc="A chess game for the reMarkable"
 url=https://github.com/LinusCDE/chessmarkable
-pkgver=0.3.3-1
-timestamp=2020-10-05T00:33Z
+pkgver=0.4.2-1
+timestamp=2020-10-09T18:15Z
 section=games
 maintainer="Linus K. <linus@cosmos-ink.net>"
 license=MIT
 
 image=rust:v1.1
-source=(https://github.com/LinusCDE/chessmarkable/archive/5571e594f6fd9175be7c0cbe9a2d20e3012d49a9.zip)
-sha256sums=(81b165f836d305374f205389d06852cffb61bace9b82ae6fe25495d14f4ffb24)
+source=(https://github.com/LinusCDE/chessmarkable/archive/1a420d667b0b459c7439170fe16d184635eabe5a.zip)
+sha256sums=(98c17dafe671d89a404a2b8783445f416d3f96ab50f8dea34b3b08137843aae6)
 
 build() {
     # Fall back to system-wide config
     rm .cargo/config
 
-    cargo build --release
+    cargo build --release --bin chessmarkable
     arm-linux-gnueabihf-strip target/armv7-unknown-linux-gnueabihf/release/chessmarkable
 }
 
