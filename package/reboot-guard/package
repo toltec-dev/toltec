@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+# Copyright (c) 2020 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgname=reboot-guard
+pkgdesc="Block systemd-initiated poweroff/reboot/halt until configurable condition checks pass"
+url=https://github.com/stephanritscher/reboot-guard
+pkgver=1.0.1~1
+timestamp=2020-05-04T06:16Z
+section=utils
+maintainer="Eeems <eeems@eeems.email>"
+license=GPL-3.0
+depends=(xochitl)
+
+source=(https://github.com/stephanritscher/reboot-guard/archive/34d5df49d9fb914ab74d9b85d726aaa503b972a9.zip)
+sha256sums=(b0a0af690d26dee6f00d03a0ed7573097bc06b867de5f7eef2222e8e6b9d3584)
+
+package() {
+    install -D -m 644 "$pkgdir"/rguard.service "$srcdir"/etc/systemd/system/rguard.service
+    install -D -m 755 "$pkgdir"/rguard "$srcdir"/opt/bin/rguard
+}
+
+configure() {
+    systemctl daemon-reload
+}
+
+preremove() {
+    systemctl disable --now rguard
+}
+
+postremove() {
+    systemctl daemon-reload
+}
