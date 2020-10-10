@@ -12,8 +12,14 @@ maintainer="Eeems <eeems@eeems.email>"
 license=GPL-3.0
 depends=(xochitl python)
 
-source=(https://github.com/stephanritscher/reboot-guard/archive/34d5df49d9fb914ab74d9b85d726aaa503b972a9.zip)
-sha256sums=(b0a0af690d26dee6f00d03a0ed7573097bc06b867de5f7eef2222e8e6b9d3584)
+source=(
+    https://github.com/stephanritscher/reboot-guard/archive/34d5df49d9fb914ab74d9b85d726aaa503b972a9.zip
+    rguard.service
+)
+sha256sums=(
+    b0a0af690d26dee6f00d03a0ed7573097bc06b867de5f7eef2222e8e6b9d3584
+    SKIP
+)
 
 package() {
     install -D -m 644 "$srcdir"/rguard.service "$pkgdir"/etc/systemd/system/rguard.service
