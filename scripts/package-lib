@@ -156,6 +156,29 @@ rsecurl() {
     rcurl --proto '=https' "$@"
 }
 
+# Join elements with the given delimiter
+#
+# Arguments:
+#
+# $1 - Separator string
+# $2... - Elements to join
+#
+# Output:
+#
+# Joined string.
+join-elements() {
+    local sep="$1"
+    local cursep=""
+    shift
+
+    for arg; do
+        echo -n "$cursep$arg"
+        cursep="$sep"
+    done
+
+    echo
+}
+
 # Check that a field is defined with the required type
 #
 # If an error occurs, this function prints an error message and exits the
