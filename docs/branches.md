@@ -15,6 +15,7 @@ If it updates an existing package, the maintainer of that specific package shoul
 ### Moving a package from testing to stable
 
 Each Saturday, a pull request can be opened with selected updates from the testing branch to merge in the stable branch.
+Only bug fixes may be added to existing merge PRs over the weekend.
 This pull request can only be merged from the following Monday.
 Each of these package changes must be tested by a maintainer different from the maintainer of the affected package.
 
