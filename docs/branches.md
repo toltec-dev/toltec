@@ -21,8 +21,10 @@ Each of these package changes must be tested by a maintainer different from the 
 Here are important things to check when testing a package:
 
 1. The package should work as intended by upstream.
-2. It must not destroy any user data (e.g. from previous versions of the same package, from other packages, from the home directory).
-3. It must not break other packages.
+2. It should not have any known major bugs.
+3. It must not destroy any user data (e.g. from previous versions of the same package, from other packages, from the home directory).
+4. It must not break other packages.
+5. It must not lock the device in a state where it cannot be used without rebooting or troubleshooting through SSH.
 
 ### Orphaning a package
 
