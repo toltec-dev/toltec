@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# Copyright (c) 2020 The Toltec Contributors
+# SPDX-License-Identifier: MIT
 
 #
 # package-lib
@@ -109,14 +111,72 @@ tardiff() {
     fi
 }
 
+# Compute how many containing folders can be safely stripped from a tar archive
+# without losing data
+#
+# Arguments:
+#
+# $1 - Path to an archive
+#
+# Output:
+#
+# Number of containing folders in the archive
+tarprefix() {
+    local contents
+    contents="$(bsdtar -t --file "$1")"
+
+    # Find the longest common prefix in the archive files
+    local strip_depth=0
+    local fields="\$1"
+
+    while [[ "$(echo "$contents" | sed 's/\/$//' \
+        | awk -F/ "NF>=$((strip_depth + 1)) { print $fields }" \
+        | sort | uniq | wc -l)" == "1" ]]; do
+        ((++strip_depth))
+        fields="$fields\"/\"\$$((strip_depth + 1))"
+    done
+
+    # If there’s only one file in the archive, keep the last component
+    if [[ "$(echo "$contents" | sed 's/\/$//' \
+        | awk -F/ "NF>=$strip_depth { print \$0 }" \
+        | wc -l)" == "1" ]]; then
+        ((--strip_depth))
+    fi
+
+    echo "$strip_depth"
+}
+
 # Curl command with flags suitable for scripting
 rcurl() {
-    curl --fail --silent --tlsv1.2 "$@"
+    curl --fail --silent --show-error --tlsv1.2 "$@"
 }
 
 # Curl command with flags suitable for scripting, restricted to HTTPS
 rsecurl() {
     rcurl --proto '=https' "$@"
+}
+
+# Join elements with the given delimiter
+#
+# Arguments:
+#
+# $1 - Separator string
+# $2... - Elements to join
+#
+# Output:
+#
+# Joined string.
+join-elements() {
+    local sep="$1"
+    local cursep=""
+    shift
+
+    for arg; do
+        echo -n "$cursep$arg"
+        cursep="$sep"
+    done
+
+    echo
 }
 
 # Check that a field is defined with the required type

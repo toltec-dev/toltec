@@ -207,10 +207,10 @@ See <https://www.debian.org/doc/debian-policy/ch-relationships.html#conflicting-
     </tr>
 </table>
 
-Docker image used for building this package.
+Docker image to use for building the package.
 It can be omitted only for packages which do not require a build step (see [below](#build-section-optional)).
 
-#### `source` 
+#### `source`
 
 <table>
     <tr>
@@ -223,7 +223,10 @@ It can be omitted only for packages which do not require a build step (see [belo
     </tr>
 </table>
 
-**TODO:** Documentation.
+List of sources needed to build the package.
+Files referenced in this array can be accessed from the `$srcdir` directory during the [build](#build-section-optional) and [package](#package-section-optional) sections.
+Each entry can either be a local path relative to the recipe file, or a full URL that will be fetched from the Internet (any protocol supported by [curl](https://curl.haxx.se/) can be used here) when building the package.
+Archive files whose names end in `.zip`, `.tar.gz`, `.tar.xz` or `.tar.bz` will be automatically extracted in place, with all container directories stripped.
 
 #### `sha256sums`
 
@@ -238,7 +241,10 @@ It can be omitted only for packages which do not require a build step (see [belo
     </tr>
 </table>
 
-**TODO:** Documentation.
+List of SHA-256 checksums for the source files.
+After copying or downloading a source file to the `$srcdir` directory, the build script will verify its integrity by comparing its checksum with the one registered here.
+You can request to skip this verification by entering `SKIP` instead of a valid SHA-256 checksum (discouraged for files fetched from remote computers).
+This array must have exactly as much elements as the `source` array.
 
 ### Build section (optional)
 
