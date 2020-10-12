@@ -1,11 +1,8 @@
 #!/usr/bin/env bash
-# Copyright (c) 2020 The Toltec Contributors
-# SPDX-License-Identifier: MIT
-
-pkgname=mines
+pkgname=minesweeper
 pkgdesc="Mine detection game"
 url=https://rmkit.dev/apps/minesweeper
-pkgver=0.0.1-15
+pkgver=0.0.1-14
 timestamp=2020-09-21T01:41+00:00
 section=games
 maintainer="raisjn <of.raisjn@gmail.com>"
