@@ -8,7 +8,7 @@ It may contain packages that could cause breakage if you install them on your de
 ### Adding or updating a package
 
 New packages or package updates are exclusively proposed through pull requests based on the testing branch.
-A proposal can be merged into testing after review from a maintainer and if it builds successfully in the CI.
+A proposal can be merged into testing after it is reviewed by a maintainer and if it builds successfully in the CI.
 If it is a proposal for a new package, the maintainer who reviews the pull request becomes the maintainer for that package.
 If it updates an existing package, the maintainer of that specific package should do the review.
 
@@ -30,4 +30,4 @@ Here are important things to check when testing a package:
 
 The maintainer of a package can, for any reason, choose to orphan a package.
 To do so, they need to send a pull request to reset the [`maintainer` metadata field](docs/package.md#maintainer-required) of that package to `None <none@example.org>`.
-The next person to review a pull request regarding an orphaned package becomes its new maintainer, and must update the `maintainer` field accordingly.
+The next person to review a pull request regarding an orphaned package becomes its new maintainer and must update the `maintainer` field accordingly.
