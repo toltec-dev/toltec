@@ -152,6 +152,7 @@ entware-install() {
     wget --no-verbose "$entware_remote/opkg" -O /opt/bin/opkg
     chmod 755 /opt/bin/opkg
     wget --no-verbose "$entware_remote/opkg.conf" -O /opt/etc/opkg.conf
+    sed -i 's|http://|https://|g' /opt/etc/opkg.conf
     wget --no-verbose "$entware_remote/ld-2.27.so" -O /opt/lib/ld-2.27.so
     wget --no-verbose "$entware_remote/libc-2.27.so" -O /opt/lib/libc-2.27.so
     wget --no-verbose "$entware_remote/libgcc_s.so.1" -O /opt/lib/libgcc_s.so.1
