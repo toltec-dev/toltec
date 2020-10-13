@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+# Copyright (c) 2020 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgname=whiteboard-hypercard
+pkgdesc="Real-time collaboration, drawing or whiteboarding"
+url=https://github.com/fenollp/reMarkable-tools
+pkgver=0.3.0-1
+timestamp=2020-09-23T18:01Z
+section=drawing
+maintainer="Pierre Fenoll <pierrefenoll@gmail.com>"
+license=Apache-2.0
+
+image=rust:v1.1
+source=(
+    https://github.com/fenollp/reMarkable-tools/archive/v0.3.0.zip
+    whiteboard-hypercard.draft
+)
+sha256sums=(
+    3d160d77cd384ee9339c7f791b3f762bb295a670c0c728373c6a09f14a061046
+    SKIP
+)
+
+build() {
+    cd marauder
+    rustup component add rustfmt --toolchain nightly-x86_64-unknown-linux-gnu
+    cargo build --release --bin whiteboard --locked
+    arm-linux-gnueabihf-strip target/armv7-unknown-linux-gnueabihf/release/whiteboard
+}
+
+package() {
+    install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/marauder/target/armv7-unknown-linux-gnueabihf/release/whiteboard
+    install -D -m 644 -t "$pkgdir"/opt/etc/draft "$srcdir"/whiteboard-hypercard.draft
+}

@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# Copyright (c) 2020 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
 pkgname=appmarkable
 pkgdesc="Turn your program into a very simple app for draft"
 url="https://github.com/LinusCDE/appmarkable"

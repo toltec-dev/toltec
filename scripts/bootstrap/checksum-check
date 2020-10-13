@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+# Copyright (c) 2020 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+#
+# checksum-check
+#
+# Verify that the checksum of the `bootstrap` script matches the one in
+# the README
+#
+# Exit code: 0 if the checksum matches, 1 otherwise
+#
+
+set -e
+
+bootstrap_path=scripts/bootstrap/bootstrap
+readme_checksum=$(sed --quiet \
+    's/^.*"\([[:alnum:]]\+\) \+bootstrap".*$/\1/p' \
+    README.md)
+
+sha256sum -c <(echo "$readme_checksum  $bootstrap_path")
