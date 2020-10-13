@@ -5,6 +5,8 @@ As a user, **you always want to use the stable branch**, which is the default on
 The testing branch exists solely for the repository maintainers to make sure that packages work correctly before distributing them to users.
 It may contain packages that could cause breakage if you install them on your device.
 
+> To use the testing branch, update the `/opt/etc/opkg.conf` file on an existing install or set the `toltec_branch` variable to `testing` when installing through the bootstrap script.
+
 ### Adding or updating a package
 
 New packages or package updates are exclusively proposed through pull requests based on the testing branch.
@@ -25,7 +27,7 @@ Here are important things to check when testing a package:
 2. It should not have any known major bugs.
 3. It must not destroy any user data (e.g. from previous versions of the same package, from other packages, from the home directory).
 4. It must not break other packages.
-5. It must not lock the device in a state where it cannot be used without rebooting or troubleshooting through SSH.
+5. It must not lock the device in a state where it cannot be used without rebooting or troubleshooting through SSH.
 
 ### Orphaning a package
 
