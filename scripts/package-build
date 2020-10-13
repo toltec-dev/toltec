@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# Copyright (c) 2020 The Toltec Contributors
+# SPDX-License-Identifier: MIT
 
 set -e
 source scripts/package-lib
@@ -83,20 +85,22 @@ for ((i = 0; i < ${#source[@]}; ++i)); do
     fi
 
     srcfile="$(basename "$srcurl")"
+    srcfilepath="$srcdir/$srcfile"
     status "$srcfile"
 
-    rcurl --location "$srcurl" -o "$srcdir"/"$srcfile"
+    rcurl --location "$srcurl" -o "$srcfilepath"
 
     if [[ $checksum != SKIP ]] \
-        && ! sha256sum -c <(echo "$checksum $srcdir/$srcfile") > /dev/null 2>&1; then
+        && ! sha256sum -c <(echo "$checksum  $srcfilepath") > /dev/null 2>&1; then
         error "Checksum mismatch while fetching $srcfile"
     fi
 
-    if [[ $srcdir/$srcfile =~ \.(zip|tar\.gz)$ ]]; then
+    # Automatically extract source archives
+    if [[ $srcfilepath =~ \.(zip|tar\.gz|tar\.xz|tar\.bz)$ ]]; then
         bsdtar -x \
-            --strip-components 1 \
+            --strip-components "$(tarprefix "$srcfilepath")" \
             --directory "$srcdir" \
-            --file "$srcdir"/"$srcfile"
+            --file "$srcfilepath"
     fi
 done
 
@@ -139,8 +143,8 @@ ctlfile="$ctldir"/control
     echo "Maintainer: $maintainer"
     echo "License: $license"
     echo "Architecture: $arch"
-    [[ -n $depends ]] && echo "Depends: $depends"
-    [[ -n $conflicts ]] && echo "Conflicts: $conflicts"
+    [[ -n $depends ]] && echo "Depends: $(join-elements ", " "${depends[@]}")"
+    [[ -n $conflicts ]] && echo "Conflicts: $(join-elements ", " "${conflicts[@]}")"
 } >> "$ctlfile"
 
 # Create maintainer scripts

@@ -26,3 +26,5 @@ jobs:
                 rsync -avz \
                     -e "ssh -i private/id_rsa -o UserKnownHostsFile=private/known_hosts" \
                     build/repo/ "${{ secrets.REMOTE }}":/srv/toltec/stable
+                scp -i private/id_rsa -o UserKnownHostsFile=private/known_hosts \
+                    scripts/bootstrap/bootstrap "${{ secrets.REMOTE }}":/srv/toltec
