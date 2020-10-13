@@ -56,7 +56,7 @@ $ opkg upgrade
 ```
 
 [See information about advanced Opkg commands →](https://openwrt.org/docs/guide-user/additional-software/opkg)\
-[Choose between the _stable_ and _testing_ channels →](docs/channels.md)
+[Choose between _stable_ and _testing_ →](docs/branches.md)
 
 ### Build it
 
