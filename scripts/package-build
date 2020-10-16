@@ -143,8 +143,8 @@ ctlfile="$ctldir"/control
     echo "Maintainer: $maintainer"
     echo "License: $license"
     echo "Architecture: $arch"
-    [[ -n $depends ]] && echo "Depends: $depends"
-    [[ -n $conflicts ]] && echo "Conflicts: $conflicts"
+    [[ -n $depends ]] && echo "Depends: $(join-elements ", " "${depends[@]}")"
+    [[ -n $conflicts ]] && echo "Conflicts: $(join-elements ", " "${conflicts[@]}")"
 } >> "$ctlfile"
 
 # Create maintainer scripts
