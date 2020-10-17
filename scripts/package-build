@@ -109,6 +109,10 @@ find "$srcdir" -exec touch --no-dereference --date="@${SOURCE_DATE_EPOCH}" {} +
 
 # Run build script inside a Docker container
 if [[ -n $image ]]; then
+    if [[ $(type -t build) != "function" ]]; then
+        error "The 'build()' function is not defined"
+    fi
+
     section "Building binaries"
     docker container run --interactive --rm \
         --mount type=bind,src="$(realpath "$recipedir")",dst=/recipe \
@@ -120,6 +124,8 @@ cd /src
 build
 chown -R $(id -u):$(id -u) /src/
 SCRIPT
+elif [[ $(type -t build) == "function" ]]; then
+    error "A 'build()' function was defined but the 'image' variable is missing"
 fi
 
 # Run packaging script
