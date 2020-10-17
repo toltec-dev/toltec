@@ -1,6 +1,6 @@
 ## Release branches
 
-There are two release branches in Toltec, [stable](https://toltec.delab.re/stable) and [testing](https://toltec.delab.re/testing).
+There are two release branches in Toltec, [stable](https://toltec-dev.org/stable) and [testing](https://toltec-dev.org/testing).
 As a user, **you always want to use the stable branch**, which is the default one when following the install instructions.
 The testing branch exists solely for the repository maintainers to make sure that packages work correctly before distributing them to users.
 It may contain packages that could cause breakage if you install them on your device.

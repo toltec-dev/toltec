@@ -123,7 +123,7 @@ Note that increasing the package revision number does not require updating the `
     </tr>
 </table>
 
-A single category that best describes the primary purpose of the package. See [the package listing](https://toltec.delab.re/stable) for examples of packages that belong to each section. The following choices currently exist:
+A single category that best describes the primary purpose of the package. See [the package listing](https://toltec-dev.org/stable) for examples of packages that belong to each section. The following choices currently exist:
 
 Section         | Description
 ----------------|----------------------------------
