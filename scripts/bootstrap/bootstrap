@@ -74,7 +74,7 @@ error-cleanup() {
 # Install a local wget binary which supports TLS (the original one
 # installed on the reMarkable does not) in the PATH
 wget-bootstrap() {
-    local wget_remote=https://toltec.delab.re/thirdparty/bin/wget-v1.20.3
+    local wget_remote=https://toltec-dev.org/thirdparty/bin/wget-v1.20.3
     local wget_checksum=8d447c6eb0a39e705f45bea900b12eef07142ea3da0809aca4dd44fe4110cdfd
 
     if [[ ! -x $wget_path ]]; then
@@ -207,12 +207,13 @@ entware-install() {
 # Arguments: List of additional packages to install, one package per argument
 toltec-install() {
     # Make sure that Opkg is configured to fetch the chosen Toltec branch
-    if grep -q "^src/gz\b.*\bhttps://toltec\.delab\.re/$toltec_branch$" /opt/etc/opkg.conf; then
+    if grep -q "^src/gz\b.*\bhttps://toltec-dev\.org/$toltec_branch$" /opt/etc/opkg.conf; then
         log "Already on the Toltec $toltec_branch branch"
     else
         log "Adding the Toltec $toltec_branch repository"
         sed -i '/^src\/gz\b.*\bhttps:\/\/toltec\.delab\.re\//d' /opt/etc/opkg.conf
-        echo "src/gz toltec https://toltec.delab.re/$toltec_branch" >> /opt/etc/opkg.conf
+        sed -i '/^src\/gz\b.*\bhttps:\/\/toltec-dev\.org\//d' /opt/etc/opkg.conf
+        echo "src/gz toltec https://toltec-dev.org/$toltec_branch" >> /opt/etc/opkg.conf
         /opt/bin/opkg update
     fi
 

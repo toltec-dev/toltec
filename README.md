@@ -1,7 +1,7 @@
 ## Toltec
 
-![Status of the stable repository](https://github.com/matteodelabre/toltec/workflows/stable/badge.svg)
-![Status of the testing repository](https://github.com/matteodelabre/toltec/workflows/testing/badge.svg)
+![Status of the stable repository](https://github.com/toltec-dev/toltec/workflows/stable/badge.svg)
+![Status of the testing repository](https://github.com/toltec-dev/toltec/workflows/testing/badge.svg)
 [![Discord](https://img.shields.io/discord/463752820026376202.svg?label=reMarkable&logo=discord&logoColor=ffffff&color=7389D8&labelColor=6A7EC2)](https://discord.gg/ATqQGfu)
 
 Toltec is a community-maintained repository of free software for [the reMarkable tablet](https://remarkable.com/).
@@ -12,8 +12,8 @@ Toltec works on top of the [Opkg](https://code.google.com/archive/p/opkg/) packa
 To automatically install Opkg, Entware and Toltec, run the bootstrap script in a [SSH session](https://remarkablewiki.com/tech/ssh) on your reMarkable:
 
 ```sh
-$ wget http://toltec.delab.re/bootstrap
-$ echo "2897bb7665ff0b992e629d674af6057510192833e9a6ea56287c1a13c5146632  bootstrap" | sha256sum -c
+$ wget http://toltec-dev.org/bootstrap
+$ echo "874e0ce8492dec1db23819a60d86e1ce24ea24ea824e9cdf1e9e863a9e1f38c9  bootstrap" | sha256sum -c
 $ bash bootstrap
 ```
 
@@ -32,7 +32,7 @@ $ bash bootstrap
 
 You now have access to all of the Toltec and Entware packages!
 
-[Browse the list of available packages →](https://toltec.delab.re/stable)
+[Browse the list of available packages →](https://toltec-dev.org/stable)
 
 ### Use it
 

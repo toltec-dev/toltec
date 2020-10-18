@@ -10,7 +10,7 @@ usage="$0 [OPTION]... RECIPESDIR WORKDIR REPODIR [REMOTEREPO]
 Build new or updated packages defined in RECIPESDIR and create a package index.
 Packages are built in subdirectories of WORKDIR and resulting artifacts are
 gathered in REPODIR.  If REMOTEREPO is omitted,
-'https://toltec.delab.re/testing' is used.
+'https://toltec-dev.org/testing' is used.
 
 Options:
 
@@ -48,7 +48,7 @@ if [[ $# -eq 2 ]]; then
     error "Missing REPODIR argument. Use the -h flag for more information."
 fi
 
-remoterepo="https://toltec.delab.re/testing"
+remoterepo="https://toltec-dev.org/testing"
 
 if [[ $# -eq 4 ]]; then
     remoterepo="$4"
