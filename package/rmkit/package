@@ -27,7 +27,6 @@ harmony() {
     url="https://rmkit.dev/apps/harmony"
     pkgver=0.0.1-17
     section=drawing
-    conflicts=(rmkit)
 
     package() {
         install -D -m 755 "$srcdir"/src/build/harmony "$pkgdir"/opt/bin/harmony
@@ -44,7 +43,6 @@ mines() {
     url="https://rmkit.dev/apps/minesweeper"
     pkgver=0.0.1-16
     section=games
-    conflicts=(rmkit)
 
     package() {
         install -D -m 755 "$srcdir"/src/build/mines "$pkgdir"/opt/bin/mines
@@ -58,7 +56,6 @@ nao() {
     pkgver=0.0.1-16
     section=utils
     depends=(simple)
-    conflicts=(rmkit)
 
     package() {
         install -D -m 755 "$srcdir"/src/build/nao.sh "$pkgdir"/opt/bin/nao
@@ -103,7 +100,6 @@ simple() {
     url="https://rmkit.dev/apps/sas"
     pkgver=0.0.1-16
     section=utils
-    conflicts=(rmkit)
 
     package() {
         install -D -m 755 "$srcdir"/src/build/simple "$pkgdir"/opt/bin/simple
