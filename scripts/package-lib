@@ -219,6 +219,9 @@ has-element() {
 # $3 (optional) - Either 'nonempty' or 'optional'
 check-field() {
     # shellcheck disable=SC2155
+    # SC2155: Declare and assign separately to avoid masking return values
+    # `declare` fails if and only if $1 does not exist, in which case
+    # `signature` will be empty. Therefore we do not need its return code
     local signature="$(declare -p "$1" 2> /dev/null)"
     local vartype=undefined
 
