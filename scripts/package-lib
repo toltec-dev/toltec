@@ -179,6 +179,32 @@ join-elements() {
     echo
 }
 
+# Check if a string appears in a set of strings
+#
+# Arguments:
+#
+# $1 - String to look for
+# $2... - Elements to compare to $1
+#
+# Example:
+#
+# > has-element "needle" "${haystack[@]}"
+# Will return 0 if "needle" is found in the "haystack" array.
+#
+# Exit code: 0 if the element is found, 1 otherwise.
+has-element() {
+    local needle="$1"
+    shift
+
+    for element; do
+        if [[ $needle == "$element" ]]; then
+            return 0
+        fi
+    done
+
+    return 1
+}
+
 # Check that a field is defined with the required type
 #
 # If an error occurs, this function prints an error message and exits the
@@ -192,8 +218,11 @@ join-elements() {
 # $2 - Expected type of the field, 'string', 'array' or 'map'
 # $3 (optional) - Either 'nonempty' or 'optional'
 check-field() {
-    local signature
-    signature="$(declare -p "$1" 2> /dev/null)"
+    # shellcheck disable=SC2155
+    # SC2155: Declare and assign separately to avoid masking return values
+    # `declare` fails if and only if $1 does not exist, in which case
+    # `signature` will be empty. Therefore we do not need its return code
+    local signature="$(declare -p "$1" 2> /dev/null)"
     local vartype=undefined
 
     if [[ $signature =~ ^declare\ -- ]]; then
@@ -211,7 +240,7 @@ check-field() {
             error "The '$1' variable is not defined"
         fi
     else
-        if [[ $vartype != "$2" ]]; then
+        if [[ ! $vartype =~ ^$2$ ]]; then
             error "The '$1' variable should be of type '$2', not '$vartype'"
         fi
 
@@ -221,26 +250,33 @@ check-field() {
     fi
 }
 
-# Load metadata and functions defined in a package recipe
+# Check that a function is defined
+#
+# If the function is not defined, this function prints an error message and
+# exits the script immediately.
 #
 # Arguments:
 #
-# $1 - Path to the package recipe
-load-recipe() {
+# $1 - Name of the function
+check-function() {
+    if ! declare -F "$1" > /dev/null 2>&1; then
+        error "The '$1()' function is not defined"
+    fi
+}
+
+# Load metadata fields common to all the packages in a recipe
+#
+# Arguments:
+#
+# $1 - Name of the package recipe
+load-recipe-header() {
     # shellcheck disable=SC1090
     source "$1"/package
 
     # Check fields types
-    check-field pkgname string nonempty
-    check-field pkgdesc string nonempty
-    check-field url string nonempty
-    check-field pkgver string nonempty
+    check-field pkgnames array nonempty
     check-field timestamp string nonempty
-    check-field section string nonempty
     check-field maintainer string nonempty
-    check-field license string nonempty
-    check-field depends array optional || depends=()
-    check-field conflicts array optional || conflicts=()
     check-field arch string optional || arch=armv7-3.2
     check-field image string optional || image=
     check-field source array optional || source=()
@@ -248,20 +284,61 @@ load-recipe() {
 
     # Make fields read-only
     readonly \
-        pkgname \
-        pkgdesc \
-        url \
-        pkgver \
+        pkgnames \
         timestamp \
-        section \
         maintainer \
-        license \
-        depends \
-        conflicts \
         arch \
         image \
         source \
         sha256sums \
+        2> /dev/null || true
+
+    # Make defined functions read-only
+    readonly -f build 2> /dev/null || true
+
+    # Recipes containing several packages need to define a function
+    # for each one, with package-specific data and functions
+    if [[ ${#pkgnames[@]} -gt 1 ]]; then
+        for pkgname in "${pkgnames[@]}"; do
+            check-function "$pkgname"
+        done
+
+        # Make defined functions read-only
+        readonly -f "${pkgnames[@]}"
+    fi
+}
+
+# Load metadata fields for a given package in the currently loaded recipe
+#
+# Arguments:
+#
+# $1 - Name of the package to load
+load-recipe-pkg() {
+    readonly pkgname="$1"
+
+    if [[ ${#pkgnames[@]} -gt 1 ]]; then
+        # For recipes with multiple packages, load data specific
+        # to the requested one
+        "$pkgname"
+    fi
+
+    check-field pkgdesc string nonempty
+    check-field url string nonempty
+    check-field pkgver string nonempty
+    check-field section string nonempty
+    check-field license string nonempty
+    check-field depends array optional || depends=()
+    check-field conflicts array optional || conflicts=()
+
+    # Make fields read-only
+    readonly \
+        pkgdesc \
+        url \
+        pkgver \
+        section \
+        license \
+        depends \
+        conflicts \
         2> /dev/null || true
 
     # Check required functions
@@ -271,7 +348,6 @@ load-recipe() {
 
     # Make defined functions read-only
     readonly -f \
-        build \
         package \
         preinstall \
         configure \

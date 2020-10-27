@@ -1,6 +1,6 @@
 ## Writing a package recipe
 
-A **package recipe** is a Bash script containing the metadata and instructions needed to build a package from source.
+A **package recipe** is a Bash script containing the metadata and instructions needed to build a set of related packages from source.
 These recipes are used by the packaging script to generate installable package archives for the Opkg package manager.
 
 > **Note:** Recipe scripts should not be marked as executable because they are not meant to be executed directly but rather meant to be sourced by the packaging script.
@@ -13,6 +13,7 @@ Sourcing a package recipe must have no side effects: the metadata section can on
 2. [Build section](#build-section)
 3. [Package section](#package-section)
 4. [Install section](#install-section)
+5. [Split packages](#split-packages)
 
 ### Metadata section
 
@@ -21,7 +22,7 @@ For consistency, declare those fields in the same order they are described below
 
 > **Note:** The field names and semantics are inspired both by the [Debian control file format](https://www.debian.org/doc/debian-policy/ch-controlfields.html) and the [Arch Linux PKGBUILD format](https://wiki.archlinux.org/index.php/PKGBUILD).
 
-#### `pkgname`
+#### `pkgnames`
 
 <table>
     <tr>
@@ -30,11 +31,12 @@ For consistency, declare those fields in the same order they are described below
     </tr>
     <tr>
         <th>Type</th>
-        <td>String</td>
+        <td>Array of strings</td>
     </tr>
 </table>
 
-The name of the package that can be built using this recipe.
+The names of the packages that can be built using this recipe.
+Unless you’re creating a [split package](#split-packages), this array should only contain one entry.
 Must only contain ASCII lowercase letters, digits, and dashes.
 Should match the upstream name as closely as possible.
 
@@ -300,3 +302,13 @@ When upgrading a package from version A to B, the following happens:
 * `postupgrade B`, if it exists, is called from version A
 * New package files are unpacked and installed
 * `configure`, if it exists, is called from version B
+
+### Split packages
+
+Split packages are sets of packages created from the build artifacts of a single recipe.
+To create a recipe for split packages, add the names of the additional packages to generate to the [`pkgnames`](#pkgnames) array.
+For each package, create a new function bearing the same name as the said package.
+Place [metadata fields](#metadata-section), a [package function](#package-section), and optionally [install functions](#install-section) specific to each package inside its associated function.
+Fields defined outside of any function at the top of the recipe will be shared with all generated packages.
+
+See [rmkit](../package/rmkit/package) for an example of a split package.
