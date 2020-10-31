@@ -1,7 +1,9 @@
 ## Toltec
 
-![Status of the stable repository](https://github.com/matteodelabre/toltec/workflows/stable/badge.svg)
-![Status of the testing repository](https://github.com/matteodelabre/toltec/workflows/testing/badge.svg)
+![Status of the stable repository](https://github.com/toltec-dev/toltec/workflows/stable/badge.svg)
+![Status of the testing repository](https://github.com/toltec-dev/toltec/workflows/testing/badge.svg)
+[![rm1](https://img.shields.io/badge/rM1-supported-green)](https://remarkable.com/store/remarkable)
+[![rm2](https://img.shields.io/badge/rM2-unsupported-red)](https://remarkable.com/store/remarkable-2)
 [![Discord](https://img.shields.io/discord/463752820026376202.svg?label=reMarkable&logo=discord&logoColor=ffffff&color=7389D8&labelColor=6A7EC2)](https://discord.gg/ATqQGfu)
 
 Toltec is a community-maintained repository of free software for [the reMarkable tablet](https://remarkable.com/).
@@ -12,8 +14,8 @@ Toltec works on top of the [Opkg](https://code.google.com/archive/p/opkg/) packa
 To automatically install Opkg, Entware and Toltec, run the bootstrap script in a [SSH session](https://remarkablewiki.com/tech/ssh) on your reMarkable:
 
 ```sh
-$ wget http://toltec.delab.re/bootstrap
-$ echo "3c792fe4dcd034dcbf52ddd242fa3816d48a776acdbd78b3bec2a7741416ed35  bootstrap" | sha256sum -c
+$ wget http://toltec-dev.org/bootstrap
+$ echo "874e0ce8492dec1db23819a60d86e1ce24ea24ea824e9cdf1e9e863a9e1f38c9  bootstrap" | sha256sum -c
 $ bash bootstrap
 ```
 
@@ -32,7 +34,7 @@ $ bash bootstrap
 
 You now have access to all of the Toltec and Entware packages!
 
-[Browse the list of available packages →](https://toltec.delab.re/stable)
+[Browse the list of available packages →](https://toltec-dev.org/stable)
 
 ### Use it
 
@@ -56,7 +58,7 @@ $ opkg upgrade
 ```
 
 [See information about advanced Opkg commands →](https://openwrt.org/docs/guide-user/additional-software/opkg)\
-[Choose between the _stable_ and _testing_ channels →](docs/channels.md)
+[Choose between _stable_ and _testing_ →](docs/branches.md)
 
 ### Build it
 

@@ -107,17 +107,22 @@ cat > "$indexfile" << 'WEBS'
 WEBS
 
 section "Indexing sections"
-declare -A pkgsections
 
-for recipedir in "$recipesdir"/*; do
-    section="$(
-        load-recipe "$recipedir"
-        echo "$section"
-    )"
-    pkgsections["$section"]=1
-done
+readarray -t pkgsections < <(
+    for recipedir in "$recipesdir"/*; do
+        (
+            load-recipe-header "$recipedir"
+            for pkgname in "${pkgnames[@]}"; do
+                (
+                    load-recipe-pkg "$pkgname"
+                    echo "$section"
+                )
+            done
+        )
+    done | sort | uniq
+)
 
-for cursection in "${!pkgsections[@]}"; do
+for cursection in "${pkgsections[@]}"; do
     section "Making $cursection index"
 
     cat >> "$indexfile" << WEBS
@@ -143,20 +148,24 @@ WEBS
 
     for recipedir in "$recipesdir"/*; do
         (
-            load-recipe "$recipedir"
+            load-recipe-header "$recipedir"
 
-            if [[ $section = "$cursection" ]]; then
-                pkgid="$(package-id)"
+            for pkgname in "${pkgnames[@]}"; do
+                (
+                    load-recipe-pkg "$pkgname"
 
-                status "Adding entry for $pkgid"
+                    if [[ $section = "$cursection" ]]; then
+                        pkgid="$(package-id)"
 
-                if [[ -z $url ]]; then
-                    href="$url"
-                else
-                    href="<a href=\"$url\">$pkgname</a>"
-                fi
+                        status "Adding entry for $pkgid"
 
-                cat >> "$indexfile" << WEBS
+                        if [[ -z $url ]]; then
+                            href="$url"
+                        else
+                            href="<a href=\"$url\">$pkgname</a>"
+                        fi
+
+                        cat >> "$indexfile" << WEBS
             <tr>
                 <td>$href</td>
                 <td>$pkgdesc</td>
@@ -164,7 +173,9 @@ WEBS
                 <td><a href='https://spdx.org/licenses/$license.html'>$license</a></td>
             </tr>
 WEBS
-            fi
+                    fi
+                )
+            done
         )
     done
 

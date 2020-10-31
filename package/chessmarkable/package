@@ -2,7 +2,7 @@
 # Copyright (c) 2020 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
-pkgname=chessmarkable
+pkgnames=(chessmarkable)
 pkgdesc="A chess game for the reMarkable"
 url=https://github.com/LinusCDE/chessmarkable
 pkgver=0.4.2-1

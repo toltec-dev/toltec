@@ -5,10 +5,11 @@
 set -e
 source scripts/package-lib
 
-usage="$0 [OPTION]... RECIPEDIR WORKDIR
+usage="$0 [OPTION]... RECIPEDIR WORKDIR [PACKAGENAME]...
 
-Build a package following the recipe defined in RECIPEDIR.
-The build is carried out in subdirectories of WORKDIR.
+Build all the packages defined in RECIPEDIR.
+If PACKAGENAMEs are given, only build the listed packages.
+The builds are carried out in subdirectories of WORKDIR.
 
 Arguments:
 
@@ -38,35 +39,21 @@ if [[ $# -eq 1 ]]; then
     error "Missing WORKDIR argument. Use the -h flag for more information."
 fi
 
-if [[ $# -gt 2 ]]; then
-    error "Extraneous arguments. Use the -h flag for more information."
-fi
+# Load common package info and create working directories
+readonly recipedir="$1"
+load-recipe-header "$1"
+shift
 
-recipedir="$1"
-workdir="$2"
+readonly workdir="$1"
+[[ -d $workdir ]] && files="$(ls -qA -- "$workdir")" && [[ -n $files ]] \
+    && error "Working directory '$workdir' exists and is not empty"
+mkdir -p "$workdir"
+shift
 
-# Load package info and script
-load-recipe "$recipedir"
+readonly requestedpkgs=("$@")
 
-pkgid="$(package-id)"
-worksubdir="$workdir"/"$pkgid"
-
-# Create working directories
-[[ -d $worksubdir ]] && files="$(ls -qA -- "$worksubdir")" && [[ -n $files ]] \
-    && error "Working directory '$worksubdir' exists and is not empty"
-mkdir -p "$worksubdir"
-
-srcdir="$worksubdir"/src
+readonly srcdir="$workdir/src"
 mkdir "$srcdir"
-
-pkgdir="$worksubdir"/pkg
-mkdir "$pkgdir"
-
-ctldir="$worksubdir"/control
-mkdir "$ctldir"
-
-ardir="$worksubdir"/ar
-mkdir "$ardir"
 
 # Use the declared timestamp as SOURCE_DATE_EPOCH
 # See <https://reproducible-builds.org/docs/source-date-epoch/>
@@ -107,8 +94,12 @@ done
 # Set atime and mtime to the SOURCE_DATE_EPOCH for all source files
 find "$srcdir" -exec touch --no-dereference --date="@${SOURCE_DATE_EPOCH}" {} +
 
-# Run build script inside a Docker container
+# Run the build script inside a Docker container
 if [[ -n $image ]]; then
+    if [[ $(type -t build) != "function" ]]; then
+        error "The 'build()' function is not defined"
+    fi
+
     section "Building binaries"
     docker container run --interactive --rm \
         --mount type=bind,src="$(realpath "$recipedir")",dst=/recipe \
@@ -120,112 +111,137 @@ cd /src
 build
 chown -R $(id -u):$(id -u) /src/
 SCRIPT
+elif [[ $(type -t build) == "function" ]]; then
+    error "A 'build()' function was defined but the 'image' variable is missing"
 fi
 
-# Run packaging script
-section "Preparing package files"
-package
+# Build all requested packages, or all defined packages if none were requested
+# Each package is built in a subshell to avoid leaking metadata fields
+for pkgname in "${pkgnames[@]}"; do
+    if [[ ${#requestedpkgs[@]} -eq 0 ]] \
+        || has-element "$pkgname" "${requestedpkgs[@]}"; then
+        (
+            section "Packaging $pkgname"
+            load-recipe-pkg "$pkgname"
 
-# Show package contents
-if command -v tree &> /dev/null; then
-    tree -np "$pkgdir" | tail +2
-fi
+            # Prepare working directories
+            readonly worksubdir="$workdir/$pkgname"
+            mkdir "$worksubdir"
 
-# Create control file
-ctlfile="$ctldir"/control
+            readonly pkgdir="$worksubdir"/pkg
+            mkdir "$pkgdir"
 
-{
-    echo "Package: $pkgname"
-    echo "Description: $pkgdesc"
-    echo "Homepage: $url"
-    echo "Version: $pkgver"
-    echo "Section: $section"
-    echo "Maintainer: $maintainer"
-    echo "License: $license"
-    echo "Architecture: $arch"
-    [[ -n $depends ]] && echo "Depends: $depends"
-    [[ -n $conflicts ]] && echo "Conflicts: $conflicts"
-} >> "$ctlfile"
+            readonly ctldir="$worksubdir"/control
+            mkdir "$ctldir"
 
-# Create maintainer scripts
-maintainer-script-header() {
-    cat << 'SCRIPT'
+            readonly ardir="$worksubdir"/ar
+            mkdir "$ardir"
+
+            # Run packaging script
+            package
+
+            # Show package contents
+            if command -v tree &> /dev/null; then
+                tree -np "$pkgdir" | tail +2
+            fi
+
+            # Create control file
+            readonly ctlfile="$ctldir"/control
+
+            {
+                echo "Package: $pkgname"
+                echo "Description: $pkgdesc"
+                echo "Homepage: $url"
+                echo "Version: $pkgver"
+                echo "Section: $section"
+                echo "Maintainer: $maintainer"
+                echo "License: $license"
+                echo "Architecture: $arch"
+                [[ -n $depends ]] && echo "Depends: $(join-elements ", " "${depends[@]}")"
+                [[ -n $conflicts ]] && echo "Conflicts: $(join-elements ", " "${conflicts[@]}")"
+            } >> "$ctlfile"
+
+            # Create maintainer scripts
+            maintainer-script-header() {
+                cat << 'SCRIPT'
 #!/usr/bin/env bash
 set -e
 SCRIPT
-    dump-fields
-    cat scripts/install-lib
-}
+                dump-fields
+                cat scripts/install-lib
+            }
 
-# Generate preinst
-if [[ $(type -t preinstall) = function ]]; then
-    {
-        maintainer-script-header
-        declare -f preinstall
-        cat << 'SCRIPT'
+            # Generate preinst
+            if [[ $(type -t preinstall) = function ]]; then
+                {
+                    maintainer-script-header
+                    declare -f preinstall
+                    cat << 'SCRIPT'
 if [[ $1 = install ]]; then
     preinstall
 fi
 SCRIPT
-    } >> "$ctldir"/preinst
-    chmod 755 "$ctldir"/preinst
-fi
+                } >> "$ctldir"/preinst
+                chmod 755 "$ctldir"/preinst
+            fi
 
-# Generate postinst
-if [[ $(type -t configure) = function ]]; then
-    {
-        maintainer-script-header
-        declare -f configure
-        cat << 'SCRIPT'
+            # Generate postinst
+            if [[ $(type -t configure) = function ]]; then
+                {
+                    maintainer-script-header
+                    declare -f configure
+                    cat << 'SCRIPT'
 if [[ $1 = configure ]]; then
     configure
 fi
 SCRIPT
-    } >> "$ctldir"/postinst
-    chmod 755 "$ctldir"/postinst
-fi
+                } >> "$ctldir"/postinst
+                chmod 755 "$ctldir"/postinst
+            fi
 
-# Generate {pre,post}rm
-for step in pre post; do
-    if [[ $(type -t "$step"upgrade) = function ]] || [[ $(type -t "$step"remove) = function ]]; then
-        {
-            maintainer-script-header
+            # Generate {pre,post}rm
+            for step in pre post; do
+                if [[ $(type -t "$step"upgrade) = function ]] \
+                    || [[ $(type -t "$step"remove) = function ]]; then
+                    {
+                        maintainer-script-header
 
-            if [[ $(type -t "$step"upgrade) = function ]]; then
-                declare -f "$step"upgrade
-                cat << SCRIPT
+                        if [[ $(type -t "$step"upgrade) = function ]]; then
+                            declare -f "$step"upgrade
+                            cat << SCRIPT
 if [[ \$1 = upgrade ]]; then
     "$step"upgrade
 fi
 SCRIPT
-            fi
+                        fi
 
-            if [[ $(type -t "$step"remove) = function ]]; then
-                declare -f "$step"remove
-                cat << SCRIPT
+                        if [[ $(type -t "$step"remove) = function ]]; then
+                            declare -f "$step"remove
+                            cat << SCRIPT
 if [[ \$1 = remove ]]; then
     "$step"remove "\$2"
 fi
 SCRIPT
-            fi
-        } >> "$ctldir"/"$step"rm
-        chmod 755 "$ctldir"/"$step"rm
+                        fi
+                    } >> "$ctldir"/"$step"rm
+                    chmod 755 "$ctldir"/"$step"rm
+                fi
+            done
+
+            # Create archives
+            section "Creating archive"
+            readonly pkgar="$ardir"/data.tar.gz
+            readonly ctlar="$ardir"/control.tar.gz
+            readonly versionar="$ardir"/debian-binary
+            readonly arar="$worksubdir/$(package-id).ipk"
+
+            echo "2.0" >> "$versionar"
+            rtar "$pkgar" "$pkgdir"
+            rtar "$ctlar" "$ctldir"
+            rtar "$arar" "$ardir"
+
+            # Set atime and mtime to the SOURCE_DATE_EPOCH for the final archive
+            touch --no-dereference --date="@$SOURCE_DATE_EPOCH" "$arar"
+        )
     fi
 done
-
-# Create archives
-section "Creating archives"
-pkgar="$ardir"/data.tar.gz
-ctlar="$ardir"/control.tar.gz
-versionar="$ardir"/debian-binary
-arar="$worksubdir/$pkgid.ipk"
-
-echo "2.0" >> "$versionar"
-rtar "$pkgar" "$pkgdir"
-rtar "$ctlar" "$ctldir"
-rtar "$arar" "$ardir"
-
-# Set atime and mtime to the SOURCE_DATE_EPOCH for the final archive
-touch --no-dereference --date="@$SOURCE_DATE_EPOCH" "$arar"
-
-section "Done. Result is in $arar"
