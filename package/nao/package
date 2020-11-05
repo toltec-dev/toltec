@@ -2,7 +2,7 @@
 # Copyright (c) 2020 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
-pkgname=nao
+pkgnames=(nao)
 pkgdesc="Nao Package Manager: opkg UI built with SAS"
 url="https://rmkit.dev/apps/nao"
 pkgver=0.0.1-15

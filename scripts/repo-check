@@ -8,7 +8,7 @@ source scripts/package-lib
 usage="$0 [OPTION]... LOCALREPO [REMOTEREPO]
 
 Check that the LOCALREPO and REMOTEREPO repositories are identical.
-If REMOTEREPO is omitted, 'https://toltec.delab.re/testing' is used.
+If REMOTEREPO is omitted, 'https://toltec-dev.org/testing' is used.
 
 Options:
 
@@ -35,7 +35,7 @@ if [[ $# -eq 0 ]]; then
 fi
 
 localrepo="$1"
-remoterepo="https://toltec.delab.re/testing"
+remoterepo="https://toltec-dev.org/testing"
 
 if [[ $# -eq 2 ]]; then
     remoterepo="$2"

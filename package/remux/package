@@ -2,7 +2,7 @@
 # Copyright (c) 2020 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
-pkgname=remux
+pkgnames=(remux)
 pkgdesc="App launcher that supports multi-tasking applications"
 url="https://rmkit.dev/apps/remux"
 pkgver=0.0.1-20

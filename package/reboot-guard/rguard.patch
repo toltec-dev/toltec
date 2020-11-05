@@ -1,0 +1,8 @@
+--- rguard	2020-10-10 17:56:32.947843536 -0600
++++ rguard.new	2020-10-10 17:57:18.981358842 -0600
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python3
++#!/opt/bin/python3
+ # -*- coding: utf-8 -*-
+ # Copyright 2015, 2017 Ryan Sawhill Aroha <rsaw@redhat.com>
+ #
