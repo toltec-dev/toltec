@@ -2,7 +2,7 @@
 # Copyright (c) 2020 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
-pkgname=harmony
+pkgnames=(harmony)
 pkgdesc="Procedural sketching app"
 url="https://rmkit.dev/apps/harmony"
 pkgver=0.0.1-16
