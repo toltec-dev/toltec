@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+# Copyright (c) 2020 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgname=remux
+pkgdesc="App launcher that supports multi-tasking applications"
+url="https://rmkit.dev/apps/remux"
+pkgver=0.0.1-20
+timestamp=2020-10-07T01:41+00:00
+section=launchers
+maintainer="raisjn <of.rajsn@gmail.com>"
+license=MIT
+
+image=python:v1.1
+source=(
+    https://github.com/rmkit-dev/rmkit/archive/3d8fef0274a59f672c136aae741ad4ddcf4fd8fc.zip
+    remux.service
+)
+sha256sums=(
+    f7a436335a768b1d786babb07af49646735a3ca7f6f75cb91359b32a8626cb54
+    SKIP
+)
+
+build() {
+    pip3 install okp
+    make remux
+}
+
+package() {
+    install -d "$pkgdir"/opt/usr/bin
+    install -D -m 755 "$srcdir"/src/build/remux "$pkgdir"/opt/bin/remux
+    install -D -m 644 "$srcdir"/remux.service "$pkgdir"/lib/systemd/system/remux.service
+}
+
+configure() {
+    systemctl daemon-reload
+
+    if ! is-enabled "$pkgname.service"; then
+        echo ""
+        echo "Run the following command(s) to use $pkgname as your launcher"
+        how-to-enable "$pkgname.service"
+        echo ""
+    fi
+}
+
+preremove() {
+    echo "Disabling $pkgname"
+    systemctl disable --now "$pkgname"
+}
+
+postremove() {
+    systemctl daemon-reload
+}
