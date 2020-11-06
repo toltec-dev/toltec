@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+# Copyright (c) 2020 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgnames=(rm1-only rm2-only)
+pkgdesc="Ensure packages are not installed on the wrong device"
+pkgver=0.1.0-1
+url=http://0.0.0.0/
+timestamp=2020-11-06T09:35Z
+section=meta
+maintainer="Linus K. <linus@cosmos-ink.net>"
+license=MIT
+
+rm1-only() {
+    conflicts=(rm2-only)
+
+    package() { :; }
+
+    preinstall() {
+        local supported_machine_names
+        local actual_machine_name
+        supported_machine_names=('reMarkable 1.0' 'reMarkable Prototype 1')
+        actual_machine_name=$(cat /sys/devices/soc0/machine)
+
+        if [[ ! "${supported_machine_names[*]}" =~ $actual_machine_name ]]; then
+            echo "Your devices got identified as: $actual_machine_name" >&2
+            echo "You are attempting to install a package that only works on the reMarkable 1." >&2
+            exit 1
+        fi
+    }
+}
+
+rm2-only() {
+    conflicts=(rm1-only)
+
+    package() { :; }
+
+    preinstall() {
+        local supported_machine_names
+        local actual_machine_name
+        supported_machine_names=('reMarkable 2.0')
+        actual_machine_name=$(cat /sys/devices/soc0/machine)
+
+        if [[ ! "${supported_machine_names[*]}" =~ $actual_machine_name ]]; then
+            echo "Your devices got identified as: $actual_machine_name" >&2
+            echo "You are attempting to install a package that only works on the reMarkable 2." >&2
+            exit 1
+        fi
+    }
+}
