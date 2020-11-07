@@ -280,6 +280,7 @@ load-recipe-header() {
     check-field arch string optional || arch=armv7-3.2
     check-field image string optional || image=
     check-field source array optional || source=()
+    check-field noextract array optional || noextract=()
     check-field sha256sums array optional || sha256sums=()
 
     # Make fields read-only
@@ -290,11 +291,15 @@ load-recipe-header() {
         arch \
         image \
         source \
+        noextract \
         sha256sums \
         2> /dev/null || true
 
     # Make defined functions read-only
-    readonly -f build 2> /dev/null || true
+    readonly -f \
+        prepare \
+        build \
+        2> /dev/null || true
 
     # Recipes containing several packages need to define a function
     # for each one, with package-specific data and functions
@@ -377,6 +382,7 @@ dump-fields() {
         arch \
         image \
         source \
+        noextract \
         sha256sums \
         2> /dev/null || true
 }

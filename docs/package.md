@@ -10,10 +10,11 @@ Sourcing a package recipe must have no side effects: the metadata section can on
 ### Contents
 
 1. [Metadata section](#metadata-section)
-2. [Build section](#build-section)
-3. [Package section](#package-section)
-4. [Install section](#install-section)
-5. [Split packages](#split-packages)
+2. [Prepare section](#prepare-section)
+3. [Build section](#build-section)
+4. [Package section](#package-section)
+5. [Install section](#install-section)
+6. [Split packages](#split-packages)
 
 ### Metadata section
 
@@ -259,6 +260,24 @@ The list of sources files and archives needed to build the package.
 The [`build()`](#build-section) and [`package()`](#package-section) sections can access the files referenced in this array from the `$srcdir` directory.
 Each entry can either be a local path relative to the recipe file or a full URL that will be fetched from the Internet (any protocol supported by [curl](https://curl.haxx.se/) can be used here) when building the package.
 Archive files whose names end in `.zip`, `.tar.gz`, `.tar.xz`, or `.tar.bz` will be automatically extracted in place, with all container directories stripped.
+You can disable this behavior by adding the archive name to the `noextract` array.
+
+#### `noextract`
+
+<table>
+    <tr>
+        <th>Required?</th>
+        <td>No, defaults to <code>()</code></th>
+    </tr>
+    <tr>
+        <th>Type</th>
+        <td>Array of strings</td>
+    </tr>
+</table>
+
+List of archive names which should not be automatically extracted by the build script.
+You can provide a custom extraction logic in the [`prepare()` section](#prepare-section).
+Note that this list should only contain file names, not full paths, in contrast to the `source` array.
 
 #### `sha256sums`
 
@@ -277,6 +296,11 @@ List of SHA-256 checksums for the source files.
 After copying or downloading a source file to the `$srcdir` directory, the build script will verify its integrity by comparing its checksum with the one registered here.
 You can request to skip this verification by entering `SKIP` instead of a valid SHA-256 checksum (discouraged for files fetched from remote computers).
 This array must have exactly as many elements as the `source` array.
+
+### Prepare section
+
+The prepare section contains the `prepare()` function in which the source files may be prepared for the building step that follows.
+Common tasks include patching sources, extracting archives, and moving downloaded sources to the right location.
 
 ### Build section
 

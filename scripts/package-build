@@ -77,19 +77,27 @@ for ((i = 0; i < ${#source[@]}; ++i)); do
 
     rcurl --location "$srcurl" -o "$srcfilepath"
 
+    # Verify checksum if one was provided
     if [[ $checksum != SKIP ]] \
         && ! sha256sum -c <(echo "$checksum  $srcfilepath") > /dev/null 2>&1; then
         error "Checksum mismatch while fetching $srcfile"
     fi
 
     # Automatically extract source archives
-    if [[ $srcfilepath =~ \.(zip|tar\.gz|tar\.xz|tar\.bz)$ ]]; then
-        bsdtar -x \
-            --strip-components "$(tarprefix "$srcfilepath")" \
-            --directory "$srcdir" \
-            --file "$srcfilepath"
+    if ! has-element "$srcfile" "${noextract[@]}"; then
+        if [[ $srcfilepath =~ \.(zip|tar\.gz|tar\.xz|tar\.bz)$ ]]; then
+            bsdtar -x \
+                --strip-components "$(tarprefix "$srcfilepath")" \
+                --directory "$srcdir" \
+                --file "$srcfilepath"
+        fi
     fi
 done
+
+if [[ $(type -t prepare) == "function" ]]; then
+    section "Preparing source files"
+    prepare
+fi
 
 # Set atime and mtime to the SOURCE_DATE_EPOCH for all source files
 find "$srcdir" -exec touch --no-dereference --date="@${SOURCE_DATE_EPOCH}" {} +
