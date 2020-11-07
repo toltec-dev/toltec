@@ -135,6 +135,7 @@ launchers       | Apps that present to the user a list of other apps that they c
 math            | Apps to assist the user in performing mathematical tasks.
 readers         | Apps for reading and annotating documents (PDF, EPUB, …).
 utils           | System tools and various apps.
+old             | Deprecated or transitional packages. Packages in this section will not be listed in the package index.
 
 If the package does not fit into one of the existing sections, you are free to create a new one and document it here.
 
@@ -204,6 +205,25 @@ See <https://www.debian.org/doc/debian-policy/ch-relationships.html#binary-depen
 A list of package names that must **NOT** be unpacked at the same time as this package.
 
 See <https://www.debian.org/doc/debian-policy/ch-relationships.html#conflicting-binary-packages-conflicts>.
+
+#### `replaces`
+
+<table>
+    <tr>
+        <th>Required?</th>
+        <td>No, defaults to <code>()</code></th>
+    </tr>
+    <tr>
+        <th>Type</th>
+        <td>Array of strings</td>
+    </tr>
+</table>
+
+A list of packages that this package wholly replaces.
+Installing this package will remove the replaced packages if they were previously installed.
+This is equivalent to a combination of the Debian `Provides`, `Conflicts` and `Replaces` fields.
+
+See <https://www.debian.org/doc/debian-policy/ch-relationships.html#replacing-whole-packages-forcing-their-removal>.
 
 #### `image`
 

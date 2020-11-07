@@ -148,6 +148,11 @@ for pkgname in "${pkgnames[@]}"; do
             # Create control file
             readonly ctlfile="$ctldir"/control
 
+            debdepends=("${depends[@]}")
+            debprovides=("${replaces[@]}")
+            debconflicts=("${conflicts[@]}" "${replaces[@]}")
+            debreplaces=("${replaces[@]}")
+
             {
                 echo "Package: $pkgname"
                 echo "Description: $pkgdesc"
@@ -157,8 +162,14 @@ for pkgname in "${pkgnames[@]}"; do
                 echo "Maintainer: $maintainer"
                 echo "License: $license"
                 echo "Architecture: $arch"
-                [[ -n $depends ]] && echo "Depends: $(join-elements ", " "${depends[@]}")"
-                [[ -n $conflicts ]] && echo "Conflicts: $(join-elements ", " "${conflicts[@]}")"
+                [[ ${#debdepends[@]} -gt 0 ]] \
+                    && echo "Depends: $(join-elements ", " "${debdepends[@]}")"
+                [[ ${#debprovides[@]} -gt 0 ]] \
+                    && echo "Provides: $(join-elements ", " "${debprovides[@]}")"
+                [[ ${#debconflicts[@]} -gt 0 ]] \
+                    && echo "Conflicts: $(join-elements ", " "${debconflicts[@]}")"
+                [[ ${#debreplaces[@]} -gt 0 ]] \
+                    && echo "Replaces: $(join-elements ", " "${debreplaces[@]}")"
             } >> "$ctlfile"
 
             # Create maintainer scripts

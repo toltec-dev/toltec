@@ -329,6 +329,7 @@ load-recipe-pkg() {
     check-field license string nonempty
     check-field depends array optional || depends=()
     check-field conflicts array optional || conflicts=()
+    check-field replaces array optional || replaces=()
 
     # Make fields read-only
     readonly \
@@ -339,6 +340,7 @@ load-recipe-pkg() {
         license \
         depends \
         conflicts \
+        replaces \
         2> /dev/null || true
 
     # Check required functions
@@ -371,6 +373,7 @@ dump-fields() {
         license \
         depends \
         conflicts \
+        replaces \
         arch \
         image \
         source \

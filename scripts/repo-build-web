@@ -123,6 +123,10 @@ readarray -t pkgsections < <(
 )
 
 for cursection in "${pkgsections[@]}"; do
+    if [[ $cursection == "old" ]]; then
+        continue
+    fi
+
     section "Making $cursection index"
 
     cat >> "$indexfile" << WEBS

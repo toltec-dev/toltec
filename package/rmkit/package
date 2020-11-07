@@ -2,7 +2,7 @@
 # Copyright (c) 2020 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
-pkgnames=(harmony mines nao remux simple)
+pkgnames=(harmony minesweeper mines nao remux simple)
 timestamp=2020-10-10T01:41+00:00
 maintainer="raisjn <of.raisjn@gmail.com>"
 license=MIT
@@ -38,11 +38,24 @@ harmony() {
     }
 }
 
+minesweeper() {
+    pkgdesc="Transitional package for mines - can safely be removed"
+    url="https://rmkit.dev/apps/minesweeper"
+    pkgver=0.0.1-15
+    section=old
+    depends=(mines)
+
+    package() {
+        return
+    }
+}
+
 mines() {
     pkgdesc="Mine detection game"
     url="https://rmkit.dev/apps/minesweeper"
-    pkgver=0.0.1-16
+    pkgver=0.0.1-17
     section=games
+    replaces=(minesweeper)
 
     package() {
         install -D -m 755 "$srcdir"/src/build/mines "$pkgdir"/opt/bin/mines
