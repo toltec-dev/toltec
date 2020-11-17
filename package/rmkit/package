@@ -9,11 +9,11 @@ license=MIT
 
 image=python:v1.1
 source=(
-    https://github.com/rmkit-dev/rmkit/archive/3d8fef0274a59f672c136aae741ad4ddcf4fd8fc.zip
+    https://github.com/rmkit-dev/rmkit/archive/9c25d48732fdf95e42f05ba6afa66fa3df42456b.zip
     remux.service
 )
 sha256sums=(
-    f7a436335a768b1d786babb07af49646735a3ca7f6f75cb91359b32a8626cb54
+    ebc4653e0653b3b270609e6122eb5d078637c24a15696e35ccf18d3fa8299d4c
     SKIP
 )
 
@@ -25,16 +25,12 @@ build() {
 harmony() {
     pkgdesc="Procedural sketching app"
     url="https://rmkit.dev/apps/harmony"
-    pkgver=0.0.1-17
+    pkgver=0.0.1-18
     section=drawing
 
     package() {
         install -D -m 755 "$srcdir"/src/build/harmony "$pkgdir"/opt/bin/harmony
         install -D -m 644 "$srcdir"/src/harmony/harmony.draft "$pkgdir"/opt/etc/draft/harmony.draft
-    }
-
-    configure() {
-        mkdir -p /home/root/harmony
     }
 }
 
@@ -79,7 +75,7 @@ nao() {
 remux() {
     pkgdesc="App launcher that supports multi-tasking applications"
     url="https://rmkit.dev/apps/remux"
-    pkgver=0.0.1-23
+    pkgver=0.0.1-24
     section=launchers
 
     package() {
