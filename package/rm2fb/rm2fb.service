@@ -1,0 +1,18 @@
+# Copyright (c) 2020 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+[Unit]
+Description=Remarkable2 Framebuffer Server
+After=opt.mount
+StartLimitInterval=30
+StartLimitBurst=5
+Conflicts=
+
+[Service]
+ExecStart=/opt/bin/rm2fb-server
+Restart=on-failure
+RestartSec=5
+Environment="HOME=/home/root"
+
+[Install]
+WantedBy=multi-user.target xochitl.service

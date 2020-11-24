@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+# Copyright (c) 2020 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgnames=(rm2fb)
+timestamp=2020-10-10T01:41+00:00
+maintainer="raisjn <of.raisjn@gmail.com>"
+license=MIT
+pkgdesc="Remarkable2 Framebuffer"
+url="https://github.com/ddvk/remarkable2-framebuffer"
+pkgver=1.0.0-1
+section=utils
+version=1.0.0
+image=qt:v1.1
+source=(
+    https://github.com/ddvk/remarkable2-framebuffer/archive/bc2ec68014aaed3383c7134160d8c241adcda6c2.zip
+    rm2fb.service
+    rm2fb-server
+    rm2fb-client
+)
+sha256sums=(
+    2da10867d082cf72f7fa23cc664affd590bc9acce1c76d45b8153dfa0ae222e1
+    SKIP
+    SKIP
+    SKIP
+)
+
+build() {
+    qmake
+    make
+}
+
+package() {
+    mkdir -p "$pkgdir"/opt/lib "$pkgdir"/opt/etc "$pkgdir"/opt/bin
+    install -D -m 644 "$srcdir"/rm2fb.service "$pkgdir"/lib/systemd/system/rm2fb.service
+    install -D -m 755 "$srcdir"/src/client/librm2fb_client.so.${version} "$pkgdir"/opt/lib/
+    install -D -m 755 "$srcdir"/src/server/librm2fb_server.so.${version} "$pkgdir"/opt/lib/
+    # install -D -m 755 "$srcdir"/src/xofb/librm2fb_xofb.so.${version} "$pkgdir"/opt/lib/
+    install -D -m 644 "$srcdir"/rm2fb.service "$pkgdir"/lib/systemd/system/rm2fb.service
+    install -D -m 755 "$srcdir"/rm2fb-server "$pkgdir"/opt/bin/
+    install -D -m 755 "$srcdir"/rm2fb-client "$pkgdir"/opt/bin/
+}
