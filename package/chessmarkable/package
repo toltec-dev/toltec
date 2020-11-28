@@ -11,7 +11,7 @@ section=games
 maintainer="Linus K. <linus@cosmos-ink.net>"
 license=MIT
 
-image=rust:v1.1
+image=rust:v1.2.1
 source=(https://github.com/LinusCDE/chessmarkable/archive/0.5.0-1.zip)
 sha256sums=(3fd39d47c7e6e5ff583cb282cacdb46633aa85f459db5e0bc7af00fa53d98040)
 
