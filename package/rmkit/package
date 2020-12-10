@@ -9,11 +9,11 @@ license=MIT
 
 image=python:v1.1
 source=(
-    https://github.com/rmkit-dev/rmkit/archive/9c25d48732fdf95e42f05ba6afa66fa3df42456b.zip
+    https://github.com/rmkit-dev/rmkit/archive/1736446aa9ab6196aa4b366f252cfc7661d11d19.zip
     remux.service
 )
 sha256sums=(
-    ebc4653e0653b3b270609e6122eb5d078637c24a15696e35ccf18d3fa8299d4c
+    79f5b70a1c3d31cc9b8fdd733ccbe7260c18630e814579e52719a845e22a4e91
     SKIP
 )
 
@@ -25,7 +25,7 @@ build() {
 harmony() {
     pkgdesc="Procedural sketching app"
     url="https://rmkit.dev/apps/harmony"
-    pkgver=0.0.1-18
+    pkgver=0.1.0-1
     section=drawing
 
     package() {
@@ -37,7 +37,7 @@ harmony() {
 mines() {
     pkgdesc="Mine detection game"
     url="https://rmkit.dev/apps/minesweeper"
-    pkgver=0.0.1-16
+    pkgver=0.1.0-1
     section=games
 
     package() {
@@ -49,7 +49,7 @@ mines() {
 nao() {
     pkgdesc="Nao Package Manager: opkg UI built with SAS"
     url="https://rmkit.dev/apps/nao"
-    pkgver=0.0.1-16
+    pkgver=0.1.0-1
     section=utils
     depends=(simple)
 
@@ -62,7 +62,7 @@ nao() {
 remux() {
     pkgdesc="App launcher that supports multi-tasking applications"
     url="https://rmkit.dev/apps/remux"
-    pkgver=0.0.1-24
+    pkgver=0.1.0-1
     section=launchers
 
     package() {
@@ -94,7 +94,7 @@ remux() {
 simple() {
     pkgdesc="Simple app script for writing scripted applications"
     url="https://rmkit.dev/apps/sas"
-    pkgver=0.0.1-16
+    pkgver=0.1.0-1
     section=utils
 
     package() {
