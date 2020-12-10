@@ -13,13 +13,13 @@ section=utils
 version=1.0.0
 image=qt:v1.1
 source=(
-    https://github.com/ddvk/remarkable2-framebuffer/archive/bc2ec68014aaed3383c7134160d8c241adcda6c2.zip
+    https://github.com/ddvk/remarkable2-framebuffer/archive/5a518c8d3fe3fe500b33c620330d62094564173f.zip
     rm2fb.service
     rm2fb-server
     rm2fb-client
 )
 sha256sums=(
-    2da10867d082cf72f7fa23cc664affd590bc9acce1c76d45b8153dfa0ae222e1
+    bbf090f83c8090f20f0319283279ecbde783fcb3ca9b8610b7dde309001592cd
     SKIP
     SKIP
     SKIP
@@ -28,6 +28,7 @@ sha256sums=(
 build() {
     qmake
     make
+    arm-linux-gnueabihf-strip src/client/librm2f_client.so.1.0.0
 }
 
 package() {
