@@ -46,4 +46,5 @@ package() {
 configure() {
     systemctl daemon-reload
     systemctl enable rm2fb --now
+    systemctl restart xochitl
 }
