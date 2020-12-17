@@ -13,13 +13,15 @@ section=utils
 version=1.0.0
 image=qt:v1.1
 source=(
-    https://github.com/ddvk/remarkable2-framebuffer/archive/5a518c8d3fe3fe500b33c620330d62094564173f.zip
+    https://github.com/ddvk/remarkable2-framebuffer/archive/cd2766864c7985fa50cdf85f4ae0a411d7ca4e56.zip
+    rm2fb.conf
     rm2fb.service
     rm2fb-server
     rm2fb-client
 )
 sha256sums=(
-    bbf090f83c8090f20f0319283279ecbde783fcb3ca9b8610b7dde309001592cd
+    c274c458270eec28950834bd28ff069a0af65e40fcc288a8ff28235001e8914f
+    SKIP
     SKIP
     SKIP
     SKIP
@@ -33,11 +35,15 @@ build() {
 
 package() {
     mkdir -p "$pkgdir"/opt/lib "$pkgdir"/opt/etc "$pkgdir"/opt/bin
-    install -D -m 644 "$srcdir"/rm2fb.service "$pkgdir"/lib/systemd/system/rm2fb.service
     install -D -m 755 "$srcdir"/src/client/librm2fb_client.so.${version} "$pkgdir"/opt/lib/
     install -D -m 755 "$srcdir"/src/server/librm2fb_server.so.${version} "$pkgdir"/opt/lib/
-    # install -D -m 755 "$srcdir"/src/xofb/librm2fb_xofb.so.${version} "$pkgdir"/opt/lib/
-    install -D -m 644 "$srcdir"/rm2fb.service "$pkgdir"/lib/systemd/system/rm2fb.service
     install -D -m 755 "$srcdir"/rm2fb-server "$pkgdir"/opt/bin/
     install -D -m 755 "$srcdir"/rm2fb-client "$pkgdir"/opt/bin/
+    install -D -m 644 "$srcdir"/rm2fb.conf "$pkgdir"/etc/systemd/system.conf.d/01-rm2fb.conf
+    install -D -m 644 "$srcdir"/rm2fb.service "$pkgdir"/lib/systemd/system/rm2fb.service
+}
+
+configure() {
+    systemctl daemon-reload
+    systemctl enable rm2fb --now
 }

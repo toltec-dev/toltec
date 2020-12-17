@@ -3,16 +3,18 @@
 
 [Unit]
 Description=Remarkable2 Framebuffer Server
+Before=xochitl.service
 After=opt.mount
 StartLimitInterval=30
 StartLimitBurst=5
 Conflicts=
 
 [Service]
-ExecStart=/opt/bin/rm2fb-server
+ExecStart=/usr/bin/remarkable-shutdown
 Restart=on-failure
 RestartSec=5
 Environment="HOME=/home/root"
+Environment="LD_PRELOAD=/opt/lib/librm2fb_server.so.1.0.0"
 
 [Install]
 WantedBy=multi-user.target xochitl.service
