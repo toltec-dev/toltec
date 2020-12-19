@@ -48,3 +48,9 @@ configure() {
     systemctl enable rm2fb --now
     systemctl restart xochitl
 }
+
+preremove() {
+    echo "make sure to re-enable xochitl with 'systemctl enable xochitl --now'"
+    echo "and to disable / uninstall any launchers like draft, oxide or remux before"
+    echo "rebooting your tablet to complete the uninstallation"
+}
