@@ -25,12 +25,16 @@ build() {
 harmony() {
     pkgdesc="Procedural sketching app"
     url="https://rmkit.dev/apps/harmony"
-    pkgver=0.1.0-1
+    pkgver=0.1.0-2
     section=drawing
 
     package() {
         install -D -m 755 "$srcdir"/src/build/harmony "$pkgdir"/opt/bin/harmony
         install -D -m 644 "$srcdir"/src/harmony/harmony.draft "$pkgdir"/opt/etc/draft/harmony.draft
+    }
+
+    configure() {
+        mkdir -p /home/root/harmony/saved_images
     }
 }
 
