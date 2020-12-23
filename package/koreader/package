@@ -27,6 +27,10 @@ package() {
 
 configure() {
     if systemctl list-units --full -all | grep -Fq "tarnish.service"; then
-        echo "KOReader has an outstanding bug where it doesn't resize the screen properly when returning to Oxide. See Oxide's release notes for a workaround."
+        if command -v rot &> /dev/null && systemctl is-active --quiet; then
+            rot apps call registerApplication 'QVariantMap:{"name": "KOReader", "displayName": "KOReader", "decription": "ebook reader", "bin": "/opt/bin/koreader", "icon": "/opt/etc/draft/icons/koreader.png", "onStop": "killall -9 luajit", "onPause": "killall -STOP luajit || true && /opt/koreader/fbdepth -d 16 -r 1", "onResume": "/opt/koreader/fbdepth -d 8 -r 1 || true && killall -CONT luajit"}'
+        else
+            echo "KOReader has an outstanding bug where it doesn't resize the screen properly when returning to Oxide. See Oxide's release notes for a workaround."
+        fi
     fi
 }
