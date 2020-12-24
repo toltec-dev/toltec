@@ -34,3 +34,10 @@ configure() {
         fi
     fi
 }
+postremove() {
+    if command -v rot &> /dev/null && command -v jq &> /dev/null && systemctl is-active --quiet tarnish; then
+        rot apps get applications | jq -rc '.KOReader' | sed 's|/codes/eeems/oxide1/||' | xargs -I {} rot --object "Application:{}" apps call unregister
+    else
+        echo "You may need to manually remove the application entry for KOReader in Oxide."
+    fi
+}
