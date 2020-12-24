@@ -27,17 +27,15 @@ package() {
 
 configure() {
     if systemctl list-units --full -all | grep -Fq "tarnish.service"; then
-        if command -v rot &> /dev/null && systemctl is-active --quiet tarnish; then
-            rot apps call registerApplication 'QVariantMap:{"name": "KOReader", "displayName": "KOReader", "decription": "ebook reader", "bin": "/opt/bin/koreader", "icon": "/opt/etc/draft/icons/koreader.png", "onStop": "killall -9 luajit", "onPause": "killall -STOP luajit || true && /opt/koreader/fbdepth -d 16 -r 1", "onResume": "/opt/koreader/fbdepth -d 8 -r 1 || true && killall -CONT luajit"}'
-        else
-            echo "KOReader has an outstanding bug where it doesn't resize the screen properly when returning to Oxide. See Oxide's release notes for a workaround."
+        if command -v rot &> /dev/null && systemctl is-active --quiet tarnish && [[ "$(rot apps call registerApplication 'QVariantMap:{"name": "KOReader", "displayName": "KOReader", "decription": "ebook reader", "bin": "/opt/bin/koreader", "icon": "/opt/etc/draft/icons/koreader.png", "onStop": "killall -9 luajit", "onPause": "killall -STOP luajit || true && /opt/koreader/fbdepth -d 16 -r 1", "onResume": "/opt/koreader/fbdepth -d 8 -r 1 || true && killall -CONT luajit"}')" != '"/"' ]]; then
+            return
         fi
+        echo "KOReader has an outstanding bug where it doesn't resize the screen properly when returning to Oxide. See Oxide's release notes for a workaround."
     fi
 }
 postremove() {
-    if command -v rot &> /dev/null && command -v jq &> /dev/null && systemctl is-active --quiet tarnish; then
-        rot apps get applications | jq -rc '.KOReader' | sed 's|/codes/eeems/oxide1/||' | xargs -I {} rot --object "Application:{}" apps call unregister
-    else
-        echo "You may need to manually remove the application entry for KOReader in Oxide."
+    if command -v rot &> /dev/null && command -v jq &> /dev/null && systemctl is-active --quiet tarnish && rot apps get applications | jq -rc '.KOReader' | sed 's|/codes/eeems/oxide1/||' | xargs -I {} rot --object "Application:{}" apps call unregister; then
+        return
     fi
+    echo "You may need to manually remove the application entry for KOReader in Oxide."
 }
