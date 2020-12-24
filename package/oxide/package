@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: MIT
 
 pkgnames=(erode fret oxide rot tarnish)
-pkgver=2.0.1~beta-1
+pkgver=2.0.1~beta-2
 timestamp=2020-12-06T20:09Z
 maintainer="Eeems <eeems@eeems.email>"
 license=MIT
@@ -36,7 +36,7 @@ oxide() {
     pkgdesc="Launcher application"
     url=https://github.com/Eeems/oxide/tree/master/applications/launcher
     section=launchers
-    depends=(erode fret tarnish xochitl)
+    depends=(erode fret tarnish xochitl rot)
 
     package() {
         install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/opt/bin/oxide
