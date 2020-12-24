@@ -37,12 +37,12 @@ package() {
 }
 
 configure() {
-    if oxideAvailable &&  ! unregisterApplication || [[ "$(registerApplication)" == '"/"' ]]; then
+    if oxideAvailable && ! unregisterApplication || [[ "$(registerApplication)" == '"/"' ]]; then
         echo "KOReader has an outstanding bug where it doesn't resize the screen properly when returning to Oxide. See Oxide's release notes for a workaround."
     fi
 }
 postremove() {
-    if oxideAvailable &&  ! unregisterApplication; then
+    if oxideAvailable && ! unregisterApplication; then
         echo "You may need to manually remove the application entry for KOReader in Oxide."
     fi
 }
