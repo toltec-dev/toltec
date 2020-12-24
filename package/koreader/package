@@ -15,6 +15,17 @@ _srcver="v${pkgver%-*}"
 source=("https://build.koreader.rocks/download/stable/$_srcver/koreader-remarkable-$_srcver.zip")
 sha256sums=(38db8f3895472828d7c1d63fc54db426135a8dbf8425633e299a1a9abfdb69b2)
 
+oxideAvailable() {
+    systemctl list-units --full -all | grep -Fq "tarnish.service" && command -v rot &> /dev/null && systemctl is-active --quiet tarnish
+}
+
+unregisterApplication() {
+    rot apps get applications | jq -rc '.KOReader' | sed 's|/codes/eeems/oxide1/||' | xargs -I {} rot --object "Application:{}" apps call unregister
+}
+registerApplication() {
+    rot apps call registerApplication 'QVariantMap:{"name": "KOReader", "displayName": "KOReader", "decription": "ebook reader", "bin": "/opt/bin/koreader", "icon": "/opt/etc/draft/icons/koreader.png", "onStop": "killall -9 luajit", "onPause": "killall -STOP luajit || true && /opt/koreader/fbdepth -d 16 -r 1", "onResume": "/opt/koreader/fbdepth -d 8 -r 1 || true && killall -CONT luajit"}'
+}
+
 package() {
     install -d "$pkgdir"/opt/koreader
     cp -R "$srcdir"/* "$pkgdir"/opt/koreader/
@@ -26,16 +37,12 @@ package() {
 }
 
 configure() {
-    if systemctl list-units --full -all | grep -Fq "tarnish.service"; then
-        if command -v rot &> /dev/null && systemctl is-active --quiet tarnish && [[ "$(rot apps call registerApplication 'QVariantMap:{"name": "KOReader", "displayName": "KOReader", "decription": "ebook reader", "bin": "/opt/bin/koreader", "icon": "/opt/etc/draft/icons/koreader.png", "onStop": "killall -9 luajit", "onPause": "killall -STOP luajit || true && /opt/koreader/fbdepth -d 16 -r 1", "onResume": "/opt/koreader/fbdepth -d 8 -r 1 || true && killall -CONT luajit"}')" != '"/"' ]]; then
-            return
-        fi
+    if oxideAvailable &&  ! unregisterApplication || [[ "$(registerApplication)" == '"/"' ]]; then
         echo "KOReader has an outstanding bug where it doesn't resize the screen properly when returning to Oxide. See Oxide's release notes for a workaround."
     fi
 }
 postremove() {
-    if command -v rot &> /dev/null && command -v jq &> /dev/null && systemctl is-active --quiet tarnish && rot apps get applications | jq -rc '.KOReader' | sed 's|/codes/eeems/oxide1/||' | xargs -I {} rot --object "Application:{}" apps call unregister; then
-        return
+    if oxideAvailable &&  ! unregisterApplication; then
+        echo "You may need to manually remove the application entry for KOReader in Oxide."
     fi
-    echo "You may need to manually remove the application entry for KOReader in Oxide."
 }
