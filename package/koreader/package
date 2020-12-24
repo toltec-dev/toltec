@@ -16,9 +16,9 @@ source=("https://build.koreader.rocks/download/stable/$_srcver/koreader-remarkab
 sha256sums=(38db8f3895472828d7c1d63fc54db426135a8dbf8425633e299a1a9abfdb69b2)
 
 _oxideAvailable="systemctl list-units --full -all | grep -Fq 'tarnish.service' && command -v rot &> /dev/null && systemctl is-active --quiet tarnish"
-_applicationRegistered='[[ "\$(rot apps get applications | jq -rc \'.KOReader\')" != "null" ]]'
+_applicationRegistered='[[ "\$(rot apps get applications | jq -rc ".KOReader")" != "null" ]]'
 _unregisterApplication="rot apps get applications | jq -rc '.KOReader' | sed 's|/codes/eeems/oxide1/||' | xargs -I {} rot --object 'Application:{}' apps call unregister"
-_registerApplication='rot apps call registerApplication \'QVariantMap:{"name": "KOReader", "displayName": "KOReader", "decription": "ebook reader", "bin": "/opt/bin/koreader", "icon": "/opt/etc/draft/icons/koreader.png", "onStop": "killall -9 luajit", "onPause": "killall -STOP luajit || true && /opt/koreader/fbdepth -d 16 -r 1", "onResume": "/opt/koreader/fbdepth -d 8 -r 1 || true && killall -CONT luajit"}\''
+_registerApplication="rot apps call registerApplication 'QVariantMap:{\"name\": \"KOReader\", \"displayName\": \"KOReader\", \"decription\": \"ebook reader\", \"bin\": \"/opt/bin/koreader\", \"icon\": \"/opt/etc/draft/icons/koreader.png\", \"onStop\": \"killall -9 luajit\", \"onPause\": \"killall -STOP luajit || true && /opt/koreader/fbdepth -d 16 -r 1\", \"onResume\": \"/opt/koreader/fbdepth -d 8 -r 1 || true && killall -CONT luajit\"}'"
 
 package() {
     install -d "$pkgdir"/opt/koreader
