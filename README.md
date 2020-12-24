@@ -27,7 +27,7 @@ $ bash bootstrap
 > **What does this script do?**
 > This script will create a `.entware` folder in your home directory, containing a complete Entware distribution (fetched from <https://bin.entware.net/armv7sf-k3.2/>), and permanently mount it to `/opt`.
 > It will then configure Opkg for use with Toltec and configure your system to automatically find binaries from `/opt`.
-> You are encouraged to audit the script yourself if you can.
+> You are encouraged to [audit the script](scripts/bootstrap/bootstrap) yourself if you can.
 
 > **Compatibility with [remarkable_entware](https://github.com/evidlo/remarkable_entware).**
 > If you have already installed Entware through Evidlo’s remarkable\_entware, this script will detect the existing install and configure Toltec on top of it.
