@@ -3,13 +3,13 @@
 # SPDX-License-Identifier: MIT
 
 pkgnames=(erode fret oxide rot tarnish)
-pkgver=2.0~beta-5
-timestamp=2020-09-26T20:53Z
+pkgver=2.0.1~beta-2
+timestamp=2020-12-06T20:09Z
 maintainer="Eeems <eeems@eeems.email>"
 license=MIT
 
-source=(https://github.com/Eeems/oxide/releases/download/v2.0-beta/oxide.zip)
-sha256sums=(d3bac44b96c78726fcbfbd8f7a23d3bd4e4ae3f1f794714190100ebe602a8433)
+source=(https://github.com/Eeems/oxide/releases/download/v2.0.1-beta/oxide.zip)
+sha256sums=(02c0561b0478d4108916d618ad1bced77e549121f1e2770d35314b94c2852dfe)
 
 erode() {
     pkgdesc="Task manager"
@@ -36,7 +36,7 @@ oxide() {
     pkgdesc="Launcher application"
     url=https://github.com/Eeems/oxide/tree/master/applications/launcher
     section=launchers
-    depends=(erode fret tarnish xochitl)
+    depends=(erode fret tarnish xochitl rot)
 
     package() {
         install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/opt/bin/oxide
