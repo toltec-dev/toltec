@@ -31,6 +31,8 @@ harmony() {
     package() {
         install -D -m 755 "$srcdir"/src/build/harmony "$pkgdir"/opt/bin/harmony
         install -D -m 644 "$srcdir"/src/harmony/harmony.draft "$pkgdir"/opt/etc/draft/harmony.draft
+        install -D -m 644 "$srcdir"/src/harmony/harmony.png "$pkgdir"/opt/etc/draft/icons/harmony.png
+
     }
 
     configure() {
@@ -47,6 +49,8 @@ mines() {
     package() {
         install -D -m 755 "$srcdir"/src/build/mines "$pkgdir"/opt/bin/mines
         install -D -m 644 "$srcdir"/src/minesweeper/mines.draft "$pkgdir"/opt/etc/draft/mines.draft
+        install -D -m 644 "$srcdir"/src/minesweeper/mines1.png "$pkgdir"/opt/etc/draft/icons/mines.png
+
     }
 }
 
@@ -60,6 +64,8 @@ nao() {
     package() {
         install -D -m 755 "$srcdir"/src/build/nao.sh "$pkgdir"/opt/bin/nao
         install -D -m 644 "$srcdir"/src/nao/nao.draft "$pkgdir"/opt/etc/draft/nao.draft
+        install -D -m 644 "$srcdir"/src/nao/nao.png "$pkgdir"/opt/etc/draft/icons/nao.png
+
     }
 }
 
