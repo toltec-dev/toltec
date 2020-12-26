@@ -25,7 +25,7 @@ build() {
 harmony() {
     pkgdesc="Procedural sketching app"
     url="https://rmkit.dev/apps/harmony"
-    pkgver=0.1.0-3
+    pkgver=0.1.0-4
     section=drawing
 
     package() {
@@ -43,7 +43,7 @@ harmony() {
 mines() {
     pkgdesc="Mine detection game"
     url="https://rmkit.dev/apps/minesweeper"
-    pkgver=0.1.0-2
+    pkgver=0.1.0-3
     section=games
 
     package() {
@@ -57,7 +57,7 @@ mines() {
 nao() {
     pkgdesc="Nao Package Manager: opkg UI built with SAS"
     url="https://rmkit.dev/apps/nao"
-    pkgver=0.1.0-2
+    pkgver=0.1.0-3
     section=utils
     depends=(simple)
 
