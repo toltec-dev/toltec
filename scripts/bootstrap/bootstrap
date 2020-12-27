@@ -225,7 +225,7 @@ toltec-install() {
 
     local machine
     machine="$(cat /sys/devices/soc0/machine)"
-    
+
     if [[ "$machine" == "reMarkable 1.0" ]] || [[ "$machine" == "reMarkable Prototype 1" ]]; then
         additional_packages+=(rm1)
     elif [[ "$machine" == "reMarkable 2.0" ]]; then
