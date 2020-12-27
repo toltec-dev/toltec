@@ -17,6 +17,5 @@ sha256sums=(08fa21e19b4fdece3696aed8cd03d60bb65f1c295c5cdce645e3725628ea37ca)
 package() {
     install -Dm644 "$srcdir"/LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
     install -Dm644 "$srcdir"/LICENSE-THIRD-PARTY "$pkgdir/usr/share/licenses/$pkgname/LICENSE-THIRD-PARTY"
-    install -Dm644 "$srcdir"/micro.1 "$pkgdir/home/root/.local/share/man/man1/micro.1"
     install -Dm744 "$srcdir"/micro "$pkgdir/opt/bin/micro"
 }
