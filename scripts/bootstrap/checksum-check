@@ -13,7 +13,7 @@
 
 set -e
 
-bootstrap_path=scripts/bootstrap/bootstrap
+bootstrap_path=./scripts/bootstrap/bootstrap
 readme_checksum=$(sed --quiet \
     's/^.*"\([[:alnum:]]\+\) \+bootstrap".*$/\1/p' \
     README.md)
