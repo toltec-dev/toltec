@@ -228,7 +228,7 @@ toltec-install() {
     fi
 
     /opt/bin/opkg update
-    /opt/bin/opkg install --force-overwrite toltec-bootstrap
+    /opt/bin/opkg install toltec-bootstrap
 
     # Install additional packages
     if [[ $# -gt 0 ]]; then
