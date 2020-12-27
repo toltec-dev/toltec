@@ -15,5 +15,5 @@ source=(../../scripts/bootstrap/bootstrap)
 sha256sums=(fef68d25f16f796028759ee95df9125ce63e96acfc643ff8fd3fb47db39f9c64)
 
 package() {
-    install -D -m 744 -t "$pkgdir"/home/root/bootstrap "$srcdir"/bootstrap
+    install -D -m 744 -t "$pkgdir"/home/root/ "$srcdir"/bootstrap
 }
