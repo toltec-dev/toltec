@@ -12,7 +12,7 @@ maintainer="Eeems <eeems@eeems.email>"
 license=MIT
 
 source=(https://github.com/zyedidia/micro/releases/download/v2.0.8/micro-2.0.8-linux-arm.tar.gz)
-sha256sums=(91715dea6795bca7eb93624d20d60a07fdfa1e8880e456fdcd58d25b5eb2dc38)
+sha256sums=(08fa21e19b4fdece3696aed8cd03d60bb65f1c295c5cdce645e3725628ea37ca)
 
 package() {
     install -Dm644 "$srcdir"/LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
