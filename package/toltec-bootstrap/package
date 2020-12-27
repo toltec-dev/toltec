@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+# Copyright (c) 2020 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgnames=(toltec-bootstrap)
+pkgdesc="Toltec installation script"
+url=https://toltec-dev.org/
+pkgver=0.0.0-1
+timestamp=2020-12-27T18:48Z
+section=readers
+maintainer="Eeems <eeems@eeems.email>"
+license=MIT
+
+source=(http://toltec-dev.org/bootstrap)
+sha256sums=(874e0ce8492dec1db23819a60d86e1ce24ea24ea824e9cdf1e9e863a9e1f38c9)
+
+package() {
+    install -D -m 744 -t "$pkgdir"/home/root/bootstrap "$srcdir"/bootstrap
+}
