@@ -218,14 +218,21 @@ toltec-install() {
     fi
 
     # Make sure that the packages needed for wget TLS support are installed
-    local tls_packages=()
+    local additional_packages=()
 
-    [[ ! -d /opt/etc/ssl/certs ]] && tls_packages+=(ca-certificates)
-    [[ ! -f /opt/bin/wget ]] && tls_packages+=(wget)
+    [[ ! -d /opt/etc/ssl/certs ]] && additional_packages+=(ca-certificates)
+    [[ ! -f /opt/bin/wget ]] && additional_packages+=(wget)
 
-    if [[ ${#tls_packages[@]} -gt 0 ]]; then
+    local machine="$(cat /sys/devices/soc0/machine)"
+    if [[ "$machine" == "reMarkable 1.0" ]] || [[ "$machine" == "reMarkable Prototype 1" ]]; then
+        additional_packages+=(rm1)
+    elif [[ "$machine" == "reMarkable 2.0" ]]; then
+        additional_packages+=(rm2)
+    fi
+
+    if [[ ${#additional_packages[@]} -gt 0 ]]; then
         /opt/bin/opkg update
-        /opt/bin/opkg install "${tls_packages[@]}"
+        /opt/bin/opkg install "${additional_packages[@]}"
     fi
 
     # Install additional packages
