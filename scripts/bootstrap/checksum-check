@@ -18,4 +18,8 @@ readme_checksum=$(sed --quiet \
     's/^.*"\([[:alnum:]]\+\) \+bootstrap".*$/\1/p' \
     README.md)
 
-sha256sum -c <(echo "$readme_checksum  $bootstrap_path") || echo "Readme: $readme_checksum file: $(sha256sum $bootstrap_path)" && false
+if ! sha256sum -c <(echo "$readme_checksum  $bootstrap_path"); then
+    echo "  Readme: $readme_checksum"
+    echo "  File: $(sha256sum $bootstrap_path)"
+    exit 1
+fi
