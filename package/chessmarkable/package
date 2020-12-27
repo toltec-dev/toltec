@@ -2,18 +2,18 @@
 # Copyright (c) 2020 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
-pkgname=chessmarkable
+pkgnames=(chessmarkable)
 pkgdesc="A chess game for the reMarkable"
 url=https://github.com/LinusCDE/chessmarkable
-pkgver=0.4.2-1
-timestamp=2020-10-09T18:15Z
+pkgver=0.5.1-1
+timestamp=2020-12-24T12:35Z
 section=games
 maintainer="Linus K. <linus@cosmos-ink.net>"
 license=MIT
 
-image=rust:v1.1
-source=(https://github.com/LinusCDE/chessmarkable/archive/1a420d667b0b459c7439170fe16d184635eabe5a.zip)
-sha256sums=(98c17dafe671d89a404a2b8783445f416d3f96ab50f8dea34b3b08137843aae6)
+image=rust:v1.2.1
+source=(https://github.com/LinusCDE/chessmarkable/archive/0.5.1-1.zip)
+sha256sums=(fac73b4cd6c6c928d858e8b0578ac7dac5372368743fb1b577bc7846fd671c52)
 
 build() {
     # Fall back to system-wide config

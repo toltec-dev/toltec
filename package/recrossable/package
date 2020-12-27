@@ -2,7 +2,7 @@
 # Copyright (c) 2020 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
-pkgname=recrossable
+pkgnames=(recrossable)
 pkgdesc="Solve crossword puzzles"
 url=https://github.com/sandsmark/recrossable
 pkgver=0.0.0-2

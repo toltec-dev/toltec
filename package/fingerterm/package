@@ -2,7 +2,7 @@
 # Copyright (c) 2020 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
-pkgname=fingerterm
+pkgnames=(fingerterm)
 pkgdesc="Terminal emulator with an on-screen touch keyboard"
 url=https://github.com/dixonary/fingerterm-reMarkable
 pkgver=1.3.5-9

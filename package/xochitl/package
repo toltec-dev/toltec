@@ -2,7 +2,7 @@
 # Copyright (c) 2020 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
-pkgname=xochitl
+pkgnames=(xochitl)
 pkgdesc="Read documents and take notes"
 url=https://remarkable.com
 pkgver=0.0.0-1
