@@ -217,7 +217,6 @@ toltec-install() {
     fi
     /opt/bin/opkg update
 
-
     # Make sure that the packages needed for wget TLS support are installed
     local additional_packages=()
 
