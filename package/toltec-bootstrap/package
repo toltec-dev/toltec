@@ -11,7 +11,7 @@ section=readers
 maintainer="Eeems <eeems@eeems.email>"
 license=MIT
 
-source=(http://toltec-dev.org/bootstrap)
+source=(../../scripts/bootstrap/bootstrap)
 sha256sums=(fef68d25f16f796028759ee95df9125ce63e96acfc643ff8fd3fb47db39f9c64)
 
 package() {
