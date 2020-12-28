@@ -16,8 +16,9 @@ sha256sums=(c95e8cf72abbcde1ac3974158ed9355d8d5588bade463fdf69d6932f915f453a)
 noextract=(dotnet-sdk-3.1.404-linux-arm.tar.gz)
 
 prepare() {
-    mkdir -p dotnet
-    tar -xf dotnet-sdk-3.1.404-linux-arm.tar.gz -C dotnet
+    mkdir -p "$srcdir"/dotnet
+    tree "$srcdir"
+    tar -xf "$srcdir"/dotnet-sdk-3.1.404-linux-arm.tar.gz -C "$srcdir"/dotnet
 }
 
 package() {
