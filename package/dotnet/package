@@ -3,11 +3,8 @@
 # SPDX-License-Identifier: MIT
 
 pkgnames=(dotnet-sdk)
-pkgdesc="Core functionality needed to create .NET Core projects, that is shared between Visual Studio and CLI "
-url=https://github.com/dotnet
 pkgver=3.1.404-1
 timestamp=2020-12-27T18:48Z
-section=utils
 maintainer="Eeems <eeems@eeems.email>"
 license=MIT
 
@@ -16,6 +13,9 @@ sha256sums=(c95e8cf72abbcde1ac3974158ed9355d8d5588bade463fdf69d6932f915f453a)
 noextract=(dotnet-sdk-3.1.404-linux-arm.tar.gz)
 
 dotnet-sdk() {
+    pkgdesc="Core functionality needed to create .NET Core projects, that is shared between Visual Studio and CLI"
+    url=https://github.com/dotnet
+    section=utils
     prepare() {
         mkdir -p "$srcdir"/dotnet
         tar -xf "$srcdir"/dotnet-sdk-3.1.404-linux-arm.tar.gz -C "$srcdir"/dotnet
