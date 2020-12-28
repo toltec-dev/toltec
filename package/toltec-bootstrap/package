@@ -11,9 +11,16 @@ section=utils
 maintainer="Eeems <eeems@eeems.email>"
 license=MIT
 
-source=(../../scripts/bootstrap/bootstrap)
-sha256sums=(7783ac9292e496a644a2c41d6f5ebfe1e281dcaa05915fadb30198a127d76875)
+source=(
+    ../../scripts/bootstrap/bootstrap
+    entware-reenable
+)
+sha256sums=(
+    SKIP
+    SKIP
+)
 
 package() {
     install -D -m 744 -t "$pkgdir"/home/root/ "$srcdir"/bootstrap
+    install -D -m 744 -t "$pkgdir"/home/root/ "$srcdir"/entware-reenable
 }
