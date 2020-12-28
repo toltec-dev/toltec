@@ -9,11 +9,11 @@ license=MIT
 
 image=python:v1.1
 source=(
-    https://github.com/rmkit-dev/rmkit/archive/9c25d48732fdf95e42f05ba6afa66fa3df42456b.zip
+    https://github.com/rmkit-dev/rmkit/archive/05b818e332f363dfa5c588894eb366a3cd9f1122.zip
     remux.service
 )
 sha256sums=(
-    ebc4653e0653b3b270609e6122eb5d078637c24a15696e35ccf18d3fa8299d4c
+    ae16e6906af39864f64574b5c1627d1191abe6aa3dc58628b8f19c0ab4cd0e24
     SKIP
 )
 
@@ -25,12 +25,18 @@ build() {
 harmony() {
     pkgdesc="Procedural sketching app"
     url="https://rmkit.dev/apps/harmony"
-    pkgver=0.0.1-18
+    pkgver=0.1.0-4
     section=drawing
 
     package() {
         install -D -m 755 "$srcdir"/src/build/harmony "$pkgdir"/opt/bin/harmony
         install -D -m 644 "$srcdir"/src/harmony/harmony.draft "$pkgdir"/opt/etc/draft/harmony.draft
+        install -D -m 644 "$srcdir"/src/harmony/harmony.png "$pkgdir"/opt/etc/draft/icons/harmony.png
+
+    }
+
+    configure() {
+        mkdir -p /home/root/harmony/saved_images
     }
 }
 
@@ -49,33 +55,37 @@ minesweeper() {
 mines() {
     pkgdesc="Mine detection game"
     url="https://rmkit.dev/apps/minesweeper"
-    pkgver=0.0.1-17
+    pkgver=0.1.0-4
     section=games
     replaces=(minesweeper)
 
     package() {
         install -D -m 755 "$srcdir"/src/build/mines "$pkgdir"/opt/bin/mines
         install -D -m 644 "$srcdir"/src/minesweeper/mines.draft "$pkgdir"/opt/etc/draft/mines.draft
+        install -D -m 644 "$srcdir"/src/minesweeper/mines1.png "$pkgdir"/opt/etc/draft/icons/mines.png
+
     }
 }
 
 nao() {
     pkgdesc="Nao Package Manager: opkg UI built with SAS"
     url="https://rmkit.dev/apps/nao"
-    pkgver=0.0.1-16
+    pkgver=0.1.0-3
     section=utils
     depends=(simple)
 
     package() {
         install -D -m 755 "$srcdir"/src/build/nao.sh "$pkgdir"/opt/bin/nao
         install -D -m 644 "$srcdir"/src/nao/nao.draft "$pkgdir"/opt/etc/draft/nao.draft
+        install -D -m 644 "$srcdir"/src/nao/nao.png "$pkgdir"/opt/etc/draft/icons/nao.png
+
     }
 }
 
 remux() {
     pkgdesc="App launcher that supports multi-tasking applications"
     url="https://rmkit.dev/apps/remux"
-    pkgver=0.0.1-24
+    pkgver=0.1.3-1
     section=launchers
 
     package() {
@@ -107,7 +117,7 @@ remux() {
 simple() {
     pkgdesc="Simple app script for writing scripted applications"
     url="https://rmkit.dev/apps/sas"
-    pkgver=0.0.1-16
+    pkgver=0.1.0-2
     section=utils
 
     package() {
