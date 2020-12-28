@@ -40,6 +40,8 @@ dotnet-sdk() {
         cd "$pkgdir"/opt/bin
         ln -s ../dotnet/dotnet dotnet
         chmod +x dotnet
+        echo "$pkgdir"
+        ls -lh "$pkgdir"
     }
 }
 dotnet-runtime() {
@@ -55,5 +57,7 @@ dotnet-runtime() {
         cd "$pkgdir"/opt/bin
         ln -s ../dotnet/dotnet dotnet
         chmod +x dotnet
+        echo "$pkgdir"
+        ls -lh "$pkgdir"
     }
 }
