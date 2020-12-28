@@ -38,7 +38,7 @@ reinstall-root() {
     # Get the list of packages that can be installed
     available_packages=$(gunzip -c /opt/var/opkg-lists/* | grep Package: | awk '{print $2}' | uniq)
     # Reinstall all packages that have files on root that are available to install
-    (echo ${packages[@]} ${available_packages[@]} | sed 's/ /\n/g' | sort | uniq -d | xargs opkg install --force-reinstall
+    echo ${packages[@]} ${available_packages[@]} | sed 's/ /\n/g' | sort | uniq -d | xargs opkg install --force-reinstall
 }
 
 main() {
