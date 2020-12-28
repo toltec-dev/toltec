@@ -22,7 +22,7 @@ prepare() {
 
 package() {
     install -d "$pkgdir"/opt/dotnet
-    cp -R "$srcdir"/dotnet/* "$pkgdir"/opt/dotnet/
+    cp -a "$srcdir"/dotnet/* "$pkgdir"/opt/dotnet/
     mkdir -p "$pkgdir"/opt/bin
     cd "$pkgdir"/opt/bin
     ln -s ../dotnet/dotnet dotnet
