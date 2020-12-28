@@ -34,11 +34,11 @@ UNIT
 reinstall-root() {
     opkg update
     # Get the list of installed packages with files on root
-    packages=$(opkg list-installed | awk '{print $1}' | while read -r pkg; do opkg files "$pkg" | grep -v /opt | grep -v "is installed on root" | grep -v /home/root | awk "{print \"$pkg\",\$0}"; done | awk '{print $1}' | uniq)
+    packages=$(opkg list-installed | awk '{print $1}' | while read -r pkg; do opkg files "$pkg" | grep -v /opt | grep -v "is installed on root" | grep -v /home/root | awk "{print \"$pkg\",\$0}"; done | awk '{print $1}' | uniq | while read -r pkg; do opkg info "$pkg" | grep Version: | awk '{print $2}' | xargs echo "$pkg"; done)
     # Get the list of packages that can be installed
-    available_packages=$(gunzip -c /opt/var/opkg-lists/* | grep Package: | awk '{print $2}' | uniq)
+    available_packages=$(gunzip -c /opt/var/opkg-lists/* | grep -E '(Package:)|(Version:)' | sed 's|Package: ||' | tr '\n' ' ' | sed -r 's| Version: ([^ ]+) | \1\n|g' | sort | uniq)
     # Reinstall all packages that have files on root that are available to install
-    echo "${packages[@]}" "${available_packages[@]}" | sed 's/ /\n/g' | sort | uniq -d | xargs opkg install --force-reinstall
+    echo -e "${packages[@]}\n${available_packages[@]}" | sed 's/ /\0/g' | sort | uniq -d | awk '{print $1}' | xargs opkg install --force-reinstall
 }
 
 main() {
