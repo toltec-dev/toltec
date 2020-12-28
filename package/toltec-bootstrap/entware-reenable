@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+# Path for the systemd unit that mounts Entware to /opt
+systemd_mount_path=/lib/systemd/system/opt.mount
+
+# Path where the actual Entware distribution resides (will be mounted to /opt)
+entware_path=/home/root/.entware
+
+entware-mount() {
+    mkdir -p /opt
+    mkdir -p "$entware_path"
+
+    # Create systemd mount unit to mount over /opt on reboot
+    cat > "$systemd_mount_path" << UNIT
+[Unit]
+Description=Bind mount Entware over /opt
+DefaultDependencies=no
+Conflicts=umount.target
+Before=local-fs.target umount.target
+
+[Mount]
+What=/home/root/.entware
+Where=/opt
+Type=none
+Options=bind
+
+[Install]
+WantedBy=local-fs.target
+UNIT
+
+    systemctl daemon-reload
+    systemctl enable --now opt.mount 2> /dev/null
+}
+
+reinstall-root() {
+    opkg update
+    # Get the list of installed packages with files on root
+    packages=$(opkg list-installed | awk '{print $1}' | while read pkg; do opkg files $pkg | grep -v /opt | grep -v "is installed on root" | grep -v /home/root | awk "{print \"$pkg\",\$0}"; done | awk '{print $1}' | uniq)
+    # Get the list of packages that can be installed
+    available_packages=$(gunzip -c /opt/var/opkg-lists/* | grep Package: | awk '{print $2}' | uniq)
+    # Reinstall all packages that have files on root that are available to install
+    (echo ${packages[@]} ${available_packages[@]} | sed 's/ /\n/g' | sort | uniq -d | xargs opkg install --force-reinstall
+}
+
+main() {
+    entware-mount
+    reinstall-root
+}
+
+main
