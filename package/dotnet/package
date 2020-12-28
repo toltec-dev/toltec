@@ -18,9 +18,13 @@ noextract=(dotnet-sdk-3.1.404-linux-arm.tar.gz)
 prepare() {
     mkdir -p "$srcdir"/dotnet
     tar -xf "$srcdir"/dotnet-sdk-3.1.404-linux-arm.tar.gz -C "$srcdir"/dotnet
-    tree "$srcdir"
 }
 
 package() {
-    install -d -m 744 -t "$pkgdir"/opt "$srcdir"/dotnet
+    install -d "$pkgdir"/opt/dotnet
+    cp -R "$srcdir"/dotnet/* "$pkgdir"/opt/dotnet/
+    mkdir -p "$pkgdir"/opt/bin
+    cd "$pkgdir"/opt/bin
+    ln -s ../dotnet/dotnet dotnet
+    chmod +x dotnet
 }
