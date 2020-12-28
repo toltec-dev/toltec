@@ -37,11 +37,10 @@ dotnet-sdk() {
         install -d "$pkgdir"/opt/bin
         install -d "$pkgdir"/opt/dotnet
         cp -a "$srcdir"/dotnet-sdk/* "$pkgdir"/opt/dotnet
-        cd "$pkgdir"/opt/bin
+        pushd "$pkgdir"/opt/bin
         ln -s ../dotnet/dotnet dotnet
         chmod +x dotnet
-        echo "$pkgdir"
-        ls -lh "$pkgdir"
+        popd
     }
 }
 dotnet-runtime() {
@@ -54,10 +53,9 @@ dotnet-runtime() {
         install -d "$pkgdir"/opt/bin
         install -d "$pkgdir"/opt/dotnet
         cp -a "$srcdir"/dotnet-runtime/* "$pkgdir"/opt/dotnet
-        cd "$pkgdir"/opt/bin
+        pushd "$pkgdir"/opt/bin
         ln -s ../dotnet/dotnet dotnet
         chmod +x dotnet
-        echo "$pkgdir"
-        ls -lh "$pkgdir"
+        popd
     }
 }
