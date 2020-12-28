@@ -28,13 +28,13 @@ dotnet-sdk() {
     conflicts=(dotnet-runtime)
     prepare() {
         mkdir -p "$srcdir"/dotnet-sdk
-        tar -xf "$srcdir"/dotnet-sdk-3.1.404-linux-arm.tar.gz -C "$srcdir"/dotnet-sdk
+        tar -xf "$srcdir"/dotnet-sdk-3.1.404-linux-arm.tar.gz -C "$srcdir"/dotnet-sdk/
     }
 
     package() {
         install -d "$pkgdir"/opt/bin
         install -d "$pkgdir"/opt/dotnet
-        cp -a "$srcdir"/dotnet-sdk/. "$pkgdir"/opt/dotnet
+        cp -a "$srcdir"/dotnet-sdk/* "$pkgdir"/opt/dotnet
         cd "$pkgdir"/opt/bin
         ln -s ../dotnet/dotnet dotnet
         chmod +x dotnet
@@ -47,13 +47,13 @@ dotnet-runtime() {
     conflicts=(dotnet-runtime)
     prepare() {
         mkdir -p "$srcdir"/dotnet-runtime
-        tar -xf "$srcdir"/dotnet-runtime-3.1.10-linux-arm.tar.gz -C "$srcdir"/dotnet-runtime
+        tar -xf "$srcdir"/dotnet-runtime-3.1.10-linux-arm.tar.gz -C "$srcdir"/dotnet-runtime/
     }
 
     package() {
         install -d "$pkgdir"/opt/bin
         install -d "$pkgdir"/opt/dotnet
-        cp -a "$srcdir"/dotnet-runtime/. "$pkgdir"/opt/dotnet
+        cp -a "$srcdir"/dotnet-runtime/* "$pkgdir"/opt/dotnet
         cd "$pkgdir"/opt/bin
         ln -s ../dotnet/dotnet dotnet
         chmod +x dotnet
