@@ -26,5 +26,4 @@ package() {
     cd "$pkgdir"/opt/bin
     ln -s ../dotnet/dotnet dotnet
     chmod +x dotnet
-    tree "$pkgdir"
 }
