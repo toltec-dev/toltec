@@ -22,7 +22,7 @@ prepare() {
 
 package() {
     install -d "$pkgdir"/opt/bin
-    cp -a "$srcdir"/dotnet "$pkgdir"/opt/
+    cp -va "$srcdir"/dotnet "$pkgdir"/opt/
     cd "$pkgdir"/opt/bin
     ln -s ../dotnet/dotnet dotnet
     chmod +x dotnet
