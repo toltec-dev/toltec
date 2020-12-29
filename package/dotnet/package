@@ -28,9 +28,9 @@ dotnet-host() {
         install -dm 755 "$pkgdir"/opt/usr/{bin,lib,share/{dotnet,licenses/dotnet-host}}
         cp -dr --no-preserve='ownership' "$srcdir"/{dotnet,host} "$pkgdir"/opt/usr/share/dotnet/
         cp -dr --no-preserve='ownership' "$srcdir"/{LICENSE,ThirdPartyNotices}.txt "$pkgdir"/opt/usr/share/licenses/dotnet-host
-        pushd "$pkgdir"/opt
-        ln -sf usr/share/dotnet/dotnet "$pkgdir"/opt/usr/bin/dotnet
-        ln -sf usr/share/dotnet/host/fxr/3.1.10/libhostfxr.so "$pkgdir"/opt/usr/lib/libhostfxr.so
+        pushd "$pkgdir"/opt/usr
+        ln -sf share/dotnet/dotnet bin/dotnet
+        ln -sf share/dotnet/host/fxr/3.1.10/libhostfxr.so lib/libhostfxr.so
         popd
     }
 }
