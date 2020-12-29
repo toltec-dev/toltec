@@ -29,7 +29,6 @@ prepare() {
     tar -xf "$srcdir"/dotnet-runtime-3.1.10-linux-arm.tar.gz -C "$srcdir"/dotnet-runtime/
     mkdir -p "$srcdir"/aspnetcore-runtime
     tar -xf "$srcdir"/aspnetcore-runtime-3.1.10-linux-arm.tar.gz -C "$srcdir"/aspnetcore-runtime/
-    ls -lh "$srcdir"/*
 }
 
 dotnet-sdk() {
