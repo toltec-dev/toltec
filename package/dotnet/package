@@ -15,15 +15,15 @@ pkgver=3.1.10-1
 timestamp=2020-12-27T18:48Z
 maintainer="Eeems <eeems@eeems.email>"
 url=https://www.microsoft.com/net/core
+section=utils
+license=MIT
 
 source=(https://download.visualstudio.microsoft.com/download/pr/2ebe1f4b-4423-4694-8f5b-57f22a315d66/4bceeffda88fc6f19fad7dfb2cd30487/dotnet-sdk-3.1.404-linux-arm.tar.gz)
 sha256sums=(c95e8cf72abbcde1ac3974158ed9355d8d5588bade463fdf69d6932f915f453a)
 
 dotnet-host() {
     pkgdesc="A generic driver for the .NET Core Command Line Interface"
-    section=utils
-    license=MIT
-    
+
     package() {
         install -dm 755 "$pkgdir"/opt/usr/{bin,lib,share/{dotnet,licenses/dotnet-host}}
         cp -dr --no-preserve='ownership' dotnet host "$pkgdir"/opt/usr/share/dotnet/
@@ -36,8 +36,6 @@ dotnet-host() {
 }
 dotnet-sdk() {
     pkgdesc="The .NET Core SDK"
-    section=utils
-    license=MIT
     depends=(
         dotnet-runtime
         dotnet-targeting-pack
@@ -51,8 +49,6 @@ dotnet-sdk() {
 }
 dotnet-runtime() {
     pkgdesc="The .NET Core runtime"
-    section=utils
-    license=MIT
     depends=(dotnet-host)
 
     package() {
@@ -62,8 +58,6 @@ dotnet-runtime() {
 }
 aspnet-runtime() {
     pkgdesc="The ASP.NET Core runtime"
-    section=utils
-    license=Apache
     depends=(dotnet-runtime)
 
     package() {
@@ -73,10 +67,8 @@ aspnet-runtime() {
 }
 dotnet-targeting-pack() {
     pkgdesc="The .NET Core targeting pack"
-    section=utils
-    license=MIT
     depends=(netstandard-targeting-pack)
-    
+
     package() {
         install -dm 755 "$pkgdir"/opt/usr/share/{dotnet,dotnet/packs,licenses}
         cp -dr --no-preserve='ownership' "$srcdir"/packs/Microsoft.NETCore.App.{Host.linux-arm,Ref} "$pkgdir"/opt/usr/share/dotnet/packs/
@@ -87,7 +79,7 @@ aspnet-targeting-pack() {
     section=utils
     license=Apache
     depends=(dotnet-targeting-pack)
-    
+
     package() {
         install -dm 755 "$pkgdir"/opt/usr/share/{dotnet,dotnet/packs,licenses}
         cp -dr --no-preserve='ownership' "$srcdir"/packs/Microsoft.AspNetCore.App.Ref "$pkgdir"/opt/usr/share/dotnet/packs/
@@ -97,7 +89,7 @@ netstandard-targeting-pack() {
     pkgdesc="The .NET Standard targeting pack"
     section=utils
     license=Apache
-    
+
     package() {
         install -dm 755 "$pkgdir"/opt/usr/share/{dotnet,dotnet/packs,licenses}
         cp -dr --no-preserve='ownership' "$srcdir"/packs/NETStandard.Library.Ref "$pkgdir"/opt/usr/share/dotnet/packs/
