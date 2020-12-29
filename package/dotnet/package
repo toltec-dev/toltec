@@ -48,7 +48,7 @@ dotnet-sdk() {
 }
 dotnet-runtime() {
     pkgdesc="The .NET Core runtime"
-    depends=(dotnet-host)
+    depends=(dotnet-host icu zlib libcurl)
 
     package() {
         install -dm 755 "$pkgdir"/opt/usr/share/{dotnet/shared,licenses}
