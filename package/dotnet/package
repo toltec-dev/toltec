@@ -54,7 +54,6 @@ dotnet-runtime() {
         install -dm 755 "$pkgdir"/opt/usr/share/{dotnet/shared,licenses}
         cp -dr --no-preserve='ownership' "$srcdir"/shared/Microsoft.NETCore.App "$pkgdir"/opt/usr/share/dotnet/shared/
         ln -s dotnet-host-bin "$pkgdir"/opt/usr/share/licenses/dotnet-runtime-bin
-}
     }
 }
 aspnet-runtime() {
