@@ -2,36 +2,41 @@
 # Copyright (c) 2020 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
-pkgnames=(dotnet-sdk dotnet-runtime)
+pkgnames=(dotnet-sdk dotnet-runtime aspnetcore-runtime)
 pkgver=3.1.10-1
 timestamp=2020-12-27T18:48Z
 maintainer="Eeems <eeems@eeems.email>"
-license=MIT
 
 source=(
     https://download.visualstudio.microsoft.com/download/pr/2ebe1f4b-4423-4694-8f5b-57f22a315d66/4bceeffda88fc6f19fad7dfb2cd30487/dotnet-sdk-3.1.404-linux-arm.tar.gz
     https://download.visualstudio.microsoft.com/download/pr/8261839b-2b61-4c49-a3e4-90b32f25bf50/12ff8ed47c32c199c04066eb07647f4e/dotnet-runtime-3.1.10-linux-arm.tar.gz
+    https://download.visualstudio.microsoft.com/download/pr/a2223d1f-c138-4586-8cd1-274c5387e975/623ece755546aca8f4be268f525683c5/aspnetcore-runtime-3.1.10-linux-arm.tar.gz
 )
 sha256sums=(
     c95e8cf72abbcde1ac3974158ed9355d8d5588bade463fdf69d6932f915f453a
     75e7bea2edfa8e8996f9faad2816370e666a1d2c903a6ee3168cca6fccce1c77
+    29c6aa914739dce59e04d1fc7dceb33e97dfec6624ec3c297a8375f66aece092
 )
 noextract=(
     dotnet-sdk-3.1.404-linux-arm.tar.gz
     dotnet-runtime-3.1.10-linux-arm.tar.gz
+    aspnetcore-runtime-3.1.10-linux-arm.tar.gz
 )
 prepare() {
     mkdir -p "$srcdir"/dotnet-sdk
     tar -xf "$srcdir"/dotnet-sdk-3.1.404-linux-arm.tar.gz -C "$srcdir"/dotnet-sdk/
     mkdir -p "$srcdir"/dotnet-runtime
     tar -xf "$srcdir"/dotnet-runtime-3.1.10-linux-arm.tar.gz -C "$srcdir"/dotnet-runtime/
+    mkdir -p "srcdir"/aspnetcore-runtime
+    tar -xf "$srcdir"/aspnetcore-runtime-3.1.10-linux-arm.tar.gz -C "srcdir"/aspnetcore-runtime
 }
 
 dotnet-sdk() {
     pkgdesc="Core functionality needed to create .NET Core projects, that is shared between Visual Studio and CLI"
-    url=https://github.com/dotnet
+    url=https://github.com/dotnet/sdk
     section=utils
-    conflicts=(dotnet-runtime)
+    conflicts=(dotnet-runtime aspnetcore-runtime)
+    license=MIT
 
     package() {
         install -d "$pkgdir"/opt/bin
@@ -45,14 +50,32 @@ dotnet-sdk() {
 }
 dotnet-runtime() {
     pkgdesc=".NET is a cross-platform runtime for cloud, mobile, desktop, and IoT apps."
-    url=https://github.com/dotnet
+    url=https://github.com/dotnet/runtime
     section=utils
-    conflicts=(dotnet-runtime)
+    conflicts=(dotnet-sdk aspnetcore-runtime)
+    license=MIT
 
     package() {
         install -d "$pkgdir"/opt/bin
         install -d "$pkgdir"/opt/dotnet
         cp -a "$srcdir"/dotnet-runtime/* "$pkgdir"/opt/dotnet
+        pushd "$pkgdir"/opt/bin
+        ln -s ../dotnet/dotnet dotnet
+        chmod +x dotnet
+        popd
+    }
+}
+aspnetcore-runtime() {
+    pkgdesc="ASP.NET Core is a cross-platform .NET framework for building modern cloud-based web applications on Windows, Mac, or Linux."
+    url=https://github.com/dotnet/aspnetcore
+    section=utils
+    conflicts=(dotnet-sdk dotnet-runtime)
+    license=Apache
+
+    package() {
+        install -d "$pkgdir"/opt/bin
+        install -d "$pkgdir"/opt/dotnet
+        cp -a "$srcdir"/aspnetcore-runtime/* "$pkgdir"/opt/dotnet
         pushd "$pkgdir"/opt/bin
         ln -s ../dotnet/dotnet dotnet
         chmod +x dotnet
