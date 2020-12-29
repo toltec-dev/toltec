@@ -29,7 +29,7 @@ sha256sums=(
 )
 
 dotnet-profile() {
-    pkgdesc=""
+    pkgdesc="Default profile script to ensure that the .NET Core Command Line Interface runs properly"
 
     package() {
         install -Dm 744 -t "$pkgdir"/etc/profile.d/ "$srcdir"/dotnet-profile
