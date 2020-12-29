@@ -35,8 +35,7 @@ dotnet-profile() {
         install -Dm 744 -t "$pkgdir"/etc/profile.d/ "$srcdir"/dotnet-profile
     }
     configure() {
-        # shellcheck disable=SC1091
-        source /etc/profile.d/dotnet-profile
+        echo "Make sure to source /etc/profile.d/dotnet-profile before running dotnet"
     }
 }
 
