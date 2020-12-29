@@ -42,6 +42,7 @@ dotnet-profile() {
 
 dotnet-host() {
     pkgdesc="A generic driver for the .NET Core Command Line Interface"
+    depends=(dotnet-profile)
 
     package() {
         install -dm 755 "$pkgdir"/opt/usr/{bin,lib,share/{dotnet,licenses/dotnet-host}}
