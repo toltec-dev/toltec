@@ -2,83 +2,104 @@
 # Copyright (c) 2020 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
-pkgnames=(dotnet-sdk dotnet-runtime aspnetcore-runtime)
+pkgnames=(
+    dotnet-host
+    dotnet-sdk
+    dotnet-runtime
+    aspnet-runtime
+    dotnet-targeting-pack
+    aspnet-targeting-pack
+    netstandard-targeting-pack
+)
 pkgver=3.1.10-1
 timestamp=2020-12-27T18:48Z
 maintainer="Eeems <eeems@eeems.email>"
+url=https://www.microsoft.com/net/core
 
-source=(
-    https://download.visualstudio.microsoft.com/download/pr/2ebe1f4b-4423-4694-8f5b-57f22a315d66/4bceeffda88fc6f19fad7dfb2cd30487/dotnet-sdk-3.1.404-linux-arm.tar.gz
-    https://download.visualstudio.microsoft.com/download/pr/8261839b-2b61-4c49-a3e4-90b32f25bf50/12ff8ed47c32c199c04066eb07647f4e/dotnet-runtime-3.1.10-linux-arm.tar.gz
-    https://download.visualstudio.microsoft.com/download/pr/a2223d1f-c138-4586-8cd1-274c5387e975/623ece755546aca8f4be268f525683c5/aspnetcore-runtime-3.1.10-linux-arm.tar.gz
-)
-sha256sums=(
-    c95e8cf72abbcde1ac3974158ed9355d8d5588bade463fdf69d6932f915f453a
-    75e7bea2edfa8e8996f9faad2816370e666a1d2c903a6ee3168cca6fccce1c77
-    29c6aa914739dce59e04d1fc7dceb33e97dfec6624ec3c297a8375f66aece092
-)
-noextract=(
-    dotnet-sdk-3.1.404-linux-arm.tar.gz
-    dotnet-runtime-3.1.10-linux-arm.tar.gz
-    aspnetcore-runtime-3.1.10-linux-arm.tar.gz
-)
-prepare() {
-    mkdir -p "$srcdir"/dotnet-sdk
-    tar -xf "$srcdir"/dotnet-sdk-3.1.404-linux-arm.tar.gz -C "$srcdir"/dotnet-sdk/
-    mkdir -p "$srcdir"/dotnet-runtime
-    tar -xf "$srcdir"/dotnet-runtime-3.1.10-linux-arm.tar.gz -C "$srcdir"/dotnet-runtime/
-    mkdir -p "$srcdir"/aspnetcore-runtime
-    tar -xf "$srcdir"/aspnetcore-runtime-3.1.10-linux-arm.tar.gz -C "$srcdir"/aspnetcore-runtime/
-}
+source=(https://download.visualstudio.microsoft.com/download/pr/2ebe1f4b-4423-4694-8f5b-57f22a315d66/4bceeffda88fc6f19fad7dfb2cd30487/dotnet-sdk-3.1.404-linux-arm.tar.gz)
+sha256sums=(c95e8cf72abbcde1ac3974158ed9355d8d5588bade463fdf69d6932f915f453a)
 
-dotnet-sdk() {
-    pkgdesc="Core functionality needed to create .NET Core projects, that is shared between Visual Studio and CLI"
-    url=https://github.com/dotnet/sdk
+dotnet-host() {
+    pkgdesc="A generic driver for the .NET Core Command Line Interface"
     section=utils
-    conflicts=(dotnet-runtime aspnetcore-runtime)
     license=MIT
+    
+    package() {
+        install -dm 755 "$pkgdir"/opt/usr/{bin,lib,share/{dotnet,licenses/dotnet-host}}
+        cp -dr --no-preserve='ownership' dotnet host "$pkgdir"/opt/usr/share/dotnet/
+        cp -dr --no-preserve='ownership' LICENSE.txt ThirdPartyNotices.txt "$pkgdir"/opt/usr/share/licenses/dotnet-host
+        pushd "$pkgdir"/opt
+        ln -sf usr/share/dotnet/dotnet "$pkgdir"/opt/usr/bin/dotnet
+        ln -sf usr/share/dotnet/host/fxr/3.1.10/libhostfxr.so "$pkgdir"/opt/usr/lib/libhostfxr.so
+        popd
+    }
+}
+dotnet-sdk() {
+    pkgdesc="The .NET Core SDK"
+    section=utils
+    license=MIT
+    depends=(
+        dotnet-runtime
+        dotnet-targeting-pack
+        netstandard-targeting-pack
+    )
 
     package() {
-        install -d "$pkgdir"/opt/bin
-        install -d "$pkgdir"/opt/dotnet
-        cp -a "$srcdir"/dotnet-sdk/* "$pkgdir"/opt/dotnet
-        pushd "$pkgdir"/opt/bin
-        ln -s ../dotnet/dotnet dotnet
-        chmod +x dotnet
-        popd
+        install -dm 755 "$pkgdir"/opt/usr/share/{dotnet,licenses}
+        cp -dr --no-preserve='ownership' "$srcdir"/{sdk,templates} "$pkgdir"/opt/usr/share/dotnet/
     }
 }
 dotnet-runtime() {
-    pkgdesc=".NET is a cross-platform runtime for cloud, mobile, desktop, and IoT apps."
-    url=https://github.com/dotnet/runtime
+    pkgdesc="The .NET Core runtime"
     section=utils
-    conflicts=(dotnet-sdk aspnetcore-runtime)
     license=MIT
+    depends=(dotnet-host)
 
     package() {
-        install -d "$pkgdir"/opt/bin
-        install -d "$pkgdir"/opt/dotnet
-        cp -a "$srcdir"/dotnet-runtime/* "$pkgdir"/opt/dotnet
-        pushd "$pkgdir"/opt/bin
-        ln -s ../dotnet/dotnet dotnet
-        chmod +x dotnet
-        popd
+        install -dm 755 "$pkgdir"/opt/usr/share/{dotnet/shared,licenses}
+        cp -dr --no-preserve='ownership' "$srcdir"/shared/Microsoft.NETCore.App "$pkgdir"/opt/usr/share/dotnet/shared/
     }
 }
-aspnetcore-runtime() {
-    pkgdesc="ASP.NET Core is a cross-platform .NET framework for building modern cloud-based web applications on Windows, Mac, or Linux."
-    url=https://github.com/dotnet/aspnetcore
+aspnet-runtime() {
+    pkgdesc="The ASP.NET Core runtime"
     section=utils
-    conflicts=(dotnet-sdk dotnet-runtime)
     license=Apache
+    depends=(dotnet-runtime)
 
     package() {
-        install -d "$pkgdir"/opt/bin
-        install -d "$pkgdir"/opt/dotnet
-        cp -a "$srcdir"/aspnetcore-runtime/* "$pkgdir"/opt/dotnet
-        pushd "$pkgdir"/opt/bin
-        ln -s ../dotnet/dotnet dotnet
-        chmod +x dotnet
-        popd
+        install -dm 755 "$pkgdir"/opt/usr/share/{dotnet/shared,licenses}
+        cp -dr --no-preserve='ownership' "$srcdir"/shared/Microsoft.AspNetCore.App "$pkgdir"/opt/usr/share/dotnet/shared/
+    }
+}
+dotnet-targeting-pack() {
+    pkgdesc="The .NET Core targeting pack"
+    section=utils
+    license=MIT
+    depends=(netstandard-targeting-pack)
+    
+    package() {
+        install -dm 755 "$pkgdir"/opt/usr/share/{dotnet,dotnet/packs,licenses}
+        cp -dr --no-preserve='ownership' "$srcdir"/packs/Microsoft.NETCore.App.{Host.linux-arm,Ref} "$pkgdir"/opt/usr/share/dotnet/packs/
+    }
+}
+aspnet-targeting-pack() {
+    pkgdesc="The ASP.NET Core targeting pack"
+    section=utils
+    license=Apache
+    depends=(dotnet-targeting-pack)
+    
+    package() {
+        install -dm 755 "$pkgdir"/opt/usr/share/{dotnet,dotnet/packs,licenses}
+        cp -dr --no-preserve='ownership' "$srcdir"/packs/Microsoft.AspNetCore.App.Ref "$pkgdir"/opt/usr/share/dotnet/packs/
+    }
+}
+netstandard-targeting-pack() {
+    pkgdesc="The .NET Standard targeting pack"
+    section=utils
+    license=Apache
+    
+    package() {
+        install -dm 755 "$pkgdir"/opt/usr/share/{dotnet,dotnet/packs,licenses}
+        cp -dr --no-preserve='ownership' "$srcdir"/packs/NETStandard.Library.Ref "$pkgdir"/opt/usr/share/dotnet/packs/
     }
 }
