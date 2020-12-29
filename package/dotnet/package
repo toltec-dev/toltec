@@ -34,6 +34,9 @@ dotnet-profile() {
     package() {
         install -Dm 744 -t "$pkgdir"/etc/profile.d/ "$srcdir"/dotnet-profile
     }
+    configure() {
+        source /etc/profile.d/dotnet-profile
+    }
 }
 
 dotnet-host() {
