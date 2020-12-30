@@ -36,22 +36,38 @@ configure() {
     # Is Oxide installed?
     if systemctl list-units --full -all | grep -Fq 'tarnish.service'; then
         # Check to see if tarnish is running and rot is available
-        if command -v jq &> /dev/null && command -v rot &> /dev/null && systemctl is-active --quiet tarnish; then
-            sh -c "$_applicationRegistered" && sh -c "$_unregisterApplication"
+        if command -v jq &> /dev/null && command -v rot &> /dev/null && [[ "$(ps | grep tarnish | grep -v grep)" != "" ]]; then
+            if sh -c "$_applicationRegistered"; then
+                echo -n "Removing KOReader from Oxide..."
+                sh -c "$_unregisterApplication"
+                echo "DONE"
+            fi
+            echo -n "Adding KOReader to Oxide..."
             result=$(rot apps call registerApplication 'QVariantMap:{"name": "KOReader", "displayName": "KOReader", "decription": "ebook reader", "bin": "/opt/bin/koreader", "icon": "/opt/etc/draft/icons/koreader.png", "onStop": "killall -9 luajit", "onPause": "killall -STOP luajit || true && /opt/koreader/fbdepth -d 16 -r 1", "onResume": "/opt/koreader/fbdepth -d 8 -r 1 || true && killall -CONT luajit"}')
             if [[ "$result" != '"/"' ]] && [[ "$result" != "" ]]; then
+                echo "DONE"
                 # Registered successfully, so we can exit
                 return
             fi
+            echo "FAILED"
         fi
         echo "KOReader has an outstanding bug where it doesn't resize the screen properly when returning to Oxide. See Oxide's release notes for a workaround."
     fi
 }
 postremove() {
     # Check to see if tarnish is running and rot is available
-    if systemctl list-units --full -all | grep -Fq 'tarnish.service' && command -v rot &> /dev/null && systemctl is-active --quiet tarnish; then
-        if ! command -v jq &> /dev/null || sh -c "$_applicationRegistered" && ! sh -c "$_unregisterApplication"; then
-            echo "You may need to manually remove the application entry for KOReader in Oxide."
+    if systemctl list-units --full -all | grep -Fq 'tarnish.service' && command -v rot &> /dev/null; then
+        msg="You may need to manually remove the application entry for KOReader in Oxide."
+        if command -v jq &> /dev/null && [[ "$(ps | grep tarnish | grep -v grep)" != "" ]] && sh -c "$_applicationRegistered"; then
+            echo -n "Removing KOReader from Oxide..."
+            if sh -c "$_unregisterApplication"; then
+                echo "DONE"
+            else
+                echo "FAILED"
+                echo "$msg"
+            fi
+        else
+            echo "$msg"
         fi
     fi
 }
