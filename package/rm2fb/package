@@ -56,7 +56,7 @@ configure() {
 
 preremove() {
     echo -n "make sure "
-    if ! systemctl list-units --full -all | grep -Fq 'xochitl.service'; then
+    if ! systemctl --quiet --is-enabled xochtil; then
         echo "to re-enable xochitl with 'systemctl enable xochitl --now'"
         echo -n "and "
     fi
