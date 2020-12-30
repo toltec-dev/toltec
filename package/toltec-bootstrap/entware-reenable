@@ -34,7 +34,11 @@ UNIT
 reinstall-root() {
     opkg update
     # Get the list of installed packages with files on root
-    packages=$(opkg list-installed | while read -r inst_line; do pkg=$(echo "$inst_line" | awk '{ print $1 }') pkg_ver=$(echo "$inst_line" | awk '{ print $3 }'); opkg files "$pkg" | grep -v /opt | grep -v "is installed on root" | grep -v /home/root >/dev/null && echo "$pkg $pkg_ver"; done)
+    packages=$(opkg list-installed | while read -r inst_line; do
+        pkg=$(echo "$inst_line" | awk '{ print $1 }')
+        pkg_ver=$(echo "$inst_line" | awk '{ print $3 }')
+        opkg files "$pkg" | grep -v /opt | grep -v "is installed on root" | grep -v /home/root > /dev/null && echo "$pkg $pkg_ver"
+    done)
     # Get the list of packages that can be installed
     available_packages=$(gunzip -c /opt/var/opkg-lists/* | grep -E '(Package:)|(Version:)' | sed 's|Package: ||' | tr '\n' ' ' | sed -r 's| Version: ([^ ]+) | \1\n|g' | sort | uniq)
     # Reinstall all packages that have files on root that are available to install
