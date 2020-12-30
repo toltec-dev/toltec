@@ -18,7 +18,7 @@ prepare() {
     git clone --depth=1 --recurse-submodules --branch v1.23.1 https://github.com/NiLuJe/FBInk.git "$srcdir"/FBInk
 }
 build() {
-    pushd "$srcdir"/FBInk
+    pushd FBInk
     REMARKABLE=1 make remarkable
     REMARKABLE=1 make utils
     popd
