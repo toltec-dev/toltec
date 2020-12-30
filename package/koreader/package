@@ -36,7 +36,7 @@ configure() {
     # Is Oxide installed?
     if systemctl list-units --full -all | grep -Fq 'tarnish.service'; then
         # Check to see if tarnish is running and rot is available
-        if command -v rot &> /dev/null && systemctl is-active --quiet tarnish; then
+        if command -v jq &> /dev/null && command -v rot &> /dev/null && systemctl is-active --quiet tarnish; then
             sh -c "$_applicationRegistered" && sh -c "$_unregisterApplication"
             result=$(rot apps call registerApplication 'QVariantMap:{"name": "KOReader", "displayName": "KOReader", "decription": "ebook reader", "bin": "/opt/bin/koreader", "icon": "/opt/etc/draft/icons/koreader.png", "onStop": "killall -9 luajit", "onPause": "killall -STOP luajit || true && /opt/koreader/fbdepth -d 16 -r 1", "onResume": "/opt/koreader/fbdepth -d 8 -r 1 || true && killall -CONT luajit"}')
             if [[ "$result" != '"/"' ]] && [[ "$result" != "" ]]; then
@@ -50,7 +50,7 @@ configure() {
 postremove() {
     # Check to see if tarnish is running and rot is available
     if systemctl list-units --full -all | grep -Fq 'tarnish.service' && command -v rot &> /dev/null && systemctl is-active --quiet tarnish; then
-        if sh -c "$_applicationRegistered" && ! sh -c "$_unregisterApplication"; then
+        if ! command -v jq &> /dev/null || sh -c "$_applicationRegistered" && ! sh -c "$_unregisterApplication"; then
             echo "You may need to manually remove the application entry for KOReader in Oxide."
         fi
     fi
