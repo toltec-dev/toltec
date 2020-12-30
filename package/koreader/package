@@ -36,6 +36,7 @@ configure() {
     # Is Oxide installed?
     if systemctl list-units --full -all | grep -Fq 'tarnish.service'; then
         # Check to see if tarnish is running and rot is available
+        # shellcheck disable=SC2009
         if command -v jq &> /dev/null && command -v rot &> /dev/null && [[ "$(ps | grep tarnish | grep -v grep)" != "" ]]; then
             if sh -c "$_applicationRegistered"; then
                 echo -n "Removing KOReader from Oxide..."
@@ -58,6 +59,7 @@ postremove() {
     # Check to see if tarnish is running and rot is available
     if systemctl list-units --full -all | grep -Fq 'tarnish.service' && command -v rot &> /dev/null; then
         msg="You may need to manually remove the application entry for KOReader in Oxide."
+        # shellcheck disable=SC2009
         if command -v jq &> /dev/null && [[ "$(ps | grep tarnish | grep -v grep)" != "" ]] && sh -c "$_applicationRegistered"; then
             echo -n "Removing KOReader from Oxide..."
             if sh -c "$_unregisterApplication"; then
