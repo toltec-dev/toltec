@@ -44,7 +44,7 @@ dotnet-host() {
     depends=(dotnet-profile)
 
     package() {
-        install -dm 755 "$pkgdir"/opt/usr/{bin,lib,share/{dotnet,licenses/dotnet-host}}
+        install -dm 755 "$pkgdir"/opt/{bin,usr/{lib,share/{dotnet,licenses/dotnet-host}}}
         cp -dr --no-preserve='ownership' "$srcdir"/{dotnet,host} "$pkgdir"/opt/usr/share/dotnet/
         cp -dr --no-preserve='ownership' "$srcdir"/{LICENSE,ThirdPartyNotices}.txt "$pkgdir"/opt/usr/share/licenses/dotnet-host
         ln -sf /opt/usr/share/dotnet/dotnet "$pkgdir"/opt/bin/dotnet
