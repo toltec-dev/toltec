@@ -81,8 +81,10 @@ tarnish() {
     }
 
     preremove() {
-        echo "Disabling $pkgname"
-        systemctl disable --now tarnish
+        if systemctl list-units --full -all | grep -Fq 'tarnish.service'; then
+            echo "Disabling $pkgname"
+            systemctl disable --now tarnish
+        fi
     }
 
     postremove() {
