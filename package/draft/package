@@ -59,8 +59,10 @@ configure() {
 }
 
 preremove() {
-    echo "Disabling $pkgname"
-    systemctl disable --now "$pkgname"
+    if systemctl list-units --full -all | grep -Fq '$pkgname.service'; then
+        echo "Disabling $pkgname"
+        systemctl disable --now "$pkgname"
+    fi
 }
 
 postremove() {
