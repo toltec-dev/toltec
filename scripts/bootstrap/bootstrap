@@ -26,9 +26,6 @@ set -eE
 # Path where the actual Entware distribution resides (will be mounted to /opt)
 [[ -z $entware_path ]] && entware_path=/home/root/.entware
 
-# Path where the re-enable script is written
-[[ -z $reenable_path ]] && reenable_path=/home/root/entware-reenable
-
 # Toltec branch to use for this install - you almost always want 'stable'
 [[ -z $toltec_branch ]] && toltec_branch="stable"
 
@@ -214,8 +211,8 @@ toltec-install() {
         sed -i '/^src\/gz\b.*\bhttps:\/\/toltec\.delab\.re\//d' /opt/etc/opkg.conf
         sed -i '/^src\/gz\b.*\bhttps:\/\/toltec-dev\.org\//d' /opt/etc/opkg.conf
         echo "src/gz toltec https://toltec-dev.org/$toltec_branch" >> /opt/etc/opkg.conf
-        /opt/bin/opkg update
     fi
+    /opt/bin/opkg update
 
     # Make sure that the packages needed for wget TLS support are installed
     local additional_packages=()
@@ -223,23 +220,15 @@ toltec-install() {
     [[ ! -d /opt/etc/ssl/certs ]] && additional_packages+=(ca-certificates)
     [[ ! -f /opt/bin/wget ]] && additional_packages+=(wget)
 
-    local machine
-    machine="$(cat /sys/devices/soc0/machine)"
-
-    if [[ "$machine" == "reMarkable 1.0" ]] || [[ "$machine" == "reMarkable Prototype 1" ]]; then
-        additional_packages+=(rm1)
-    elif [[ "$machine" == "reMarkable 2.0" ]]; then
-        additional_packages+=(rm2)
-    fi
-
     if [[ ${#additional_packages[@]} -gt 0 ]]; then
-        /opt/bin/opkg update
         /opt/bin/opkg install "${additional_packages[@]}"
     fi
 
+    /opt/bin/opkg update
+    /opt/bin/opkg install toltec-bootstrap
+
     # Install additional packages
     if [[ $# -gt 0 ]]; then
-        /opt/bin/opkg update
         /opt/bin/opkg install "$@"
     fi
 
@@ -330,18 +319,7 @@ main() {
     fi
 
     toltec-install "$@"
-
-    if [[ ! -x $reenable_path ]]; then
-        {
-            echo "#!/usr/bin/env bash"
-            declare -p entware_path systemd_mount_path
-            declare -f entware-mount
-            echo "entware-mount"
-        } >> "$reenable_path"
-
-        chmod +x "$reenable_path"
-        log "Use '$reenable_path' to re-enable Toltec after a system update"
-    fi
+    log "Use '/home/root/entware-reenable' to re-enable Toltec after a system update"
 }
 
 main "$@"
