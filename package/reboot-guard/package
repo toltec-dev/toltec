@@ -34,7 +34,9 @@ configure() {
 }
 
 preremove() {
-    systemctl disable --now rguard
+    if systemctl list-units --full -all | grep -Fq 'rguard.service'; then
+        systemctl disable --now rguard
+    fi
 }
 
 postremove() {
