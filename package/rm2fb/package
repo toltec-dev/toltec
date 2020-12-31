@@ -55,6 +55,9 @@ configure() {
 }
 
 preremove() {
+    if systemctl list-units --full -all | grep -Fq 'rm2fb.service'; then
+        systemctl disable rm2fb --now
+    fi
     echo -n "make sure "
     if ! systemctl --quiet is-enabled xochtil; then
         echo "to re-enable xochitl with 'systemctl enable xochitl --now'"
