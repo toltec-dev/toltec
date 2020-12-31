@@ -25,12 +25,14 @@ build() {
 harmony() {
     pkgdesc="Procedural sketching app"
     url="https://rmkit.dev/apps/harmony"
-    pkgver=0.1.0-3
+    pkgver=0.1.0-4
     section=drawing
 
     package() {
         install -D -m 755 "$srcdir"/src/build/harmony "$pkgdir"/opt/bin/harmony
         install -D -m 644 "$srcdir"/src/harmony/harmony.draft "$pkgdir"/opt/etc/draft/harmony.draft
+        install -D -m 644 "$srcdir"/src/harmony/harmony.png "$pkgdir"/opt/etc/draft/icons/harmony.png
+
     }
 
     configure() {
@@ -41,25 +43,29 @@ harmony() {
 mines() {
     pkgdesc="Mine detection game"
     url="https://rmkit.dev/apps/minesweeper"
-    pkgver=0.1.0-2
+    pkgver=0.1.0-3
     section=games
 
     package() {
         install -D -m 755 "$srcdir"/src/build/mines "$pkgdir"/opt/bin/mines
         install -D -m 644 "$srcdir"/src/minesweeper/mines.draft "$pkgdir"/opt/etc/draft/mines.draft
+        install -D -m 644 "$srcdir"/src/minesweeper/mines1.png "$pkgdir"/opt/etc/draft/icons/mines.png
+
     }
 }
 
 nao() {
     pkgdesc="Nao Package Manager: opkg UI built with SAS"
     url="https://rmkit.dev/apps/nao"
-    pkgver=0.1.0-2
+    pkgver=0.1.0-3
     section=utils
     depends=(simple)
 
     package() {
         install -D -m 755 "$srcdir"/src/build/nao.sh "$pkgdir"/opt/bin/nao
         install -D -m 644 "$srcdir"/src/nao/nao.draft "$pkgdir"/opt/etc/draft/nao.draft
+        install -D -m 644 "$srcdir"/src/nao/nao.png "$pkgdir"/opt/etc/draft/icons/nao.png
+
     }
 }
 
