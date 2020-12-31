@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: MIT
 
 pkgnames=(erode fret oxide rot tarnish)
-pkgver=2.0.1~beta-2
+pkgver=2.0.1~beta-3
 timestamp=2020-12-06T20:09Z
 maintainer="Eeems <eeems@eeems.email>"
 license=MIT
@@ -81,8 +81,10 @@ tarnish() {
     }
 
     preremove() {
-        echo "Disabling $pkgname"
-        systemctl disable --now tarnish
+        if systemctl list-units --full -all | grep -Fq 'tarnish.service'; then
+            echo "Disabling $pkgname"
+            systemctl disable --now tarnish
+        fi
     }
 
     postremove() {
