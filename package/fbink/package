@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+# Copyright (c) 2020 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgnames=(fbink fbdepth fbink-doom)
+url=https://github.com/NiLuJe/FBInk
+pkgver=1.23.1-1
+timestamp=2020-12-14T12:30Z
+section=util
+maintainer="Mattéo Delabre <spam@delab.re>"
+license=GPL-3.0
+
+image=base:v1.2.1
+source=()
+sha256sums=()
+
+prepare() {
+    git clone --depth=1 --recurse-submodules --branch v1.23.1 https://github.com/NiLuJe/FBInk.git "$srcdir"/FBInk
+}
+build() {
+    pushd FBInk
+    REMARKABLE=1 make remarkable
+    REMARKABLE=1 make utils
+    popd
+}
+
+fbink() {
+    pkgdesc="FrameBuffer eInker, a small tool & library to print text & images to an eInk Linux framebuffer "
+    package() {
+        install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/FBInk/Release/fbink
+    }
+}
+
+fbdepth() {
+    pkgdesc="A tool to change rotation and bitdepth of the screen"
+    package() {
+        install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/FBInk/Release/fbdepth
+    }
+}
+
+fbink-doom() {
+    pkgdesc="Doom fire effect stress test"
+    package() {
+        install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/FBInk/Release/doom
+    }
+}
