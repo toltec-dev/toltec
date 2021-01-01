@@ -9,11 +9,11 @@ license=MIT
 
 image=python:v1.1
 source=(
-    https://github.com/rmkit-dev/rmkit/archive/6ab247121b2a4d3b5b5f85fd13c4ee5cd80db278.zip
+    https://github.com/rmkit-dev/rmkit/archive/7bd930a8bcdf4b0bde547a710a7633e115483b09.zip
     remux.service
 )
 sha256sums=(
-    334b7414a1b85e69ec25a23ee663d4425526aa93f2d318b775777285fca72aff
+    1b0a923072b33eed2dc2f3e1cd739e4a5da0e550f6b720d628bffb398750d1a3
     SKIP
 )
 
