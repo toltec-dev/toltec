@@ -8,7 +8,7 @@ maintainer="raisjn <of.raisjn@gmail.com>"
 license=MIT
 pkgdesc="Remarkable2 Framebuffer"
 url="https://github.com/ddvk/remarkable2-framebuffer"
-pkgver=1.0.0-2
+pkgver=1.0.0-3
 section=utils
 version=1.0.0
 image=qt:v1.1
@@ -55,6 +55,9 @@ configure() {
 }
 
 preremove() {
+    if systemctl list-units --full -all | grep -Fq 'rm2fb.service'; then
+        systemctl disable rm2fb --now
+    fi
     echo -n "make sure "
     if ! systemctl --quiet is-enabled xochtil; then
         echo "to re-enable xochitl with 'systemctl enable xochitl --now'"
