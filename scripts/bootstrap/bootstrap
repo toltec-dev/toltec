@@ -40,7 +40,7 @@ get-branch() {
                 # If it's the wrong domain skip, we don't know how to get the branch
                 continue
             fi
-            echo "$url" | sed 's|https://toltec-dev.org/||'
+            echo "${url/'https://toltec-dev.org/'/}"
             return
         fi
     done)
