@@ -26,8 +26,26 @@ set -eE
 # Path where the actual Entware distribution resides (will be mounted to /opt)
 [[ -z $entware_path ]] && entware_path=/home/root/.entware
 
+# Find out used branch or get default one
+get-branch() {
+    # Using $entware_path path in case toltec is not reactivated yet
+    local opkg_conf=$entware_path/etc/opkg.conf
+    if [[ -f $opkg_conf ]]; then
+        for toltec_branch in stable testing; do
+          if grep -q "^src/gz\b.*\bhttps://toltec-dev\.org/$toltec_branch$" $opkg_conf; then
+              # Found branch specified in opkg.conf
+              echo $toltec_branch
+              return
+          fi
+        done
+    fi
+
+    # No opkg.conf or toltec repo found. Using default branch.
+    echo stable
+}
+
 # Toltec branch to use for this install - you almost always want 'stable'
-[[ -z $toltec_branch ]] && toltec_branch="stable"
+[[ -z $toltec_branch ]] && toltec_branch=$(get-branch)
 
 # Remove all temporary files
 cleanup() {
