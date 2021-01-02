@@ -29,20 +29,21 @@ set -eE
 
 # Find out used branch or get default one
 get-branch() {
-    # Using $entware_path path in case toltec is not reactivated yet
-    local opkg_conf=$entware_path/etc/opkg.conf
-    if [[ -f $opkg_conf ]]; then
-        for toltec_branch in stable testing; do
-          if grep -q "^src/gz\b.*\bhttps://toltec-dev\.org/$toltec_branch$" $opkg_conf; then
-              # Found branch specified in opkg.conf
-              echo $toltec_branch
-              return
-          fi
-        done
+  local opkg_conf=$entware_path/etc/opkg.conf
+  branch=$(cat "$opkg_conf" | grep src/gz | while read -r line; do
+    # Is this the toltec repo?
+    if [[ "$(echo "$line" | awk '{print $2}')" == "toltec" ]];then
+      local url=$(echo "$line" | awk '{print $3}')
+      if ! echo $url | grep -q https://toltec-dev.org/; then
+        # If it's the wrong domain skip, we don't know how to get the branch
+        continue
+      fi
+      echo "$url" | sed 's|https://toltec-dev.org/||'
+      return
     fi
-
-    # No opkg.conf or toltec repo found. Using default branch.
-    echo stable
+  done)
+  # Default to stable if there was no result
+  [[ "$branch" != "" ]] && echo "$branch" || echo stable
 }
 
 # Toltec branch to use for this install - you almost always want 'stable'
