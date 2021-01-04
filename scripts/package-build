@@ -154,6 +154,18 @@ for pkgname in "${pkgnames[@]}"; do
                 fi
             done
 
+            docker container run --interactive --rm \
+                --mount type=bind,src="$(realpath "$recipedir")",dst=/recipe \
+                --mount type=bind,src="$(realpath "$srcdir")",dst=/src \
+                "$(image-name "$image")" /bin/bash \
+                << SCRIPT
+find "$pkgdir" -type f | while read -r file; do
+    if objdump --syms "$file" &> /dev/null; then
+        arm-linux-gnueabihf-strip --strip-all "$file"
+    fi
+done
+SCRIPT
+
             # Show package contents
             if command -v tree &> /dev/null; then
                 tree -np "$pkgdir" | tail +2
