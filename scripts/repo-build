@@ -68,7 +68,7 @@ mkdir -p "$repodir"
 
 all_devices=(rm1 rm2)
 for target_device in ${all_devices[@]}; do
-  truncate -s0 "$repodir/$target_device.list"
+    truncate -s0 "$repodir/$target_device.list"
 done
 
 # Build missing packages or get them from the remote server
@@ -123,7 +123,7 @@ for target_device in ${all_devices[@]}; do
     mkdir "$repodir"/$target_device
 
     cat "$repodir"/$target_device.list | while read -r pkg_file; do
-      ln -s "../$pkg_file" "$repodir/$target_device/$pkg_file"
+        ln -s "../$pkg_file" "$repodir/$target_device/$pkg_file"
     done
 done
 
