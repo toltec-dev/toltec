@@ -68,5 +68,5 @@ package() {
     # install license
     install -Dm644 LICENSE "${pkgdir}"/opt/usr/share/licenses/tzdata/LICENSE
 
-    mv -r "${pkgdir}"/usr/{bin,lib,sbin,share/man} "${pkgdir}"/opt/usr
+    mv "${pkgdir}"/usr/{bin,lib,sbin,share/man} "${pkgdir}"/opt/usr
 }
