@@ -8,6 +8,7 @@ url=https://toltec-dev.org/
 pkgver=0.0.1-1
 timestamp=2020-12-27T18:48Z
 section=utils
+devices=(rm1 rm2)
 maintainer="Eeems <eeems@eeems.email>"
 license=MIT
 

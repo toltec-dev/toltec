@@ -4,6 +4,7 @@
 
 pkgnames=(rm2fb)
 timestamp=2020-10-10T01:41+00:00
+devices=(rm2)
 maintainer="raisjn <of.raisjn@gmail.com>"
 license=MIT
 pkgdesc="Remarkable2 Framebuffer"

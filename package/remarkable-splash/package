@@ -8,6 +8,7 @@ url=https://github.com/ddvk/remarkable-splash
 pkgver=1.0-1
 timestamp=2019-12-31T10:07Z
 section=utils
+devices=(rm1 rm2)
 maintainer="Eeems <eeems@eeems.email>"
 license=MIT
 

@@ -8,6 +8,7 @@ url=https://micro-editor.github.io/
 pkgver=2.0.8-1
 timestamp=2020-10-06T22:44Z
 section=utils
+devices=(any)
 maintainer="Eeems <eeems@eeems.email>"
 license=MIT
 

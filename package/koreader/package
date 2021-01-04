@@ -8,6 +8,7 @@ url=https://github.com/koreader/koreader
 pkgver=2020.10-2
 timestamp=2020-10-10T20:13Z
 section=readers
+devices=(rm1 rm2)
 maintainer="raisjn <of.raisjn@gmail.com>"
 license=AGPL-3.0-or-later
 depends=(fbink fbdepth)

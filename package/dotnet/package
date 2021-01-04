@@ -17,6 +17,7 @@ timestamp=2020-12-27T18:48Z
 maintainer="Eeems <eeems@eeems.email>"
 url=https://www.microsoft.com/net/core
 section=utils
+devices=(any)
 license=MIT
 
 source=(

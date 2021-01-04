@@ -8,6 +8,7 @@ url=https://github.com/reHackable/Calculator
 pkgver=0.0.0-12
 timestamp=2020-08-20T12:28Z
 section=math
+devices=(rm1 rm2)
 maintainer="Mattéo Delabre <spam@delab.re>"
 license=GPL-3.0-or-later
 
