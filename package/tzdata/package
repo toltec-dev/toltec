@@ -2,6 +2,8 @@
 # Copyright (c) 2020 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
+# Inspired by https://github.com/archlinux/svntogit-packages/blob/packages/tzdata/trunk/PKGBUILD
+
 pkgnames=(tzdata)
 pkgdesc="Sources for time zone and daylight saving time data"
 url=https://www.iana.org/time-zones
@@ -15,6 +17,7 @@ depends=()
 _tzcode=2020f
 _tzdata=2020f
 
+# shellcheck disable=SC2206
 source=(
     https://www.iana.org/time-zones/repository/releases/tzcode${_tzcode}.tar.gz{,.asc}
     https://www.iana.org/time-zones/repository/releases/tzdata${_tzdata}.tar.gz{,.asc}
@@ -37,7 +40,7 @@ prepare() {
 }
 
 build() {
-    make LFLAGS=${LDFLAGS}
+    make LFLAGS="${LDFLAGS}"
 }
 
 package() {
@@ -46,9 +49,9 @@ package() {
     make DESTDIR="${pkgdir}" install
 
     # install tzdata stuff
-    ./zic -b fat -d "${pkgdir}"/usr/share/zoneinfo ${timezones[@]}
-    ./zic -b fat -d "${pkgdir}"/usr/share/zoneinfo/posix ${timezones[@]}
-    ./zic -b fat -d "${pkgdir}"/usr/share/zoneinfo/right -L leapseconds ${timezones[@]}
+    ./zic -b fat -d "${pkgdir}"/usr/share/zoneinfo "${timezones[@]}"
+    ./zic -b fat -d "${pkgdir}"/usr/share/zoneinfo/posix "${timezones[@]}"
+    ./zic -b fat -d "${pkgdir}"/usr/share/zoneinfo/right -L leapseconds "${timezones[@]}"
     # This creates the posixrules file. We use New York because POSIX requires the daylight savings time rules to be in accordance with US rules.
     ./zic -b fat -d "${pkgdir}"/usr/share/zoneinfo -p America/New_York
     install -m444 -t "${pkgdir}"/usr/share/zoneinfo iso3166.tab zone1970.tab zone.tab # zone.tab is depricated and will go soon
