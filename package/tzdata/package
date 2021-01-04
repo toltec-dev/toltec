@@ -49,7 +49,7 @@ package() {
     ./zic -b fat -d "${pkgdir}"/usr/share/zoneinfo ${timezones[@]}
     ./zic -b fat -d "${pkgdir}"/usr/share/zoneinfo/posix ${timezones[@]}
     ./zic -b fat -d "${pkgdir}"/usr/share/zoneinfo/right -L leapseconds ${timezones[@]}
-    # This creates the posixrules file. We use New York because POSIX requires the daylight savings time rules to be in accordance with US rules.   
+        # This creates the posixrules file. We use New York because POSIX requires the daylight savings time rules to be in accordance with US rules.
     ./zic -b fat -d "${pkgdir}"/usr/share/zoneinfo -p America/New_York
     install -m444 -t "${pkgdir}"/usr/share/zoneinfo iso3166.tab zone1970.tab zone.tab # zone.tab is depricated and will go soon
 
