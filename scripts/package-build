@@ -150,7 +150,7 @@ for pkgname in "${pkgnames[@]}"; do
 
             find "$pkgdir" -type f | while read -r file; do
                 if objdump --syms "$file" &> /dev/null; then
-                    strip --strip-all "$file"
+                    arm-linux-gnueabihf-strip --strip-all "$file"
                 fi
             done
 
