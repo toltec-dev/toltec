@@ -5,7 +5,7 @@
 pkgnames=(remarkable-splash)
 pkgdesc="show a splashscreen + shutdown replacement that does not clear the screen"
 url=https://github.com/ddvk/remarkable-splash
-pkgver=1.0-1
+pkgver=1.0-2
 timestamp=2019-12-31T10:07Z
 section=utils
 devices=(rm1 rm2)
