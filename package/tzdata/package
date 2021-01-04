@@ -63,7 +63,7 @@ package() {
     install -m444 -t "${pkgdir}"/usr/share/zoneinfo iso3166.tab zone1970.tab zone.tab # zone.tab is depricated and will go soon
 
     # cleanup
-    rm "${pkgdir}/etc/localtime"
+    rm -f "${pkgdir}/etc/localtime"
 
     # install license
     install -Dm644 LICENSE "${pkgdir}"/opt/usr/share/licenses/tzdata/LICENSE
