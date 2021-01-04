@@ -50,7 +50,6 @@ build() {
 }
 
 package() {
-    cd "${srcdir}"
     # install tzcode stuff
     make DESTDIR="${pkgdir}" install
 
