@@ -153,8 +153,8 @@ for pkgname in "${pkgnames[@]}"; do
                 "$(image-name base)" /bin/bash \
                 << "SCRIPT"
 find "/pkg" -type f | xargs arm-linux-gnueabihf-strip --strip-all &> /dev/null || true
-find "/pkg" -type f | xargs strip --strip-all &> /dev/null || true
 SCRIPT
+            find "$pkgdir" -type f | xargs strip --strip-all &> /dev/null || true
 
             # Show package contents
             if command -v tree &> /dev/null; then
