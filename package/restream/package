@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+# Copyright (c) 2020 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgnames=(restream)
+pkgdesc="A binary framebuffer capture tool for the reStream script"
+url=https://github.com/rien/reStream
+pkgver=0.0.0-c41b877
+timestamp=2021-01-01T14:55:28+01:00
+section=utils
+maintainer="Dan Shick <dan.shick@gmail.com>"
+license=MIT
+
+image=rust:v1.2.1
+source=(https://github.com/rien/reStream/archive/c41b87778953513cd52d9c58b3cc5ce52825700e.zip)
+sha256sums=(89da0932f17a546f194b816eb28a83f84f2484a1508d545bfce2115908248fc3)
+
+build() {
+    # Fall back to system-wide config
+    rm .cargo/config
+
+    cargo build --release --bin restream
+}
+
+package() {
+    install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/target/armv7-unknown-linux-gnueabihf/release/restream
+}
