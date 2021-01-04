@@ -64,9 +64,9 @@ package() {
 
     # install license
     install -Dm644 LICENSE "${pkgdir}"/opt/usr/share/licenses/tzdata/LICENSE
-    
+
     popd
-    
+
     # cleanup
     rm "${pkgdir}/etc/localtime"
     rmdir "${pkgdir}/etc"
