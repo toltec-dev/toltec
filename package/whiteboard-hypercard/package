@@ -25,7 +25,6 @@ build() {
     cd marauder
     rustup component add rustfmt --toolchain nightly-x86_64-unknown-linux-gnu
     cargo build --release --bin whiteboard --locked
-    arm-linux-gnueabihf-strip target/armv7-unknown-linux-gnueabihf/release/whiteboard
 }
 
 package() {
