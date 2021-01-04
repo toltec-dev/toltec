@@ -151,7 +151,7 @@ for pkgname in "${pkgnames[@]}"; do
             docker container run --interactive --rm \
                 --mount type=bind,src="$(realpath "$recipedir")",dst=/recipe \
                 --mount type=bind,src="$(realpath "$srcdir")",dst=/src \
-                "$(image-name "$image")" /bin/bash \
+                "$(image-name base)" /bin/bash \
                 << "SCRIPT"
 find "$pkgdir" -type f | while read -r binary; do
     if objdump --syms "$binary" &> /dev/null; then
