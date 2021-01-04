@@ -152,13 +152,8 @@ for pkgname in "${pkgnames[@]}"; do
                 --mount type=bind,src="$(realpath "$pkgdir")",dst=/pkg \
                 "$(image-name base)" /bin/bash \
                 << "SCRIPT"
-find "/pkg" -type f | while read -r binary; do
-    if objdump --syms "$binary" &> /dev/null; then
-        # Ignore errors since we don't filter the format to just arm binaries
-        arm-linux-gnueabihf-strip --strip-all "$binary" &> /dev/null || true
-        strip --strip-all "$binary" &> /dev/null || true
-    fi
-done
+find "/pkg" -type f | xargs arm-linux-gnueabihf-strip --strip-all &> /dev/null || true
+find "/pkg" -type f | xargs strip --strip-all &> /dev/null || true
 SCRIPT
 
             # Show package contents
