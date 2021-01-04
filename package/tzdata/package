@@ -88,6 +88,5 @@ postremove() {
         echo "You may need to restore from your other partition."
         return
     fi
-    mv /home/root/.local/backup/zoneinfo/* /usr/share/zoneinfo/
-    rmdir /home/root/.local/backup/zoneinfo
+    cp -r /home/root/.local/backup/zoneinfo/* /usr/share/zoneinfo/
 }
