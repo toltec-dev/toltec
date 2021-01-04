@@ -149,11 +149,10 @@ for pkgname in "${pkgnames[@]}"; do
             package
 
             docker container run --interactive --rm \
-                --mount type=bind,src="$(realpath "$recipedir")",dst=/recipe \
-                --mount type=bind,src="$(realpath "$srcdir")",dst=/src \
+                --mount type=bind,src="$(realpath "$pkgdir")",dst=/pkg \
                 "$(image-name base)" /bin/bash \
                 << "SCRIPT"
-find "$pkgdir" -type f | while read -r binary; do
+find "/pkg" -type f | while read -r binary; do
     if objdump --syms "$binary" &> /dev/null; then
         echo "Stripping $binary"
         arm-linux-gnueabihf-strip --strip-all "$binary"
