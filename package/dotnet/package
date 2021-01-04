@@ -12,7 +12,7 @@ pkgnames=(
     aspnet-targeting-pack
     netstandard-targeting-pack
 )
-pkgver=3.1.10-1
+pkgver=3.1.10-2
 timestamp=2020-12-27T18:48Z
 maintainer="Eeems <eeems@eeems.email>"
 url=https://www.microsoft.com/net/core
