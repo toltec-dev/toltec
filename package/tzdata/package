@@ -13,6 +13,7 @@ section=utils
 maintainer="Eeems <eeems@eeems.email>"
 license="custom: public domain"
 depends=()
+image=base:v1.2.1
 
 _tzcode=2020f
 _tzdata=2020f
