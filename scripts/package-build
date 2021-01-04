@@ -148,12 +148,6 @@ for pkgname in "${pkgnames[@]}"; do
             # Run packaging script
             package
 
-            find "$pkgdir" -type f | while read -r file; do
-                if objdump --syms "$file" &> /dev/null; then
-                    arm-linux-gnueabihf-strip --strip-all "$file"
-                fi
-            done
-
             docker container run --interactive --rm \
                 --mount type=bind,src="$(realpath "$recipedir")",dst=/recipe \
                 --mount type=bind,src="$(realpath "$srcdir")",dst=/src \
