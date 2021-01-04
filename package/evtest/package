@@ -24,7 +24,6 @@ build() {
     ./autogen.sh --host armv7
     ./configure --host armv7
     make
-    arm-linux-gnueabihf-strip evtest
 }
 
 package() {
