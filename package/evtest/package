@@ -5,7 +5,7 @@
 pkgnames=(evtest)
 pkgdesc="Kernel evdev device information and monitor"
 url=https://gitlab.freedesktop.org/libevdev/evtest
-pkgver=1.34-3
+pkgver=1.34-2
 timestamp=2020-12-30T02:52Z
 devices=(any)
 section=utils
