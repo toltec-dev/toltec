@@ -120,9 +120,9 @@ done
 section "Symlinking packages in device specific directories"
 # Creating seperate device directories
 for target_device in "${all_devices[@]}"; do
-    mkdir "$repodir"/$target_device
+    mkdir "$repodir/$target_device"
 
-    cat "$repodir"/$target_device.list | while read -r pkg_file; do
+    cat "$repodir/$target_device".list | while read -r pkg_file; do
         ln -s "../$pkg_file" "$repodir/$target_device/$pkg_file"
     done
 done
