@@ -159,9 +159,9 @@ for pkgname in "${pkgnames[@]}"; do
                 --mount type=bind,src="$(realpath "$srcdir")",dst=/src \
                 "$(image-name "$image")" /bin/bash \
                 << SCRIPT
-find "$pkgdir" -type f | while read -r file; do
-    if objdump --syms "$file" &> /dev/null; then
-        arm-linux-gnueabihf-strip --strip-all "$file"
+find "$pkgdir" -type f | while read -r binary; do
+    if objdump --syms "$binary" &> /dev/null; then
+        arm-linux-gnueabihf-strip --strip-all "$binary"
     fi
 done
 SCRIPT
