@@ -154,14 +154,13 @@ for pkgname in "${pkgnames[@]}"; do
                 fi
             done
 
-            # shellcheck disable=SC2154
             docker container run --interactive --rm \
                 --mount type=bind,src="$(realpath "$recipedir")",dst=/recipe \
                 --mount type=bind,src="$(realpath "$srcdir")",dst=/src \
                 "$(image-name "$image")" /bin/bash \
-                << SCRIPT
+                << "SCRIPT"
 find "$pkgdir" -type f | while read -r binary; do
-    if objdump --syms "$binary"; then
+    if objdump --syms "$binary" &> /dev/null; then
         echo "Stripping $binary"
         arm-linux-gnueabihf-strip --strip-all "$binary"
     fi
