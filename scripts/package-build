@@ -139,12 +139,6 @@ for pkgname in "${pkgnames[@]}"; do
             readonly pkgdir="$worksubdir"/pkg
             mkdir "$pkgdir"
 
-            readonly ctldir="$worksubdir"/control
-            mkdir "$ctldir"
-
-            readonly ardir="$worksubdir"/ar
-            mkdir "$ardir"
-
             # Run packaging script
             package
 
@@ -152,6 +146,9 @@ for pkgname in "${pkgnames[@]}"; do
             if command -v tree &> /dev/null; then
                 tree -np "$pkgdir" | tail +2
             fi
+
+            readonly ctldir="$worksubdir"/control
+            mkdir "$ctldir"
 
             # Create control file
             readonly ctlfile="$ctldir"/control
@@ -235,6 +232,9 @@ SCRIPT
                     chmod 755 "$ctldir"/"$step"rm
                 fi
             done
+
+            readonly ardir="$worksubdir"/ar
+            mkdir "$ardir"
 
             # Create archives
             section "Creating archive"
