@@ -161,7 +161,7 @@ for pkgname in "${pkgnames[@]}"; do
                 "$(image-name "$image")" /bin/bash \
                 << SCRIPT
 find "$pkgdir" -type f | while read -r binary; do
-    if objdump --syms "$binary" &> /dev/null; then
+    if objdump --syms "$binary"; then
         arm-linux-gnueabihf-strip --strip-all "$binary"
     fi
 done
