@@ -162,6 +162,7 @@ for pkgname in "${pkgnames[@]}"; do
                 << SCRIPT
 find "$pkgdir" -type f | while read -r binary; do
     if objdump --syms "$binary"; then
+        echo "Stripping $binary"
         arm-linux-gnueabihf-strip --strip-all "$binary"
     fi
 done
