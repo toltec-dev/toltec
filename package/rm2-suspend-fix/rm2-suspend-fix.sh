@@ -1,6 +1,6 @@
 #!/bin/sh
 if [ "${1}" == "pre" ]; then
-  rmmod brcmfmac
+    rmmod brcmfmac
 elif [ "${1}" == "post" ]; then
-  modprobe brcmfmac
+    modprobe brcmfmac
 fi
