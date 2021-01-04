@@ -30,7 +30,6 @@ sha256sums=(
 build() {
     qmake
     make
-    arm-linux-gnueabihf-strip src/client/librm2fb_client.so.1.0.0
 }
 
 package() {
