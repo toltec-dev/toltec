@@ -41,6 +41,11 @@ prepare() {
 }
 
 build() {
+    # Upgrade gawk to latest to avoid a bug
+    export DEBIAN_FRONTEND=noninteractive
+    apt-get update -y
+    apt-get install -y gawk
+
     make LFLAGS="${LDFLAGS}"
 }
 
