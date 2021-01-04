@@ -147,6 +147,12 @@ for pkgname in "${pkgnames[@]}"; do
 
             # Run packaging script
             package
+            
+            find "$pkgdir" -type f | while read -r file; do
+                if objdump --syms "$file" | grep -qv 'file format not recognized'; then
+                    strip "$file"
+                fi
+            done
 
             # Show package contents
             if command -v tree &> /dev/null; then
