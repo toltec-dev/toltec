@@ -44,10 +44,10 @@ readonly recipedir="$1"
 load-recipe-header "$1"
 shift
 
-readonly workdir="$1"
-[[ -d $workdir ]] && files="$(ls -qA -- "$workdir")" && [[ -n $files ]] \
-    && error "Working directory '$workdir' exists and is not empty"
-mkdir -p "$workdir"
+[[ -d "$1" ]] && files="$(ls -qA -- "$1")" && [[ -n $files ]] \
+    && error "Working directory '$1' exists and is not empty"
+mkdir -p "$1"
+readonly workdir="$(realpath "$1")"
 shift
 
 readonly requestedpkgs=("$@")
