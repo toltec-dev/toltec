@@ -50,7 +50,7 @@ build() {
 }
 
 package() {
-    cd "${srcdir}"
+    pushd "${srcdir}"
     # install tzcode stuff
     make DESTDIR="${pkgdir}" install
 
@@ -62,13 +62,14 @@ package() {
     ./zic -b fat -d "${pkgdir}"/usr/share/zoneinfo -p America/New_York
     install -m444 -t "${pkgdir}"/usr/share/zoneinfo iso3166.tab zone1970.tab zone.tab # zone.tab is depricated and will go soon
 
-    # cleanup
-    rm -f "${pkgdir}/etc/localtime"
-    rmdir --ignore-fail-on-non-empty "${pkgdir}"
-
     # install license
     install -Dm644 LICENSE "${pkgdir}"/opt/usr/share/licenses/tzdata/LICENSE
-
+    
+    popd
+    
+    # cleanup
+    rm "${pkgdir}/etc/localtime"
+    rmdir "${pkgdir}/etc"
     mv "${pkgdir}"/usr/{bin,lib,sbin,share/man} "${pkgdir}"/opt/usr
 }
 
