@@ -10,7 +10,7 @@ timestamp=2021-01-01T13:55:28Z
 section=utils
 maintainer="Dan Shick <dan.shick@gmail.com>"
 license=MIT
-
+conflicts=(rm2fb)
 image=rust:v1.2.1
 source=(https://github.com/rien/reStream/archive/c41b87778953513cd52d9c58b3cc5ce52825700e.zip)
 sha256sums=(89da0932f17a546f194b816eb28a83f84f2484a1508d545bfce2115908248fc3)
