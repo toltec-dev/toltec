@@ -80,9 +80,8 @@ package() {
     # cleanup
     rm "${pkgdir}/etc/localtime"
     rmdir "${pkgdir}/etc"
-    mv "${pkgdir}"/usr/{lib,sbin,share/man} "${pkgdir}"/opt/usr
-    mv "${pkgdir}"/usr/sbin/zic "${pkgdir}"/opt/bin
-    rmdir "${pkgdir}"/usr/sbin
+    mv "${pkgdir}"/usr/{lib,share/man} "${pkgdir}"/opt/usr
+    mv "${pkgdir}"/usr/sbin "${pkgdir}"/opt
     mv "${pkgdir}"/usr/bin "${pkgdir}"/opt
 }
 
