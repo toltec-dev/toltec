@@ -5,7 +5,7 @@
 pkgnames=(chessmarkable)
 pkgdesc="A chess game for the reMarkable"
 url=https://github.com/LinusCDE/chessmarkable
-pkgver=0.6.0-1
+pkgver=0.6.0-2
 timestamp=2021-01-03T05:26Z
 section=games
 maintainer="Linus K. <linus@cosmos-ink.net>"
@@ -20,7 +20,6 @@ build() {
     rm .cargo/config
 
     cargo build --release --bin chessmarkable
-    arm-linux-gnueabihf-strip target/armv7-unknown-linux-gnueabihf/release/chessmarkable
 }
 
 package() {
