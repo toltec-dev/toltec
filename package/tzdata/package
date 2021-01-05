@@ -46,26 +46,36 @@ build() {
     apt-get update -y
     apt-get install -y gawk
 
+    mkdir .x86
+    pushd .x86 > /dev/null
+
+    shopt -s extglob
+    cp -r ../* .
+    make LFLAGS="${LDFLAGS}"
+
+    popd > /dev/null
+
     make LFLAGS="${LDFLAGS}" CC=arm-linux-gnueabihf-cc
 }
 
 package() {
-    pushd "${srcdir}"
+    pushd "${srcdir}" > /dev/null
+    local zic=.x86/zic
     # install tzcode stuff
-    make DESTDIR="${pkgdir}" zic=zic install
+    make DESTDIR="${pkgdir}" zic="$zic" install
 
     # install tzdata stuff
-    zic -b fat -d "${pkgdir}"/usr/share/zoneinfo "${timezones[@]}"
-    zic -b fat -d "${pkgdir}"/usr/share/zoneinfo/posix "${timezones[@]}"
-    zic -b fat -d "${pkgdir}"/usr/share/zoneinfo/right -L leapseconds "${timezones[@]}"
+    "$zic" -b fat -d "${pkgdir}"/usr/share/zoneinfo "${timezones[@]}"
+    "$zic" -b fat -d "${pkgdir}"/usr/share/zoneinfo/posix "${timezones[@]}"
+    "$zic" -b fat -d "${pkgdir}"/usr/share/zoneinfo/right -L leapseconds "${timezones[@]}"
     # This creates the posixrules file. We use New York because POSIX requires the daylight savings time rules to be in accordance with US rules.
-    zic -b fat -d "${pkgdir}"/usr/share/zoneinfo -p America/New_York
+    "$zic" -b fat -d "${pkgdir}"/usr/share/zoneinfo -p America/New_York
     install -m444 -t "${pkgdir}"/usr/share/zoneinfo iso3166.tab zone1970.tab zone.tab # zone.tab is depricated and will go soon
 
     # install license
     install -Dm644 LICENSE "${pkgdir}"/opt/usr/share/licenses/tzdata/LICENSE
 
-    popd
+    popd > /dev/null
 
     # cleanup
     rm "${pkgdir}/etc/localtime"
