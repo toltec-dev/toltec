@@ -18,10 +18,7 @@
 #
 # 0 if the unit exists and is enabled, 1 otherwise
 is-enabled() {
-    # Note that we must invert the condition so that the exit code indicates
-    # a failure when the unit exists and is disabled or when the unit does
-    # not exist
-    ! systemctl --quiet is-enabled "$1"
+    systemctl --quiet is-enabled "$1" 2> /dev/null
 }
 
 # Get a list of systemd units with which the given unit conflicts
