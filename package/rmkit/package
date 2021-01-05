@@ -38,7 +38,7 @@ genie() {
 
     configure() {
         systemctl daemon-reload
-        systemctl enable genie --now
+        echo "Run 'systemctl enable genie --now' to enable genie"
     }
 
     preremove() {

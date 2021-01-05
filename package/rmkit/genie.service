@@ -1,0 +1,17 @@
+# Copyright (c) 2020 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+[Unit]
+Description=Gesture launcher
+After=opt.mount
+StartLimitInterval=30
+StartLimitBurst=5
+
+[Service]
+ExecStart=/opt/bin/genie /opt/etc/genie.conf
+Restart=on-failure
+RestartSec=5
+Environment="HOME=/home/root"
+
+[Install]
+WantedBy=multi-user.target
