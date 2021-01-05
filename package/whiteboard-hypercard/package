@@ -5,7 +5,7 @@
 pkgnames=(whiteboard-hypercard)
 pkgdesc="Real-time collaboration, drawing or whiteboarding"
 url=https://github.com/fenollp/reMarkable-tools
-pkgver=0.3.0-1
+pkgver=0.3.0-2
 timestamp=2020-09-23T18:01Z
 section=drawing
 maintainer="Pierre Fenoll <pierrefenoll@gmail.com>"
@@ -25,7 +25,6 @@ build() {
     cd marauder
     rustup component add rustfmt --toolchain nightly-x86_64-unknown-linux-gnu
     cargo build --release --bin whiteboard --locked
-    arm-linux-gnueabihf-strip target/armv7-unknown-linux-gnueabihf/release/whiteboard
 }
 
 package() {
