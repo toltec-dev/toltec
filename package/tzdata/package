@@ -70,7 +70,8 @@ package() {
     # cleanup
     rm "${pkgdir}/etc/localtime"
     rmdir "${pkgdir}/etc"
-    mv "${pkgdir}"/usr/{bin,lib,sbin,share/man} "${pkgdir}"/opt/usr
+    mv "${pkgdir}"/usr/{lib,sbin,share/man} "${pkgdir}"/opt/usr
+    mv "${pkgdir}"/usr/bin "${pkgdir}"/opt
 }
 
 preinstall() {
