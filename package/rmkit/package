@@ -2,7 +2,7 @@
 # Copyright (c) 2020 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
-pkgnames=(harmony mines nao remux simple)
+pkgnames=(genie harmony mines nao remux simple)
 timestamp=2021-01-05T14:03-08:00
 maintainer="raisjn <of.raisjn@gmail.com>"
 license=MIT
@@ -11,15 +11,44 @@ image=python:v1.1
 source=(
     https://github.com/rmkit-dev/rmkit/archive/eafbc08fc890dfa9130455d59425bdbc32e230a8.zip
     remux.service
+    genie.service
 )
 sha256sums=(
     65623d8684eae192a58da94379d11a637c9cdb9b939964a82e06dbc4216ea22e
+    SKIP
     SKIP
 )
 
 build() {
     pip3 install okp
     make
+}
+
+genie() {
+    pkgdesc="Gesture engine that connects commands to gestures"
+    url="https://rmkit.dev/apps/genie"
+    pkgver=0.1.0-1
+    section=utils
+
+    package() {
+        install -D -m 755 "$srcdir"/src/build/genie "$pkgdir"/opt/bin/genie
+        install -D -m 644 "$srcdir"/genie.service "$pkgdir"/lib/systemd/system/genie.service
+        install -D -m 644 "$srcdir"/src/genie/example.conf "$pkgdir"/opt/etc/genie.example.conf
+    }
+
+    configure() {
+        systemctl daemon-reload
+        systemctl enable genie --now
+    }
+
+    preremove() {
+        echo "Disabling $pkgname"
+        systemctl disable --now "$pkgname"
+    }
+
+    postremove() {
+        systemctl daemon-reload
+    }
 }
 
 harmony() {
