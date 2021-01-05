@@ -8,11 +8,13 @@
 # Common functions used by the install scripts
 #
 
-# Check whether a systemd unit exists and is enabled
+# Check whether a systemd unit exists and is in an enabled-like state
+# ("enabled", "enabled-runtime", "alias", "static", "indirect", "generated"
+# or "transient")
 #
 # Arguments:
 #
-# $1 - Full name of the systemd unit, e.g. "xochitl.service"
+# $1 - Name of the systemd unit, e.g. "xochitl.service" or "xochitl"
 #
 # Exit code:
 #
