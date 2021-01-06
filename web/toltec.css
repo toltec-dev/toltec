@@ -1,0 +1,25 @@
+.left, .right {
+  display: inline-block;
+  width: calc(49% - 10px);
+  padding: inherit 0;
+  margin-left: 0.5%;
+  vertical-align: text-top;
+}
+
+.center, h1, h2, h3, h4, h5 {
+  text-align: center;
+}
+
+pre {
+  padding: 10px;
+  background-color: #ddd;
+  overflow: auto;
+}
+
+body {
+  background-color: #f8fcf8;
+  margin: 0 auto;
+  padding: 20px;
+  max-width: 1024px;
+  font-family:"-apple-system", "BlinkMacSystemFont", "Helvetica Neue", "Roboto", sans-serif;
+}
