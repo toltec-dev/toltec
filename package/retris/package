@@ -5,7 +5,7 @@
 pkgnames=(retris)
 pkgdesc="Tetris game"
 url=https://github.com/LinusCDE/retris
-pkgver=0.6.1-1
+pkgver=0.6.1-2
 timestamp=2020-12-24T12:32Z
 section=games
 devices=(rm1 rm2)
@@ -21,7 +21,6 @@ build() {
     rm .cargo/config
 
     cargo build --release
-    arm-linux-gnueabihf-strip target/armv7-unknown-linux-gnueabihf/release/retris
 }
 
 package() {

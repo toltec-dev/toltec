@@ -5,7 +5,7 @@
 pkgnames=(plato)
 pkgdesc="Document reader"
 url=https://github.com/LinusCDE/plato
-pkgver=0.9.1-12
+pkgver=0.9.1-13
 timestamp=2020-12-28T17:53Z
 section=readers
 devices=(rm1 rm2)

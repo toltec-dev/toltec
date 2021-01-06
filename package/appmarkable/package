@@ -5,7 +5,7 @@
 pkgnames=(appmarkable)
 pkgdesc="Turn your program into a very simple app for draft"
 url="https://github.com/LinusCDE/appmarkable"
-pkgver=0.0.0-6
+pkgver=0.0.0-7
 timestamp=2020-09-07T00:16Z
 section=utils
 devices=(rm1 rm2)
@@ -19,7 +19,6 @@ sha256sums=(0422cee28668d4e7ff554c26884e45ec63feff840eec92e6b8b2e8a7905a9d3b)
 build() {
     rm -r .cargo/
     cargo build --release --target=armv7-unknown-linux-gnueabihf
-    arm-linux-gnueabihf-strip target/armv7-unknown-linux-gnueabihf/release/appmarkable
 }
 
 package() {

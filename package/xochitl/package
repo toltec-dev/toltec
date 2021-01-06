@@ -5,7 +5,7 @@
 pkgnames=(xochitl)
 pkgdesc="Read documents and take notes"
 url=https://remarkable.com
-pkgver=0.0.0-1
+pkgver=0.0.0-2
 timestamp=2020-09-24T18:48Z
 section=readers
 devices=(any)

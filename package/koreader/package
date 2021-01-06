@@ -5,7 +5,7 @@
 pkgnames=(koreader)
 pkgdesc="An ebook reader application supporting PDF, DjVu, EPUB, FB2 and many more formats"
 url=https://github.com/koreader/koreader
-pkgver=2020.10-2
+pkgver=2020.12-1
 timestamp=2020-10-10T20:13Z
 section=readers
 devices=(rm1 rm2)
@@ -15,12 +15,15 @@ depends=(fbink fbdepth)
 
 _srcver="v${pkgver%-*}"
 source=("https://build.koreader.rocks/download/stable/$_srcver/koreader-remarkable-$_srcver.zip")
-sha256sums=(a646c52e22c2ea47aa8b4677cc8060b979dcbadb718ce111ad8489233780da10)
+sha256sums=(38db8f3895472828d7c1d63fc54db426135a8dbf8425633e299a1a9abfdb69b2)
 
 package() {
     install -d "$pkgdir"/opt/koreader
     cp -R "$srcdir"/* "$pkgdir"/opt/koreader/
     rm "$pkgdir"/opt/koreader/koreader*zip
+    rm "$pkgdir"/opt/koreader/{fbink,fbdepth}
+    ln -s /opt/bin/fbink "$pkgdir"/opt/koreader/fbink
+    ln -s /opt/bin/fbdepth "$pkgdir"/opt/koreader/fbdepth
 
     install -D -m 644 -t "$pkgdir"/opt/etc/draft/ "$recipedir"/koreader.draft
     install -D -m 644 -t "$pkgdir"/opt/etc/draft/icons/ "$srcdir"/resources/koreader.png
@@ -31,7 +34,12 @@ package() {
 }
 
 configure() {
-    if systemctl list-units --full -all | grep -Fq "tarnish.service"; then
-        echo "KOReader has an outstanding bug where it doesn't resize the screen properly when returning to Oxide. See Oxide's release notes for a workaround."
+    echo "KOReader has an outstanding bug where it doesn't resize the screen properly when returning to Oxide. See Oxide's release notes for a workaround."
+}
+postremove() {
+    # Check to see if tarnish is running and rot is available
+    # shellcheck disable=SC2009
+    if systemctl list-units --full -all | grep -Fq 'tarnish.service' || [[ "$(ps | grep tarnish | grep -v grep)" != "" ]]; then
+        echo "You may need to manually remove the application entry for KOReader in Oxide."
     fi
 }

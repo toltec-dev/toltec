@@ -6,6 +6,8 @@ We welcome contributions from anyone, regarding for example [reporting bugs](#re
 To make a request or report a bug, you simply need to [open a new issue](../../../issues/new/choose).
 
 To directly propose changes, the basic procedure is to fork this repository, make the desired changes in your newly created local copy, and open a pull request.
+**When creating your pull request, make sure to target the `testing` branch instead of the default `stable` branch** (PRs against the `stable` branch will not be merged).
+
 When proposing changes, please make sure that you follow the [style guide](#style-guide).
 After you submit your pull request, a maintainer will take time to review your changes, request modifications and then merge your changes into the repository if they fit.
 
