@@ -91,11 +91,11 @@ The current version of the package.
 A Debian-style version number that is equal to the concatenation of Arch-style versioning fields: `$epoch:$pkgver-$pkgrel`.
 The [deb-version rules](https://manpages.debian.org/wheezy/dpkg-dev/deb-version.5.en.html) apply:
 
--   Make newer version numbers greater than all the previous ones, or users will not see them as available upgrades.
--   Always include a dash-separated package revision number at the end of the version, resetting it to 1 when bumping the software version, and increasing it when making changes to the recipe itself.
--   Match the upstream version number as closely as possible.
-    -   Use the version number `0.0.0` if upstream has no versioning scheme, and then only use the package revision number for increasing the version number.
-    -   Use the `~beta` suffix for beta versions. `~` has a special meaning in Debian version numbers that makes it sort lower than any other character, even the empty string.
+* Make newer version numbers greater than all the previous ones, or users will not see them as available upgrades.
+* Always include a dash-separated package revision number at the end of the version, resetting it to 1 when bumping the software version, and increasing it when making changes to the recipe itself.
+* Match the upstream version number as closely as possible.
+    - Use the version number `0.0.0` if upstream has no versioning scheme, and then only use the package revision number for increasing the version number.
+    - Use the `~beta` suffix for beta versions. `~` has a special meaning in Debian version numbers that makes it sort lower than any other character, even the empty string.
 
 #### `timestamp`
 
@@ -128,14 +128,14 @@ Note that increasing the package revision number does not require updating the `
 
 A single category that best describes the primary purpose of the package. See [the package listing](https://toltec-dev.org/stable) for examples of packages that belong to each section. The following choices currently exist:
 
-| Section   | Description                                                                                                        |
-| --------- | ------------------------------------------------------------------------------------------------------------------ |
-| drawing   | Apps for drawing and whiteboarding.                                                                                |
-| games     | Apps for playing games.                                                                                            |
-| launchers | Apps that present to the user a list of other apps that they can launch. Usually started automatically after boot. |
-| math      | Apps to assist the user in performing mathematical tasks.                                                          |
-| readers   | Apps for reading and annotating documents (PDF, EPUB, …).                                                          |
-| utils     | System tools and various apps.                                                                                     |
+Section         | Description
+----------------|----------------------------------
+drawing         | Apps for drawing and whiteboarding.
+games           | Apps for playing games.
+launchers       | Apps that present to the user a list of other apps that they can launch. Usually started automatically after boot.
+math            | Apps to assist the user in performing mathematical tasks.
+readers         | Apps for reading and annotating documents (PDF, EPUB, …).
+utils           | System tools and various apps.
 
 If the package does not fit into one of the existing sections, you are free to create a new one and document it here.
 
@@ -205,25 +205,6 @@ See <https://www.debian.org/doc/debian-policy/ch-relationships.html#binary-depen
 A list of package names that must **NOT** be unpacked at the same time as this package.
 
 See <https://www.debian.org/doc/debian-policy/ch-relationships.html#conflicting-binary-packages-conflicts>.
-
-#### `devices`
-
-<table>
-    <tr>
-        <th>Required?</th>
-        <td>Yes</th>
-    </tr>
-    <tr>
-        <th>Type</th>
-        <td>Array of strings</td>
-    </tr>
-</table>
-
-A list of devices the package is know to work with. Currently the following values are available: `rm1` and `rm2`.
-
-This is loosly based on Arch Linux' idea of the architecture: https://wiki.archlinux.org/index.php/PKGBUILD#arch
-
-In that spirit, you can also just define `any`. Packages that define this, should be universal (similar to entware packages) in that the package will most likely immediately work on a potential new reMarkable. An example would be command line tool. If your package depends on a compatibilty tool that doesn't support any possible reMarkable, your package most likely shouldn't be `any` as well.
 
 #### `image`
 
@@ -327,24 +308,24 @@ They can also use functions from the [install library](scripts/install-lib).
 
 When installing a new package, the following happens:
 
--   The package files are unpacked (but not installed)
--   `preinstall` is called if it exists
--   The package files are installed into place
--   `configure` is called if it exists
+* The package files are unpacked (but not installed)
+* `preinstall` is called if it exists
+* The package files are installed into place
+* `configure` is called if it exists
 
 When removing an installed package, the following happens:
 
--   `preremove` is called if it exists
--   The package files are removed (except configuration files)
--   `postremove` is called if it exists
+* `preremove` is called if it exists
+* The package files are removed (except configuration files)
+* `postremove` is called if it exists
 
 When upgrading a package from version A to B, the following happens:
 
--   `preupgrade B`, if it exists, is called from version A
--   Old package files are removed (except configuration files)
--   `postupgrade B`, if it exists, is called from version A
--   New package files are unpacked and installed
--   `configure`, if it exists, is called from version B
+* `preupgrade B`, if it exists, is called from version A
+* Old package files are removed (except configuration files)
+* `postupgrade B`, if it exists, is called from version A
+* New package files are unpacked and installed
+* `configure`, if it exists, is called from version B
 
 ### Split packages
 

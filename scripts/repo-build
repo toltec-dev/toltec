@@ -66,11 +66,6 @@ mkdir -p "$workdir"
 repodir="$3"
 mkdir -p "$repodir"
 
-all_devices=(rm1 rm2)
-for target_device in "${all_devices[@]}"; do
-    truncate -s0 "$repodir/$target_device.list"
-done
-
 # Build missing packages or get them from the remote server
 # Each recipe is loaded in a subshell to avoid leaking metadata fields
 for recipedir in "$recipesdir"/*; do
@@ -85,13 +80,6 @@ for recipedir in "$recipesdir"/*; do
             if (
                 load-recipe-pkg "$pkgname"
                 pkgid="$(package-id)"
-
-                # Add expected .ipkg file to listings for proper devices
-                for target_device in "${all_devices[@]}"; do
-                    if [[ ${devices[*]} =~ $target_device ]] || [[ ${devices[*]} =~ any ]]; then
-                        echo "$pkgid.ipk" >> "$repodir/$target_device.list"
-                    fi
-                done
 
                 # A package is missing if it’s not in the local build folder
                 # and, when the -l flag is not set, if it’s not on the
@@ -117,30 +105,16 @@ for recipedir in "$recipesdir"/*; do
     )
 done
 
-section "Symlinking packages in device specific directories"
-# Creating seperate device directories
-for target_device in "${all_devices[@]}"; do
-    mkdir "$repodir/$target_device"
-
-    while read -r pkg_file; do
-        ln -s "../$pkg_file" "$repodir/$target_device/$pkg_file"
-    done < "$repodir/$target_device".list
-done
-
 # Build packages index
-section "Making packages indexes"
-for subdir_name in . "${all_devices[@]}"; do
-    "${BASH_SOURCE%/*}"/opkg/opkg-make-index --checksum sha256 -p "$repodir/$subdir_name"/Packages "$repodir/$subdir_name"
-done
+section "Making packages index"
+"${BASH_SOURCE%/*}"/opkg/opkg-make-index --checksum sha256 -p "$repodir"/Packages "$repodir"
 
 # Set atime and mtime to the date of latest commit for the packages index
 lastcommitdate="$(git log -1 --pretty=%ct)"
-for subdir_name in . "${all_devices[@]}"; do
-    touch --no-dereference --date="@$lastcommitdate" \
-        "$repodir/$subdir_name"/Packages \
-        "$repodir/$subdir_name"/Packages.gz \
-        "$repodir/$subdir_name"/Packages.stamps
-done
+touch --no-dereference --date="@$lastcommitdate" \
+    "$repodir"/Packages \
+    "$repodir"/Packages.gz \
+    "$repodir"/Packages.stamps
 
 section "Making packages web listing"
 scripts/repo-build-web "$recipesdir" "$repodir"

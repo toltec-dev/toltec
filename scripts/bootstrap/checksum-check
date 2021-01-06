@@ -13,13 +13,9 @@
 
 set -e
 
-bootstrap_path=./scripts/bootstrap/bootstrap
+bootstrap_path=scripts/bootstrap/bootstrap
 readme_checksum=$(sed --quiet \
     's/^.*"\([[:alnum:]]\+\) \+bootstrap".*$/\1/p' \
     README.md)
 
-if ! sha256sum -c <(echo "$readme_checksum  $bootstrap_path"); then
-    echo "  Readme: $readme_checksum"
-    echo "  File: $(sha256sum $bootstrap_path)"
-    exit 1
-fi
+sha256sum -c <(echo "$readme_checksum  $bootstrap_path")

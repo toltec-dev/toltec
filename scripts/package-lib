@@ -332,7 +332,6 @@ load-recipe-pkg() {
     check-field pkgver string nonempty
     check-field section string nonempty
     check-field license string nonempty
-    check-field devices array nonempty
     check-field depends array optional || depends=()
     check-field conflicts array optional || conflicts=()
 
@@ -343,7 +342,6 @@ load-recipe-pkg() {
         pkgver \
         section \
         license \
-        devices \
         depends \
         conflicts \
         2> /dev/null || true
@@ -376,7 +374,6 @@ dump-fields() {
         section \
         maintainer \
         license \
-        devices \
         depends \
         conflicts \
         arch \
