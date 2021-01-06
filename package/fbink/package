@@ -7,6 +7,7 @@ url=https://github.com/NiLuJe/FBInk
 pkgver=1.23.1-2
 timestamp=2020-12-14T12:30Z
 section=util
+devices=(rm1 rm2)
 maintainer="Mattéo Delabre <spam@delab.re>"
 license=GPL-3.0
 
