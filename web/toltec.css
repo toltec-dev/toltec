@@ -23,3 +23,8 @@ body {
   max-width: 1024px;
   font-family:"-apple-system", "BlinkMacSystemFont", "Helvetica Neue", "Roboto", sans-serif;
 }
+
+h1.title {
+  font-size: 96px;
+  margin: 0px;
+}

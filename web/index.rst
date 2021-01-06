@@ -4,8 +4,7 @@ Toltec
 
 .. class:: center
 
-  **A software repository for the reMarkable tablet**
-
+a community-maintained repository of free software for the reMarkable tablet.
 
 Install Toltec
 ==============
@@ -65,13 +64,17 @@ Frequently Asked Questions
 
   at https://toltec-dev.org/stable
 
-* Do you support remarkable2?
+* Do you support reMarkable 2?
 
   Yes, but you need to install the rm2fb package if you want to use any applications that use the display.
 
-* How do I contribute to toltec?
+* Is this supported by reMarkable AS?
 
-  See `the contributing doc <#>`_
+  No, it is a community project
+
+* Where can I get help?
+
+  `please open an issue on github <#>`_
 
 * Will this brick my remarkable?
 
