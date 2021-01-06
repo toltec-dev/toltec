@@ -8,7 +8,6 @@ url=https://github.com/LinusCDE/chessmarkable
 pkgver=0.6.0-2
 timestamp=2021-01-03T05:26Z
 section=games
-devices=(rm1 rm2)
 maintainer="Linus K. <linus@cosmos-ink.net>"
 license=MIT
 

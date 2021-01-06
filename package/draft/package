@@ -8,7 +8,6 @@ url=https://github.com/dixonary/draft-reMarkable
 pkgver=0.2.0-16
 timestamp=2020-07-20T10:23Z
 section=launchers
-devices=(rm1 rm2)
 maintainer="Mattéo Delabre <spam@delab.re>"
 license=Apache-2.0
 depends=(xochitl)

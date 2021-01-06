@@ -8,7 +8,6 @@ url=https://github.com/fenollp/reMarkable-tools
 pkgver=0.3.0-2
 timestamp=2020-09-23T18:01Z
 section=drawing
-devices=(rm1 rm2)
 maintainer="Pierre Fenoll <pierrefenoll@gmail.com>"
 license=Apache-2.0
 

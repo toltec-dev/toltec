@@ -8,7 +8,6 @@ url=https://github.com/LinusCDE/plato
 pkgver=0.9.1-13
 timestamp=2020-12-28T17:53Z
 section=readers
-devices=(rm1 rm2)
 maintainer="Linus K. <linus@cosmos-ink.net>"
 license=AGPL-3.0-or-later
 
