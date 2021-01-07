@@ -134,7 +134,7 @@ entware-mount() {
         # before switching to toltec. Removing old .mount file to prevent duplicate files
         log "Updating opt.mount location"
 
-        if systemctl -q --is-enabled opt.mount; then
+        if systemctl -q is-enabled opt.mount; then
             # Remove path to old file if still symlinked
             systemctl disable opt.mount
         fi
