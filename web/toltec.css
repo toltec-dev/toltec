@@ -32,4 +32,5 @@ h1.title {
 .logo {
   display: block;
   margin: auto;
+  margin-bottom: 60px;
 }
