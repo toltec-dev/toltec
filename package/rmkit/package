@@ -3,17 +3,17 @@
 # SPDX-License-Identifier: MIT
 
 pkgnames=(harmony mines nao remux simple)
-timestamp=2020-10-10T01:41+00:00
+timestamp=2021-01-05T14:03-08:00
 maintainer="raisjn <of.raisjn@gmail.com>"
 license=MIT
 
 image=python:v1.1
 source=(
-    https://github.com/rmkit-dev/rmkit/archive/91b71447f26f23a7677f0f2b6e33b0d91fa3dc12.zip
+    https://github.com/rmkit-dev/rmkit/archive/eafbc08fc890dfa9130455d59425bdbc32e230a8.zip
     remux.service
 )
 sha256sums=(
-    76179badd00b5656581997c0aec723277d89fdb6aec85ac8886314b8808e190c
+    65623d8684eae192a58da94379d11a637c9cdb9b939964a82e06dbc4216ea22e
     SKIP
 )
 
@@ -72,7 +72,7 @@ nao() {
 remux() {
     pkgdesc="App launcher that supports multi-tasking applications"
     url="https://rmkit.dev/apps/remux"
-    pkgver=0.1.4-2
+    pkgver=0.1.5-1
     section=launchers
 
     package() {
