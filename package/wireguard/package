@@ -43,6 +43,7 @@ build() {
     mkdir .pc
     for i in $(seq 0 1); do
         git checkout -f "${_kernelrevs[$i]}"
+        touch .scmversion
         cp "${_defconfigs[$i]}" .config
         echo "CONFIG_NET_FOU=m" >> .config
         make olddefconfig
