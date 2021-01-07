@@ -151,7 +151,7 @@ for pkgname in "${pkgnames[@]}"; do
             section "Stripping $pkgname"
             docker container run --interactive --rm \
                 --mount type=bind,src="$(realpath "$pkgdir")",dst=/pkg \
-                "$(image-name "$image")" /bin/bash \
+                "$(image-name $([[ -n $image ]] && echo "base:v1.2.2" || echo "$image"))" /bin/bash \
                 << "SCRIPT"
 find /pkg -print0 -type f | xargs --null "${CROSS_COMPILE}strip" --strip-all &> /dev/null || true
 SCRIPT
