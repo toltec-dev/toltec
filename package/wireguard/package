@@ -12,6 +12,7 @@ section=utils
 maintainer="Jonah Weissman <jonahrweissman+toltec@gmail.com>"
 license=GPL-2.0
 depends=(wireguard-tools)
+flags=(nostrip)
 
 _kernelrepo=https://github.com/remarkable/linux
 _kernelrevs=(
