@@ -8,8 +8,8 @@ timestamp=2021-01-07T03:28Z
 maintainer="Eeems <eeems@eeems.email>"
 license=MIT
 
-source=(https://github.com/Eeems/oxide/suites/1783100061/artifacts/34094431)
-sha256sums=(c35f62d33ec954d88fc36fd9853bcb37e54ac45b936364f4014bf6d4b69725e1)
+source=(https://github.com/Eeems/oxide/files/5783885/oxide.zip)
+sha256sums=(2e46ea132061424a98207f99d875119914498b384bc1222a8fbd586a75595c65)
 
 erode() {
     pkgdesc="Task manager"
