@@ -6,6 +6,11 @@ Toltec
 
 a community-maintained repository of free software for the reMarkable tablet.
 
+.. image:: ./logo.png
+  :height: 400
+  :class: logo
+
+
 Install Toltec
 ==============
 

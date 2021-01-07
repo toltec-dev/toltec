@@ -28,3 +28,8 @@ h1.title {
   font-size: 96px;
   margin: 0px;
 }
+
+.logo {
+  display: block;
+  margin: auto;
+}
