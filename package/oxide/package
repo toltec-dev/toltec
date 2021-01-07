@@ -3,13 +3,13 @@
 # SPDX-License-Identifier: MIT
 
 pkgnames=(erode fret oxide rot tarnish)
-pkgver=2.0.1~beta-4
+pkgver=2.0.2~beta-1
 timestamp=2020-12-06T20:09Z
 maintainer="Eeems <eeems@eeems.email>"
 license=MIT
 
-source=(https://github.com/Eeems/oxide/releases/download/v2.0.1-beta/oxide.zip)
-sha256sums=(02c0561b0478d4108916d618ad1bced77e549121f1e2770d35314b94c2852dfe)
+source=(https://github.com/Eeems/oxide/releases/download/v2.0.2-beta/oxide.zip)
+sha256sums=(b9e9518262204808052053170295a4d84fcb8c5971f6b6924cf6e209cecc12b4)
 
 erode() {
     pkgdesc="Task manager"
