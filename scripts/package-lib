@@ -334,6 +334,7 @@ load-recipe-pkg() {
     check-field license string nonempty
     check-field depends array optional || depends=()
     check-field conflicts array optional || conflicts=()
+    check-field flags array optional || flags=()
 
     # Make fields read-only
     readonly \
@@ -344,6 +345,7 @@ load-recipe-pkg() {
         license \
         depends \
         conflicts \
+        flags \
         2> /dev/null || true
 
     # Check required functions
@@ -381,6 +383,7 @@ dump-fields() {
         source \
         noextract \
         sha256sums \
+        flags \
         2> /dev/null || true
 }
 
