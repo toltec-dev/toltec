@@ -97,7 +97,7 @@ decay() {
     pkgdesc="Lockscreen application"
     url=https://github.com/Eeems/oxide/tree/master/applications/lockscreen
     section=utils
-    
+
     package() {
         install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/opt/bin/decay
     }
