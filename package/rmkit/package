@@ -9,12 +9,12 @@ license=MIT
 
 image=python:v1.1
 source=(
-    https://github.com/rmkit-dev/rmkit/archive/eafbc08fc890dfa9130455d59425bdbc32e230a8.zip
+    https://github.com/rmkit-dev/rmkit/archive/522311921cb3acafd9ed2d21e0ba65c9d6d3f452.zip
     remux.service
     genie.service
 )
 sha256sums=(
-    65623d8684eae192a58da94379d11a637c9cdb9b939964a82e06dbc4216ea22e
+    71c431340e87dea57a9eb51a225f8b0a60b6d11e2f26b391adac4578b115be76
     SKIP
     SKIP
 )
@@ -27,7 +27,7 @@ build() {
 genie() {
     pkgdesc="Gesture engine that connects commands to gestures"
     url="https://rmkit.dev/apps/genie"
-    pkgver=0.1.0-1
+    pkgver=0.1.1-1
     section=utils
 
     package() {
