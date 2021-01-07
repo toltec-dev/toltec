@@ -2,13 +2,13 @@
 # Copyright (c) 2020 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
-pkgnames=(erode fret oxide rot tarnish)
-pkgver=2.0.3~beta-1
+pkgnames=(erode fret oxide rot tarnish decay)
+pkgver=2.1~beta-1
 timestamp=2021-01-07T03:28Z
 maintainer="Eeems <eeems@eeems.email>"
 license=MIT
 
-source=(https://github.com/Eeems/oxide/releases/download/v2.0.3-beta/oxide.zip)
+source=(https://github.com/Eeems/oxide/suites/1783100061/artifacts/34094431)
 sha256sums=(c35f62d33ec954d88fc36fd9853bcb37e54ac45b936364f4014bf6d4b69725e1)
 
 erode() {
@@ -36,7 +36,7 @@ oxide() {
     pkgdesc="Launcher application"
     url=https://github.com/Eeems/oxide/tree/master/applications/launcher
     section=launchers
-    depends=(erode fret tarnish xochitl rot)
+    depends=(erode fret tarnish rot decay xochitl)
 
     package() {
         install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/opt/bin/oxide
@@ -74,6 +74,7 @@ tarnish() {
         install -D -m 644 -t "$pkgdir"/etc/dbus-1/system.d "$srcdir"/etc/dbus-1/system.d/codes.eeems.oxide.conf
         install -D -m 644 -t "$pkgdir"/lib/systemd/system "$srcdir"/etc/systemd/system/tarnish.service
         install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/opt/bin/tarnish
+        install -D -m 644 -t "$pkgdir"/opt/usr/share/applications "$srcdir"/opt/usr/share/applications/*.oxide
     }
 
     configure() {
@@ -89,5 +90,15 @@ tarnish() {
 
     postremove() {
         systemctl daemon-reload
+    }
+}
+
+decay() {
+    pkgdesc="Lockscreen application"
+    url=https://github.com/Eeems/oxide/tree/master/applications/lockscreen
+    section=utils
+    
+    package() {
+        install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/opt/bin/decay
     }
 }
