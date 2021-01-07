@@ -4,7 +4,7 @@
 
 pkgnames=(erode fret oxide rot tarnish)
 pkgver=2.0.2~beta-1
-timestamp=2020-12-06T20:09Z
+timestamp=2021-01-07T00:47Z
 maintainer="Eeems <eeems@eeems.email>"
 license=MIT
 
