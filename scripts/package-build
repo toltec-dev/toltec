@@ -147,15 +147,17 @@ for pkgname in "${pkgnames[@]}"; do
 
             # Run packaging script
             package
-
-            section "Stripping $pkgname"
-            docker container run --interactive --rm \
-                --mount type=bind,src="$(realpath "$pkgdir")",dst=/pkg \
-                "$(image-name base)" /bin/bash \
-                << "SCRIPT"
+            
+            if ! printf '%s\n' "${flags[@]}" | grep -qP '^nostrip$'; then
+                section "Stripping $pkgname"
+                docker container run --interactive --rm \
+                    --mount type=bind,src="$(realpath "$pkgdir")",dst=/pkg \
+                    "$(image-name base)" /bin/bash \
+                    << "SCRIPT"
 find /pkg -print0 -type f | xargs --null arm-linux-gnueabihf-strip --strip-all &> /dev/null || true
 SCRIPT
-            find "$pkgdir" -print0 -type f | xargs --null strip --strip-all &> /dev/null || true
+                find "$pkgdir" -print0 -type f | xargs --null strip --strip-all &> /dev/null || true
+            fi
 
             section "Finalizing package $pkgname"
             # Show package contents
