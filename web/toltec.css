@@ -1,8 +1,9 @@
 .left, .right {
   display: inline-block;
-  width: calc(49% - 10px);
+  width: calc(47% - 10px);
   padding: inherit 0;
-  margin-left: 0.5%;
+  margin-left: 1.5%;
+  margin-right: 0.5%;
   vertical-align: text-top;
 }
 
@@ -12,8 +13,11 @@
 
 pre {
   padding: 10px;
-  background-color: #ddd;
+  background-color: #131521;
+  color: #fefefe;
   overflow: auto;
+  border-radius: 5px;
+  font-size: 90%;
 }
 
 body {

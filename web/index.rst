@@ -17,7 +17,7 @@ Install Toltec
 ::
 
     $ wget http://toltec-dev.org/bootstrap
-    $ echo "cbe83d1ae2d3ef6291a2b57202bb59aace14f2f1849bbdb09552a7419995294a  bootstrap" | sha256sum -c
+    $ echo "cbe83d1ae2d3ef6291a2b57202bb59aace14f2f1849bbdb09552a7419995294a bootstrap" | sha256sum -c
     $ bash bootstrap
 
 .. class:: left
@@ -49,7 +49,7 @@ How to use
 
 .. class:: left
 
-  the `opkg` command is used to add/remove/update packages. `see our quickstart guide <#>`_
+  the `opkg` command is used to add/remove/update packages. `see the quickstart guide <#>`_
 
 
 .. class:: right
@@ -58,6 +58,8 @@ How to use
 
      $ opkg update
      $ opkg upgrade
+     $ opkg install <package>
+     $ opkg remove <package>
 
 
 ---------------------------------------------------------------
