@@ -37,6 +37,9 @@ export USAGE
 help:
 	@echo "$$USAGE"
 
+homepage:
+	./scripts/homepage-build web/
+
 repo:
 	./scripts/repo-build package build/package build/repo "$$remote_repo"
 

@@ -2,7 +2,7 @@ name: homepage
 on:
     push:
         branches:
-            - add-homepage
+            - homepage
 jobs:
     homepage:
         name: Build and publish the toltec homepage
@@ -15,7 +15,7 @@ jobs:
                 sudo apt-get install python3-docutils
             - name: Build packages
               run: |
-                cd web && bash build_rst.sh
+                make homepage
             - name: Transfer packages and index
               run: |
                 mkdir -p private
