@@ -13,8 +13,18 @@ license=AGPL-3.0-or-later
 depends=(fbink fbdepth)
 
 _srcver="v${pkgver%-*}"
-source=("https://build.koreader.rocks/download/stable/$_srcver/koreader-remarkable-$_srcver.zip")
-sha256sums=(38db8f3895472828d7c1d63fc54db426135a8dbf8425633e299a1a9abfdb69b2)
+source=(
+    "https://build.koreader.rocks/download/stable/$_srcver/koreader-remarkable-$_srcver.zip"
+    koreader.png
+    koreader.draft
+    koreader.oxide
+)
+sha256sums=(
+    38db8f3895472828d7c1d63fc54db426135a8dbf8425633e299a1a9abfdb69b2
+    SKIP
+    SKIP
+    SKIP
+)
 
 package() {
     install -d "$pkgdir"/opt/koreader
@@ -25,12 +35,15 @@ package() {
     ln -s /opt/bin/fbdepth "$pkgdir"/opt/koreader/fbdepth
 
     install -D -m 644 -t "$pkgdir"/opt/etc/draft/ "$recipedir"/koreader.draft
+    install -D -m 644 -t "$pkgdir"/opt/usr/share/applications/ "$recipedir"/koreder.oxide
     install -D -m 644 -t "$pkgdir"/opt/etc/draft/icons/ "$srcdir"/resources/koreader.png
     install -D -m 755 -t "$pkgdir"/opt/bin/ "$recipedir"/koreader
 }
 
 configure() {
-    echo "KOReader has an outstanding bug where it doesn't resize the screen properly when returning to Oxide. See Oxide's release notes for a workaround."
+    if systemctl --quiet is-active tarnish; then
+        rot apps call reload
+    fi
 }
 postremove() {
     # Check to see if tarnish is running and rot is available
