@@ -18,13 +18,20 @@ source=(
     koreader.png
     koreader.draft
     koreader.oxide
+    rm2-support.patch
 )
 sha256sums=(
     38db8f3895472828d7c1d63fc54db426135a8dbf8425633e299a1a9abfdb69b2
     SKIP
     SKIP
     SKIP
+    SKIP
 )
+
+prepare() {
+    patch -p1 -d"$srcdir" < "$srcdir"/rm2-support.patch
+    rm "$srcdir"/rm2-support.patch
+}
 
 package() {
     install -d "$pkgdir"/opt/koreader
