@@ -21,6 +21,12 @@ erode() {
         install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/opt/bin/erode
         install -D -m 644 -t "$pkgdir"/opt/usr/share/applications "$srcdir"/opt/usr/share/applications/codes.eeems.erode.oxide
     }
+    configure() {
+        reload-oxide-apps
+    }
+    postremove() {
+        reload-oxide-apps
+    }
 }
 
 fret() {
@@ -31,6 +37,12 @@ fret() {
     package() {
         install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/opt/bin/fret
         install -D -m 644 -t "$pkgdir"/opt/usr/share/applications "$srcdir"/opt/usr/share/applications/codes.eeems.fret.oxide
+    }
+    configure() {
+        reload-oxide-apps
+    }
+    postremove() {
+        reload-oxide-apps
     }
 }
 
@@ -45,14 +57,18 @@ oxide() {
         install -D -m 644 -t "$pkgdir"/opt/etc "$srcdir"/opt/etc/oxide.conf
         install -D -m 644 -t "$pkgdir"/opt/usr/share/applications "$srcdir"/opt/usr/share/applications/codes.eeems.oxide.oxide
     }
-
     configure() {
         if ! is-enabled "tarnish.service"; then
             echo ""
             echo "Run the following command(s) to use $pkgname as your launcher"
             how-to-enable "tarnish.service"
             echo ""
+        else
+            reload-oxide-apps
         fi
+    }
+    postremove() {
+        reload-oxide-apps
     }
 }
 
@@ -78,18 +94,15 @@ tarnish() {
         install -D -m 644 -t "$pkgdir"/lib/systemd/system "$srcdir"/etc/systemd/system/tarnish.service
         install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/opt/bin/tarnish
     }
-
     configure() {
         systemctl daemon-reload
     }
-
     preremove() {
         if systemctl list-units --full -all | grep -Fq 'tarnish.service'; then
             echo "Disabling $pkgname"
             systemctl disable --now tarnish
         fi
     }
-
     postremove() {
         systemctl daemon-reload
     }
@@ -103,5 +116,11 @@ decay() {
     package() {
         install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/opt/bin/decay
         install -D -m 644 -t "$pkgdir"/opt/usr/share/applications "$srcdir"/opt/usr/share/applications/codes.eeems.decay.oxide
+    }
+    configure() {
+        reload-oxide-apps
+    }
+    postremove() {
+        reload-oxide-apps
     }
 }
