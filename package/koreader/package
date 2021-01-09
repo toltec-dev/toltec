@@ -41,14 +41,9 @@ package() {
 }
 
 configure() {
-    if systemctl --quiet is-active tarnish; then
-        rot apps call reload
-    fi
+    reload-oxide-apps
 }
+
 postremove() {
-    # Check to see if tarnish is running and rot is available
-    # shellcheck disable=SC2009
-    if systemctl list-units --full -all | grep -Fq 'tarnish.service' || [[ "$(ps | grep tarnish | grep -v grep)" != "" ]]; then
-        echo "You may need to manually remove the application entry for KOReader in Oxide."
-    fi
+    reload-oxide-apps
 }
