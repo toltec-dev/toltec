@@ -23,6 +23,20 @@ is-enabled() {
     systemctl --quiet is-enabled "$1" 2> /dev/null
 }
 
+# Check whether a systemd unit is in an active state
+# ("running")
+#
+# Arguments:
+#
+# $1 - Name of the systemd unit, e.g. "xochitl.service" or "xochitl"
+#
+# Exit code:
+#
+# 0 if the unit exists and is enabled, 1 otherwise
+is-active() {
+    systemctl --quiet is-active "$1" 2> /dev/null
+}
+
 # Get a list of systemd units with which the given unit conflicts
 #
 # Arguments:
@@ -54,4 +68,16 @@ how-to-enable() {
     done
 
     echo "$ systemctl enable --now ${1/.service/}"
+}
+
+
+# Reload application registrations in oxide
+#
+# Output:
+#
+# 0 if there was no error, 1 otherwise
+reload-oxide-apps() {
+    if is-active tarnish.service; then
+        /opt/bin/rot apps call reload 2> /dev/null
+    fi
 }
