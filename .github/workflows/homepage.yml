@@ -2,7 +2,7 @@ name: homepage
 on:
     push:
         branches:
-            - homepage
+            - add-homepage
 jobs:
     homepage:
         name: Build and publish the toltec homepage

@@ -20,11 +20,11 @@ Install Toltec
     $ echo "cbe83d1ae2d3ef6291a2b57202bb59aace14f2f1849bbdb09552a7419995294a bootstrap" | sha256sum -c
     $ bash bootstrap
 
-.. class:: left
+.. class:: twocolumn
 
-  To automatically install Toltec, run the bootstrap script in a SSH session on your reMarkable
+  To install Toltec, run the bootstrap script in a SSH session on your reMarkable
 
-.. class:: right
+.. class:: twocolumn
 
   This script installs the toltec package repository and `related tools <#>`_.
 
@@ -32,27 +32,26 @@ Install Toltec
 What does Toltec do?
 ====================
 
-.. class:: left
+.. class:: twocolumn
 
   Toltec is a repository of homebrew applications for the remarkable tablet, similar to homebrew for Mac or linux package repositories.
 
-
-.. class:: right
+.. class:: twocolumn
 
 ::
 
      $ opkg install nao
 
 
+
 How to use
 ==========
 
-.. class:: left
+.. class:: twocolumn
 
-  the `opkg` command is used to add/remove/update packages. `see the quickstart guide <#>`_
+  the **opkg** command is used to add/remove/update packages. `see the quickstart guide <#>`_
 
-
-.. class:: right
+.. class:: twocolumn
 
 ::
 
@@ -60,7 +59,6 @@ How to use
      $ opkg upgrade
      $ opkg install <package>
      $ opkg remove <package>
-
 
 ---------------------------------------------------------------
 
