@@ -5,15 +5,21 @@
 pkgnames=(chessmarkable)
 pkgdesc="A chess game for the reMarkable"
 url=https://github.com/LinusCDE/chessmarkable
-pkgver=0.6.0-2
+pkgver=0.6.0-3
 timestamp=2021-01-03T05:26Z
 section=games
 maintainer="Linus K. <linus@cosmos-ink.net>"
 license=MIT
 
 image=rust:v1.2.1
-source=(https://github.com/LinusCDE/chessmarkable/archive/0.6.0-1.zip)
-sha256sums=(3ad10a46da5a42f603947ad4dce960bdac2d646c0cd29b7bb3a60b8d308dd82a)
+source=(
+    https://github.com/LinusCDE/chessmarkable/archive/0.6.0-1.zip
+    chessMarkable.oxide
+)
+sha256sums=(
+    3ad10a46da5a42f603947ad4dce960bdac2d646c0cd29b7bb3a60b8d308dd82a
+    SKIP
+)
 
 build() {
     # Fall back to system-wide config
@@ -25,5 +31,6 @@ build() {
 package() {
     install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/target/armv7-unknown-linux-gnueabihf/release/chessmarkable
     install -D -m 644 "$srcdir"/oxide "$pkgdir"/opt/etc/draft/chessmarkable
+    install -D -m 644 "$srcdir"/chessMarkable.oxide "$pkgdir"/opt/usr/share/applications/
     install -D -m 644 "$srcdir"/icon.png "$pkgdir"/opt/etc/draft/icons/chessmarkable.png
 }
