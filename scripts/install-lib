@@ -75,9 +75,16 @@ how-to-enable() {
 #
 # Output:
 #
-# 0 if there was no error, 1 otherwise
+# Reload status message
 reload-oxide-apps() {
-    if is-active tarnish.service; then
-        /opt/bin/rot apps call reload 2> /dev/null
+    echo -n "Reloading Oxide applications: "
+    if ! is-active tarnish.service; then
+        echo "N/A"
+        return
     fi
+    if ! /opt/bin/rot apps call reload 2> /dev/null; then
+        echo "Failed!"
+        return
+    fi
+    echo "Done!"
 }
