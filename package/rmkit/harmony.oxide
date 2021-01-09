@@ -1,0 +1,6 @@
+{
+  "displayName": "Harmony",
+  "description": "Procedural sketching app for remarkable",
+  "bin": "/opt/bin/harmony",
+  "icon": "/opt/etc/draft/icons/harmony.png"
+}
