@@ -13,6 +13,8 @@ Building packages:
                     repository for existing package versions.
     repo-local      Build the repository without using existing archives from
                     the remote repository.
+    repo-new        Build only the new packages in the repository based
+										on what exists in the remote repository.
     RECIPE          Build packages from the given recipe.
     RECIPE-push     Push built packages from the given recipe to the
                     .cache/opkg directory on the reMarkable.
@@ -42,6 +44,9 @@ repo:
 
 repo-local:
 	./scripts/repo-build -l package build/package build/repo "$$remote_repo"
+
+repo-new:
+	./scripts/repo-build -n package build/package build/repo "$$remote_repo"
 
 repo-check:
 	./scripts/repo-check build/repo
