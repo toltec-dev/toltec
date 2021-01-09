@@ -5,15 +5,21 @@
 pkgnames=(retris)
 pkgdesc="Tetris game"
 url=https://github.com/LinusCDE/retris
-pkgver=0.6.1-2
+pkgver=0.6.1-3
 timestamp=2020-12-24T12:32Z
 section=games
 maintainer="Linus K. <linus@cosmos-ink.net>"
 license=MIT
 
 image=rust:v1.2.1
-source=(https://github.com/LinusCDE/retris/archive/0.6.1-1.zip)
-sha256sums=(1d7be2246904b1ed0ac0930229f0aec7a44ed660119357b7a6c49ffc8f751229)
+source=(
+    https://github.com/LinusCDE/retris/archive/0.6.1-1.zip
+    retris.oxide
+)
+sha256sums=(
+    1d7be2246904b1ed0ac0930229f0aec7a44ed660119357b7a6c49ffc8f751229
+    SKIP
+)
 
 build() {
     # Fall back to system-wide config
@@ -26,4 +32,5 @@ package() {
     install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/target/armv7-unknown-linux-gnueabihf/release/retris
     install -D -m 644 "$srcdir"/oxide "$pkgdir"/opt/etc/draft/retris
     install -D -m 644 "$srcdir"/icon.png "$pkgdir"/opt/etc/draft/icons/retris.png
+    install -D -m 644 "$srcdir"/retris.oxide "$pkgdir"/opt/usr/share/applications
 }
