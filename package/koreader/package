@@ -24,6 +24,7 @@ sha256sums=(
 
 prepare() {
     patch -p1 -d"$srcdir" < "$srcdir"/rm2-support.patch
+    rm "$srcdir"/rm2-support.patch
 }
 
 package() {
