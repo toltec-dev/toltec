@@ -1,0 +1,6 @@
+{
+  "displayName": "Mines",
+  "description": "Mine detection game",
+  "bin": "/opt/bin/mines",
+  "icon": "/opt/etc/draft/icons/mines.png"
+}
