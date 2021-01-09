@@ -1,0 +1,6 @@
+{
+  "displayName": "recrossable",
+  "description": "Solve crossword puzzles",
+  "bin": "/opt/bin/recrossable",
+  "icon": "/opt/etc/draft/icons/recrossable.png"
+}
