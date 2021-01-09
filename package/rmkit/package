@@ -2,18 +2,20 @@
 # Copyright (c) 2020 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
-pkgnames=(harmony mines nao remux simple)
-timestamp=2020-10-10T01:41+00:00
+pkgnames=(genie harmony mines nao remux simple)
+timestamp=2021-01-05T14:03-08:00
 maintainer="raisjn <of.raisjn@gmail.com>"
 license=MIT
 
 image=python:v1.1
 source=(
-    https://github.com/rmkit-dev/rmkit/archive/91b71447f26f23a7677f0f2b6e33b0d91fa3dc12.zip
+    https://github.com/rmkit-dev/rmkit/archive/eafbc08fc890dfa9130455d59425bdbc32e230a8.zip
     remux.service
+    genie.service
 )
 sha256sums=(
-    76179badd00b5656581997c0aec723277d89fdb6aec85ac8886314b8808e190c
+    65623d8684eae192a58da94379d11a637c9cdb9b939964a82e06dbc4216ea22e
+    SKIP
     SKIP
 )
 
@@ -22,10 +24,37 @@ build() {
     make
 }
 
+genie() {
+    pkgdesc="Gesture engine that connects commands to gestures"
+    url="https://rmkit.dev/apps/genie"
+    pkgver=0.1.0-1
+    section=utils
+
+    package() {
+        install -D -m 755 "$srcdir"/src/build/genie "$pkgdir"/opt/bin/genie
+        install -D -m 644 "$srcdir"/genie.service "$pkgdir"/lib/systemd/system/genie.service
+        install -D -m 644 "$srcdir"/src/genie/example.conf "$pkgdir"/opt/etc/genie.example.conf
+    }
+
+    configure() {
+        systemctl daemon-reload
+        echo "Run 'systemctl enable genie --now' to enable genie"
+    }
+
+    preremove() {
+        echo "Disabling $pkgname"
+        systemctl disable --now "$pkgname"
+    }
+
+    postremove() {
+        systemctl daemon-reload
+    }
+}
+
 harmony() {
     pkgdesc="Procedural sketching app"
     url="https://rmkit.dev/apps/harmony"
-    pkgver=0.1.0-4
+    pkgver=0.1.0-5
     section=drawing
 
     package() {
@@ -43,7 +72,7 @@ harmony() {
 mines() {
     pkgdesc="Mine detection game"
     url="https://rmkit.dev/apps/minesweeper"
-    pkgver=0.1.0-3
+    pkgver=0.1.0-4
     section=games
 
     package() {
@@ -57,7 +86,7 @@ mines() {
 nao() {
     pkgdesc="Nao Package Manager: opkg UI built with SAS"
     url="https://rmkit.dev/apps/nao"
-    pkgver=0.1.0-3
+    pkgver=0.1.0-4
     section=utils
     depends=(simple)
 
@@ -72,7 +101,7 @@ nao() {
 remux() {
     pkgdesc="App launcher that supports multi-tasking applications"
     url="https://rmkit.dev/apps/remux"
-    pkgver=0.1.4-1
+    pkgver=0.1.5-1
     section=launchers
 
     package() {
@@ -104,7 +133,7 @@ remux() {
 simple() {
     pkgdesc="Simple app script for writing scripted applications"
     url="https://rmkit.dev/apps/sas"
-    pkgver=0.1.0-2
+    pkgver=0.1.0-3
     section=utils
 
     package() {

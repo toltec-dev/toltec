@@ -4,7 +4,7 @@
 
 pkgnames=(fbink fbdepth fbink-doom)
 url=https://github.com/NiLuJe/FBInk
-pkgver=1.23.1-1
+pkgver=1.23.1-2
 timestamp=2020-12-14T12:30Z
 section=util
 maintainer="Mattéo Delabre <spam@delab.re>"
