@@ -5,7 +5,7 @@
 pkgnames=(whiteboard-hypercard)
 pkgdesc="Real-time collaboration, drawing or whiteboarding"
 url=https://github.com/fenollp/reMarkable-tools
-pkgver=0.3.0-2
+pkgver=0.3.0-3
 timestamp=2020-09-23T18:01Z
 section=drawing
 maintainer="Pierre Fenoll <pierrefenoll@gmail.com>"
@@ -15,9 +15,11 @@ image=rust:v1.1
 source=(
     https://github.com/fenollp/reMarkable-tools/archive/v0.3.0.zip
     whiteboard-hypercard.draft
+    whiteboard.oxide
 )
 sha256sums=(
     3d160d77cd384ee9339c7f791b3f762bb295a670c0c728373c6a09f14a061046
+    SKIP
     SKIP
 )
 
@@ -30,4 +32,5 @@ build() {
 package() {
     install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/marauder/target/armv7-unknown-linux-gnueabihf/release/whiteboard
     install -D -m 644 -t "$pkgdir"/opt/etc/draft "$srcdir"/whiteboard-hypercard.draft
+    install -D -m 644 -t "$pkgdir"/opt/usr/share/applications "$srcdir"/whiteboard.oxide
 }
