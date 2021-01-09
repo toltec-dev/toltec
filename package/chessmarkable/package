@@ -34,3 +34,11 @@ package() {
     install -D -m 644 "$srcdir"/chessMarkable.oxide "$pkgdir"/opt/usr/share/applications/
     install -D -m 644 "$srcdir"/icon.png "$pkgdir"/opt/etc/draft/icons/chessmarkable.png
 }
+
+configure() {
+    reload-oxide-apps
+}
+
+postremove() {
+    reload-oxide-apps
+}
