@@ -43,6 +43,11 @@ harmony() {
 
     configure() {
         mkdir -p /home/root/harmony/saved_images
+        reload-oxide-apps
+    }
+
+    postremove() {
+        reload-oxide-apps
     }
 }
 
@@ -58,6 +63,14 @@ mines() {
         install -D -m 644 "$srcdir"/src/minesweeper/mines1.png "$pkgdir"/opt/etc/draft/icons/mines.png
         install -D -m 644 "$srcdir"/mines.oxide "$pkgdir"/opt/usr/share/applications/mines.oxide
     }
+
+    configure() {
+        reload-oxide-apps
+    }
+
+    postremove() {
+        reload-oxide-apps
+    }
 }
 
 nao() {
@@ -72,6 +85,14 @@ nao() {
         install -D -m 644 "$srcdir"/src/nao/nao.draft "$pkgdir"/opt/etc/draft/nao.draft
         install -D -m 644 "$srcdir"/src/nao/nao.png "$pkgdir"/opt/etc/draft/icons/nao.png
         install -D -m 644 "$srcdir"/nao.oxide "$pkgdir"/opt/usr/share/applications
+    }
+
+    configure() {
+        reload-oxide-apps
+    }
+
+    postremove() {
+        reload-oxide-apps
     }
 }
 
