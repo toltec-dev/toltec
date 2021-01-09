@@ -1,0 +1,6 @@
+{
+  "displayName": "Terminal",
+  "description": "Terminal emulator with on-screen touch keyboard",
+  "bin": "/opt/bin/fingerterm",
+  "icon": "/opt/etc/draft/icons/fingerterm.png"
+}
