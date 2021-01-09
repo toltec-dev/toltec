@@ -1,0 +1,6 @@
+{
+  "displayName": "reTris",
+  "description": "Tetris",
+  "bin": "/opt/bin/retris",
+  "icon": "/opt/etc/draft/icons/retris.png"
+}
