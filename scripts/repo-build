@@ -15,7 +15,7 @@ gathered in REPODIR.  If REMOTEREPO is omitted,
 Options:
 
     -h              Show this help message.
-    -n              Only build new packages
+    -n              Only build new packages.
     -l              Only build packages locally, do not reuse existing packages
                     from the publishing server."
 
@@ -95,7 +95,6 @@ for recipedir in "$recipesdir"/*; do
                 }
             ); then
                 missingpkgs+=("$pkgname")
-
             else
                 (
                     load-recipe-pkg "$pkgname"
