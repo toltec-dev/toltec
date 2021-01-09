@@ -34,3 +34,11 @@ package() {
     install -D -m 644 -t "$pkgdir"/opt/etc/draft "$srcdir"/whiteboard-hypercard.draft
     install -D -m 644 -t "$pkgdir"/opt/usr/share/applications "$srcdir"/whiteboard.oxide
 }
+
+configure() {
+    reload-oxide-apps
+}
+
+postremove() {
+    reload-oxide-apps
+}
