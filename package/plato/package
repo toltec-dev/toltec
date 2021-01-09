@@ -83,4 +83,9 @@ configure() {
         echo "Place your media files for plato in '$mediadir'"
         echo ""
     fi
+    reload-oxide-apps
+}
+
+postremove() {
+    reload-oxide-apps
 }
