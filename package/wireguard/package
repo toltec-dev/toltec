@@ -35,13 +35,13 @@ sha256sums=(c74cedb10c9b830d937b5575e4b7d2625a8534d2c06a80368e5530db23e69d3b)
 build() {
     apt-get update
     apt-get install -y bc lzop git
-    git init
-    git remote add -f origin "$_kernelrepo"
 
     # we will save the generated files in .pc,
     # so that they will not be deleted by `make mrproper`
     mkdir .pc
+    git init
     for i in $(seq 0 1); do
+        git fetch --depth=1 "$_kernelrepo" "${_kernelrevs[$i]}"
         git checkout -f "${_kernelrevs[$i]}"
         touch .scmversion
         cp "${_defconfigs[$i]}" .config
