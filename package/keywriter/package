@@ -5,7 +5,7 @@
 pkgnames=(keywriter)
 pkgdesc="Markdown-enabled free writing app"
 url=https://github.com/dps/remarkable-keywriter
-pkgver=0.1.0-1
+pkgver=0.1.0-2
 timestamp=2019-07-13T06:27Z
 section=writing
 maintainer="Mattéo Delabre <spam@delab.re>"
@@ -17,11 +17,13 @@ source=(
     https://github.com/dps/remarkable-keywriter/archive/c77ec3f65d9ff769f3f5dc85cc91abbf05aa163f.zip
     "https://github.com/vmg/sundown/archive/$_sundown.zip"
     keywriter.draft
+    keywriter.oxide
 )
 noextract=("$_sundown.zip")
 sha256sums=(
     acbd0b0f74793320b1399d2adb68c4647f128578c7786f80c1cf8472b16a36f7
     3c594d8219b17acd140b7011b44ebc69ab9d68910da827494f8c9cc2f5b12ecf
+    SKIP
     SKIP
 )
 
@@ -41,6 +43,7 @@ build() {
 package() {
     install -D -m 755 "$srcdir"/edit "$pkgdir"/opt/bin/keywriter
     install -D -m 644 -t "$pkgdir"/opt/etc/draft "$srcdir"/keywriter.draft
+    install -D -m 644 -t "$pkgdir"/opt/usr/share/applications "$srcdir"/keywriter.oxide
 }
 
 configure() {
