@@ -83,4 +83,4 @@ Frequently Asked Questions
 
 * Will this brick my remarkable?
 
-  No
+  No, but `standard disclaimers apply <https://github.com/toltec-dev/toltec/blob/stable/LICENSE>`_
