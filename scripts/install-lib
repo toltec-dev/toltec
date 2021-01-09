@@ -70,7 +70,6 @@ how-to-enable() {
     echo "$ systemctl enable --now ${1/.service/}"
 }
 
-
 # Reload application registrations in oxide
 #
 # Output:
