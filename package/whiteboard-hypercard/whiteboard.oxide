@@ -1,0 +1,6 @@
+{
+  "displayName": "Whiteboard",
+  "description": "live whiteboard",
+  "bin": "/opt/bin/whiteboard",
+  "icon": "/opt/etc/draft/icons/whiteboard.png"
+}
