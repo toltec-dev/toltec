@@ -124,25 +124,28 @@ elif [[ $(type -t build) == "function" ]]; then
 fi
 
 function convert-draft-apps() {
+    local name
+    local bin
+    local description
+    local icon
+    local onstop
     find "$pkgdir"{/opt,}/etc/draft -maxdepth 1 -type f 2> /dev/null | while read -r file; do
-        local name="$(cat "$file" | grep ^name= | sed 's|^name=||')"
+        name="$(cat "$file" | grep ^name= | sed 's|^name=||')"
         if ! [ -f "$pkgdir"/opt/usr/share/applications/"$name".oxide ]; then
             echo "Creating $name.oxide"
-            local bin="$(cat "$file" | grep ^call= | sed -E 's|^call=:?||' | xargs -I {} jo bin="{}")"
-            local description="$(cat "$file" | grep ^desc= | sed -E 's|^desc=:?||' | xargs -I {} jo description="{}")"
-            local icon="$(cat "$file" | grep ^imgFile= | sed -E 's|^imgFile=:?||')"
+            bin="$(cat "$file" | grep ^call= | sed -E 's|^call=:?||' | xargs -I {} jo bin="{}")"
+            description="$(cat "$file" | grep ^desc= | sed -E 's|^desc=:?||' | xargs -I {} jo description="{}")"
+            icon="$(cat "$file" | grep ^imgFile= | sed -E 's|^imgFile=:?||')"
             if [[ "$icon" != "" ]]; then
                 icon="$(jo icon="$(dirname "${file#"$pkgdir"}")/$icon.png")"
             fi
-            local onstop="$(cat "$file" | grep ^term= | sed -E 's|^term=:?||')"
+            onstop="$(cat "$file" | grep ^term= | sed -E 's|^term=:?||')"
             if [[ "$onstop" != "" ]]; then
-                echo $onstop
                 onstop="$(jo events="$(jo stop="$onstop")")"
-                echo $onstop
             fi
             mkdir -p "$pkgdir"/opt/usr/share/applications
             jq -Ms '.[0] * .[1] * .[2] * .[3] * .[4]' \
-                <(echo "$(jo name="$name")") \
+                <(jo name="$name") \
                 <(echo "${description:-{\}}") \
                 <(echo "${bin:-{\}}") \
                 <(echo "${icon:-{\}}") \
