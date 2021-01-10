@@ -16,7 +16,7 @@ _srcver="v${pkgver%-*}"
 source=(
     "https://build.koreader.rocks/download/stable/$_srcver/koreader-remarkable-$_srcver.zip"
     koreader.draft
-    koreader.oxide
+    KOReader.oxide
     rm2-support.patch
 )
 sha256sums=(
@@ -40,7 +40,7 @@ package() {
     ln -s /opt/bin/fbdepth "$pkgdir"/opt/koreader/fbdepth
 
     install -D -m 644 -t "$pkgdir"/opt/etc/draft/ "$recipedir"/koreader.draft
-    install -D -m 644 -t "$pkgdir"/opt/usr/share/applications/ "$recipedir"/koreader.oxide
+    install -D -m 644 -t "$pkgdir"/opt/usr/share/applications/ "$recipedir"/KOReader.oxide
     install -D -m 644 -t "$pkgdir"/opt/etc/draft/icons/ "$srcdir"/resources/koreader.png
     install -D -m 755 -t "$pkgdir"/opt/bin/ "$recipedir"/koreader
 }
