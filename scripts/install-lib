@@ -8,20 +8,19 @@
 # Common functions used by the install scripts
 #
 
-# Check whether a systemd unit exists and is enabled
+# Check whether a systemd unit exists and is in an enabled-like state
+# ("enabled", "enabled-runtime", "alias", "static", "indirect", "generated"
+# or "transient")
 #
 # Arguments:
 #
-# $1 - Full name of the systemd unit, e.g. "xochitl.service"
+# $1 - Name of the systemd unit, e.g. "xochitl.service" or "xochitl"
 #
 # Exit code:
 #
 # 0 if the unit exists and is enabled, 1 otherwise
 is-enabled() {
-    # Note that we must invert the condition so that the exit code indicates
-    # a failure when the unit exists and is disabled or when the unit does
-    # not exist
-    ! systemctl list-unit-files "$1" | awk "/$1/{exit \$2 == \"enabled\"}"
+    systemctl --quiet is-enabled "$1" 2> /dev/null
 }
 
 # Get a list of systemd units with which the given unit conflicts
