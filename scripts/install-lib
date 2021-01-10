@@ -48,7 +48,7 @@ get-conflicts() {
 # Commands to run to achieve the desired result
 how-to-enable() {
     for conflict in $(get-conflicts "$1"); do
-        if is-enabled "$conflict"; then
+        if is-enabled "$conflict" && echo "$conflict" | grep -q '\.service$'; then
             echo "$ systemctl disable --now ${conflict/.service/}"
         fi
     done
