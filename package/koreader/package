@@ -15,14 +15,12 @@ depends=(fbink fbdepth)
 _srcver="v${pkgver%-*}"
 source=(
     "https://build.koreader.rocks/download/stable/$_srcver/koreader-remarkable-$_srcver.zip"
-    koreader.png
     koreader.draft
     koreader.oxide
     rm2-support.patch
 )
 sha256sums=(
     38db8f3895472828d7c1d63fc54db426135a8dbf8425633e299a1a9abfdb69b2
-    SKIP
     SKIP
     SKIP
     SKIP
