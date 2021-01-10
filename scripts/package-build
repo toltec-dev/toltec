@@ -288,8 +288,6 @@ SCRIPT
             # Reload oxide apps if they are part of the package
             if [ -d "$pkgdir"/opt/usr/share/applications ]; then
                 {
-                    maintainer-script-header
-                    declare -f configure
                     cat << 'SCRIPT'
 if [[ $1 = remove ]]; then
     if ! is-active tarnish.service; then
