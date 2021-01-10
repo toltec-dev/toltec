@@ -1,25 +1,40 @@
 ## Toltec
 
-![Status of the stable repository](https://github.com/matteodelabre/toltec/workflows/stable/badge.svg)
-![Status of the testing repository](https://github.com/matteodelabre/toltec/workflows/testing/badge.svg)
+![Status of the stable repository](https://github.com/toltec-dev/toltec/workflows/stable/badge.svg)
+![Status of the testing repository](https://github.com/toltec-dev/toltec/workflows/testing/badge.svg)
+[![rm1](https://img.shields.io/badge/rM1-supported-green)](https://remarkable.com/store/remarkable)
+[![rm2](https://img.shields.io/badge/rM2-experimental-yellow)](https://remarkable.com/store/remarkable-2)
 [![Discord](https://img.shields.io/discord/463752820026376202.svg?label=reMarkable&logo=discord&logoColor=ffffff&color=7389D8&labelColor=6A7EC2)](https://discord.gg/ATqQGfu)
 
 Toltec is a community-maintained repository of free software for [the reMarkable tablet](https://remarkable.com/).
 
-[Browse the list of available packages →](https://toltec.delab.re/stable)
-
 ### Install it
 
-Toltec works with the [Opkg](https://code.google.com/archive/p/opkg/) package manager, which is in widespread use in embedded devices.
-Opkg is not available by default on the reMarkable, but you can install it by following the instructions described in [remarkable\_entware](https://github.com/evidlo/remarkable_entware).
-After installing Opkg on your device, add the Toltec repository to `/opt/etc/opkg.conf` and download the repository data by running the following commands:
+Toltec works on top of the [Opkg](https://code.google.com/archive/p/opkg/) package manager and the [Entware](https://github.com/Entware/Entware) distribution, which are in widespread use in embedded devices.
+To automatically install Opkg, Entware and Toltec, run the bootstrap script in a [SSH session](https://remarkablewiki.com/tech/ssh) on your reMarkable:
 
 ```sh
-$ cat "src/gz toltec https://toltec.delab.re/stable" >> /opt/etc/opkg.conf
-$ opkg update
+$ wget http://toltec-dev.org/bootstrap
+$ echo "3eefd43f5c80ea4b7b8bb60475a5ebe23d895fc2eb12d3174d1b7594a6a0c6d5  bootstrap" | sha256sum -c
+$ bash bootstrap
 ```
 
-You now have access to all of the Toltec packages!
+> **Warning:**
+> Make sure to run the second line above, which verifies the integrity of the downloaded script before running it.
+> Since the built-in wget binary does not implement TLS, _you will expose yourself to MITM attacks if you skip this step!_
+> The bootstrap script takes care of replacing the built-in wget with a safer version.
+
+> **What does this script do?**
+> This script will create a `.entware` folder in your home directory, containing a complete Entware distribution (fetched from <https://bin.entware.net/armv7sf-k3.2/>), and permanently mount it to `/opt`.
+> It will then configure Opkg for use with Toltec and configure your system to automatically find binaries from `/opt`.
+> You are encouraged to [audit the script](scripts/bootstrap/bootstrap) yourself if you can.
+
+> **Compatibility with [remarkable_entware](https://github.com/evidlo/remarkable_entware).**
+> If you have already installed Entware through Evidlo’s remarkable\_entware, this script will detect the existing install and configure Toltec on top of it.
+
+You now have access to all of the Toltec and Entware packages!
+
+[Browse the list of available packages →](https://toltec-dev.org/stable)
 
 ### Use it
 
@@ -43,7 +58,7 @@ $ opkg upgrade
 ```
 
 [See information about advanced Opkg commands →](https://openwrt.org/docs/guide-user/additional-software/opkg)\
-[Choose between the _stable_ and _testing_ channels →](docs/channels.md)
+[Choose between _stable_ and _testing_ →](docs/branches.md)
 
 ### Build it
 

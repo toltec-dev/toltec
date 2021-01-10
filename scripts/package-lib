@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# Copyright (c) 2020 The Toltec Contributors
+# SPDX-License-Identifier: MIT
 
 #
 # package-lib
@@ -51,7 +53,7 @@ rtar() {
     tar --sort=name \
         --owner=0 --group=0 --numeric-owner \
         --mtime="@${SOURCE_DATE_EPOCH}" \
-        --pax-option=exthdr.name=%d/PaxHeaders/%f,delete=atime,delete=ctime \
+        --format=gnu \
         --create --file - --directory "$2" . \
         | gzip -9 --no-name - > "$1"
 }
@@ -109,14 +111,98 @@ tardiff() {
     fi
 }
 
+# Compute how many containing folders can be safely stripped from a tar archive
+# without losing data
+#
+# Arguments:
+#
+# $1 - Path to an archive
+#
+# Output:
+#
+# Number of containing folders in the archive
+tarprefix() {
+    local contents
+    contents="$(bsdtar -t --file "$1")"
+
+    # Find the longest common prefix in the archive files
+    local strip_depth=0
+    local fields="\$1"
+
+    while [[ "$(echo "$contents" | sed 's/\/$//' \
+        | awk -F/ "NF>=$((strip_depth + 1)) { print $fields }" \
+        | sort | uniq | wc -l)" == "1" ]]; do
+        ((++strip_depth))
+        fields="$fields\"/\"\$$((strip_depth + 1))"
+    done
+
+    # If there’s only one file in the archive, keep the last component
+    if [[ "$(echo "$contents" | sed 's/\/$//' \
+        | awk -F/ "NF>=$strip_depth { print \$0 }" \
+        | wc -l)" == "1" ]]; then
+        ((--strip_depth))
+    fi
+
+    echo "$strip_depth"
+}
+
 # Curl command with flags suitable for scripting
 rcurl() {
-    curl --fail --silent --tlsv1.2 "$@"
+    curl --fail --silent --show-error --tlsv1.2 "$@"
 }
 
 # Curl command with flags suitable for scripting, restricted to HTTPS
 rsecurl() {
     rcurl --proto '=https' "$@"
+}
+
+# Join elements with the given delimiter
+#
+# Arguments:
+#
+# $1 - Separator string
+# $2... - Elements to join
+#
+# Output:
+#
+# Joined string.
+join-elements() {
+    local sep="$1"
+    local cursep=""
+    shift
+
+    for arg; do
+        echo -n "$cursep$arg"
+        cursep="$sep"
+    done
+
+    echo
+}
+
+# Check if a string appears in a set of strings
+#
+# Arguments:
+#
+# $1 - String to look for
+# $2... - Elements to compare to $1
+#
+# Example:
+#
+# > has-element "needle" "${haystack[@]}"
+# Will return 0 if "needle" is found in the "haystack" array.
+#
+# Exit code: 0 if the element is found, 1 otherwise.
+has-element() {
+    local needle="$1"
+    shift
+
+    for element; do
+        if [[ $needle == "$element" ]]; then
+            return 0
+        fi
+    done
+
+    return 1
 }
 
 # Check that a field is defined with the required type
@@ -132,8 +218,11 @@ rsecurl() {
 # $2 - Expected type of the field, 'string', 'array' or 'map'
 # $3 (optional) - Either 'nonempty' or 'optional'
 check-field() {
-    local signature
-    signature="$(declare -p "$1" 2> /dev/null)"
+    # shellcheck disable=SC2155
+    # SC2155: Declare and assign separately to avoid masking return values
+    # `declare` fails if and only if $1 does not exist, in which case
+    # `signature` will be empty. Therefore we do not need its return code
+    local signature="$(declare -p "$1" 2> /dev/null)"
     local vartype=undefined
 
     if [[ $signature =~ ^declare\ -- ]]; then
@@ -151,7 +240,7 @@ check-field() {
             error "The '$1' variable is not defined"
         fi
     else
-        if [[ $vartype != "$2" ]]; then
+        if [[ ! $vartype =~ ^$2$ ]]; then
             error "The '$1' variable should be of type '$2', not '$vartype'"
         fi
 
@@ -161,47 +250,100 @@ check-field() {
     fi
 }
 
-# Load metadata and functions defined in a package recipe
+# Check that a function is defined
+#
+# If the function is not defined, this function prints an error message and
+# exits the script immediately.
 #
 # Arguments:
 #
-# $1 - Path to the package recipe
-load-recipe() {
+# $1 - Name of the function
+check-function() {
+    if ! declare -F "$1" > /dev/null 2>&1; then
+        error "The '$1()' function is not defined"
+    fi
+}
+
+# Load metadata fields common to all the packages in a recipe
+#
+# Arguments:
+#
+# $1 - Name of the package recipe
+load-recipe-header() {
     # shellcheck disable=SC1090
     source "$1"/package
 
     # Check fields types
-    check-field pkgname string nonempty
-    check-field pkgdesc string nonempty
-    check-field url string nonempty
-    check-field pkgver string nonempty
+    check-field pkgnames array nonempty
     check-field timestamp string nonempty
-    check-field section string nonempty
     check-field maintainer string nonempty
-    check-field license string nonempty
-    check-field depends array optional || depends=()
-    check-field conflicts array optional || conflicts=()
     check-field arch string optional || arch=armv7-3.2
     check-field image string optional || image=
     check-field source array optional || source=()
+    check-field noextract array optional || noextract=()
     check-field sha256sums array optional || sha256sums=()
 
     # Make fields read-only
     readonly \
-        pkgname \
-        pkgdesc \
-        url \
-        pkgver \
+        pkgnames \
         timestamp \
-        section \
         maintainer \
-        license \
-        depends \
-        conflicts \
         arch \
         image \
         source \
+        noextract \
         sha256sums \
+        2> /dev/null || true
+
+    # Make defined functions read-only
+    readonly -f \
+        prepare \
+        build \
+        2> /dev/null || true
+
+    # Recipes containing several packages need to define a function
+    # for each one, with package-specific data and functions
+    if [[ ${#pkgnames[@]} -gt 1 ]]; then
+        for pkgname in "${pkgnames[@]}"; do
+            check-function "$pkgname"
+        done
+
+        # Make defined functions read-only
+        readonly -f "${pkgnames[@]}"
+    fi
+}
+
+# Load metadata fields for a given package in the currently loaded recipe
+#
+# Arguments:
+#
+# $1 - Name of the package to load
+load-recipe-pkg() {
+    readonly pkgname="$1"
+
+    if [[ ${#pkgnames[@]} -gt 1 ]]; then
+        # For recipes with multiple packages, load data specific
+        # to the requested one
+        "$pkgname"
+    fi
+
+    check-field pkgdesc string nonempty
+    check-field url string nonempty
+    check-field pkgver string nonempty
+    check-field section string nonempty
+    check-field license string nonempty
+    check-field depends array optional || depends=()
+    check-field conflicts array optional || conflicts=()
+
+    # Make fields read-only
+    readonly \
+        pkgdesc \
+        url \
+        pkgver \
+        section \
+        license \
+        depends \
+        conflicts \
         2> /dev/null || true
 
     # Check required functions
@@ -211,7 +353,6 @@ load-recipe() {
 
     # Make defined functions read-only
     readonly -f \
-        build \
         package \
         preinstall \
         configure \
@@ -238,6 +379,7 @@ dump-fields() {
         arch \
         image \
         source \
+        noextract \
         sha256sums \
         2> /dev/null || true
 }

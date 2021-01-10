@@ -1,0 +1,142 @@
+#!/usr/bin/env bash
+# Copyright (c) 2020 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgnames=(genie harmony mines nao remux simple)
+timestamp=2021-01-05T14:03-08:00
+maintainer="raisjn <of.raisjn@gmail.com>"
+license=MIT
+
+image=python:v1.1
+source=(
+    https://github.com/rmkit-dev/rmkit/archive/522311921cb3acafd9ed2d21e0ba65c9d6d3f452.zip
+    remux.service
+    genie.service
+)
+sha256sums=(
+    71c431340e87dea57a9eb51a225f8b0a60b6d11e2f26b391adac4578b115be76
+    SKIP
+    SKIP
+)
+
+build() {
+    pip3 install okp
+    make
+}
+
+genie() {
+    pkgdesc="Gesture engine that connects commands to gestures"
+    url="https://rmkit.dev/apps/genie"
+    pkgver=0.1.1-1
+    section=utils
+
+    package() {
+        install -D -m 755 "$srcdir"/src/build/genie "$pkgdir"/opt/bin/genie
+        install -D -m 644 "$srcdir"/genie.service "$pkgdir"/lib/systemd/system/genie.service
+        install -D -m 644 "$srcdir"/src/genie/example.conf "$pkgdir"/opt/etc/genie.example.conf
+    }
+
+    configure() {
+        systemctl daemon-reload
+        echo "Run 'systemctl enable genie --now' to enable genie"
+    }
+
+    preremove() {
+        echo "Disabling $pkgname"
+        systemctl disable --now "$pkgname"
+    }
+
+    postremove() {
+        systemctl daemon-reload
+    }
+}
+
+harmony() {
+    pkgdesc="Procedural sketching app"
+    url="https://rmkit.dev/apps/harmony"
+    pkgver=0.1.0-5
+    section=drawing
+
+    package() {
+        install -D -m 755 "$srcdir"/src/build/harmony "$pkgdir"/opt/bin/harmony
+        install -D -m 644 "$srcdir"/src/harmony/harmony.draft "$pkgdir"/opt/etc/draft/harmony.draft
+        install -D -m 644 "$srcdir"/src/harmony/harmony.png "$pkgdir"/opt/etc/draft/icons/harmony.png
+
+    }
+
+    configure() {
+        mkdir -p /home/root/harmony/saved_images
+    }
+}
+
+mines() {
+    pkgdesc="Mine detection game"
+    url="https://rmkit.dev/apps/minesweeper"
+    pkgver=0.1.0-4
+    section=games
+
+    package() {
+        install -D -m 755 "$srcdir"/src/build/mines "$pkgdir"/opt/bin/mines
+        install -D -m 644 "$srcdir"/src/minesweeper/mines.draft "$pkgdir"/opt/etc/draft/mines.draft
+        install -D -m 644 "$srcdir"/src/minesweeper/mines1.png "$pkgdir"/opt/etc/draft/icons/mines.png
+
+    }
+}
+
+nao() {
+    pkgdesc="Nao Package Manager: opkg UI built with SAS"
+    url="https://rmkit.dev/apps/nao"
+    pkgver=0.1.0-4
+    section=utils
+    depends=(simple)
+
+    package() {
+        install -D -m 755 "$srcdir"/src/build/nao.sh "$pkgdir"/opt/bin/nao
+        install -D -m 644 "$srcdir"/src/nao/nao.draft "$pkgdir"/opt/etc/draft/nao.draft
+        install -D -m 644 "$srcdir"/src/nao/nao.png "$pkgdir"/opt/etc/draft/icons/nao.png
+
+    }
+}
+
+remux() {
+    pkgdesc="App launcher that supports multi-tasking applications"
+    url="https://rmkit.dev/apps/remux"
+    pkgver=0.1.5-1
+    section=launchers
+
+    package() {
+        install -D -m 755 "$srcdir"/src/build/remux "$pkgdir"/opt/bin/remux
+        install -D -m 644 "$srcdir"/remux.service "$pkgdir"/lib/systemd/system/remux.service
+    }
+
+    configure() {
+        systemctl daemon-reload
+
+        if ! is-enabled "$pkgname.service"; then
+            echo ""
+            echo "Run the following command(s) to use $pkgname as your launcher"
+            how-to-enable "$pkgname.service"
+            echo ""
+        fi
+    }
+
+    preremove() {
+        echo "Disabling $pkgname"
+        systemctl disable --now "$pkgname"
+    }
+
+    postremove() {
+        systemctl daemon-reload
+    }
+}
+
+simple() {
+    pkgdesc="Simple app script for writing scripted applications"
+    url="https://rmkit.dev/apps/sas"
+    pkgver=0.1.0-3
+    section=utils
+
+    package() {
+        install -D -m 755 "$srcdir"/src/build/simple "$pkgdir"/opt/bin/simple
+    }
+}

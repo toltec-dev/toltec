@@ -1,2 +1,5 @@
 #!/usr/bin/env bash
-bash /opt/koreader/koreader.sh
+# Copyright (c) 2020 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+KO_DONT_GRAB_INPUT=1 bash /opt/koreader/koreader.sh

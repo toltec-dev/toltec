@@ -1,22 +1,53 @@
 #!/usr/bin/env bash
-pkgname=koreader
+# Copyright (c) 2020 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgnames=(koreader)
 pkgdesc="An ebook reader application supporting PDF, DjVu, EPUB, FB2 and many more formats"
 url=https://github.com/koreader/koreader
-pkgver=2020.09.29-1
-timestamp=2020-09-29T01:52Z
+pkgver=2020.12-2
+timestamp=2020-10-10T20:13Z
 section=readers
 maintainer="raisjn <of.raisjn@gmail.com>"
 license=AGPL-3.0-or-later
+depends=(fbink fbdepth)
 
-source=(https://build.koreader.rocks/download/nightly/v2020.09-29-ge169b34_2020-09-29/koreader-remarkable-v2020.09-29-ge169b34_2020-09-29.zip)
-sha256sums=(05dcf25067bfec4c949274bad130823b23c771fde1a549a39f5eccca2320549b)
+_srcver="v${pkgver%-*}"
+source=(
+    "https://build.koreader.rocks/download/stable/$_srcver/koreader-remarkable-$_srcver.zip"
+    rm2-support.patch
+)
+sha256sums=(
+    38db8f3895472828d7c1d63fc54db426135a8dbf8425633e299a1a9abfdb69b2
+    SKIP
+)
+
+prepare() {
+    patch -p1 -d"$srcdir" < "$srcdir"/rm2-support.patch
+    rm "$srcdir"/rm2-support.patch
+}
 
 package() {
     install -d "$pkgdir"/opt/koreader
     cp -R "$srcdir"/* "$pkgdir"/opt/koreader/
     rm "$pkgdir"/opt/koreader/koreader*zip
+    rm "$pkgdir"/opt/koreader/{fbink,fbdepth}
+    ln -s /opt/bin/fbink "$pkgdir"/opt/koreader/fbink
+    ln -s /opt/bin/fbdepth "$pkgdir"/opt/koreader/fbdepth
 
     install -D -m 644 -t "$pkgdir"/opt/etc/draft/ "$recipedir"/koreader.draft
     install -D -m 644 -t "$pkgdir"/opt/etc/draft/icons/ "$srcdir"/resources/koreader.png
     install -D -m 755 -t "$pkgdir"/opt/bin/ "$recipedir"/koreader
+}
+
+configure() {
+    echo "KOReader has an outstanding bug where it doesn't resize the screen properly when returning to Oxide. See Oxide's release notes for a workaround."
+}
+
+postremove() {
+    # Check to see if tarnish is running and rot is available
+    # shellcheck disable=SC2009
+    if systemctl list-units --full -all | grep -Fq 'tarnish.service' || [[ "$(ps | grep tarnish | grep -v grep)" != "" ]]; then
+        echo "You may need to manually remove the application entry for KOReader in Oxide."
+    fi
 }

@@ -1,23 +1,24 @@
 #!/usr/bin/env bash
-pkgname=recrossable
+# Copyright (c) 2020 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgnames=(recrossable)
 pkgdesc="Solve crossword puzzles"
 url=https://github.com/sandsmark/recrossable
-pkgver=0.0.0-1
-timestamp=2019-01-08T17:41Z
+pkgver=0.0.0-3
+timestamp=2020-10-05T08:43Z
 section=games
 maintainer="Mattéo Delabre <spam@delab.re>"
 license=GPL-2.0-or-later
 
 image=qt:v1.2
 source=(
-    https://github.com/sandsmark/recrossable/archive/6c2c8b1d3d2ec3f3978078f941b09d8cc525f4c6.zip
-    synthesize-pen-events.patch
+    https://github.com/sandsmark/recrossable/archive/5faa37c6e8a13e3ddeb0fe6d9d5f15717f83b662.zip
     recrossable.draft
     recrossable.svg
 )
 sha256sums=(
-    d2596134f33ecbbf629fb05ca7740e2d89c4cdc41454fe56ee8c33ba4c4f6147
-    SKIP
+    51e9f630204262fd2b839dafadb4e288797609467e9f07c29f7581711cb2eaec
     SKIP
     SKIP
 )
@@ -31,7 +32,6 @@ build() {
         -o Dpkg::Options::="--force-confdef" \
         imagemagick librsvg2-bin
 
-    patch main.cpp synthesize-pen-events.patch
     sed -i 's/linux-oe-g++/linux-arm-gnueabihf-g++/' recrossable.pro
     qmake
     make

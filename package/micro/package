@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+# Copyright (c) 2020 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgnames=(micro)
+pkgdesc="a modern and intuitive terminal-based text editor"
+url=https://micro-editor.github.io/
+pkgver=2.0.8-2
+timestamp=2020-10-06T22:44Z
+section=utils
+maintainer="Eeems <eeems@eeems.email>"
+license=MIT
+
+source=(https://github.com/zyedidia/micro/releases/download/v2.0.8/micro-2.0.8-linux-arm.tar.gz)
+sha256sums=(08fa21e19b4fdece3696aed8cd03d60bb65f1c295c5cdce645e3725628ea37ca)
+
+package() {
+    install -Dm644 "$srcdir"/LICENSE "$pkgdir/opt/usr/share/licenses/$pkgname/LICENSE"
+    install -Dm644 "$srcdir"/LICENSE-THIRD-PARTY "$pkgdir/opt/usr/share/licenses/$pkgname/LICENSE-THIRD-PARTY"
+    install -Dm644 "$srcdir"/micro.1 "$pkgdir/opt/share/man/man1/micro.1"
+    install -Dm744 "$srcdir"/micro "$pkgdir/opt/bin/micro"
+}

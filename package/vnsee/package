@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+# Copyright (c) 2020 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgnames=(vnsee)
+pkgdesc="VNC client allowing you to use the device as a second screen"
+url=https://github.com/matteodelabre/vnsee
+pkgver=0.3.0-2
+timestamp=2020-10-23T14:02Z
+section=utils
+maintainer="Mattéo Delabre <spam@delab.re>"
+license=GPL-3.0-only
+
+image=base:v1.2.1
+_vnclib=LibVNCServer-0.9.13
+source=(
+    "https://github.com/matteodelabre/vnsee/archive/v${pkgver%-*}.zip"
+    "https://github.com/LibVNC/libvncserver/archive/$_vnclib.zip"
+)
+noextract=("$_vnclib.zip")
+sha256sums=(
+    700005ff7b09f2fc329a05c06fce810705e1ef3523611022765cb13df9f4a815
+    d209d70998a9b98f9120eeb82df7a17767796c477eaa8297e0a55856a977c54f
+)
+
+prepare() {
+    bsdtar -x \
+        --strip-components 1 \
+        --directory "$srcdir/libvncserver" \
+        --file "$srcdir/$_vnclib.zip"
+}
+
+build() {
+    mkdir build
+    cd build
+    cmake .. \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DCMAKE_TOOLCHAIN_FILE="/usr/share/cmake/$CHOST.cmake"
+    make
+}
+
+package() {
+    install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/build/vnsee
+}
