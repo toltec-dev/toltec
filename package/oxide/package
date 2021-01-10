@@ -21,12 +21,6 @@ erode() {
         install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/opt/bin/erode
         install -D -m 644 -t "$pkgdir"/opt/usr/share/applications "$srcdir"/opt/usr/share/applications/codes.eeems.erode.oxide
     }
-    configure() {
-        reload-oxide-apps
-    }
-    postremove() {
-        reload-oxide-apps
-    }
 }
 
 fret() {
@@ -37,12 +31,6 @@ fret() {
     package() {
         install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/opt/bin/fret
         install -D -m 644 -t "$pkgdir"/opt/usr/share/applications "$srcdir"/opt/usr/share/applications/codes.eeems.fret.oxide
-    }
-    configure() {
-        reload-oxide-apps
-    }
-    postremove() {
-        reload-oxide-apps
     }
 }
 
@@ -63,12 +51,7 @@ oxide() {
             echo "Run the following command(s) to use $pkgname as your launcher"
             how-to-enable "tarnish.service"
             echo ""
-        else
-            reload-oxide-apps
         fi
-    }
-    postremove() {
-        reload-oxide-apps
     }
 }
 
@@ -120,11 +103,5 @@ decay() {
     package() {
         install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/opt/bin/decay
         install -D -m 644 -t "$pkgdir"/opt/usr/share/applications "$srcdir"/opt/usr/share/applications/codes.eeems.decay.oxide
-    }
-    configure() {
-        reload-oxide-apps
-    }
-    postremove() {
-        reload-oxide-apps
     }
 }
