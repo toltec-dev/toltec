@@ -290,7 +290,7 @@ fi
 SCRIPT
                         fi
 
-                        if [ $step = post ] &&  [ -d "$pkgdir"/opt/usr/share/applications ]; then
+                        if [ $step = post ] && [ -d "$pkgdir"/opt/usr/share/applications ]; then
                             cat << 'SCRIPT'
 if [[ $1 = remove ]] || [[ $1 = upgrade ]]; then
     reload-oxide-apps
