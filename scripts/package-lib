@@ -282,6 +282,7 @@ load-recipe-header() {
     check-field source array optional || source=()
     check-field noextract array optional || noextract=()
     check-field sha256sums array optional || sha256sums=()
+    check-field flags array optional || flags=()
 
     # Make fields read-only
     readonly \
@@ -293,6 +294,7 @@ load-recipe-header() {
         source \
         noextract \
         sha256sums \
+        flags \
         2> /dev/null || true
 
     # Make defined functions read-only
@@ -334,6 +336,7 @@ load-recipe-pkg() {
     check-field license string nonempty
     check-field depends array optional || depends=()
     check-field conflicts array optional || conflicts=()
+    check-field flags array optional || flags=()
 
     # Make fields read-only
     readonly \
@@ -344,6 +347,7 @@ load-recipe-pkg() {
         license \
         depends \
         conflicts \
+        flags \
         2> /dev/null || true
 
     # Check required functions
@@ -381,6 +385,7 @@ dump-fields() {
         source \
         noextract \
         sha256sums \
+        flags \
         2> /dev/null || true
 }
 

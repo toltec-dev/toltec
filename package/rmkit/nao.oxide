@@ -1,6 +1,0 @@
-{
-  "displayName": "nao package manager",
-  "description": "Nao is a package manager UI for managing packages in opkg",
-  "bin": "/opt/bin/nao",
-  "icon": "/opt/etc/draft/icons/nao.png"
-}

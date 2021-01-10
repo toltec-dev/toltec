@@ -16,11 +16,9 @@ source=(
     https://github.com/dixonary/fingerterm-reMarkable/archive/bd97bfb34b7ebebeed029fca0d72a10af0258884.zip
     fingerterm.png
     fingerterm.draft
-    fingerterm.oxide
 )
 sha256sums=(
     ff4fa704d6199213ccfacb34477c5b0869910b9f7f476f334bf31c192456c1b5
-    SKIP
     SKIP
     SKIP
 )
@@ -40,14 +38,5 @@ package() {
     cp -r "$srcdir"/data "$pkgdir"/opt/share/fingerterm
 
     install -D -m 644 -t "$pkgdir"/opt/etc/draft "$srcdir"/fingerterm.draft
-    install -D -m 644 -t "$pkgdir"/opt/usr/share/applicaitons "$srcdir"/fingerterm.oxide
     install -D -m 644 -t "$pkgdir"/opt/etc/draft/icons "$srcdir"/fingerterm.png
-}
-
-configure() {
-    reload-oxide-apps
-}
-
-postremove() {
-    reload-oxide-apps
 }

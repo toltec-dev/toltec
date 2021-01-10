@@ -1,5 +1,0 @@
-{
-  "displayName": "Keywriter",
-  "description": "Markdown-enabled free writing app",
-  "bin": "/opt/bin/keywriter"
-}

@@ -1,6 +1,0 @@
-{
-  "displayName": "Plato",
-  "description": "Document reader port",
-  "bin": "/opt/bin/plato",
-  "icon": "/opt/etc/draft/icons/plato.png"
-}

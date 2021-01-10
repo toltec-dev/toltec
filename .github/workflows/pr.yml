@@ -23,7 +23,7 @@ jobs:
 
                 # Install Shellcheck (Ubuntu’s version is too old)
                 shellcheck_version=v0.7.1
-                shellcheck_checksum=64f17152d96d7ec261ad3086ed42d18232fcb65148b44571b564d688269d36c8  
+                shellcheck_checksum=64f17152d96d7ec261ad3086ed42d18232fcb65148b44571b564d688269d36c8
                 shellcheck_arname=shellcheck.tar.xz
                 curl --location --silent --fail --tlsv1.2 --proto '=https' \
                     --output "$shellcheck_arname" \
@@ -47,7 +47,7 @@ jobs:
             - name: Checkout the Git repository
               uses: actions/checkout@v2
             - name: Install missing tools
-              run: sudo apt-get install bsdtar tree
+              run: sudo apt-get install bsdtar tree jo jq
             - name: Build packages
               run: make repo-new
             - name: Save the build output

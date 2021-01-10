@@ -123,6 +123,35 @@ elif [[ $(type -t build) == "function" ]]; then
     error "A 'build()' function was defined but the 'image' variable is missing"
 fi
 
+function convert-draft-apps(){
+    find "$pkgdir"{/opt,}/etc/draft -maxdepth 1 -type f 2>/dev/null | while read -r file; do
+        local name="$(cat "$file" | grep ^name= | sed 's|^name=||')"
+        if ! [ -f "$pkgdir"/opt/usr/share/applications/"$name".oxide ]; then
+            echo "Creating $name.oxide"
+            local bin="$(cat "$file" | grep ^call= | sed -E 's|^call=:?||' | xargs -I {} jo bin="{}")"
+            local description="$(cat "$file" | grep ^desc= | sed -E 's|^desc=:?||' | xargs -I {} jo description="{}")"
+            local icon="$(cat "$file" | grep ^imgFile= | sed -E 's|^imgFile=:?||')"
+            if [[ "$icon" != "" ]]; then
+                icon="$(jo icon="$(dirname "${file#"$pkgdir"}")/$icon.png")"
+            fi
+            local onstop="$(cat "$file" | grep ^term= | sed -E 's|^term=:?||')"
+            if [[ "$onstop" != "" ]]; then
+                echo $onstop
+                onstop="$(jo events="$(jo stop="$onstop")")"
+                echo $onstop
+            fi
+            mkdir -p "$pkgdir"/opt/usr/share/applications
+            jq -Ms '.[0] * .[1] * .[2] * .[3] * .[4]' \
+                <(echo "$(jo name="$name")") \
+                <(echo "${description:-{\}}") \
+                <(echo "${bin:-{\}}") \
+                <(echo "${icon:-{\}}") \
+                <(echo "${onstop:-{\}}") \
+                > "$pkgdir"/opt/usr/share/applications/"$name".oxide
+        fi
+    done
+}
+
 # Build all requested packages, or all defined packages if none were requested
 # Each package is built in a subshell to avoid leaking metadata fields
 for pkgname in "${pkgnames[@]}"; do
@@ -148,14 +177,21 @@ for pkgname in "${pkgnames[@]}"; do
             # Run packaging script
             package
 
-            section "Stripping $pkgname"
-            docker container run --interactive --rm \
-                --mount type=bind,src="$(realpath "$pkgdir")",dst=/pkg \
-                "$(image-name "${image:-base:v1.2.2}")" /bin/bash \
-                << "SCRIPT"
+            if ! has-element "nostrip" "${flags[@]}"; then
+                section "Stripping $pkgname"
+                docker container run --interactive --rm \
+                    --mount type=bind,src="$(realpath "$pkgdir")",dst=/pkg \
+                    "$(image-name "${image:-base:v1.2.2}")" /bin/bash \
+                    << "SCRIPT"
 find /pkg -print0 -type f | xargs --null "${CROSS_COMPILE}strip" --strip-all &> /dev/null || true
 SCRIPT
-            find "$pkgdir" -print0 -type f | xargs --null strip --strip-all &> /dev/null || true
+                find "$pkgdir" -print0 -type f | xargs --null strip --strip-all &> /dev/null || true
+            fi
+
+            if ! has-element "noautodraft" "${flags[@]}"; then
+                section "Automatically converting application registrations"
+                convert-draft-apps
+            fi
 
             section "Finalizing package $pkgname"
             # Show package contents
@@ -245,6 +281,27 @@ SCRIPT
                     chmod 755 "$ctldir"/"$step"rm
                 fi
             done
+
+            # Reload oxide apps if they are part of the package
+            if [ -d "$pkgdir"/opt/usr/share/applications ]; then
+                {
+                    maintainer-script-header
+                    declare -f configure
+                    cat << 'SCRIPT'
+if [[ $1 = remove ]]; then
+    if ! is-active tarnish.service; then
+        return
+    fi
+    echo -n "Reloading Oxide applications: "
+    if ! /opt/bin/rot apps call reload 2> /dev/null; then
+        echo "Failed!"
+        return
+    fi
+    echo "Done!"
+fi
+SCRIPT
+                } >> "$ctldir"/postinst >> "$ctldir"/postrm
+            fi
 
             # Create archives
             section "Creating archive"

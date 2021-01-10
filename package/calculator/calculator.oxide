@@ -1,6 +1,0 @@
-{
-  "displayName": "Calculator",
-  "description": "Touch-based calculator",
-  "bin": "/opt/bin/calculator",
-  "icon": "/opt/etc/draft/icons/calculator.png"
-}

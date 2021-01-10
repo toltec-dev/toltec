@@ -69,21 +69,3 @@ how-to-enable() {
 
     echo "$ systemctl enable --now ${1/.service/}"
 }
-
-# Reload application registrations in oxide
-#
-# Output:
-#
-# Reload status message
-reload-oxide-apps() {
-    echo -n "Reloading Oxide applications: "
-    if ! is-active tarnish.service; then
-        echo "N/A"
-        return
-    fi
-    if ! /opt/bin/rot apps call reload 2> /dev/null; then
-        echo "Failed!"
-        return
-    fi
-    echo "Done!"
-}

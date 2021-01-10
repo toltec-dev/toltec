@@ -1,6 +1,0 @@
-{
-  "displayName": "chessMarkable",
-  "description": "Chess",
-  "bin": "/opt/bin/chessmarkable",
-  "icon": "/opt/etc/draft/icons/chessmarkable.png"
-}

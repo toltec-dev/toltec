@@ -16,11 +16,9 @@ source=(
     https://github.com/sandsmark/recrossable/archive/5faa37c6e8a13e3ddeb0fe6d9d5f15717f83b662.zip
     recrossable.draft
     recrossable.svg
-    recrossable.oxide
 )
 sha256sums=(
     51e9f630204262fd2b839dafadb4e288797609467e9f07c29f7581711cb2eaec
-    SKIP
     SKIP
     SKIP
 )
@@ -46,13 +44,4 @@ package() {
 
     install -D -m 644 -t "$pkgdir"/opt/etc/draft "$srcdir"/recrossable.draft
     install -D -m 644 -t "$pkgdir"/opt/etc/draft/icons "$srcdir"/recrossable.png
-    install -D -m 644 -t "$pkgdir"/opt/usr/share/applications "$srcdir"/recrossable.oxide
-}
-
-configure() {
-    reload-oxide-apps
-}
-
-postremove() {
-    reload-oxide-apps
 }
