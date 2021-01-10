@@ -123,8 +123,8 @@ elif [[ $(type -t build) == "function" ]]; then
     error "A 'build()' function was defined but the 'image' variable is missing"
 fi
 
-function convert-draft-apps(){
-    find "$pkgdir"{/opt,}/etc/draft -maxdepth 1 -type f 2>/dev/null | while read -r file; do
+function convert-draft-apps() {
+    find "$pkgdir"{/opt,}/etc/draft -maxdepth 1 -type f 2> /dev/null | while read -r file; do
         local name="$(cat "$file" | grep ^name= | sed 's|^name=||')"
         if ! [ -f "$pkgdir"/opt/usr/share/applications/"$name".oxide ]; then
             echo "Creating $name.oxide"
