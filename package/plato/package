@@ -69,7 +69,7 @@ package() {
 
     install -D -m 644 "$srcdir"/oxide "$pkgdir"/opt/etc/draft/plato.draft
     install -D -m 644 "$srcdir"/oxide-icon.png "$pkgdir"/opt/etc/draft/icons/plato.png
-    install -D -m 644 "$srcdir"/plato.oxide "$pkgdir"/opt/usr/share/applications
+    install -D -m 644 "$srcdir"/plato.oxide "$pkgdir"/opt/usr/share/applications/plato.oxide
 }
 
 configure() {
