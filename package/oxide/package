@@ -98,9 +98,13 @@ tarnish() {
         systemctl daemon-reload
     }
     preremove() {
-        if systemctl list-units --full -all | grep -Fq 'tarnish.service'; then
-            echo "Disabling $pkgname"
-            systemctl disable --now tarnish
+        if is-active tarnish; then
+            echo "Stopping tarnish"
+            systemctl stop tarnish
+        fi
+        if is-enabled tarnish; then
+            echo "Disabling tarnish"
+            systemctl disable tarnish
         fi
     }
     postremove() {
