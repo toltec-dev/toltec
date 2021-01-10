@@ -130,16 +130,16 @@ function convert-draft-apps() {
     local icon
     local onstop
     find "$pkgdir"{/opt,}/etc/draft -maxdepth 1 -type f 2> /dev/null | while read -r file; do
-        name="$(cat "$file" | grep ^name= | sed 's|^name=||')"
+        name="$(grep ^name= "$file" | sed 's|^name=||')"
         if ! [ -f "$pkgdir"/opt/usr/share/applications/"$name".oxide ]; then
             echo "Creating $name.oxide"
-            bin="$(cat "$file" | grep ^call= | sed -E 's|^call=:?||' | xargs -I {} jo bin="{}")"
-            description="$(cat "$file" | grep ^desc= | sed -E 's|^desc=:?||' | xargs -I {} jo description="{}")"
-            icon="$(cat "$file" | grep ^imgFile= | sed -E 's|^imgFile=:?||')"
+            bin="$(grep ^call= "$file" | sed -E 's|^call=:?||' | xargs -I {} jo bin="{}")"
+            description="$(grep ^desc= "$file" | sed -E 's|^desc=:?||' | xargs -I {} jo description="{}")"
+            icon="$(grep ^imgFile= "$file" | sed -E 's|^imgFile=:?||')"
             if [[ "$icon" != "" ]]; then
                 icon="$(jo icon="$(dirname "${file#"$pkgdir"}")/$icon.png")"
             fi
-            onstop="$(cat "$file" | grep ^term= | sed -E 's|^term=:?||')"
+            onstop="$(grep ^term= "$file" | sed -E 's|^term=:?||')"
             if [[ "$onstop" != "" ]]; then
                 onstop="$(jo events="$(jo stop="$onstop")")"
             fi
