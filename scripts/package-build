@@ -268,7 +268,7 @@ SCRIPT
             for step in pre post; do
                 if [[ $(type -t "$step"upgrade) = function ]] \
                     || [[ $(type -t "$step"remove) = function ]] \
-                    || ([ -d "$pkgdir"/opt/usr/share/applications ] && [ $step = post ]); then
+                    || {[ -d "$pkgdir"/opt/usr/share/applications ] && [ $step = post ]}; then
                     {
                         maintainer-script-header
 
