@@ -296,9 +296,9 @@ if [[ $1 = remove ]]; then
     echo -n "Reloading Oxide applications: "
     if ! /opt/bin/rot apps call reload 2> /dev/null; then
         echo "Failed!"
-        return
+    else
+        echo "Done!"
     fi
-    echo "Done!"
 fi
 SCRIPT
                 } >> "$ctldir"/postinst >> "$ctldir"/postrm
