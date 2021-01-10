@@ -243,23 +243,32 @@ SCRIPT
             fi
 
             # Generate postinst
-            if [[ $(type -t configure) = function ]]; then
-                {
-                    maintainer-script-header
+            {
+                maintainer-script-header
+                if [[ $(type -t configure) = function ]]; then
                     declare -f configure
                     cat << 'SCRIPT'
 if [[ $1 = configure ]]; then
     configure
 fi
 SCRIPT
-                } >> "$ctldir"/postinst
-                chmod 755 "$ctldir"/postinst
-            fi
+                fi
+
+                if [ -d "$pkgdir"/opt/usr/share/applications ]; then
+                    cat << 'SCRIPT'
+if [[ $1 = configure ]]; then
+    reload-oxide-apps
+fi
+SCRIPT
+                fi
+            } >> "$ctldir"/postinst
+            chmod 755 "$ctldir"/postinst
 
             # Generate {pre,post}rm
             for step in pre post; do
                 if [[ $(type -t "$step"upgrade) = function ]] \
-                    || [[ $(type -t "$step"remove) = function ]]; then
+                    || [[ $(type -t "$step"remove) = function ]] \
+                    || ([ -d "$pkgdir"/opt/usr/share/applications ] && [ $step = post ]); then
                     {
                         maintainer-script-header
 
@@ -280,29 +289,18 @@ if [[ \$1 = remove ]]; then
 fi
 SCRIPT
                         fi
+
+                        if [ $step = post ] &&  [ -d "$pkgdir"/opt/usr/share/applications ]; then
+                            cat << 'SCRIPT'
+if [[ $1 = remove ]] || [[ $1 = upgrade ]]; then
+    reload-oxide-apps
+fi
+SCRIPT
+                        fi
                     } >> "$ctldir"/"$step"rm
                     chmod 755 "$ctldir"/"$step"rm
                 fi
             done
-
-            # Reload oxide apps if they are part of the package
-            if [ -d "$pkgdir"/opt/usr/share/applications ]; then
-                {
-                    cat << 'SCRIPT'
-if [[ $1 = remove ]]; then
-    if ! is-active tarnish.service; then
-        return
-    fi
-    echo -n "Reloading Oxide applications: "
-    if ! /opt/bin/rot apps call reload 2> /dev/null; then
-        echo "Failed!"
-    else
-        echo "Done!"
-    fi
-fi
-SCRIPT
-                } >> "$ctldir"/postinst >> "$ctldir"/postrm
-            fi
 
             # Create archives
             section "Creating archive"
