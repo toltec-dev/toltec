@@ -71,3 +71,11 @@ package() {
 configure() {
     depmod -a
 }
+
+postremove() {
+    modprobe -r wireguard
+}
+
+postupgrade() {
+    modprobe -r wireguard
+}
