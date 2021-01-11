@@ -33,6 +33,8 @@ is-enabled() {
 #
 # List of conflicting units
 get-conflicts() {
+    # systemd automatically adds a conflict with "shutdown.target" to all
+    # service units (see systemd.service(5), section "Automatic Dependencies")
     systemctl show "$1" | awk -F'=' '/^Conflicts=/{print $2}' \
         | sed 's|\bshutdown.target\b||'
 }
