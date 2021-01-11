@@ -33,7 +33,8 @@ is-enabled() {
 #
 # List of conflicting units
 get-conflicts() {
-    systemctl show "$1" | awk -F'=' '/^Conflicts=/{print $2}'
+    systemctl show "$1" | awk -F'=' '/^Conflicts=/{print $2}' \
+        | awk 'BEGIN { ORS=" " }; { for(i = 1; i <= NF; i++) if ($i != "shutdown.target") print $i }'
 }
 
 # Print instructions about how to enable a given systemd service and disable
@@ -48,7 +49,7 @@ get-conflicts() {
 # Commands to run to achieve the desired result
 how-to-enable() {
     for conflict in $(get-conflicts "$1"); do
-        if is-enabled "$conflict" && echo "$conflict" | grep -q '\.service$'; then
+        if is-enabled "$conflict"; then
             echo "$ systemctl disable --now ${conflict/.service/}"
         fi
     done
