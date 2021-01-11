@@ -34,7 +34,7 @@ is-enabled() {
 # List of conflicting units
 get-conflicts() {
     systemctl show "$1" | awk -F'=' '/^Conflicts=/{print $2}' \
-        | awk 'BEGIN { ORS=" " }; { for(i = 1; i <= NF; i++) if($i != "shutdown.target") print $i }'
+        |  sed 's|\bshutdown.target\b||'
 }
 
 # Print instructions about how to enable a given systemd service and disable
