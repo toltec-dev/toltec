@@ -129,7 +129,7 @@ entware-mount() {
     mkdir -p /opt
     mkdir -p "$entware_path"
 
-    if [[ ! -f $old_systemd_mount_path ]] && [[ ! -f $systemd_mount_path ]]; then
+    if [[ -f $old_systemd_mount_path ]] && [[ ! -f $systemd_mount_path ]]; then
         # The user was probably using https://github.com/Evidlo/remarkable_entware
         # before switching to toltec. Removing old .mount file to prevent duplicate files
         log "Updating opt.mount location"
