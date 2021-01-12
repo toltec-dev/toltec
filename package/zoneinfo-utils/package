@@ -73,5 +73,5 @@ package() {
     mv "${pkgdir}"/usr/bin/* "${pkgdir}"/opt/bin
 
     # cleanup
-    rm -rf "$pkgdir"/{etc,usr}
+    rm -rf "${pkgdir:?}"/{etc,usr}
 }
