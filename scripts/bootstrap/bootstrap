@@ -21,8 +21,8 @@ set -eE
 [[ -z $wget_path ]] && wget_path=/home/root/.local/bin/wget
 
 # Path for the systemd unit that mounts Entware to /opt
-[[ -z $old_systemd_opt_mount_path ]] && old_systemd_mount_path=/etc/systemd/system/opt.mount
-[[ -z $systemd_opt_mount_path ]] && systemd_mount_path=/lib/systemd/system/opt.mount
+[[ -z $old_systemd_opt_mount_path ]] && old_systemd_opt_mount_path=/etc/systemd/system/opt.mount
+[[ -z $systemd_opt_mount_path ]] && systemd_opt_mount_path=/lib/systemd/system/opt.mount
 
 # Path for the systemd unit that mounts /opt/share/zoneinfo to /usr/share/zoneinfo
 [[ -z $systemd_timezone_mount_path ]] && systemd_timezone_mount_path=/lib/systemd/system/timezone.mount
@@ -78,9 +78,9 @@ error-cleanup() {
         rm -rf "$entware_path"
     fi
 
-    if [[ -f $systemd_mount_path ]]; then
+    if [[ -f $systemd_opt_mount_path ]]; then
         systemctl disable --now opt.mount 2> /dev/null
-        rm "$systemd_mount_path"
+        rm "$systemd_opt_mount_path"
         systemctl daemon-reload
     fi
 
