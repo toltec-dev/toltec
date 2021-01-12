@@ -390,6 +390,7 @@ main() {
         log "Creating $entware_path and mounting to /opt"
         entware-mount
         entware-install
+        log "Mounting timezone info over /usr/share/timezone"
         timezone-mount
     fi
 
