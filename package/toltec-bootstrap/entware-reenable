@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Path for the systemd unit that mounts Entware to /opt
-systemd_mount_path=/lib/systemd/system/opt.mount
+systemd_opt_mount_path=/lib/systemd/system/opt.mount
 
 # Path for the systemd unit that mounts /opt/share/zoneinfo to /usr/share/zoneinfo
 systemd_timezone_mount_path=/lib/systemd/system/timezone.mount
@@ -13,7 +13,7 @@ entware-mount() {
     mkdir -p "$entware_path"
 
     # Create systemd mount unit to mount over /opt on reboot
-    cat > "$systemd_mount_path" << UNIT
+    cat > "$systemd_opt_mount_path" << UNIT
 [Unit]
 Description=Bind mount Entware over /opt
 DefaultDependencies=no
