@@ -36,7 +36,8 @@ get-branch() {
         branch=$(cat "$opkg_conf" | grep "^src/gz" | while read -r line; do
             # Is this the toltec repo?
             if [[ "$(echo "$line" | awk '{print $2}')" == "toltec" ]]; then
-                local url=$(echo "$line" | awk '{print $3}')
+                local url
+                url=$(echo "$line" | awk '{print $3}')
                 if ! echo "$url" | grep -q https://toltec-dev.org/; then
                     # If it's the wrong domain skip, we don't know how to get the branch
                     continue
