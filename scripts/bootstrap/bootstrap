@@ -24,6 +24,9 @@ set -eE
 [[ -z $old_systemd_mount_path ]] && old_systemd_mount_path=/etc/systemd/system/opt.mount
 [[ -z $systemd_mount_path ]] && systemd_mount_path=/lib/systemd/system/opt.mount
 
+# Path for the systemd unit that mounts /opt/share/zoneinfo to /usr/share/zoneinfo
+[[ -z $systemd_timezone_mount_path ]] && systemd_timezone_mount_path=/lib/systemd/system/timezone.mount
+
 # Path where the actual Entware distribution resides (will be mounted to /opt)
 [[ -z $entware_path ]] && entware_path=/home/root/.entware
 
@@ -233,6 +236,42 @@ entware-install() {
     fi
 }
 
+# Mount /opt/share/zoneinfo to /usr/share/zoneinfo
+timezone-mount() {
+    mkdir -p "$entware_path"/share/zoneinfo
+
+    if [[ ! -f $systemd_timezone_mount_path ]]; then
+        log "Updating timezone.mount location"
+
+        if systemctl -q is-enabled timezone.mount; then
+            # Remove path to old file if still symlinked
+            systemctl disable timezone.mount
+        fi
+    fi
+
+    # Create systemd mount unit to mount over /opt on reboot
+    cat > "$systemd_timezone_mount_path" << UNIT
+[Unit]
+Description=Bind mount /opt/share/zoneinfo over /usr/share/zoneinfo
+DefaultDependencies=no
+Conflicts=umount.target
+Before=local-fs.target umount.target
+After=opt.mount
+
+[Mount]
+What=/opt/share/zoneinfo
+Where=/usr/share/zoneinfo
+Type=none
+Options=bind
+
+[Install]
+WantedBy=local-fs.target
+UNIT
+
+    systemctl daemon-reload
+    systemctl enable --now timezone.mount 2> /dev/null
+}
+
 # Add Toltec configuration to an existing Entware install
 #
 # Arguments: List of additional packages to install, one package per argument
@@ -345,11 +384,13 @@ main() {
         else
             log "Re-enabling existing Entware install"
             entware-mount
+            timezone-mount
         fi
     else
         log "Creating $entware_path and mounting to /opt"
         entware-mount
         entware-install
+        timezone-mount
     fi
 
     toltec-install "$@"
