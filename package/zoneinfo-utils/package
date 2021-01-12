@@ -69,8 +69,7 @@ package() {
     popd > /dev/null
 
     mv "${pkgdir}"/usr/{lib,share/man} "${pkgdir}"/opt/usr
-    mv "${pkgdir}"/usr/bin "${pkgdir}"/opt
-    mv "${pkgdir}"/usr/bin/* "${pkgdir}"/opt/bin
+    mv "${pkgdir}"/usr/{s,}bin "${pkgdir}"/opt
 
     # cleanup
     rm -rf "${pkgdir:?}"/{etc,usr}
