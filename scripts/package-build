@@ -123,38 +123,6 @@ elif [[ $(type -t build) == "function" ]]; then
     error "A 'build()' function was defined but the 'image' variable is missing"
 fi
 
-function convert-draft-apps() {
-    local name
-    local bin
-    local description
-    local icon
-    local onstop
-    find "$pkgdir"{/opt,}/etc/draft -maxdepth 1 -type f 2> /dev/null | while read -r file; do
-        name="$(grep ^name= "$file" | sed 's|^name=||')"
-        if ! [ -f "$pkgdir"/opt/usr/share/applications/"$name".oxide ]; then
-            echo "Creating $name.oxide"
-            bin="$(grep ^call= "$file" | sed -E 's|^call=:?||' | xargs -I {} jo bin="{}")"
-            description="$(grep ^desc= "$file" | sed -E 's|^desc=:?||' | xargs -I {} jo description="{}")"
-            icon="$(grep ^imgFile= "$file" | sed -E 's|^imgFile=:?||')"
-            if [[ "$icon" != "" ]]; then
-                icon="$(jo icon="$(dirname "${file#"$pkgdir"}")/$icon.png")"
-            fi
-            onstop="$(grep ^term= "$file" | sed -E 's|^term=:?||')"
-            if [[ "$onstop" != "" ]]; then
-                onstop="$(jo events="$(jo stop="$onstop")")"
-            fi
-            mkdir -p "$pkgdir"/opt/usr/share/applications
-            jq -Ms '.[0] * .[1] * .[2] * .[3] * .[4]' \
-                <(jo name="$name") \
-                <(echo "${description:-{\}}") \
-                <(echo "${bin:-{\}}") \
-                <(echo "${icon:-{\}}") \
-                <(echo "${onstop:-{\}}") \
-                > "$pkgdir"/opt/usr/share/applications/"$name".oxide
-        fi
-    done
-}
-
 # Build all requested packages, or all defined packages if none were requested
 # Each package is built in a subshell to avoid leaking metadata fields
 for pkgname in "${pkgnames[@]}"; do
@@ -189,11 +157,6 @@ for pkgname in "${pkgnames[@]}"; do
 find /pkg -print0 -type f | xargs --null "${CROSS_COMPILE}strip" --strip-all &> /dev/null || true
 SCRIPT
                 find "$pkgdir" -print0 -type f | xargs --null strip --strip-all &> /dev/null || true
-            fi
-
-            if ! has-element "noautodraft" "${flags[@]}"; then
-                section "Automatically converting application registrations"
-                convert-draft-apps
             fi
 
             section "Finalizing package $pkgname"
