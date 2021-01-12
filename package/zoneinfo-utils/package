@@ -4,8 +4,8 @@
 
 # Inspired by https://github.com/archlinux/svntogit-packages/blob/packages/tzdata/trunk/PKGBUILD
 
-pkgnames=(tzdata)
-pkgdesc="Sources for time zone and daylight saving time data"
+pkgnames=(zoneinfo-utils)
+pkgdesc="Utilities for interacting with zoneinfo files"
 url=https://www.iana.org/time-zones
 pkgver=2020f-1
 timestamp=2020-05-04T06:16Z
@@ -63,42 +63,15 @@ package() {
     local zic=.x86/zic
     # install tzcode stuff
     make DESTDIR="${pkgdir}" zic="$zic" install
-
-    # install tzdata stuff
-    "$zic" -b fat -d "${pkgdir}"/usr/share/zoneinfo "${timezones[@]}"
-    "$zic" -b fat -d "${pkgdir}"/usr/share/zoneinfo/posix "${timezones[@]}"
-    "$zic" -b fat -d "${pkgdir}"/usr/share/zoneinfo/right -L leapseconds "${timezones[@]}"
-    # This creates the posixrules file. We use New York because POSIX requires the daylight savings time rules to be in accordance with US rules.
-    "$zic" -b fat -d "${pkgdir}"/usr/share/zoneinfo -p America/New_York
-    install -m444 -t "${pkgdir}"/usr/share/zoneinfo iso3166.tab zone1970.tab zone.tab # zone.tab is depricated and will go soon
-
     # install license
     install -Dm644 LICENSE "${pkgdir}"/opt/usr/share/licenses/tzdata/LICENSE
 
     popd > /dev/null
 
-    # cleanup
-    rm "${pkgdir}/etc/localtime"
-    rmdir "${pkgdir}/etc"
     mv "${pkgdir}"/usr/{lib,share/man} "${pkgdir}"/opt/usr
-    mv "${pkgdir}"/usr/sbin "${pkgdir}"/opt
     mv "${pkgdir}"/usr/bin "${pkgdir}"/opt
-}
+    mv "${pkgdir}"/usr/bin/* "${pkgdir}"/opt/bin
 
-preinstall() {
-    if [ ! -d /home/root/.local/backup/zoneinfo ]; then
-        mkdir -p /home/root/.local/backup/zoneinfo
-    else
-        echo "Zoneinfo backup folder already exists"
-    fi
-    cp -r /usr/share/zoneinfo/* /home/root/.local/backup/zoneinfo/
-}
-
-postremove() {
-    if [ ! -d /home/root/.local/backup/zoneinfo ]; then
-        echo "Warning, could not find backed up zoneinfo."
-        echo "You may need to restore from your other partition."
-        return
-    fi
-    cp -r /home/root/.local/backup/zoneinfo/* /usr/share/zoneinfo/
+    # cleanup
+    rm -rf "$pkgdir"/{etc,usr}
 }
