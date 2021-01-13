@@ -31,7 +31,7 @@ WantedBy=local-fs.target
 UNIT
 
     systemctl daemon-reload
-    systemctl enable --now "$(basename "$systemd_timezone_mount_path")" 2> /dev/null
+    systemctl enable --now "$(basename "$systemd_opt_mount_path")" 2> /dev/null
 }
 
 # Mount /opt/share/zoneinfo to /usr/share/zoneinfo
