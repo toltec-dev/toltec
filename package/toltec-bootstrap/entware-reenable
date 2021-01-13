@@ -3,7 +3,7 @@
 systemd_opt_mount_path=/lib/systemd/system/opt.mount
 
 # Path for the systemd unit that mounts /opt/share/zoneinfo to /usr/share/zoneinfo
-systemd_timezone_mount_path=/lib/systemd/system/timezone.mount
+systemd_timezone_mount_path=/lib/systemd/system/usr-share-zoneinfo.mount
 
 # Path where the actual Entware distribution resides (will be mounted to /opt)
 entware_path=/home/root/.entware
@@ -31,7 +31,7 @@ WantedBy=local-fs.target
 UNIT
 
     systemctl daemon-reload
-    systemctl enable --now opt.mount 2> /dev/null
+    systemctl enable --now "$(basename "$systemd_timezone_mount_path")" 2> /dev/null
 }
 
 # Mount /opt/share/zoneinfo to /usr/share/zoneinfo
@@ -57,7 +57,7 @@ WantedBy=local-fs.target
 UNIT
 
     systemctl daemon-reload
-    systemctl enable --now timezone.mount 2> /dev/null
+    systemctl enable --now "$(basename "$systemd_timezone_mount_path")" 2> /dev/null
 }
 
 reinstall-root() {
