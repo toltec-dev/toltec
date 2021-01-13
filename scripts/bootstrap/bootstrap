@@ -27,29 +27,19 @@ set -eE
 # Path where the actual Entware distribution resides (will be mounted to /opt)
 [[ -z $entware_path ]] && entware_path=/home/root/.entware
 
-# Find out used branch or get default one
+# Find out current branch or get default one
 get-branch() {
-    local opkg_conf=$entware_path/etc/opkg.conf
-    # shellcheck disable=SC2002
-    branch=$(cat "$opkg_conf" | grep "^src/gz" | while read -r line; do
-        # Is this the toltec repo?
-        if [[ "$(echo "$line" | awk '{print $2}')" == "toltec" ]]; then
-            local url
-            url=$(echo "$line" | awk '{print $3}')
-            if ! echo "$url" | grep -q https://toltec-dev.org/; then
-                # If it's the wrong domain skip, we don't know how to get the branch
-                continue
-            fi
-            echo "${url/'https://toltec-dev.org/'/}"
-            return
-        fi
-    done)
-    # Default to stable if there was no result
-    [[ "$branch" != "" ]] && echo "$branch" || echo stable
+    local opkg_conf="$entware_path/etc/opkg.conf"
+    local branch
+    if [[ -f "$opkg_conf" ]]; then
+        # Get the first (...) value (aka \1) of the pattern if matching
+        branch="$(sed -E 's|^src/gz\s+toltec\s+https://toltec-dev.org/([[:alnum:]]*).*$|\1|;t;d' "$opkg_conf" | head -n1)"
+    fi
+    echo "${branch:-stable}"
 }
 
-# Toltec branch to use for this install - you almost always want 'stable'
-[[ -z $toltec_branch ]] && toltec_branch=$(get-branch)
+# Toltec branch to use for this install - you almost always want the default
+[[ -z $toltec_branch ]] && toltec_branch="$(get-branch)"
 
 # Remove all temporary files
 cleanup() {
@@ -129,7 +119,7 @@ entware-mount() {
     mkdir -p /opt
     mkdir -p "$entware_path"
 
-    if [[ ! -f $old_systemd_mount_path ]] && [[ ! -f $systemd_mount_path ]]; then
+    if [[ -f $old_systemd_mount_path ]] && [[ ! -f $systemd_mount_path ]]; then
         # The user was probably using https://github.com/Evidlo/remarkable_entware
         # before switching to toltec. Removing old .mount file to prevent duplicate files
         log "Updating opt.mount location"
