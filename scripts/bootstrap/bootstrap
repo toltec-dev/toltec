@@ -74,6 +74,12 @@ error-cleanup() {
         systemctl daemon-reload
     fi
 
+    if [[ -f $systemd_timezone_mount_path ]]; then
+        systemctl disable --now timezone.mount 2> /dev/null
+        rm "$systemd_timezone_mount_path"
+        systemctl daemon-reload
+    fi
+
     log ERROR "This script failed to install. If you can't solve the above" \
         "issue yourself, please report it at:" \
         "" \
