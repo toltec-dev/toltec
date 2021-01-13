@@ -1,6 +1,6 @@
 {
   "displayName": "KOReader",
-  "description": "ebook reader",
+  "description": "An ebook reader application supporting PDF, DjVu, EPUB, FB2 and many more formats",
   "bin": "/opt/bin/koreader",
   "icon": "/opt/etc/draft/icons/koreader.png",
   "type": "foreground",
