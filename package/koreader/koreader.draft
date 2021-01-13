@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MIT
 
 name=KOReader
-desc=ebook reader
+desc=An ebook reader application supporting PDF, DjVu, EPUB, FB2 and many more formats
 imgFile=koreader
 call=/opt/bin/koreader
 term=killall -9 luajit
