@@ -32,7 +32,7 @@ configure() {
     t_file="/usr/share/remarkable/templates/template-cartesian-graph"
     for ext in png svg; do
         if [[ -L "${pkgdir}${t_file}.${ext}" ]]; then
-            if [[ "$(readlink ${pkgdir}${t_file}.${ext})" != "${pkgdir}${o_file}.${ext}" ]]; then
+            if [[ "$(readlink \"${pkgdir}${t_file}.${ext}\")" != "${pkgdir}${o_file}.${ext}" ]]; then
                 rm -f "$pkgdir"${t_file}.${ext}
                 ln -s "$pkgdir"${o_file}.${ext} ${t_file}.${ext}
             fi
