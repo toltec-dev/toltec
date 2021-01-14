@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+# Copyright (c) 2020 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgnames=(templatectl)
+pkgdesc="Tool to add/remove templates for xochitl"
+url=https://github.com/PeterGrace/templatectl
+pkgver=0.1.0-1
+timestamp=2021-01-14T01:54Z
+section=utils
+maintainer="Peter Grace <pete.grace@gmail.com>"
+license=MIT
+
+image=rust:v1.2.2
+source=(https://github.com/PeterGrace/templatectl/archive/v0.1.0.zip)
+sha256sums=(521621c076ba79f6e7bce0b36ba129a61260a35e8d7f5ec3ad9a7390882ed60c)
+
+build() {
+    # Fall back to system-wide config
+    rm .cargo/config
+
+    cargo build --release
+}
+
+package() {
+    install -D -m 755 -t "$pkgdir"/opt/bin \
+        "$srcdir"/target/armv7-unknown-linux-gnueabihf/release/templatectl
+}
