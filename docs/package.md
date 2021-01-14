@@ -140,7 +140,6 @@ readers         | Apps for reading and annotating documents (PDF, EPUB, …).
 templates       | Templates for xochitl notebooks
 utils           | System tools and various apps.
 
-
 If the package does not fit into one of the existing sections, you are free to create a new one and document it here.
 
 #### `maintainer`
