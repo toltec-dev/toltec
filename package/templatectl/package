@@ -16,9 +16,6 @@ source=(https://github.com/PeterGrace/templatectl/archive/v0.1.0.zip)
 sha256sums=(521621c076ba79f6e7bce0b36ba129a61260a35e8d7f5ec3ad9a7390882ed60c)
 
 build() {
-    # Fall back to system-wide config
-    rm .cargo/config
-
     cargo build --release
 }
 
