@@ -10,4 +10,4 @@ jobs:
             - name: Check labels
               run: |
                 [[ '${{ github.base_ref }}' != stable ]] \
-                || [[ '${{ contains(github.event.pull_request.labels.*.name, "merge") }}' == true ]]
+                || [[ '${{ contains(github.event.pull_request.labels.*.name, 'merge') }}' == true ]]
