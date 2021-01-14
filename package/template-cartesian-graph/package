@@ -12,7 +12,7 @@ maintainer="Peter Grace <pete.grace@gmail.com>"
 license=MIT
 depends=(templatectl)
 
-source=(https://github.com/PeterGrace/template-cartesian-graph/archive/v1.0.0.zip)
+source=("https://github.com/PeterGrace/template-cartesian-graph/archive/v${pkgver%-*}.zip")
 sha256sums=(d3215546c6fd709bb5988b7042ce5fb990d9a030d783ed7505fcc2dbedbc0e0f)
 
 package() {
