@@ -5,15 +5,15 @@
 pkgnames=(templatectl)
 pkgdesc="Tool to add/remove templates for xochitl"
 url=https://github.com/PeterGrace/templatectl
-pkgver=0.1.1-1
-timestamp=2021-01-15T00:49Z
+pkgver=0.1.2-1
+timestamp=2021-01-15T01:23Z
 section=templates
 maintainer="Peter Grace <pete.grace@gmail.com>"
 license=MIT
 
 image=rust:v1.2.2
 source=("https://github.com/PeterGrace/templatectl/archive/v${pkgver%-*}.zip")
-sha256sums=(e7e4bfcc16e1f7bb710484b737666515b67a38ab79646a0beb20868e9d828f35)
+sha256sums=(305e3dbf29aea7f762fba22ceebfa004a5f666ae96fdb8776b2acfdb39539469)
 
 build() {
     cargo build --release
