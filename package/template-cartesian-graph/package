@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: MIT
 
 pkgnames=(template-cartesian-graph)
-pkgdesc="A Cartesian graph template for the reMarkable tablet"
+pkgdesc="Cartesian graph template"
 url=https://github.com/PeterGrace/template-cartesian-graph
 pkgver=1.0.0-4
 timestamp=2021-01-14T17:46Z
