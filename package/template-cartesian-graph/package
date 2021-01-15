@@ -35,8 +35,8 @@ configure() {
             ln -s "$pkgdir${o_file}.${ext}" "${t_file}.${ext}"
         fi
     done
-    templatectl add -n "Cartesian Graph" -f "template-cartesian-graph" \
-        -c "Custom" -c "Math"
+    templatectl add --name "Cartesian Graph" --filename "template-cartesian-graph" \
+        --category "Custom" --category "Math"
 }
 
 preremove() {
