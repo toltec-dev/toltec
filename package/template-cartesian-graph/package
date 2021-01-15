@@ -40,5 +40,5 @@ configure() {
 }
 
 preremove() {
-    templatectl remove -n "Cartesian Graph"
+    templatectl remove --name "Cartesian Graph"
 }
