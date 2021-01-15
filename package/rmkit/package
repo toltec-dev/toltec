@@ -2,18 +2,20 @@
 # Copyright (c) 2020 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
-pkgnames=(harmony mines nao remux simple)
-timestamp=2020-10-10T01:41+00:00
+pkgnames=(genie harmony mines nao remux simple)
+timestamp=2021-01-12T14:03-08:00
 maintainer="raisjn <of.raisjn@gmail.com>"
 license=MIT
 
 image=python:v1.1
 source=(
-    https://github.com/rmkit-dev/rmkit/archive/05b818e332f363dfa5c588894eb366a3cd9f1122.zip
+    https://github.com/rmkit-dev/rmkit/archive/a8ded6ba0cc60dee2a4cd1068c90840f7a358061.zip
     remux.service
+    genie.service
 )
 sha256sums=(
-    ae16e6906af39864f64574b5c1627d1191abe6aa3dc58628b8f19c0ab4cd0e24
+    1b5423c96a46394cf93cf5124dd59b5fe23f62c7cddd0cee1eab979817e687c6
+    SKIP
     SKIP
 )
 
@@ -22,17 +24,43 @@ build() {
     make
 }
 
+genie() {
+    pkgdesc="Gesture engine that connects commands to gestures"
+    url="https://rmkit.dev/apps/genie"
+    pkgver=0.1.1-1
+    section=utils
+
+    package() {
+        install -D -m 755 "$srcdir"/src/build/genie "$pkgdir"/opt/bin/genie
+        install -D -m 644 "$srcdir"/genie.service "$pkgdir"/lib/systemd/system/genie.service
+        install -D -m 644 "$srcdir"/src/genie/example.conf "$pkgdir"/opt/etc/genie.example.conf
+    }
+
+    configure() {
+        systemctl daemon-reload
+        echo "Run 'systemctl enable genie --now' to enable genie"
+    }
+
+    preremove() {
+        echo "Disabling $pkgname"
+        systemctl disable --now "$pkgname"
+    }
+
+    postremove() {
+        systemctl daemon-reload
+    }
+}
+
 harmony() {
     pkgdesc="Procedural sketching app"
     url="https://rmkit.dev/apps/harmony"
-    pkgver=0.1.0-4
+    pkgver=0.1.0-5
     section=drawing
 
     package() {
         install -D -m 755 "$srcdir"/src/build/harmony "$pkgdir"/opt/bin/harmony
         install -D -m 644 "$srcdir"/src/harmony/harmony.draft "$pkgdir"/opt/etc/draft/harmony.draft
         install -D -m 644 "$srcdir"/src/harmony/harmony.png "$pkgdir"/opt/etc/draft/icons/harmony.png
-
     }
 
     configure() {
@@ -43,21 +71,20 @@ harmony() {
 mines() {
     pkgdesc="Mine detection game"
     url="https://rmkit.dev/apps/minesweeper"
-    pkgver=0.1.0-3
+    pkgver=0.1.0-4
     section=games
 
     package() {
         install -D -m 755 "$srcdir"/src/build/mines "$pkgdir"/opt/bin/mines
         install -D -m 644 "$srcdir"/src/minesweeper/mines.draft "$pkgdir"/opt/etc/draft/mines.draft
         install -D -m 644 "$srcdir"/src/minesweeper/mines1.png "$pkgdir"/opt/etc/draft/icons/mines.png
-
     }
 }
 
 nao() {
     pkgdesc="Nao Package Manager: opkg UI built with SAS"
     url="https://rmkit.dev/apps/nao"
-    pkgver=0.1.0-3
+    pkgver=0.1.0-4
     section=utils
     depends=(simple)
 
@@ -65,14 +92,13 @@ nao() {
         install -D -m 755 "$srcdir"/src/build/nao.sh "$pkgdir"/opt/bin/nao
         install -D -m 644 "$srcdir"/src/nao/nao.draft "$pkgdir"/opt/etc/draft/nao.draft
         install -D -m 644 "$srcdir"/src/nao/nao.png "$pkgdir"/opt/etc/draft/icons/nao.png
-
     }
 }
 
 remux() {
     pkgdesc="App launcher that supports multi-tasking applications"
     url="https://rmkit.dev/apps/remux"
-    pkgver=0.1.3-1
+    pkgver=0.1.6-1
     section=launchers
 
     package() {
@@ -104,7 +130,7 @@ remux() {
 simple() {
     pkgdesc="Simple app script for writing scripted applications"
     url="https://rmkit.dev/apps/sas"
-    pkgver=0.1.0-2
+    pkgver=0.1.1-1
     section=utils
 
     package() {

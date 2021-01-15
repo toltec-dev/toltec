@@ -6,20 +6,22 @@ We welcome contributions from anyone, regarding for example [reporting bugs](#re
 To make a request or report a bug, you simply need to [open a new issue](../../../issues/new/choose).
 
 To directly propose changes, the basic procedure is to fork this repository, make the desired changes in your newly created local copy, and open a pull request.
+**When creating your pull request, make sure to target the `testing` branch instead of the default `stable` branch** (PRs against the `stable` branch will not be merged).
+
 When proposing changes, please make sure that you follow the [style guide](#style-guide).
 After you submit your pull request, a maintainer will take time to review your changes, request modifications and then merge your changes into the repository if they fit.
 
-### Common contributions
+### Common Contributions
 
-#### Requesting a package
-
-**TODO**
-
-#### Reporting a bug
+#### Requesting a Package
 
 **TODO**
 
-#### Adding a new package
+#### Reporting a Bug
+
+**TODO**
+
+#### Adding a New Package
 
 See [instructions for creating a package recipe](package.md).
 
@@ -31,15 +33,15 @@ See [instructions for creating a package recipe](package.md).
 * for new packages, submit a pull request with the title: [$PACKAGE][$VERSION] - New Package
 * for updating packages, submit a pull request with the title: [$PACKAGE][$VERSION] - Updated Package
 
-#### Upgrading a package
+#### Upgrading a Package
 
 **TODO**
 
-#### Improving the documentation
+#### Improving the Documentation
 
 **TODO**
 
-### Style guide
+### Style Guide
 
 All contributions must follow the project’s [style guide](../.editorconfig).
 Shell scripts must also comply to [Shellcheck](https://github.com/koalaman/shellcheck).
@@ -50,6 +52,11 @@ You may also check it manually by running `make format` (or `make format-fix` to
 
 Compliance of shell scripts to Shellcheck will also automatically be checked.
 To check it manually, run `make lint` at the root of the repository (you need to have Shellcheck installed on your computer for this to work).
+
+### Code of Conduct
+
+Please note that this project is released with a [Contributor Code of Conduct](docs/code_of_conduct.md).
+By participating in this project you agree to abide by its terms.
 
 ### License
 

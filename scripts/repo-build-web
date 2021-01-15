@@ -169,7 +169,7 @@ WEBS
             <tr>
                 <td>$href</td>
                 <td>$pkgdesc</td>
-                <td>$pkgver</td>
+                <td><a href='./${pkgid}.ipk'>$pkgver</a></td>
                 <td><a href='https://spdx.org/licenses/$license.html'>$license</a></td>
             </tr>
 WEBS

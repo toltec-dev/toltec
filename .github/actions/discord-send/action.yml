@@ -1,0 +1,51 @@
+name: Send a Discord message
+description: Send a message to a Discord channel
+inputs:
+    channel:
+        description: Identifier of the channel to send the message to
+        required: true
+    token:
+        description: API access token
+        required: true
+    title:
+        description: Title of the message to send
+        required: true
+    link:
+        description: URL to link the message title to
+        required: true
+    color:
+        description: Color to annotate the message with
+        required: true
+    message:
+        description: Content of the message to send
+        required: true
+runs:
+    using: composite
+    steps:
+        - name: Post to the Discord REST API
+          shell: bash
+          env:
+              MSG_TITLE: ${{ inputs.title }}
+              MSG_LINK: ${{ inputs.link }}
+              MSG_COLOR: ${{ inputs.color }}
+              MSG_VALUE: ${{ inputs.message }}
+          run: |
+            payload="$(jq --null-input --compact-output --monochrome-output \
+                --arg title "$MSG_TITLE" \
+                --arg link "$MSG_LINK" \
+                --arg color "$MSG_COLOR" \
+                --arg message "$MSG_VALUE" \
+                '{
+                    username: "Toltec",
+                    avatar_url: "https://avatars0.githubusercontent.com/u/71158884",
+                    embeds: [{
+                        title: $title,
+                        url: $link,
+                        color: $color,
+                        description: $message,
+                    }]
+                }')"
+            curl --silent --show-error --fail \
+                 --header "Content-Type: application/json" \
+                 --data "$payload" \
+                 'https://discord.com/api/webhooks/${{ inputs.channel }}/${{ inputs.token }}'

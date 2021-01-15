@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+# Copyright (c) 2020 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgnames=(rm2-suspend-fix)
+pkgdesc="Fix issue where suspend breaks networking on the reMarkable 2"
+url=https://toltec-dev.org/
+pkgver=0.0.0-1
+timestamp=2021-01-04T22:40Z
+section=utils
+maintainer="Eeems <eeems@eeems.email>"
+license=MIT
+
+source=(rm2-suspend-fix.sh)
+sha256sums=(SKIP)
+
+package() {
+    install -D -m 744 -t "$pkgdir"/lib/systemd/system-sleep/ "$srcdir"/rm2-suspend-fix.sh
+}

@@ -8,7 +8,7 @@ maintainer="raisjn <of.raisjn@gmail.com>"
 license=MIT
 pkgdesc="Remarkable2 Framebuffer"
 url="https://github.com/ddvk/remarkable2-framebuffer"
-pkgver=1.0.0-1
+pkgver=1.0.0-5
 section=utils
 version=1.0.0
 image=qt:v1.1
@@ -30,7 +30,6 @@ sha256sums=(
 build() {
     qmake
     make
-    arm-linux-gnueabihf-strip src/client/librm2fb_client.so.1.0.0
 }
 
 package() {
@@ -46,11 +45,23 @@ package() {
 configure() {
     systemctl daemon-reload
     systemctl enable rm2fb --now
-    systemctl restart xochitl
+    # Restart xochitl if it's running
+    if systemctl --quiet is-active xochitl; then
+        # Reset the crash count so we don't trigger remarkable-fail
+        echo "0" > /tmp/crashnum
+        systemctl restart xochitl
+    fi
 }
 
 preremove() {
-    echo "make sure to re-enable xochitl with 'systemctl enable xochitl --now'"
-    echo "and to disable / uninstall any launchers like draft, oxide or remux before"
+    if systemctl list-units --full -all | grep -Fq 'rm2fb.service'; then
+        systemctl disable rm2fb --now
+    fi
+    echo -n "make sure "
+    if ! is-enabled xochitl.service; then
+        echo "to re-enable xochitl with 'systemctl enable xochitl --now'"
+        echo -n "and "
+    fi
+    echo "to disable / uninstall any launchers like draft, oxide or remux before"
     echo "rebooting your tablet to complete the uninstallation"
 }
