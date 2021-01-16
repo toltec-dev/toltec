@@ -9,12 +9,12 @@ license=MIT
 
 image=python:v1.1
 source=(
-    https://github.com/rmkit-dev/rmkit/archive/a8ded6ba0cc60dee2a4cd1068c90840f7a358061.zip
+    https://github.com/rmkit-dev/rmkit/archive/f7f808c28593435f7243a02d0280691345639f1c.zip
     remux.service
     genie.service
 )
 sha256sums=(
-    1b5423c96a46394cf93cf5124dd59b5fe23f62c7cddd0cee1eab979817e687c6
+    12c56e9ef48a45376c714e7587a292ffda907f5589a46e2af29d349b9b7873bb
     SKIP
     SKIP
 )
@@ -98,7 +98,7 @@ nao() {
 remux() {
     pkgdesc="App launcher that supports multi-tasking applications"
     url="https://rmkit.dev/apps/remux"
-    pkgver=0.1.6-1
+    pkgver=0.1.6-2
     section="launchers"
 
     package() {
