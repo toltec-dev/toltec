@@ -14,7 +14,7 @@ sha256sums=(ca5b58a98242cfaf846545c391dca75dc4d13e443764e656cdc621ce07d091f8)
 erode() {
     pkgdesc="Task manager"
     url=https://github.com/Eeems/oxide/tree/master/applications/process-manager
-    section=admin
+    section="admin"
     depends=("tarnish (= $pkgver)")
 
     package() {
@@ -59,7 +59,7 @@ oxide() {
 rot() {
     pkgdesc="Manage Oxide settings through the command line"
     url=https://github.com/Eeems/oxide/tree/master/applications/settings-manager
-    section=admin
+    section="admin"
     depends=("tarnish (= $pkgver)")
 
     package() {

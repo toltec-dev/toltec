@@ -85,7 +85,7 @@ nao() {
     pkgdesc="Nao Package Manager: opkg UI built with SAS"
     url="https://rmkit.dev/apps/nao"
     pkgver=0.1.0-4
-    section=admin
+    section="admin"
     depends=(simple)
 
     package() {
