@@ -1,11 +1,11 @@
-## Writing a package recipe
+## Structure of a Recipe
 
-A **package recipe** is a Bash script containing the metadata and instructions needed to build a set of related packages from source.
-These recipes are used by the packaging script to generate installable package archives for the Opkg package manager.
+A **recipe** is a Bash script containing the metadata and instructions needed to build a set of related packages from source.
+These recipes are used by the packaging script to generate [installable package archives for the Opkg package manager](opkg.md).
 
-> **Note:** Recipe scripts should not be marked as executable because they are not meant to be executed directly but rather meant to be sourced by the packaging script.
+> **Note:** Recipes should not be marked as executable because they are not meant to be executed directly but rather meant to be parsed by the packaging script.
 
-Sourcing a package recipe must have no side effects: the metadata section can only execute commands that do not modify the system state, and stateful commands must be confined inside functions.
+Sourcing a recipe must have no side effects: the metadata section can only execute commands that do not modify the system state, and stateful commands must be confined inside functions.
 
 ### Contents
 
@@ -16,7 +16,7 @@ Sourcing a package recipe must have no side effects: the metadata section can on
 5. [Install section](#install-section)
 6. [Split packages](#split-packages)
 
-### Metadata section
+### Metadata Section
 
 At the top of the file is a block of fields that define metadata about the package.
 For consistency, declare those fields in the same order they are described below.
@@ -277,12 +277,12 @@ After copying or downloading a source file to the `$srcdir` directory, the build
 You can request to skip this verification by entering `SKIP` instead of a valid SHA-256 checksum (discouraged for files fetched from remote computers).
 This array must have exactly as many elements as the `source` array.
 
-### Prepare section
+### Prepare Section
 
 The prepare section contains the `prepare()` function in which the source files may be prepared for the building step that follows.
 Common tasks include patching sources, extracting archives, and moving downloaded sources to the right location.
 
-### Build section
+### Build Section
 
 The build section is made up of a function called `build()`, which runs in the context of a Docker container with the chosen `image`.
 This function has access to all the metadata fields declared above.
@@ -290,7 +290,7 @@ This function will only be run if the `image` field is defined and must be omitt
 The working directory is already populated with all the sources declared in `sources`.
 It can be omitted for packages that do not require a build step.
 
-### Package section
+### Package Section
 
 The package section comprises a function called `package()`, which runs outside of the Docker container in an unspecified working directory.
 It has access to all the metadata fields, plus the `$srcdir` and `$pkgdir` variables.
@@ -298,7 +298,7 @@ The `$pkgdir` directory is initially empty.
 The `$srcdir` directory is the working directory of the previous Docker container after running the build section.
 The `package()` function populates the `$pkgdir` directory with the files and directories that need to be installed using files from the `$srcdir` directory.
 
-### Install section
+### Install Section
 
 The install section can contain additional functions to customize the behavior of the package when it is installed, removed, or upgraded on the device.
 Those functions are `preinstall()`, `configure()`, `preremove()`, `postremove()`, `preupgrade()` and `postupgrade()`.
@@ -327,7 +327,7 @@ When upgrading a package from version A to B, the following happens:
 * New package files are unpacked and installed
 * `configure`, if it exists, is called from version B
 
-### Split packages
+### Split Packages
 
 Split packages are sets of packages created from the build artifacts of a single recipe.
 To create a recipe for split packages, add the names of the additional packages to generate to the [`pkgnames`](#pkgnames) array.
