@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Copyright (c) 2020 The Toltec Contributors
+# Copyright (c) 2021 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
 #
@@ -92,8 +92,8 @@ error-cleanup() {
 # Install a local wget binary which supports TLS (the original one
 # installed on the reMarkable does not) in the PATH
 wget-bootstrap() {
-    local wget_remote=https://toltec-dev.org/thirdparty/bin/wget-v1.20.3
-    local wget_checksum=8d447c6eb0a39e705f45bea900b12eef07142ea3da0809aca4dd44fe4110cdfd
+    local wget_remote=https://toltec-dev.org/thirdparty/bin/wget-v1.21.1
+    local wget_checksum=8798fcdabbe560722a02f95b30385926e4452e2c98c15c2c217583eaa0db30fc
 
     if [[ ! -x $wget_path ]]; then
         if [[ -e $wget_path ]]; then
