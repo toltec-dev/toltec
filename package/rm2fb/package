@@ -6,11 +6,11 @@ pkgnames=(rm2fb)
 timestamp=2020-10-10T01:41+00:00
 maintainer="raisjn <of.raisjn@gmail.com>"
 license=MIT
-pkgdesc="Remarkable2 Framebuffer"
+pkgdesc="Interface to the reMarkable 2 framebuffer"
 url="https://github.com/ddvk/remarkable2-framebuffer"
-pkgver=1.0.0-5
-section=utils
-version=1.0.0
+pkgver=1.0.0-6
+section="devel"
+
 image=qt:v1.1
 source=(
     https://github.com/ddvk/remarkable2-framebuffer/archive/cd2766864c7985fa50cdf85f4ae0a411d7ca4e56.zip
@@ -34,8 +34,8 @@ build() {
 
 package() {
     mkdir -p "$pkgdir"/opt/lib "$pkgdir"/opt/etc "$pkgdir"/opt/bin
-    install -D -m 755 "$srcdir"/src/client/librm2fb_client.so.${version} "$pkgdir"/opt/lib/
-    install -D -m 755 "$srcdir"/src/server/librm2fb_server.so.${version} "$pkgdir"/opt/lib/
+    install -D -m 755 "$srcdir"/src/client/librm2fb_client.so.${pkgver%-*} "$pkgdir"/opt/lib/
+    install -D -m 755 "$srcdir"/src/server/librm2fb_server.so.${pkgver%-*} "$pkgdir"/opt/lib/
     install -D -m 755 "$srcdir"/rm2fb-server "$pkgdir"/opt/bin/
     install -D -m 755 "$srcdir"/rm2fb-client "$pkgdir"/opt/bin/
     install -D -m 644 "$srcdir"/rm2fb.conf "$pkgdir"/etc/systemd/system.conf.d/01-rm2fb.conf

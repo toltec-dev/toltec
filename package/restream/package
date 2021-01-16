@@ -3,11 +3,11 @@
 # SPDX-License-Identifier: MIT
 
 pkgnames=(restream)
-pkgdesc="A binary framebuffer capture tool for the reStream script"
+pkgdesc="Binary framebuffer capture tool for the reStream script"
 url=https://github.com/rien/reStream
-pkgver=0.0.0-1
+pkgver=0.0.0-2
 timestamp=2021-01-01T13:55:28Z
-section=utils
+section="screensharing"
 maintainer="Dan Shick <dan.shick@gmail.com>"
 license=MIT
 conflicts=(rm2fb)
