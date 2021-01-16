@@ -1,0 +1,31 @@
+name: Sync with remote repository
+description: Synchronize packages with a remote repository
+inputs:
+    local-path:
+        description: Path to the directory containing the packages to push
+        required: true
+    ssh-key:
+        description: Private SSH key to access the remote repository
+        required: true
+    ssh-known-hosts:
+        description: Public SSH key of the remote repository
+        required: true
+    remote-path:
+        description: Path to the remote directory to place the packages in
+        required: true
+runs:
+    using: composite
+    steps:
+        - name: rsync packages and index
+          shell: bash
+          run: |
+            mkdir -p private
+            chmod 700 private
+            echo '${{ inputs.ssh-key }}' > private/id_rsa
+            echo '${{ inputs.ssh-known-hosts }}' > private/known_hosts
+            chmod 600 private/*
+            rsync --archive --verbose --compress --delete \
+                -e "ssh -i private/id_rsa -o UserKnownHostsFile=private/known_hosts" \
+                '${{ inputs.local-path }}' \
+                '${{ inputs.remote-path }}'
+            rm -r private
