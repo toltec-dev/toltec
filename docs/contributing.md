@@ -1,7 +1,7 @@
 ## Contributing to Toltec
 
 Thank you for taking the time to contribute to Toltec!
-We welcome contributions from anyone, regarding for example [reporting bugs](#reporting-a-bug), [requesting](#request-a-package) or [adding new packages](#adding-a-new-package), upgrading existing ones, improving the docs, or other topics.
+We welcome contributions from anyone, regarding for example [reporting bugs](#reporting-a-bug), [requesting](#requesting-a-package) or [adding new packages](#adding-a-new-package), upgrading existing ones, improving the docs, or other topics.
 
 To make a request or report a bug, you simply need to [open a new issue](../../../issues/new/choose).
 To directly propose changes, the basic procedure is:
