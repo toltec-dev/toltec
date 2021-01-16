@@ -59,7 +59,7 @@ package() {
 
     mv "${pkgdir}"/usr/{lib,share/man} "${pkgdir}"/opt/usr
     mv "${pkgdir}"/usr/{s,}bin "${pkgdir}"/opt
-    
+
     install -D -m 644 -t "$pkgdir"/opt/share/zoneinfo "$srcdir"/iso3166.tab
     install -D -m 644 -t "$pkgdir"/opt/share/zoneinfo "$srcdir"/zone1970.tab
 
