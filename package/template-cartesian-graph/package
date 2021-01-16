@@ -7,7 +7,7 @@ pkgdesc="Cartesian graph template"
 url=https://github.com/PeterGrace/template-cartesian-graph
 pkgver=1.0.0-4
 timestamp=2021-01-14T17:46Z
-section=templates
+section="templates"
 maintainer="Peter Grace <pete.grace@gmail.com>"
 license=MIT
 depends=(templatectl)
@@ -23,22 +23,14 @@ package() {
 }
 
 configure() {
-    o_file="/opt/share/remarkable/templates/template-cartesian-graph"
-    t_file="/usr/share/remarkable/templates/template-cartesian-graph"
-    for ext in png svg; do
-        if [[ -L "${pkgdir}${t_file}.${ext}" ]]; then
-            if [[ "$(readlink "${pkgdir}${t_file}.${ext}")" != "${pkgdir}${o_file}.${ext}" ]]; then
-                rm -f "$pkgdir${t_file}.${ext}"
-                ln -s "$pkgdir${o_file}.${ext}" "${t_file}.${ext}"
-            fi
-        else
-            ln -s "$pkgdir${o_file}.${ext}" "${t_file}.${ext}"
-        fi
-    done
     templatectl add --name "Cartesian Graph" --filename "template-cartesian-graph" \
         --category "Custom" --category "Math"
 }
 
 preremove() {
+    templatectl remove --name "Cartesian Graph"
+}
+
+preupgrade() {
     templatectl remove --name "Cartesian Graph"
 }

@@ -7,13 +7,19 @@ pkgdesc="Tool to add/remove templates for xochitl"
 url=https://github.com/PeterGrace/templatectl
 pkgver=0.1.2-1
 timestamp=2021-01-15T01:23Z
-section=templates
+section="templates"
 maintainer="Peter Grace <pete.grace@gmail.com>"
 license=MIT
 
 image=rust:v1.2.2
-source=("https://github.com/PeterGrace/templatectl/archive/v${pkgver%-*}.zip")
-sha256sums=(305e3dbf29aea7f762fba22ceebfa004a5f666ae96fdb8776b2acfdb39539469)
+source=(
+    "https://github.com/PeterGrace/templatectl/archive/v${pkgver%-*}.zip"
+    usr-share-remarkable-templates.mount
+)
+sha256sums=(
+    305e3dbf29aea7f762fba22ceebfa004a5f666ae96fdb8776b2acfdb39539469
+    SKIP
+)
 
 build() {
     cargo build --release
@@ -22,4 +28,31 @@ build() {
 package() {
     install -D -m 755 -t "$pkgdir"/opt/bin \
         "$srcdir"/target/armv7-unknown-linux-gnueabihf/release/templatectl
+    install -D -t "$pkgdir"/lib/systemd/system "$srcdir"/usr-share-remarkable-templates.mount
+}
+
+preinstall() {
+    local path=usr/share/remarkable/templates
+    if [ ! -d  /home/root/.entware/"$path" ]; then
+        mkdir -p /home/root/.entware/"$path"
+        cp -r /"$path"/* /home/root/.entware/"$path"
+    fi
+}
+
+postupgrade() {
+    systemctl stop usr-share-remarkable-templates.mount
+}
+
+configure() {
+    systemctl daemon-reload
+    systemctl enable --now usr-share-remarkable-templates.mount
+}
+
+preremove() {
+    systemctl disable --now usr-share-remarkable-templates.mount
+}
+
+postremove() {
+    echo "To fully remove templatectl you'll need to run the following command:"
+    echo "  rm -rf /home/root/.entware/usr/share/remarkable/templates"
 }
