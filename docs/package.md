@@ -137,7 +137,7 @@ games           | Apps for playing games.
 launchers       | Apps that present to the user a list of other apps that they can launch. Usually started automatically after boot.
 math            | Apps to assist the user in performing mathematical tasks.
 readers         | Apps for reading and annotating documents (PDF, EPUB, …).
-screensharing   | Apps for streaming the display between the PC and tablet
+screensharing   | Apps for streaming the display between the PC and tablet.
 templates       | Templates for xochitl notebooks.
 utils           | System tools and various apps.
 
