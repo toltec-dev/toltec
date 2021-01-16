@@ -7,7 +7,7 @@ pkgdesc="Real-time collaboration, drawing or whiteboarding"
 url=https://github.com/fenollp/reMarkable-tools
 pkgver=0.3.0-2
 timestamp=2020-09-23T18:01Z
-section=drawing
+section="drawing"
 maintainer="Pierre Fenoll <pierrefenoll@gmail.com>"
 license=Apache-2.0
 
