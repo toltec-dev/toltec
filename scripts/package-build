@@ -142,14 +142,16 @@ for pkgname in "${pkgnames[@]}"; do
             # Run packaging script
             package
 
-            section "Stripping $pkgname"
-            docker container run --interactive --rm \
-                --mount type=bind,src="$(realpath "$pkgdir")",dst=/pkg \
-                "$(image-name "${image:-base:v1.2.2}")" /bin/bash \
-                << "SCRIPT"
+            if ! has-element "nostrip" "${flags[@]}"; then
+                section "Stripping $pkgname"
+                docker container run --interactive --rm \
+                    --mount type=bind,src="$(realpath "$pkgdir")",dst=/pkg \
+                    "$(image-name "${image:-base:v1.2.2}")" /bin/bash \
+                    << "SCRIPT"
 find /pkg -print0 -type f | xargs --null "${CROSS_COMPILE}strip" --strip-all &> /dev/null || true
 SCRIPT
-            find "$pkgdir" -print0 -type f | xargs --null strip --strip-all &> /dev/null || true
+                find "$pkgdir" -print0 -type f | xargs --null strip --strip-all &> /dev/null || true
+            fi
 
             section "Finalizing package $pkgname"
             # Show package contents
@@ -201,23 +203,32 @@ SCRIPT
             fi
 
             # Generate postinst
-            if [[ $(type -t configure) = function ]]; then
-                {
-                    maintainer-script-header
+            {
+                maintainer-script-header
+                if [[ $(type -t configure) = function ]]; then
                     declare -f configure
                     cat << 'SCRIPT'
 if [[ $1 = configure ]]; then
     configure
 fi
 SCRIPT
-                } >> "$ctldir"/postinst
-                chmod 755 "$ctldir"/postinst
-            fi
+                fi
+
+                if [ -d "$pkgdir"/opt/usr/share/applications ]; then
+                    cat << 'SCRIPT'
+if [[ $1 = configure ]]; then
+    reload-oxide-apps
+fi
+SCRIPT
+                fi
+            } >> "$ctldir"/postinst
+            chmod 755 "$ctldir"/postinst
 
             # Generate {pre,post}rm
             for step in pre post; do
                 if [[ $(type -t "$step"upgrade) = function ]] \
-                    || [[ $(type -t "$step"remove) = function ]]; then
+                    || [[ $(type -t "$step"remove) = function ]] \
+                    || [ -d "$pkgdir"/opt/usr/share/applications ] && [ $step = post ]; then
                     {
                         maintainer-script-header
 
@@ -235,6 +246,14 @@ SCRIPT
                             cat << SCRIPT
 if [[ \$1 = remove ]]; then
     "$step"remove "\$2"
+fi
+SCRIPT
+                        fi
+
+                        if [ $step = post ] && [ -d "$pkgdir"/opt/usr/share/applications ]; then
+                            cat << 'SCRIPT'
+if [[ $1 = remove ]] || [[ $1 = upgrade ]]; then
+    reload-oxide-apps
 fi
 SCRIPT
                         fi
