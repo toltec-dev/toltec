@@ -26,7 +26,7 @@ Install Toltec
 
 .. class:: twocolumn
 
-  This script installs the toltec package repository and `related tools <#>`_.
+  This script installs the toltec package repository and related tools.
 
 
 What does Toltec do?
@@ -49,7 +49,7 @@ How to use
 
 .. class:: twocolumn
 
-  the **opkg** command is used to add/remove/update packages. `see the quickstart guide <#>`_
+  the **opkg** command is used to add/remove/update packages.
 
 .. class:: twocolumn
 
@@ -59,6 +59,7 @@ How to use
      $ opkg upgrade
      $ opkg install <package>
      $ opkg remove <package>
+     $ opkg info <package>
 
 ---------------------------------------------------------------
 
