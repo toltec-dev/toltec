@@ -84,7 +84,7 @@ mines() {
 nao() {
     pkgdesc="Nao Package Manager: opkg UI built with SAS"
     url="https://rmkit.dev/apps/nao"
-    pkgver=0.1.0-4
+    pkgver=0.1.0-5
     section="admin"
     depends=(simple)
 
@@ -130,7 +130,7 @@ remux() {
 simple() {
     pkgdesc="Simple app script for writing scripted applications"
     url="https://rmkit.dev/apps/sas"
-    pkgver=0.1.1-1
+    pkgver=0.1.1-2
     section="devel"
 
     package() {
