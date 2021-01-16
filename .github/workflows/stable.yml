@@ -10,21 +10,25 @@ jobs:
         steps:
             - name: Checkout the Git repository
               uses: actions/checkout@v2
-            - name: Install missing tools
-              run: |
-                sudo apt-get install bsdtar tree
+            - name: Setup Toltec dependencies
+              uses: ./.github/actions/setup
             - name: Build packages
               run: |
                 remote_repo="https://toltec-dev.org/stable" make repo
-            - name: Transfer packages and index
-              run: |
-                mkdir -p private
-                chmod 700 private
-                echo "${{ secrets.SSH_PRIVATE_KEY }}" > private/id_rsa
-                echo "${{ secrets.SSH_KNOWN_HOSTS }}" > private/known_hosts
-                chmod 600 private/*
-                rsync --archive --verbose --compress --delete \
-                    -e "ssh -i private/id_rsa -o UserKnownHostsFile=private/known_hosts" \
-                    build/repo/ "${{ secrets.REMOTE }}":/srv/toltec/stable
-                scp -i private/id_rsa -o UserKnownHostsFile=private/known_hosts \
-                    scripts/bootstrap/bootstrap "${{ secrets.REMOTE }}":/srv/toltec
+            - name: Sync packages with the remote repository
+              uses: ./.github/actions/sync-repository
+              with:
+                local-path: build/repo/
+                ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
+                ssh-known-hosts: ${{ secrets.SSH_KNOWN_HOSTS }}
+                remote-path: ${{ secrets.REMOTE }}:/srv/toltec/stable
+            - name: Send notification to Discord
+              continue-on-error: true
+              uses: ./.github/actions/discord-send
+              with:
+                channel: ${{ secrets.DISCORD_STABLE_CHANNEL_ID }}
+                token: ${{ secrets.DISCORD_STABLE_CHANNEL_TOKEN }}
+                title: New Toltec stable update available
+                link: https://toltec-dev.org/stable
+                color: 0x2ea043
+                message: ${{ github.event.head_commit.message }}

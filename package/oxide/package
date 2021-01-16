@@ -59,7 +59,6 @@ oxide() {
 rot() {
     pkgdesc="Manage Oxide settings through the command line"
     url=https://github.com/Eeems/oxide/tree/master/applications/settings-manager
-    pkgver=1.0.0
     section=utils
     depends=("tarnish (= $pkgver)")
 
