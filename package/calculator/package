@@ -7,7 +7,7 @@ pkgdesc="Touch-based calculator"
 url=https://github.com/reHackable/Calculator
 pkgver=0.0.0-13
 timestamp=2020-08-20T12:28Z
-section=math
+section="math"
 maintainer="Mattéo Delabre <spam@delab.re>"
 license=GPL-3.0-or-later
 

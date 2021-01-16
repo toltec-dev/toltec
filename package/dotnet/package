@@ -12,11 +12,11 @@ pkgnames=(
     aspnet-targeting-pack
     netstandard-targeting-pack
 )
-pkgver=3.1.10-2
+pkgver=3.1.10-3
 timestamp=2020-12-27T18:48Z
 maintainer="Eeems <eeems@eeems.email>"
 url=https://www.microsoft.com/net/core
-section=utils
+section="devel"
 license=MIT
 
 source=(
@@ -40,7 +40,7 @@ dotnet-profile() {
 }
 
 dotnet-host() {
-    pkgdesc="A generic driver for the .NET Core Command Line Interface"
+    pkgdesc="Generic driver for the .NET Core Command Line Interface"
     depends=(dotnet-profile)
 
     package() {
@@ -52,7 +52,7 @@ dotnet-host() {
     }
 }
 dotnet-sdk() {
-    pkgdesc="The .NET Core SDK"
+    pkgdesc=".NET Core SDK"
     depends=(
         dotnet-runtime
         dotnet-targeting-pack
@@ -66,7 +66,7 @@ dotnet-sdk() {
     }
 }
 dotnet-runtime() {
-    pkgdesc="The .NET Core runtime"
+    pkgdesc=".NET Core runtime"
     depends=(dotnet-host icu zlib libcurl)
 
     package() {
@@ -76,7 +76,7 @@ dotnet-runtime() {
     }
 }
 aspnet-runtime() {
-    pkgdesc="The ASP.NET Core runtime"
+    pkgdesc="ASP.NET Core runtime"
     depends=(dotnet-runtime)
 
     package() {
@@ -86,7 +86,7 @@ aspnet-runtime() {
     }
 }
 dotnet-targeting-pack() {
-    pkgdesc="The .NET Core targeting pack"
+    pkgdesc=".NET Core targeting pack"
     depends=(netstandard-targeting-pack)
 
     package() {
@@ -96,8 +96,7 @@ dotnet-targeting-pack() {
     }
 }
 aspnet-targeting-pack() {
-    pkgdesc="The ASP.NET Core targeting pack"
-    section=utils
+    pkgdesc="ASP.NET Core targeting pack"
     license=Apache
     depends=(dotnet-targeting-pack)
 
@@ -108,8 +107,7 @@ aspnet-targeting-pack() {
     }
 }
 netstandard-targeting-pack() {
-    pkgdesc="The .NET Standard targeting pack"
-    section=utils
+    pkgdesc=".NET Standard targeting pack"
     license=Apache
 
     package() {

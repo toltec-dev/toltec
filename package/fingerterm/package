@@ -5,9 +5,9 @@
 pkgnames=(fingerterm)
 pkgdesc="Terminal emulator with an on-screen touch keyboard"
 url=https://github.com/dixonary/fingerterm-reMarkable
-pkgver=1.3.5-10
+pkgver=1.3.5-11
 timestamp=2017-12-08T15:40Z
-section=utils
+section="admin"
 maintainer="Mattéo Delabre <spam@delab.re>"
 license=GPL-2.0-or-later
 

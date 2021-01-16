@@ -5,9 +5,9 @@
 pkgnames=(reboot-guard)
 pkgdesc="Block systemd-initiated poweroff/reboot/halt until configurable condition checks pass"
 url=https://github.com/stephanritscher/reboot-guard
-pkgver=1.0.1-4
+pkgver=1.0.1-5
 timestamp=2020-05-04T06:16Z
-section=utils
+section="devel"
 maintainer="Eeems <eeems@eeems.email>"
 license=GPL-3.0
 depends=(xochitl python3)
