@@ -1,3 +1,3 @@
 #!/bin/sh
 cd "$1" || exit 1
-rst2html --stylesheet-path=toltec.css index.rst > index.html
+rst2html5 --stylesheet-path=toltec.css index.rst > index.html
