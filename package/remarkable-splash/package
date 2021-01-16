@@ -7,7 +7,7 @@ pkgdesc="Show splashscreens + remarkable-shutdown replacement that does not clea
 url=https://github.com/ddvk/remarkable-splash
 pkgver=1.0-3
 timestamp=2019-12-31T10:07Z
-section=utils
+section="utils"
 maintainer="Eeems <eeems@eeems.email>"
 license=MIT
 

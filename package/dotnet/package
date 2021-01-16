@@ -16,7 +16,7 @@ pkgver=3.1.10-3
 timestamp=2020-12-27T18:48Z
 maintainer="Eeems <eeems@eeems.email>"
 url=https://www.microsoft.com/net/core
-section=devel
+section="devel"
 license=MIT
 
 source=(

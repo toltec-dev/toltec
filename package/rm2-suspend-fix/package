@@ -7,7 +7,7 @@ pkgdesc="Fix issue where suspend breaks networking on the reMarkable 2"
 url=https://toltec-dev.org/
 pkgver=0.0.0-1
 timestamp=2021-01-04T22:40Z
-section=devel
+section="devel"
 maintainer="Eeems <eeems@eeems.email>"
 license=MIT
 

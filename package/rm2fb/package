@@ -9,7 +9,7 @@ license=MIT
 pkgdesc="Interface to the reMarkable 2 framebuffer"
 url="https://github.com/ddvk/remarkable2-framebuffer"
 pkgver=1.0.0-6
-section=devel
+section="devel"
 
 image=qt:v1.1
 source=(

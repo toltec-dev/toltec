@@ -26,7 +26,7 @@ build() {
 
 fbink() {
     pkgdesc="Print text and images to the framebuffer"
-    section=devel
+    section="devel"
 
     package() {
         install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/FBInk/Release/fbink
@@ -35,7 +35,7 @@ fbink() {
 
 fbdepth() {
     pkgdesc="Change rotation and bitdepth of the screen"
-    section=utils
+    section="utils"
 
     package() {
         install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/FBInk/Release/fbdepth
@@ -44,7 +44,7 @@ fbdepth() {
 
 fbink-doom() {
     pkgdesc="Doom fire effect stress test"
-    section=utils
+    section="utils"
 
     package() {
         install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/FBInk/Release/doom
