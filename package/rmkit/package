@@ -85,7 +85,7 @@ nao() {
     pkgdesc="Nao Package Manager: opkg UI built with SAS"
     url="https://rmkit.dev/apps/nao"
     pkgver=0.1.0-4
-    section=utils
+    section=admin
     depends=(simple)
 
     package() {
@@ -131,7 +131,7 @@ simple() {
     pkgdesc="Simple app script for writing scripted applications"
     url="https://rmkit.dev/apps/sas"
     pkgver=0.1.1-1
-    section=utils
+    section=devel
 
     package() {
         install -D -m 755 "$srcdir"/src/build/simple "$pkgdir"/opt/bin/simple
