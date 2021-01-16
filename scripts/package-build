@@ -44,7 +44,7 @@ readonly recipedir="$1"
 load-recipe-header "$1"
 shift
 
-[[ -d "$1" ]] && files="$(ls -qA -- "$1")" && [[ -n $files ]] \
+[[ -d $1 ]] && files="$(ls -qA -- "$1")" && [[ -n $files ]] \
     && error "Working directory '$1' exists and is not empty"
 mkdir -p "$1"
 readonly workdir="$(realpath "$1")"
