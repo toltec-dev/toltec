@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: MIT
 
 pkgnames=(erode fret oxide rot tarnish decay)
-pkgver=2.1~beta-1
+pkgver=2.1~beta-2
 timestamp=2021-01-07T03:28Z
 maintainer="Eeems <eeems@eeems.email>"
 license=MIT
@@ -14,7 +14,7 @@ sha256sums=(ca5b58a98242cfaf846545c391dca75dc4d13e443764e656cdc621ce07d091f8)
 erode() {
     pkgdesc="Task manager"
     url=https://github.com/Eeems/oxide/tree/master/applications/process-manager
-    section=utils
+    section="admin"
     depends=("tarnish (= $pkgver)")
 
     package() {
@@ -26,7 +26,7 @@ erode() {
 fret() {
     pkgdesc="Take screenshots"
     url=https://github.com/Eeems/oxide/tree/master/applications/screenshot-tool
-    section=utils
+    section="utils"
     depends=("tarnish (= $pkgver)")
 
     package() {
@@ -38,7 +38,7 @@ fret() {
 oxide() {
     pkgdesc="Launcher application"
     url=https://github.com/Eeems/oxide/tree/master/applications/launcher
-    section=launchers
+    section="launchers"
     depends=("erode  (= $pkgver)" "fret (= $pkgver)" "tarnish (= $pkgver)" "rot (= $pkgver)" "decay (= $pkgver)")
 
     package() {
@@ -59,7 +59,7 @@ oxide() {
 rot() {
     pkgdesc="Manage Oxide settings through the command line"
     url=https://github.com/Eeems/oxide/tree/master/applications/settings-manager
-    section=utils
+    section="admin"
     depends=("tarnish (= $pkgver)")
 
     package() {
@@ -70,7 +70,7 @@ rot() {
 tarnish() {
     pkgdesc="Service managing power states, connectivity and buttons"
     url=https://github.com/Eeems/oxide/tree/master/applications/system-service
-    section=utils
+    section="devel"
     depends=(xochitl)
 
     package() {
@@ -99,7 +99,7 @@ tarnish() {
 decay() {
     pkgdesc="Lockscreen application"
     url=https://github.com/Eeems/oxide/tree/master/applications/lockscreen
-    section=utils
+    section="utils"
     depends=("tarnish (= $pkgver)")
 
     package() {

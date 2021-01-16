@@ -7,7 +7,7 @@ pkgdesc="Markdown-enabled free writing app"
 url=https://github.com/dps/remarkable-keywriter
 pkgver=0.1.0-1
 timestamp=2019-07-13T06:27Z
-section=writing
+section="writing"
 maintainer="Mattéo Delabre <spam@delab.re>"
 license=MIT
 
