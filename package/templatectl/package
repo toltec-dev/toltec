@@ -33,7 +33,7 @@ package() {
 
 preinstall() {
     local target_path=share/remarkable/templates
-    local factory_path="/usr/$path"
+    local factory_path="/usr/$target_path"
     if [ ! -d /home/root/.entware/"$target_path" ]; then
         mkdir -p /home/root/.entware/"$target_path"
         cp -r /"$factory_path"/* /home/root/.entware/"$target_path"
