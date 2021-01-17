@@ -54,5 +54,5 @@ preremove() {
 
 postremove() {
     echo "To fully remove templatectl you'll need to run the following command:"
-    echo "  rm -rf /home/root/.entware/usr/share/remarkable/templates"
+    echo "  rm -rf /home/root/.entware/share/remarkable/templates"
 }
