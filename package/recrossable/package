@@ -7,7 +7,7 @@ pkgdesc="Solve crossword puzzles"
 url=https://github.com/sandsmark/recrossable
 pkgver=0.0.0-3
 timestamp=2020-10-05T08:43Z
-section=games
+section="games"
 maintainer="Mattéo Delabre <spam@delab.re>"
 license=GPL-2.0-or-later
 

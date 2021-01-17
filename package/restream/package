@@ -3,11 +3,11 @@
 # SPDX-License-Identifier: MIT
 
 pkgnames=(restream)
-pkgdesc="A binary framebuffer capture tool for the reStream script"
+pkgdesc="Binary framebuffer capture tool for the reStream script"
 url=https://github.com/rien/reStream
-pkgver=0.0.0-1
+pkgver=0.0.0-2
 timestamp=2021-01-01T13:55:28Z
-section=utils
+section="screensharing"
 maintainer="Dan Shick <dan.shick@gmail.com>"
 license=MIT
 conflicts=(rm2fb)
@@ -26,8 +26,17 @@ package() {
     install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/target/armv7-unknown-linux-gnueabihf/release/restream
 }
 
-postinstall() {
-    printf "This app is only the device-side half of reStream. The companion script for consuming the output of this app can be found at https://github.com/rien/reStream\n"
-    printf "The script may need to be adjusted to target /opt/bin/restream instead of \$HOME/restream, or you can create a symlink on your device with\n"
-    printf "ln -s /opt/bin/restream \$HOME/restream\n"
+configure() {
+    cat << 'MSG'
+
+This app is only the device-side half of reStream. The companion script for
+consuming the output of this app can be found at
+<https://github.com/rien/reStream>.
+
+The script may need to be adjusted to target '/opt/bin/restream' instead of
+'$HOME/restream', or you can create a symlink on your device with:
+
+    ln -s /opt/bin/restream $HOME/restream
+
+MSG
 }

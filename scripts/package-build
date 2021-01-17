@@ -44,10 +44,10 @@ readonly recipedir="$1"
 load-recipe-header "$1"
 shift
 
-readonly workdir="$1"
-[[ -d $workdir ]] && files="$(ls -qA -- "$workdir")" && [[ -n $files ]] \
-    && error "Working directory '$workdir' exists and is not empty"
-mkdir -p "$workdir"
+[[ -d $1 ]] && files="$(ls -qA -- "$1")" && [[ -n $files ]] \
+    && error "Working directory '$1' exists and is not empty"
+mkdir -p "$1"
+readonly workdir="$(realpath "$1")"
 shift
 
 readonly requestedpkgs=("$@")
@@ -139,29 +139,28 @@ for pkgname in "${pkgnames[@]}"; do
             readonly pkgdir="$worksubdir"/pkg
             mkdir "$pkgdir"
 
-            readonly ctldir="$worksubdir"/control
-            mkdir "$ctldir"
-
-            readonly ardir="$worksubdir"/ar
-            mkdir "$ardir"
-
             # Run packaging script
             package
 
-            section "Stripping $pkgname"
-            docker container run --interactive --rm \
-                --mount type=bind,src="$(realpath "$pkgdir")",dst=/pkg \
-                "$(image-name base)" /bin/bash \
-                << "SCRIPT"
-find /pkg -print0 -type f | xargs --null arm-linux-gnueabihf-strip --strip-all &> /dev/null || true
+            if ! has-element "nostrip" "${flags[@]}"; then
+                section "Stripping $pkgname"
+                docker container run --interactive --rm \
+                    --mount type=bind,src="$(realpath "$pkgdir")",dst=/pkg \
+                    "$(image-name "${image:-base:v1.2.2}")" /bin/bash \
+                    << "SCRIPT"
+find /pkg -print0 -type f | xargs --null "${CROSS_COMPILE}strip" --strip-all &> /dev/null || true
 SCRIPT
-            find "$pkgdir" -print0 -type f | xargs --null strip --strip-all &> /dev/null || true
+                find "$pkgdir" -print0 -type f | xargs --null strip --strip-all &> /dev/null || true
+            fi
 
             section "Finalizing package $pkgname"
             # Show package contents
             if command -v tree &> /dev/null; then
                 tree -np "$pkgdir" | tail +2
             fi
+
+            readonly ctldir="$worksubdir"/control
+            mkdir "$ctldir"
 
             # Create control file
             readonly ctlfile="$ctldir"/control
@@ -204,23 +203,32 @@ SCRIPT
             fi
 
             # Generate postinst
-            if [[ $(type -t configure) = function ]]; then
-                {
-                    maintainer-script-header
+            {
+                maintainer-script-header
+                if [[ $(type -t configure) = function ]]; then
                     declare -f configure
                     cat << 'SCRIPT'
 if [[ $1 = configure ]]; then
     configure
 fi
 SCRIPT
-                } >> "$ctldir"/postinst
-                chmod 755 "$ctldir"/postinst
-            fi
+                fi
+
+                if [ -d "$pkgdir"/opt/usr/share/applications ]; then
+                    cat << 'SCRIPT'
+if [[ $1 = configure ]]; then
+    reload-oxide-apps
+fi
+SCRIPT
+                fi
+            } >> "$ctldir"/postinst
+            chmod 755 "$ctldir"/postinst
 
             # Generate {pre,post}rm
             for step in pre post; do
                 if [[ $(type -t "$step"upgrade) = function ]] \
-                    || [[ $(type -t "$step"remove) = function ]]; then
+                    || [[ $(type -t "$step"remove) = function ]] \
+                    || [ -d "$pkgdir"/opt/usr/share/applications ] && [ $step = post ]; then
                     {
                         maintainer-script-header
 
@@ -241,10 +249,21 @@ if [[ \$1 = remove ]]; then
 fi
 SCRIPT
                         fi
+
+                        if [ $step = post ] && [ -d "$pkgdir"/opt/usr/share/applications ]; then
+                            cat << 'SCRIPT'
+if [[ $1 = remove ]] || [[ $1 = upgrade ]]; then
+    reload-oxide-apps
+fi
+SCRIPT
+                        fi
                     } >> "$ctldir"/"$step"rm
                     chmod 755 "$ctldir"/"$step"rm
                 fi
             done
+
+            readonly ardir="$worksubdir"/ar
+            mkdir "$ardir"
 
             # Create archives
             section "Creating archive"

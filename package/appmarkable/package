@@ -3,11 +3,11 @@
 # SPDX-License-Identifier: MIT
 
 pkgnames=(appmarkable)
-pkgdesc="Turn your program into a very simple app for draft"
+pkgdesc="Front-end for apps that do not have a graphical user interface"
 url="https://github.com/LinusCDE/appmarkable"
-pkgver=0.0.0-7
+pkgver=0.0.0-8
 timestamp=2020-09-07T00:16Z
-section=utils
+section="devel"
 maintainer="Linus K. <linus@cosmos-ink.net>"
 license=MIT
 

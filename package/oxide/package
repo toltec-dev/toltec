@@ -2,47 +2,50 @@
 # Copyright (c) 2020 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
-pkgnames=(erode fret oxide rot tarnish)
-pkgver=2.0.1~beta-4
-timestamp=2020-12-06T20:09Z
+pkgnames=(erode fret oxide rot tarnish decay)
+pkgver=2.1~beta-2
+timestamp=2021-01-07T03:28Z
 maintainer="Eeems <eeems@eeems.email>"
 license=MIT
 
-source=(https://github.com/Eeems/oxide/releases/download/v2.0.1-beta/oxide.zip)
-sha256sums=(02c0561b0478d4108916d618ad1bced77e549121f1e2770d35314b94c2852dfe)
+source=(https://github.com/Eeems/oxide/releases/download/v2.1/oxide.zip)
+sha256sums=(ca5b58a98242cfaf846545c391dca75dc4d13e443764e656cdc621ce07d091f8)
 
 erode() {
     pkgdesc="Task manager"
     url=https://github.com/Eeems/oxide/tree/master/applications/process-manager
-    section=utils
-    depends=(tarnish)
+    section="admin"
+    depends=("tarnish (= $pkgver)")
 
     package() {
         install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/opt/bin/erode
+        install -D -m 644 -t "$pkgdir"/opt/usr/share/applications "$srcdir"/opt/usr/share/applications/codes.eeems.erode.oxide
     }
 }
 
 fret() {
     pkgdesc="Take screenshots"
     url=https://github.com/Eeems/oxide/tree/master/applications/screenshot-tool
-    section=utils
+    section="utils"
+    depends=("tarnish (= $pkgver)")
 
     package() {
         install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/opt/bin/fret
+        install -D -m 644 -t "$pkgdir"/opt/usr/share/applications "$srcdir"/opt/usr/share/applications/codes.eeems.fret.oxide
     }
 }
 
 oxide() {
     pkgdesc="Launcher application"
     url=https://github.com/Eeems/oxide/tree/master/applications/launcher
-    section=launchers
-    depends=(erode fret tarnish xochitl rot)
+    section="launchers"
+    depends=("erode  (= $pkgver)" "fret (= $pkgver)" "tarnish (= $pkgver)" "rot (= $pkgver)" "decay (= $pkgver)")
 
     package() {
         install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/opt/bin/oxide
         install -D -m 644 -t "$pkgdir"/opt/etc "$srcdir"/opt/etc/oxide.conf
+        install -D -m 644 -t "$pkgdir"/opt/usr/share/applications "$srcdir"/opt/usr/share/applications/codes.eeems.oxide.oxide
     }
-
     configure() {
         if ! is-enabled "tarnish.service"; then
             echo ""
@@ -56,9 +59,8 @@ oxide() {
 rot() {
     pkgdesc="Manage Oxide settings through the command line"
     url=https://github.com/Eeems/oxide/tree/master/applications/settings-manager
-    pkgver=1.0.0
-    section=utils
-    depends=(tarnish)
+    section="admin"
+    depends=("tarnish (= $pkgver)")
 
     package() {
         install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/opt/bin/rot
@@ -68,26 +70,40 @@ rot() {
 tarnish() {
     pkgdesc="Service managing power states, connectivity and buttons"
     url=https://github.com/Eeems/oxide/tree/master/applications/system-service
-    section=utils
+    section="devel"
+    depends=(xochitl)
 
     package() {
         install -D -m 644 -t "$pkgdir"/etc/dbus-1/system.d "$srcdir"/etc/dbus-1/system.d/codes.eeems.oxide.conf
         install -D -m 644 -t "$pkgdir"/lib/systemd/system "$srcdir"/etc/systemd/system/tarnish.service
         install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/opt/bin/tarnish
     }
-
     configure() {
         systemctl daemon-reload
     }
-
     preremove() {
-        if systemctl list-units --full -all | grep -Fq 'tarnish.service'; then
-            echo "Disabling $pkgname"
-            systemctl disable --now tarnish
+        if is-active tarnish; then
+            echo "Stopping tarnish"
+            systemctl stop tarnish
+        fi
+        if is-enabled tarnish; then
+            echo "Disabling tarnish"
+            systemctl disable tarnish
         fi
     }
-
     postremove() {
         systemctl daemon-reload
+    }
+}
+
+decay() {
+    pkgdesc="Lockscreen application"
+    url=https://github.com/Eeems/oxide/tree/master/applications/lockscreen
+    section="utils"
+    depends=("tarnish (= $pkgver)")
+
+    package() {
+        install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/opt/bin/decay
+        install -D -m 644 -t "$pkgdir"/opt/usr/share/applications "$srcdir"/opt/usr/share/applications/codes.eeems.decay.oxide
     }
 }
