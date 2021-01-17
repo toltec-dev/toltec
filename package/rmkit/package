@@ -27,7 +27,7 @@ build() {
 genie() {
     pkgdesc="Gesture engine that connects commands to gestures"
     url="https://rmkit.dev/apps/genie"
-    pkgver=0.1.2-1
+    pkgver=0.1.2-2
     section="utils"
 
     package() {
@@ -98,7 +98,7 @@ nao() {
 remux() {
     pkgdesc="App launcher that supports multi-tasking applications"
     url="https://rmkit.dev/apps/remux"
-    pkgver=0.1.7-1
+    pkgver=0.1.7-2
     section="launchers"
 
     package() {
