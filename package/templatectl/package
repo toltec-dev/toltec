@@ -47,6 +47,8 @@ postupgrade() {
 configure() {
     systemctl daemon-reload
     systemctl enable --now usr-share-remarkable-templates.mount
+    echo "If you perform a system upgrade that adds new templates"
+    echo "Manual intervention may be required to handle adding the new templates"
 }
 
 preremove() {
