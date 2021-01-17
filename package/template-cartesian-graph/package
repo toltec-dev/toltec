@@ -30,7 +30,3 @@ configure() {
 preremove() {
     templatectl remove --name "Cartesian Graph"
 }
-
-preupgrade() {
-    templatectl remove --name "Cartesian Graph" > /dev/null
-}
