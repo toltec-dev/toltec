@@ -50,13 +50,11 @@ configure() {
 }
 
 preremove() {
-    umount /usr/share/remarkable/templates || echo "Attempt to unmount path \
-        failed.  You may need to reboot the reMarkable to fully restore factory \
-        functionality."
     systemctl disable --now usr-share-remarkable-templates.mount
 }
 
 postremove() {
+    systemctl daemon-reload
     echo "To fully remove templatectl you'll need to run the following command:"
     echo "  rm -rf /home/root/.entware/share/remarkable/templates"
 }
