@@ -130,11 +130,15 @@ A single category that best describes the primary purpose of the package. See [t
 
 Section         | Description
 ----------------|----------------------------------
+admin           | System administration tools.
+devel           | Dependencies for other apps, like runtimes or libraries.
 drawing         | Apps for drawing and whiteboarding.
 games           | Apps for playing games.
 launchers       | Apps that present to the user a list of other apps that they can launch. Usually started automatically after boot.
 math            | Apps to assist the user in performing mathematical tasks.
 readers         | Apps for reading and annotating documents (PDF, EPUB, …).
+screensharing   | Apps for streaming the display between the PC and tablet.
+templates       | Templates for xochitl notebooks.
 utils           | System tools and various apps.
 
 If the package does not fit into one of the existing sections, you are free to create a new one and document it here.

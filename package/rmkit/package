@@ -9,12 +9,12 @@ license=MIT
 
 image=python:v1.1
 source=(
-    https://github.com/rmkit-dev/rmkit/archive/a8ded6ba0cc60dee2a4cd1068c90840f7a358061.zip
+    https://github.com/rmkit-dev/rmkit/archive/0b4bda6a31a075dc3be093c338322203137549bf.zip
     remux.service
     genie.service
 )
 sha256sums=(
-    1b5423c96a46394cf93cf5124dd59b5fe23f62c7cddd0cee1eab979817e687c6
+    48620f0eb4223decf5c96c7b61cf44fb0bfeb8ccc83e72ac8f49fb6869612015
     SKIP
     SKIP
 )
@@ -27,8 +27,8 @@ build() {
 genie() {
     pkgdesc="Gesture engine that connects commands to gestures"
     url="https://rmkit.dev/apps/genie"
-    pkgver=0.1.1-1
-    section=utils
+    pkgver=0.1.2-1
+    section="utils"
 
     package() {
         install -D -m 755 "$srcdir"/src/build/genie "$pkgdir"/opt/bin/genie
@@ -54,8 +54,8 @@ genie() {
 harmony() {
     pkgdesc="Procedural sketching app"
     url="https://rmkit.dev/apps/harmony"
-    pkgver=0.1.0-5
-    section=drawing
+    pkgver=0.1.1-1
+    section="drawing"
 
     package() {
         install -D -m 755 "$srcdir"/src/build/harmony "$pkgdir"/opt/bin/harmony
@@ -71,8 +71,8 @@ harmony() {
 mines() {
     pkgdesc="Mine detection game"
     url="https://rmkit.dev/apps/minesweeper"
-    pkgver=0.1.0-4
-    section=games
+    pkgver=0.1.1-1
+    section="games"
 
     package() {
         install -D -m 755 "$srcdir"/src/build/mines "$pkgdir"/opt/bin/mines
@@ -84,8 +84,8 @@ mines() {
 nao() {
     pkgdesc="Nao Package Manager: opkg UI built with SAS"
     url="https://rmkit.dev/apps/nao"
-    pkgver=0.1.0-4
-    section=utils
+    pkgver=0.1.1-1
+    section="admin"
     depends=(simple)
 
     package() {
@@ -98,8 +98,8 @@ nao() {
 remux() {
     pkgdesc="App launcher that supports multi-tasking applications"
     url="https://rmkit.dev/apps/remux"
-    pkgver=0.1.6-1
-    section=launchers
+    pkgver=0.1.7-1
+    section="launchers"
 
     package() {
         install -D -m 755 "$srcdir"/src/build/remux "$pkgdir"/opt/bin/remux
@@ -130,8 +130,8 @@ remux() {
 simple() {
     pkgdesc="Simple app script for writing scripted applications"
     url="https://rmkit.dev/apps/sas"
-    pkgver=0.1.1-1
-    section=utils
+    pkgver=0.1.2-1
+    section="devel"
 
     package() {
         install -D -m 755 "$srcdir"/src/build/simple "$pkgdir"/opt/bin/simple
