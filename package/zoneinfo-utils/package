@@ -1,0 +1,68 @@
+#!/usr/bin/env bash
+# Copyright (c) 2020 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+# Inspired by https://github.com/archlinux/svntogit-packages/blob/packages/tzdata/trunk/PKGBUILD
+
+pkgnames=(zoneinfo-utils)
+pkgdesc="Utilities for interacting with zoneinfo files"
+url=https://www.iana.org/time-zones
+_tzver=2020f
+pkgver="$_tzver"-1
+timestamp=2020-05-04T06:16Z
+section=utils
+maintainer="Eeems <eeems@eeems.email>"
+license="custom: public domain"
+depends=(zoneinfo-core)
+image=base:v1.2.1
+
+source=(
+    "https://www.iana.org/time-zones/repository/releases/tzcode${_tzver}.tar.gz"
+    "https://www.iana.org/time-zones/repository/releases/tzdata${_tzver}.tar.gz"
+)
+sha256sums=(
+    cfeeea2a7745164f64bd9f6d76e47916f4ac820c4434493674adbbd4324329c5
+    121131918c3ae6dc5d40f0eb87563a2be920b71a76e2392c09519a5e4a666881
+)
+
+prepare() {
+    sed -i "s:sbin:bin:" Makefile
+}
+
+build() {
+    # Upgrade gawk to latest to avoid a bug
+    export DEBIAN_FRONTEND=noninteractive
+    apt-get update -y
+    apt-get install -y gawk
+
+    mkdir .x86
+    pushd .x86 > /dev/null
+
+    shopt -s extglob
+    cp -r ../* .
+    make LFLAGS="${LDFLAGS}"
+
+    popd > /dev/null
+
+    make LFLAGS="${LDFLAGS}" CC=arm-linux-gnueabihf-cc
+}
+
+package() {
+    pushd "${srcdir}" > /dev/null
+    local zic=.x86/zic
+    # install tzcode stuff
+    make DESTDIR="${pkgdir}" zic="$zic" install
+    # install license
+    install -Dm644 LICENSE "${pkgdir}"/opt/usr/share/licenses/tzdata/LICENSE
+
+    popd > /dev/null
+
+    mv "${pkgdir}"/usr/{lib,share/man} "${pkgdir}"/opt/usr
+    mv "${pkgdir}"/usr/{s,}bin "${pkgdir}"/opt
+
+    install -D -m 644 -t "$pkgdir"/opt/share/zoneinfo "$srcdir"/iso3166.tab
+    install -D -m 644 -t "$pkgdir"/opt/share/zoneinfo "$srcdir"/zone1970.tab
+
+    # cleanup
+    rm -rf "${pkgdir:?}"/{etc,usr}
+}
