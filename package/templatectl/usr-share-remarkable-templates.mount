@@ -5,7 +5,7 @@ Conflicts=umount.target
 Before=local-fs.target umount.target
 
 [Mount]
-What=/home/root/.entware/share/remarkable/templates
+What=/home/root/.entware/usr/share/remarkable/templates
 Where=/usr/share/remarkable/templates
 Type=none
 Options=bind
