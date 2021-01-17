@@ -5,7 +5,7 @@
 pkgnames=(templatectl)
 pkgdesc="Tool to add/remove templates for xochitl"
 url=https://github.com/PeterGrace/templatectl
-pkgver=0.1.2-2
+pkgver=0.1.2-3
 timestamp=2021-01-15T01:23Z
 section="templates"
 maintainer="Peter Grace <pete.grace@gmail.com>"
