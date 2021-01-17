@@ -50,6 +50,7 @@ configure() {
 }
 
 preremove() {
+    umount /usr/share/remarkable/templates || true
     systemctl disable --now usr-share-remarkable-templates.mount
 }
 
