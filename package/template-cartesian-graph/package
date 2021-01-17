@@ -32,5 +32,5 @@ preremove() {
 }
 
 preupgrade() {
-    templatectl remove --name "Cartesian Graph"
+    templatectl remove --name "Cartesian Graph" > /dev/null
 }
