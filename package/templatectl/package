@@ -5,7 +5,7 @@
 pkgnames=(templatectl)
 pkgdesc="Tool to add/remove templates for xochitl"
 url=https://github.com/PeterGrace/templatectl
-pkgver=0.1.2-3
+pkgver=0.1.3-1
 timestamp=2021-01-15T01:23Z
 section="templates"
 maintainer="Peter Grace <pete.grace@gmail.com>"
@@ -17,7 +17,7 @@ source=(
     usr-share-remarkable-templates.mount
 )
 sha256sums=(
-    305e3dbf29aea7f762fba22ceebfa004a5f666ae96fdb8776b2acfdb39539469
+    1ac1049c7db4f87c113dbc96372f8f4e2b8bd4c60252e3c4f7c1fafb5ee61ae4
     SKIP
 )
 
