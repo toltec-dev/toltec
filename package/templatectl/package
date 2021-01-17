@@ -5,7 +5,7 @@
 pkgnames=(templatectl)
 pkgdesc="Tool to add/remove templates for xochitl"
 url=https://github.com/PeterGrace/templatectl
-pkgver=0.1.2-1
+pkgver=0.1.2-2
 timestamp=2021-01-15T01:23Z
 section="templates"
 maintainer="Peter Grace <pete.grace@gmail.com>"
@@ -32,10 +32,11 @@ package() {
 }
 
 preinstall() {
-    local path=share/remarkable/templates
+    local target_path=share/remarkable/templates
+    local factory_path="/usr/$path"
     if [ ! -d /home/root/.entware/"$path" ]; then
         mkdir -p /home/root/.entware/"$path"
-        cp -r /"$path"/* /home/root/.entware/"$path"
+        cp -r /"$factory_path"/* /home/root/.entware/"$path"
     fi
 }
 
