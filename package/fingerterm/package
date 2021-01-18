@@ -11,7 +11,7 @@ section="admin"
 maintainer="Mattéo Delabre <spam@delab.re>"
 license=GPL-2.0-or-later
 
-image=qt:v1.1
+image=qt:v1.2.2
 source=(
     https://github.com/dixonary/fingerterm-reMarkable/archive/02c17b5b485743c698e005ca89366c32b66aa044.zip
     fingerterm.png
