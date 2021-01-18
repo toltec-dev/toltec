@@ -72,10 +72,32 @@ configure() {
     depmod -a
 }
 
-postremove() {
-    modprobe -r wireguard
+preremove() {
+    if ! modprobe -r wireguard; then
+        cat << ERROR
+Failed to unload existing wireguard module.
+Likely, you have a wireguard connection configured and will need to manually
+remove it before running "opkg remove wireguard" again.
+
+If the issue persists, you may want to try rebooting your device.
+ERROR
+        exit 1
+    fi
 }
 
-postupgrade() {
-    modprobe -r wireguard
+postremove() {
+    depmod -a
+}
+
+preupgrade() {
+    if ! modprobe -r wireguard; then
+        cat << ERROR
+Failed to unload existing wireguard module.
+Likely, you have a wireguard connection configured and will need to manually
+remove it before trying to upgrade again.
+
+If the issue persists, you may want to try rebooting your device.
+ERROR
+        exit 1
+    fi
 }
