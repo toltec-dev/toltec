@@ -57,7 +57,7 @@ cat > "$indexfile" << 'WEBS'
 
         <style>
             body {
-                font-family: monospace;
+                font-family:"-apple-system", "BlinkMacSystemFont", "Helvetica Neue", "Roboto", sans-serif;
                 background-color: #f8fcf8;
             }
 
