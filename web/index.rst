@@ -14,15 +14,10 @@ A community-maintained repository of free software for the reMarkable tablet.
 Install Toltec
 ==============
 
-.. container:: columns
 
-    .. container::
-
-        To install Toltec, paste the following lines in `a SSH session <https://remarkablewiki.com/tech/ssh>`_ on your reMarkable.
-
-    .. container::
-
-        This will install the Toltec package repository and related tools.
+To install Toltec, paste the following lines in `a SSH session
+<https://remarkablewiki.com/tech/ssh>`_ on your reMarkable.
+This will install the Toltec package repository and related tools.
 
 ::
 
@@ -35,7 +30,7 @@ What Does Toltec Do?
 ====================
 
 Toltec is a repository of unofficial applications for the reMarkable tablet, similar to Homebrew for Mac or Linux.
-Toltec keeps track of which apps you have installed through it and makes it easy to update or remove them.
+Toltec keeps track of which apps you have installed and makes it easy to update or remove them.
 
 .. container:: columns
 
@@ -55,13 +50,13 @@ Toltec keeps track of which apps you have installed through it and makes it easy
 
     .. container::
 
-        .. image:: ./nao.png
-            :width: 100%
-            :class: screenshot
+        Or install **nao** to manage packages using a graphical interface.
 
     .. container::
 
-        Or install **nao** to manage packages using a graphical interface.
+        .. image:: ./nao.png
+            :width: 100%
+            :class: screenshot
 
 .. class:: center
 
