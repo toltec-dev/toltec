@@ -5,7 +5,7 @@
 pkgnames=(draft)
 pkgdesc="Launcher which wraps around the standard interface"
 url=https://github.com/dixonary/draft-reMarkable
-pkgver=0.2.0-17
+pkgver=0.2.0-18
 timestamp=2020-07-20T10:23Z
 section="launchers"
 maintainer="Mattéo Delabre <spam@delab.re>"
