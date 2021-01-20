@@ -57,6 +57,6 @@ cat > defs.rst << RST
 .. |bootstrap-hash| replace:: $bootstrap_checksum
 RST
 
-rst2html5 index.rst > index.html
+rst2html5 --input-encoding utf-8 --output-encoding utf-8 index.rst index.html
 rm index.rst docutils.conf defs.rst
 popd > /dev/null
