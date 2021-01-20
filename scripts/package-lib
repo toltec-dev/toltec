@@ -282,6 +282,7 @@ load-recipe-header() {
     check-field source array optional || source=()
     check-field noextract array optional || noextract=()
     check-field sha256sums array optional || sha256sums=()
+    check-field flags array optional || flags=()
 
     # Make fields read-only
     readonly \
@@ -293,6 +294,7 @@ load-recipe-header() {
         source \
         noextract \
         sha256sums \
+        flags \
         2> /dev/null || true
 
     # Make defined functions read-only

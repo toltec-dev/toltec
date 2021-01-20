@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
-# Copyright (c) 2020 The Toltec Contributors
+# Copyright (c) 2021 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
 pkgnames=(toltec-bootstrap)
 pkgdesc="Toltec installation script"
 url=https://toltec-dev.org/
-pkgver=0.0.1-2
-timestamp=2020-12-27T18:48Z
-section=utils
+pkgver=0.0.2-1
+timestamp=2021-01-15T20:15Z
+section="utils"
 maintainer="Eeems <eeems@eeems.email>"
 license=MIT
 

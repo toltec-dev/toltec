@@ -3,11 +3,11 @@
 # SPDX-License-Identifier: MIT
 
 pkgnames=(micro)
-pkgdesc="a modern and intuitive terminal-based text editor"
+pkgdesc="Modern and intuitive terminal-based text editor"
 url=https://micro-editor.github.io/
-pkgver=2.0.8-2
+pkgver=2.0.8-3
 timestamp=2020-10-06T22:44Z
-section=utils
+section="utils"
 maintainer="Eeems <eeems@eeems.email>"
 license=MIT
 

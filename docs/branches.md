@@ -1,4 +1,4 @@
-## Release branches
+## Release Branches
 
 There are two release branches in Toltec, [stable](https://toltec-dev.org/stable) and [testing](https://toltec-dev.org/testing).
 As a user, **you always want to use the stable branch**, which is the default one when following the install instructions.
@@ -7,14 +7,14 @@ It may contain packages that could cause breakage if you install them on your de
 
 > To use the testing branch, update the `/opt/etc/opkg.conf` file on an existing install or set the `toltec_branch` variable to `testing` when installing through the bootstrap script.
 
-### Adding or updating a package
+### Adding or Updating a Package
 
 New packages or package updates are exclusively proposed through pull requests based on the testing branch.
 A proposal can be merged into testing after it is reviewed by a maintainer and if it builds successfully in the CI.
 If it is a proposal for a new package, the maintainer who reviews the pull request becomes the maintainer for that package.
 If it updates an existing package, the maintainer of that specific package should do the review.
 
-### Moving a package from testing to stable
+### Moving a Package from Testing to Stable
 
 Each Saturday, a pull request can be opened with selected updates from the testing branch to merge in the stable branch.
 Only bug fixes may be added to existing merge PRs over the weekend.
@@ -29,7 +29,7 @@ Here are important things to check when testing a package:
 4. It must not break other packages.
 5. It must not lock the device in a state where it cannot be used without rebooting or troubleshooting through SSH.
 
-### Orphaning a package
+### Orphaning a Package
 
 The maintainer of a package can, for any reason, choose to orphan a package.
 To do so, they need to send a pull request to reset the [`maintainer` metadata field](docs/package.md#maintainer-required) of that package to `None <none@example.org>`.
