@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+# Copyright (c) 2021 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgnames=(template-cartesian-graph)
+pkgdesc="Cartesian graph template"
+url=https://github.com/PeterGrace/template-cartesian-graph
+pkgver=1.0.0-4
+timestamp=2021-01-14T17:46Z
+section="templates"
+maintainer="Peter Grace <pete.grace@gmail.com>"
+license=MIT
+depends=(templatectl)
+
+source=("https://github.com/PeterGrace/template-cartesian-graph/archive/v${pkgver%-*}.zip")
+sha256sums=(d3215546c6fd709bb5988b7042ce5fb990d9a030d783ed7505fcc2dbedbc0e0f)
+
+package() {
+    install -D -m 755 -t "$pkgdir"/opt/share/remarkable/templates \
+        "$srcdir"/template-cartesian-graph.png
+    install -D -m 755 -t "$pkgdir"/opt/share/remarkable/templates \
+        "$srcdir"/template-cartesian-graph.svg
+}
+
+configure() {
+    templatectl add --name "Cartesian Graph" --filename "template-cartesian-graph" \
+        --category "Custom" --category "Math"
+}
+
+preremove() {
+    templatectl remove --name "Cartesian Graph"
+}
