@@ -63,24 +63,34 @@ Toltec keeps track of which apps you have installed and makes it easy to update 
 
     .. raw:: html
 
-        <p><a class="button" href="https://toltec-dev.org/stable">Browse available packages</a></p>
+        <p><a class="button" href="stable">Browse available packages</a></p>
 
 
 Frequently Asked Questions
 ==========================
 
-* Do you support reMarkable 2?
+* Do you support reMarkable 2?
 
-  Yes, but you need to install the rm2fb package if you want to use any applications that use the display.
+  Yes, but you need to install the **rm2fb** package if you want to use any applications that interact with the display.
 
 * Is this supported by reMarkable AS?
 
-  No, it is a community project
+  No, it is a community project.
+
+* Will this brick my reMarkable?
+
+  Probably not, but `standard disclaimers apply <https://github.com/toltec-dev/toltec/blob/stable/LICENSE>`_.
 
 * Where can I get help?
 
-  `please open an issue on github <#>`_
+  If you need help with Toltec or one of its packages, feel free to join the `reMarkable community on Discord <https://discord.gg/ATqQGfu>`_.
+  Please do not open issues on GitHub to ask for help, as they’re not the best medium to provide assistance.
 
-* Will this brick my remarkable?
+* Can you add `_____` to Toltec?
 
-  No, but `standard disclaimers apply <https://github.com/toltec-dev/toltec/blob/stable/LICENSE>`_
+  We’re always open to adding new packages to the repository.
+  You’ll find information about how to request a package in our `contributing guide <https://github.com/toltec-dev/toltec/blob/stable/docs/contributing.md>`_.
+
+* I found a vulnerability in Toltec or one of its packages, where can I report it?
+
+  To inform the Toltec maintainers about a security issue, please follow the `security instructions <https://github.com/toltec-dev/organization/blob/main/docs/security.md>`_.
