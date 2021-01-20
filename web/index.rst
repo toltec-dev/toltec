@@ -1,3 +1,5 @@
+.. include:: defs.rst
+
 ======
 Toltec
 ======
@@ -14,15 +16,14 @@ A community-maintained repository of free software for the reMarkable tablet.
 Install Toltec
 ==============
 
-
 To install Toltec, paste the following lines in `a SSH session
 <https://remarkablewiki.com/tech/ssh>`_ on your reMarkable.
 This will install the Toltec package repository and related tools.
 
-::
+.. parsed-literal::
 
-    $ wget http://toltec-dev.org/bootstrap
-    $ echo "cbe83d1ae2d3ef6291a2b57202bb59aace14f2f1849bbdb09552a7419995294a bootstrap" | sha256sum -c
+    $ wget \http://toltec-dev.org/bootstrap
+    $ echo "|bootstrap-hash|  bootstrap" | sha256sum -c
     $ bash bootstrap
 
 

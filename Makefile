@@ -19,6 +19,10 @@ Building packages:
     RECIPE-push     Push built packages from the given recipe to the
                     .cache/opkg directory on the reMarkable.
 
+Building webpages:
+
+    web             Generate the Toltec website.
+
 Checking for errors:
 
     repo-check      Compare the local repository to the remote one.
@@ -39,8 +43,8 @@ export USAGE
 help:
 	@echo "$$USAGE"
 
-homepage:
-	./scripts/homepage-build web/
+web:
+	./scripts/web-build web build/web
 
 repo:
 	./scripts/repo-build package build/package build/repo "$$remote_repo"
@@ -83,6 +87,7 @@ clean:
 
 .PHONY: \
     help \
+    web \
     repo \
     repo-local \
     repo-check \

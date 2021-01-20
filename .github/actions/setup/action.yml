@@ -6,7 +6,7 @@ runs:
           shell: bash
           run: |
             sudo apt-get update -yq
-            sudo apt-get install -yq bsdtar tree
+            sudo apt-get install -yq bsdtar tree python3-docutils
         - name: Install shfmt and Shellcheck
           shell: bash
           run: |
