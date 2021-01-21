@@ -6,7 +6,6 @@ import shutil
 from typing import Any, Iterable, MutableMapping, Optional, Tuple
 import re
 import os
-import glob
 import logging
 import textwrap
 import docker
@@ -228,6 +227,13 @@ source file '{source.url}', got {req.status_code}"
             return
 
         adapter.info("Building artifacts")
+
+        # Set fixed atime and mtime for all the source files
+        epoch = int(recipe.timestamp.timestamp())
+
+        for filename in util.list_tree(src_dir):
+            os.utime(filename, (epoch, epoch))
+
         mount_src = "/src"
         uid = os.getuid()
 
@@ -319,8 +325,13 @@ source file '{source.url}', got {req.status_code}"
 
         adapter.debug("Resulting tree:")
 
-        for filename in glob.iglob(pkg_dir + "/**/*", recursive=True):
-            adapter.debug(" - /%s", os.path.relpath(filename, pkg_dir))
+        for filename in util.list_tree(pkg_dir):
+            adapter.debug(
+                " - %s",
+                os.path.normpath(
+                    os.path.join("/", os.path.relpath(filename, pkg_dir))
+                ),
+            )
 
     def _archive(
         self, adapter: BuildContextAdapter, package: Package, pkg_dir: str
@@ -329,6 +340,13 @@ source file '{source.url}', got {req.status_code}"
         adapter.info("Creating archive")
         ar_path = os.path.join(paths.REPO_DIR, package.filename())
 
+        # Inject Oxide-specific hook for reloading apps
+        if os.path.exists(os.path.join(pkg_dir, "opt/usr/share/applications")):
+            oxide_hook = "\nreload-oxide-apps\n"
+            package.functions["configure"] += oxide_hook
+            package.functions["postupgrade"] += oxide_hook
+            package.functions["postremove"] += oxide_hook
+
         # Convert install scripts to Debian format
         scripts = {}
         script_header = "\n".join(
@@ -336,11 +354,12 @@ source file '{source.url}', got {req.status_code}"
                 textwrap.dedent(
                     """\
                     #!/usr/bin/env bash
-                    set -e
+                    set -euo pipefail
                     """
                 ),
                 bash.put_variables(
                     {
+                        **package.parent.variables,
                         **package.variables,
                         **package.custom_variables,
                     }
@@ -361,14 +380,14 @@ source file '{source.url}', got {req.status_code}"
                         textwrap.dedent(
                             f"""\
                             if [[ $1 = {action} ]]; then
-                                fun() {{
+                                script() {{
                             """
                         ),
                         package.functions[name],
                         textwrap.dedent(
                             """\
                                 }
-                                fun
+                                script
                             fi
                             """
                         ),
@@ -389,14 +408,14 @@ source file '{source.url}', got {req.status_code}"
                                 textwrap.dedent(
                                     f"""\
                                     if [[ $1 = {action} ]]; then
-                                        fun() {{
+                                        script() {{
                                     """
                                 ),
                                 package.functions[step + action],
                                 textwrap.dedent(
                                     """\
                                         }
-                                        fun
+                                        script
                                     fi
                                     """
                                 ),
@@ -408,7 +427,7 @@ source file '{source.url}', got {req.status_code}"
         adapter.debug("Install scripts:")
 
         if scripts:
-            for script in scripts:
+            for script in sorted(scripts):
                 adapter.debug(" - %s", script)
         else:
             adapter.debug("(none)")
@@ -424,5 +443,5 @@ source file '{source.url}', got {req.status_code}"
                 scripts=scripts,
             )
 
-        # Set fixed mtime for the resulting archive
+        # Set fixed atime and mtime for the resulting archive
         os.utime(ar_path, (epoch, epoch))

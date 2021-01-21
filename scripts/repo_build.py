@@ -46,9 +46,7 @@ logging.basicConfig(format=LOGGING_FORMAT, level=args.verbose)
 
 repo = Repo()
 builder = Builder()
-
 missing = repo.fetch_packages(remote, fetch_missing=not args.no_fetch)
-repo.make_packages(missing)
 
 for recipe_name, packages in missing.items():
     if packages:

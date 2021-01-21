@@ -206,3 +206,20 @@ def query_user(
             return aliases[choice]
 
         print("Invalid answer. Please choose among the valid options.")
+
+
+def list_tree(root: str) -> List[str]:
+    """
+    Get a sorted list of all files and folders under a given root folder.
+
+    :param root: root folder to start from
+    :returns: sorted list of items under the root folder
+    """
+    result = []
+
+    for directory, _, files in os.walk(root):
+        result.append(directory)
+        for file in files:
+            result.append(os.path.join(directory, file))
+
+    return sorted(result)

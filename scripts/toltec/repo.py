@@ -85,14 +85,6 @@ class Repo:
 
         return missing
 
-    def make_packages(self, packages_by_recipe: Dict[str, List[str]]) -> None:
-        """
-        Build packages and move them to the repo.
-
-        :param packages_by_recipe: packages to build (keys are recipes, values
-            are list of packages for each recipe)
-        """
-
     def make_index(self) -> None:
         """Generate index files for all the packages in the repo."""
         logger.info("Generating package index")

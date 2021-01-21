@@ -161,8 +161,8 @@ which has a build() step"
             for pkg_name, (pkg_vars, pkg_funcs) in pkg_decls.items():
                 self.packages[pkg_name] = Package(self, pkg_vars, pkg_funcs)
 
-    @classmethod
-    def from_file(cls, path: str) -> "Recipe":
+    @staticmethod
+    def from_file(path: str) -> "Recipe":
         """Load a recipe from a file."""
         name = os.path.basename(path)
         with open(os.path.join(path, "package"), "r") as recipe:
@@ -278,13 +278,13 @@ custom functions with '_'"
         control = textwrap.dedent(
             f"""\
             Package: {self.name}
-            Version: {self.version}
-            Maintainer: {self.parent.maintainer}
-            Section: {self.section}
-            Architecture: {self.arch}
             Description: {self.desc}
-            HomePage: {self.url}
+            Homepage: {self.url}
+            Version: {self.version}
+            Section: {self.section}
+            Maintainer: {self.parent.maintainer}
             License: {self.license}
+            Architecture: {self.arch}
             """
         )
 

@@ -6,6 +6,7 @@ from gzip import GzipFile
 from typing import Dict, IO, Optional
 from io import BytesIO
 import tarfile
+import operator
 import os
 
 
@@ -95,9 +96,13 @@ def make_control(
     :param scripts: optional maintainer scripts
     """
     with _targz_open(file, epoch) as archive:
+        root_info = tarfile.TarInfo("./")
+        root_info.type = tarfile.DIRTYPE
+        archive.addfile(_clean_info(None, epoch, root_info))
+
         _add_file(archive, "control", 0o644, epoch, metadata.encode())
 
-        for name, script in scripts.items():
+        for name, script in sorted(scripts.items(), key=operator.itemgetter(0)):
             _add_file(archive, name, 0o755, epoch, script.encode())
 
 
@@ -134,6 +139,10 @@ def make_ipk(
     with BytesIO() as control, BytesIO() as data, _targz_open(
         file, epoch
     ) as archive:
+        root_info = tarfile.TarInfo("./")
+        root_info.type = tarfile.DIRTYPE
+        archive.addfile(_clean_info(None, epoch, root_info))
+
         make_control(control, epoch, metadata, scripts)
         _add_file(archive, "control.tar.gz", 0o644, epoch, control.getvalue())
 

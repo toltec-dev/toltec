@@ -339,7 +339,18 @@ def run_script(variables: Variables, script: str) -> Generator[str, None, None]:
 
     assert process.stdin is not None
     assert process.stdout is not None
-    process.stdin.write((put_variables(variables) + "\n" + script).encode())
+    process.stdin.write(
+        "\n".join(
+            (
+                "set -euo pipefail",
+                put_variables(variables),
+                "script() {",
+                script,
+                "}",
+                "script",
+            )
+        ).encode()
+    )
     process.stdin.close()
 
     while process.poll() is None:
@@ -376,7 +387,16 @@ def run_script_in_container(
             "/usr/bin/env",
             "bash",
             "-c",
-            put_variables(variables) + "\n" + script,
+            "\n".join(
+                (
+                    "set -euo pipefail",
+                    put_variables(variables),
+                    "script() {",
+                    script,
+                    "}",
+                    "script",
+                )
+            ),
         ],
         detach=True,
     )

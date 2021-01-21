@@ -34,8 +34,8 @@ class Version:
 
         self._original: Optional[str] = None
 
-    @classmethod
-    def parse(cls, version: str) -> "Version":
+    @staticmethod
+    def parse(version: str) -> "Version":
         """Parse a version number."""
         original = version
         colon = version.find(":")
