@@ -23,8 +23,7 @@ This will install the Toltec package repository and related tools.
 .. parsed-literal::
 
     $ wget \http://toltec-dev.org/bootstrap
-    $ echo "|bootstrap-hash|  bootstrap" | sha256sum -c
-    $ bash bootstrap
+    $ echo "|bootstrap-hash|  bootstrap" | sha256sum -c && bash bootstrap
 
 
 What Does Toltec Do?
