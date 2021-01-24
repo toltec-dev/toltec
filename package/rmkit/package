@@ -9,12 +9,12 @@ license=MIT
 
 image=python:v1.1
 source=(
-    https://github.com/rmkit-dev/rmkit/archive/0b4bda6a31a075dc3be093c338322203137549bf.zip
+    https://github.com/rmkit-dev/rmkit/archive/3d8ba83684f76b3e4146af9f295de4615a416cb8.zip
     remux.service
     genie.service
 )
 sha256sums=(
-    48620f0eb4223decf5c96c7b61cf44fb0bfeb8ccc83e72ac8f49fb6869612015
+    3f37bf01547395404d27df788c959895f194711e80ef26839f521d1dedc4faed
     SKIP
     SKIP
 )
@@ -27,7 +27,7 @@ build() {
 genie() {
     pkgdesc="Gesture engine that connects commands to gestures"
     url="https://rmkit.dev/apps/genie"
-    pkgver=0.1.2-2
+    pkgver=0.1.2-3
     section="utils"
 
     package() {
@@ -54,7 +54,7 @@ genie() {
 harmony() {
     pkgdesc="Procedural sketching app"
     url="https://rmkit.dev/apps/harmony"
-    pkgver=0.1.1-1
+    pkgver=0.1.1-2
     section="drawing"
 
     package() {
@@ -71,7 +71,7 @@ harmony() {
 mines() {
     pkgdesc="Mine detection game"
     url="https://rmkit.dev/apps/minesweeper"
-    pkgver=0.1.1-1
+    pkgver=0.1.1-2
     section="games"
 
     package() {
@@ -98,7 +98,7 @@ nao() {
 remux() {
     pkgdesc="App launcher that supports multi-tasking applications"
     url="https://rmkit.dev/apps/remux"
-    pkgver=0.1.7-2
+    pkgver=0.1.7-3
     section="launchers"
 
     package() {
@@ -130,7 +130,7 @@ remux() {
 simple() {
     pkgdesc="Simple app script for writing scripted applications"
     url="https://rmkit.dev/apps/sas"
-    pkgver=0.1.2-1
+    pkgver=0.1.2-2
     section="devel"
 
     package() {

@@ -52,15 +52,15 @@ Before proposing your package, make sure that it conforms to the rules on how to
 
 ### Style Guide
 
-All contributions must follow the project’s [style guide](../.editorconfig).
-Shell scripts must also comply with [Shellcheck](https://github.com/koalaman/shellcheck).
 Sticking to a common set of conventions makes it easier for everyone to read the source code and reduces the time spent reviewing little formatting details.
 
-The code style for shell scripts will automatically be checked when you submit your pull request.
-You may also check it manually by running `make format` (or `make format-fix` to automatically fix any issues) at the root of the repository (you need to have [shfmt](https://github.com/mvdan/sh) installed on your computer for this to work).
+All contributions must follow the project’s [style guide](../.editorconfig).
+The code style for shell scripts and Python code will automatically be checked for pull requests and can be checked locally using `make format`.
+Use `make format-fix` to automatically reformat your code to fit the style guide.
 
-Compliance of shell scripts with Shellcheck will also automatically be checked.
-To check it manually, run `make lint` at the root of the repository (you need to have Shellcheck installed on your computer for this to work).
+Shell scripts must comply with [Shellcheck](https://github.com/koalaman/shellcheck).
+Python code must have valid type annotations (typechecked using [mypy](http://mypy-lang.org/)) and be free of [pylint](https://www.pylint.org/) errors.
+Compliance with those tools will automatically be checked for pull requests and can be checked locally using `make lint`.
 
 ### Code of Conduct
 

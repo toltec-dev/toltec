@@ -8,7 +8,11 @@ jobs:
         steps:
             - name: Checkout the Git repository
               uses: actions/checkout@v2
-            - name: Setup Toltec environment
+            - name: Setup Python
+              uses: actions/setup-python@v2
+              with:
+                python-version: '3.8'
+            - name: Setup Toltec dependencies
               uses: ./.github/actions/setup
             - name: Check formatting
               run: make format
@@ -21,10 +25,14 @@ jobs:
         steps:
             - name: Checkout the Git repository
               uses: actions/checkout@v2
-            - name: Setup Toltec environment
+            - name: Setup Python
+              uses: actions/setup-python@v2
+              with:
+                python-version: '3.8'
+            - name: Setup Toltec dependencies
               uses: ./.github/actions/setup
             - name: Build packages
-              run: remote_repo='https://toltec-dev.org/${{ github.base_ref }}' make repo-new
+              run: make repo-new FLAGS='--remote-repo ${{ secrets.REMOTE_HTTP }}/${{ github.base_ref }}'
             - name: Save the build output
               uses: actions/upload-artifact@v2
               with:

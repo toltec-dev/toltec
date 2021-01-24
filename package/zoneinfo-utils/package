@@ -40,11 +40,11 @@ build() {
 
     shopt -s extglob
     cp -r ../* .
-    make LFLAGS="${LDFLAGS}"
+    make VERSION="$_tzver"
 
     popd > /dev/null
 
-    make LFLAGS="${LDFLAGS}" CC=arm-linux-gnueabihf-cc
+    make VERSION="$_tzver" CC=arm-linux-gnueabihf-cc
 }
 
 package() {
