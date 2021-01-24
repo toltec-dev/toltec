@@ -15,16 +15,19 @@ gathered in REPODIR.  If REMOTEREPO is omitted,
 Options:
 
     -h              Show this help message.
+    -n              Only build new packages.
     -l              Only build packages locally, do not reuse existing packages
                     from the publishing server."
 
 helpflag=
 localflag=
+onlynew=
 
-while getopts hl name; do
+while getopts hln name; do
     case $name in
         h) helpflag=1 ;;
         l) localflag=1 ;;
+        n) onlynew=1 ;;
         *) error "Invalid option. Use the -h flag for more information." ;;
     esac
 done
@@ -92,6 +95,14 @@ for recipedir in "$recipesdir"/*; do
                 }
             ); then
                 missingpkgs+=("$pkgname")
+            else
+                (
+                    load-recipe-pkg "$pkgname"
+                    pkgid="$(package-id)"
+                    if [[ -n $onlynew ]]; then
+                        rm "$repodir/$pkgid.ipk"
+                    fi
+                )
             fi
         done
 
