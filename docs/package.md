@@ -20,6 +20,7 @@ Sourcing a recipe must have no side effects: the metadata section can only execu
 
 At the top of the file is a block of fields that define metadata about the package.
 For consistency, declare those fields in the same order they are described below.
+You can also declare custom variables to reduce repetition, but make sure to prefix their name with `_`.
 
 > **Note:** The field names and semantics are inspired both by the [Debian control file format](https://www.debian.org/doc/debian-policy/ch-controlfields.html) and the [Arch Linux PKGBUILD format](https://wiki.archlinux.org/index.php/PKGBUILD).
 
@@ -246,6 +247,22 @@ Each entry can either be a local path relative to the recipe file or a full URL 
 Archive files whose names end in `.zip`, `.tar.gz`, `.tar.xz`, or `.tar.bz` will be automatically extracted in place, with all container directories stripped.
 You can disable this behavior by adding the archive name to the `noextract` array.
 
+#### `flags`
+
+<table>
+    <tr>
+        <th>Required?</th>
+        <td>No, defaults to <code>()</code></th>
+    </tr>
+    <tr>
+        <th>Type</th>
+        <td>Array of strings</td>
+    </tr>
+</table>
+
+Set of flags that affect the build process.
+Currently, the only available flag is `nostrip`, which disables the automatic removal of unneeded symbols from binaries.
+
 #### `noextract`
 
 <table>
@@ -284,6 +301,7 @@ This array must have exactly as many elements as the `source` array.
 ### Prepare Section
 
 The prepare section contains the `prepare()` function in which the source files may be prepared for the building step that follows.
+This function has access to all the metadata fields declared above.
 Common tasks include patching sources, extracting archives, and moving downloaded sources to the right location.
 
 ### Build Section
@@ -307,7 +325,7 @@ The `package()` function populates the `$pkgdir` directory with the files and di
 The install section can contain additional functions to customize the behavior of the package when it is installed, removed, or upgraded on the device.
 Those functions are `preinstall()`, `configure()`, `preremove()`, `postremove()`, `preupgrade()` and `postupgrade()`.
 Unlike the previous functions, all the install functions **run in the context of the target device.**
-They have access to all the metadata fields, but not to other functions.
+They have access to all the metadata fields and to custom functions whose name starts with `_`.
 They can also use functions from the [install library](../scripts/install-lib).
 
 When installing a new package, the following happens:

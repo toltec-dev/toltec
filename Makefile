@@ -47,35 +47,45 @@ web:
 	./scripts/web-build web build/web
 
 repo:
-	./scripts/repo-build package build/package build/repo "$$remote_repo"
+	./scripts/repo_build.py $(FLAGS)
 
 repo-local:
-	./scripts/repo-build -l package build/package build/repo "$$remote_repo"
+	./scripts/repo_build.py --local $(FLAGS)
 
 repo-new:
-	./scripts/repo-build -n package build/package build/repo "$$remote_repo"
+	./scripts/repo_build.py --no-fetch $(FLAGS)
 
 repo-check:
 	./scripts/repo-check build/repo
 
 $(RECIPES): %:
-	./scripts/package-build package/"${@}" build/package/"${@}"
+	./scripts/package_build.py $(FLAGS) "$(@)"
 
-$(RECIPES_PUSH): %:
-	ssh root@"${HOST}" mkdir -p .cache/opkg
-	scp build/package/"$(@:%-push=%)"/*/*.ipk root@"${HOST}":.cache/opkg
+push: %:
+	rsync --rsync-path /opt/bin/rsync \
+	      --archive --verbose --compress --delete \
+	      build/repo/ \
+	      root@"$(HOST)":~/.cache/toltec/
 
 format:
-	@echo "==> Checking the formatting of shell scripts"
+	@echo "==> Checking Bash formatting"
 	shfmt -d .
+	@echo "==> Checking Python formatting"
+	black --line-length 80 --check --diff scripts
 
 format-fix:
-	@echo "==> Fixing the formatting of shell scripts"
+	@echo "==> Fixing Bash formatting"
 	shfmt -l -w .
+	@echo "==> Fixing Python formatting"
+	black --line-length 80 scripts
 
 lint:
-	@echo "==> Linting shell scripts"
+	@echo "==> Linting Bash scripts"
 	shellcheck $$(shfmt -f .)
+	@echo "==> Typechecking Python files"
+	MYPYPATH=scripts mypy --disallow-untyped-defs scripts
+	@echo "==> Linting Python files"
+	PYTHONPATH=: pylint scripts
 	@echo "==> Verifying that the bootstrap checksum is correct"
 	./scripts/bootstrap/checksum-check
 

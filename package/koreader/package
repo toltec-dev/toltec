@@ -18,9 +18,11 @@ source=(
     koreader.draft
     KOReader.oxide
     rm2-support.patch
+    koreader
 )
 sha256sums=(
     38db8f3895472828d7c1d63fc54db426135a8dbf8425633e299a1a9abfdb69b2
+    SKIP
     SKIP
     SKIP
     SKIP
@@ -42,5 +44,5 @@ package() {
     install -D -m 644 -t "$pkgdir"/opt/etc/draft/ "$srcdir"/koreader.draft
     install -D -m 644 -t "$pkgdir"/opt/usr/share/applications/ "$srcdir"/KOReader.oxide
     install -D -m 644 -t "$pkgdir"/opt/etc/draft/icons/ "$srcdir"/resources/koreader.png
-    install -D -m 755 -t "$pkgdir"/opt/bin/ "$recipedir"/koreader
+    install -D -m 755 -t "$pkgdir"/opt/bin/ "$srcdir"/koreader
 }

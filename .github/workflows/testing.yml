@@ -10,18 +10,23 @@ jobs:
         steps:
             - name: Checkout the Git repository
               uses: actions/checkout@v2
+            - name: Setup Python
+              uses: actions/setup-python@v2
+              with:
+                python-version: '3.8'
             - name: Setup Toltec dependencies
               uses: ./.github/actions/setup
             - name: Build packages
               run: |
-                remote_repo="https://toltec-dev.org/testing" make repo
+                make repo FLAGS='--remote-repo ${{ secrets.REMOTE_HTTP }}/testing'
+                ./scripts/repo-build-web package build/repo
             - name: Sync packages with the remote repository
               uses: ./.github/actions/sync-repository
               with:
                 local-path: build/repo/
                 ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
                 ssh-known-hosts: ${{ secrets.SSH_KNOWN_HOSTS }}
-                remote-path: ${{ secrets.REMOTE }}:/srv/toltec/testing
+                remote-path: ${{ secrets.REMOTE_SSH }}:/srv/toltec/testing
             - name: Send notification to Discord
               continue-on-error: true
               uses: ./.github/actions/discord-send
