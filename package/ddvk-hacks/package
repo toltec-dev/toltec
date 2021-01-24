@@ -38,15 +38,6 @@ package() {
 }
 
 configure() {
-    # FIXME: Remove this duplicated block of constants once #218 is merged
-    local _patches_dir="/opt/share/ddvk-hacks"
-    local _xochitl_path="/usr/bin/xochitl"
-    local _work_dir="/home/root/.local/share/ddvk-hacks"
-    local _backup_path="$_work_dir/xochitl.backup"
-    local _old_backup_path="$_backup_path.old"
-    local _patched_path="$_work_dir/xochitl.patched"
-    # END FIXME
-
     local build_date
     build_date="$(cat /etc/version)"
     local patch_version
@@ -165,16 +156,7 @@ configure() {
     echo
 }
 
-preremove() {
-    # FIXME: Remove this duplicated block of constants once #218 is merged
-    local _patches_dir="/opt/share/ddvk-hacks"
-    local _xochitl_path="/usr/bin/xochitl"
-    local _work_dir="/home/root/.local/share/ddvk-hacks"
-    local _backup_path="$_work_dir/xochitl.backup"
-    local _old_backup_path="$_backup_path.old"
-    local _patched_path="$_work_dir/xochitl.patched"
-    # END FIXME
-
+_restore() {
     echo
     echo "Restoring the original Xochitl binary"
 
@@ -189,26 +171,10 @@ preremove() {
     echo
 }
 
+preremove() {
+    _restore
+}
+
 preupgrade() {
-    # FIXME: Remove this duplicated block of constants once #218 is merged
-    local _patches_dir="/opt/share/ddvk-hacks"
-    local _xochitl_path="/usr/bin/xochitl"
-    local _work_dir="/home/root/.local/share/ddvk-hacks"
-    local _backup_path="$_work_dir/xochitl.backup"
-    local _old_backup_path="$_backup_path.old"
-    local _patched_path="$_work_dir/xochitl.patched"
-    # END FIXME
-
-    echo
-    echo "Restoring the original Xochitl binary before upgrading"
-
-    if ! diff "$_xochitl_path" "$_patched_path" > /dev/null 2>&1; then
-        echo "Warning: The Xochitl binary has changed!"
-        echo "Not restoring the backup"
-    else
-        cp "$_backup_path" "$_xochitl_path"
-        rm -rf /home/root/.cache/remarkable/xochitl/qmlcache/*
-    fi
-
-    echo
+    _restore
 }
