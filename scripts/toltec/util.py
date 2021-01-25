@@ -134,27 +134,23 @@ def auto_extract(archive_path: str, dest_path: str) -> bool:
             )
         return True
 
-    if exts[0] == ".tar":
-        mode = "r"
-    elif (
+    if exts[0] == ".tar" or (
         len(exts) >= 2
         and exts[0] in (".gz", ".bz2", ".xz")
         and exts[1] == ".tar"
     ):
-        mode = f"r:{exts[0][1:]}"
-    else:
-        return False
+        with tarfile.open(archive_path, mode="r") as tar_archive:
+            _auto_extract(
+                tar_archive.getnames(),
+                tar_archive.getmember,
+                tar_archive.extractfile,
+                lambda member: member.isdir(),
+                lambda member: member.mode,
+                dest_path,
+            )
+        return True
 
-    with tarfile.open(archive_path, mode=mode) as tar_archive:
-        _auto_extract(
-            tar_archive.getnames(),
-            tar_archive.getmember,
-            tar_archive.extractfile,
-            lambda member: member.isdir(),
-            lambda member: member.mode,
-            dest_path,
-        )
-    return True
+    return False
 
 
 def _auto_extract(  # pylint:disable=too-many-arguments
