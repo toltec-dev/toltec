@@ -191,7 +191,11 @@ source file '{source.url}', got {req.status_code}"
 
             # Automatically extract source archives
             if not source.noextract:
-                util.auto_extract(local_path, src_dir)
+                if not util.auto_extract(local_path, src_dir):
+                    adapter.debug(
+                        "Not extracting %s (unsupported archive type)",
+                        local_path,
+                    )
 
     def _prepare(  # pylint: disable=no-self-use
         self, adapter: BuildContextAdapter, recipe: Recipe, src_dir: str

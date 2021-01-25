@@ -244,7 +244,7 @@ Conversely, you must not define a `build()` function if you omit this field.
 The list of sources files and archives needed to build the package.
 The [`build()`](#build-section) and [`package()`](#package-section) sections can access the files referenced in this array from the `$srcdir` directory.
 Each entry can either be a local path relative to the recipe file or a full URL that will be fetched from the Internet (any protocol supported by [curl](https://curl.haxx.se/) can be used here) when building the package.
-Archive files whose names end in `.zip`, `.tar.gz`, `.tar.xz`, or `.tar.bz` will be automatically extracted in place, with all container directories stripped.
+Archive files whose names end in `.zip`, `.tar`, `.tar.gz`, `.tar.bz2`, or `.tar.xz` will be automatically extracted in place, with all container directories stripped.
 You can disable this behavior by adding the archive name to the `noextract` array.
 
 #### `flags`
