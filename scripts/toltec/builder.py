@@ -3,7 +3,7 @@
 """Build recipes and create packages."""
 
 import shutil
-from typing import Any, Iterable, MutableMapping, Optional, Tuple
+from typing import Any, Generator, Iterable, MutableMapping, Optional, Tuple
 import re
 import os
 import logging
@@ -213,8 +213,7 @@ source file '{source.url}', got {req.status_code}"
             },
         )
 
-        for line in logs:
-            adapter.debug(line)
+        self._print_logs(logs, adapter, "prepare()")
 
     def _build(
         self, adapter: BuildContextAdapter, recipe: Recipe, src_dir: str
@@ -261,8 +260,7 @@ source file '{source.url}', got {req.status_code}"
             ),
         )
 
-        for line in logs:
-            adapter.debug(line)
+        self._print_logs(logs, adapter, "build()")
 
     def _strip(
         self, adapter: BuildContextAdapter, recipe: Recipe, src_dir: str
@@ -298,8 +296,7 @@ source file '{source.url}', got {req.status_code}"
             ),
         )
 
-        for line in logs:
-            adapter.debug(line)
+        self._print_logs(logs, adapter)
 
     def _package(  # pylint: disable=no-self-use
         self,
@@ -320,8 +317,7 @@ source file '{source.url}', got {req.status_code}"
             },
         )
 
-        for line in logs:
-            adapter.debug(line)
+        self._print_logs(logs, adapter, "package()")
 
         adapter.debug("Resulting tree:")
 
@@ -445,3 +441,37 @@ source file '{source.url}', got {req.status_code}"
 
         # Set fixed atime and mtime for the resulting archive
         os.utime(ar_path, (epoch, epoch))
+
+    def _print_logs(
+        self,
+        logs: Generator[str, None, None],
+        adapter: BuildContextAdapter,
+        function_name: str=None,
+        max_lines_on_fail: int=200
+    ):
+        """
+        Output the logs of builder.run_script and run_script_in_container
+        to debug and up to max_lines_on_fail if a ScriptError is raised
+        (the ScriptError will get passed through).
+        """
+        log_buffer = []
+        try:
+            for line in logs:
+                if adapter.getEffectiveLevel() <= logging.DEBUG:
+                    adapter.debug(line)
+                else:
+                    if len(log_buffer) == max_lines_on_fail:
+                        log_buffer.pop(0)
+                    log_buffer.append(line)
+        except bash.ScriptError as e:
+            # Output recent lines that were added when logging level not debug
+            if len(log_buffer) > 0:
+                adapter.info(f"Only showing up to {max_lines_on_fail} lines of output. " + \
+                            "Use --verbose for the full output.")
+                for line in log_buffer:
+                    adapter.error(line)
+
+            if function_name:
+                adapter.error(f"{function_name} failed")
+
+            raise e
