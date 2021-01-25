@@ -26,10 +26,10 @@ sha256sums=(
 )
 
 build() {
-  mkdir build
-  cd build
-  cmake ..
-  make yaft
+    mkdir build
+    cd build
+    cmake ..
+    make yaft
 }
 
 package() {
