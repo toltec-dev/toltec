@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+# Copyright (c) 2020 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgnames=(yaft)
+pkgdesc="Framebuffer terminal emulator with an on-screen touch keyboard"
+url=https://github.com/timower/rM2-stuff/tree/master/apps/yaft
+pkgver=0.0.1
+timestamp=2020-10-27T12:02Z
+section="admin"
+maintainer="Timothy Werquin"
+license=GPL-3.0
+
+image=base:v1.2.1
+
+source=(
+    https://github.com/timower/rM2-stuff/archive/0a5ff42551dab208c1937d9b10396f30e8e982ba.zip
+    yaft.png
+    yaft.draft
+)
+
+sha256sums=(
+    6838b3b340a210b369afdf0958f297ac3670f848fd5d3ebbee5ab69bc8aa3152
+    SKIP
+    SKIP
+)
+
+build() {
+  mkdir build
+  cd build
+  cmake ..
+  make
+}
+
+package() {
+    install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/build/apps/yaft/yaft
+
+    install -D -m 644 -t "$pkgdir"/opt/etc/draft "$srcdir"/yaft.draft
+    install -D -m 644 -t "$pkgdir"/opt/etc/draft/icons "$srcdir"/yaft.png
+}

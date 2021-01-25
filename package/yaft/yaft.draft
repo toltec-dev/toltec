@@ -1,0 +1,8 @@
+# Copyright (c) 2020 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+name=yaft
+desc=Framebuffer terminal emulator with an on-screen touch keyboard
+call=/opt/bin/yaft
+term=:
+imgFile=yaft
