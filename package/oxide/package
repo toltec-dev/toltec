@@ -9,7 +9,7 @@ maintainer="Eeems <eeems@eeems.email>"
 license=MIT
 
 source=(https://github.com/Eeems/oxide/releases/download/v2.1.2/oxide.zip)
-sha256sums=(e7b00e3ddd85235b201e6201bdf5c6beab200f485d9e6bfec4fba3cf1265e297)
+sha256sums=(c9e8214dd60346b0865bc41e8180064cbb7e108ed676b6726abecff0b4adb710)
 
 erode() {
     pkgdesc="Task manager"
