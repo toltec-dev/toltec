@@ -448,7 +448,7 @@ source file '{source.url}', got {req.status_code}"
         logs: bash.LogGenerator,
         adapter: BuildContextAdapter,
         function_name: str = None,
-        max_lines_on_fail: int = 200,
+        max_lines_on_fail: int = 50,
     ) -> None:
         """
         Print logs to the debug output or buffer and print the last n log lines
