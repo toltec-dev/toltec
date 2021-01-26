@@ -11,7 +11,7 @@ section="admin"
 maintainer="Timothy Werquin"
 license=GPL-3.0
 
-image=base:v1.2.1
+image=base:v1.3
 
 source=(
     https://github.com/timower/rM2-stuff/archive/0a5ff42551dab208c1937d9b10396f30e8e982ba.zip
