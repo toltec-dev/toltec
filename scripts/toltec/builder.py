@@ -3,7 +3,8 @@
 """Build recipes and create packages."""
 
 import shutil
-from typing import Any, Generator, Iterable, MutableMapping, Optional, Tuple
+from typing import Any, Deque, Iterable, MutableMapping, Optional, Tuple
+from collections import deque
 import re
 import os
 import logging
@@ -193,7 +194,7 @@ source file '{source.url}', got {req.status_code}"
             if not source.noextract:
                 util.auto_extract(local_path, src_dir)
 
-    def _prepare(  # pylint: disable=no-self-use
+    def _prepare(
         self, adapter: BuildContextAdapter, recipe: Recipe, src_dir: str
     ) -> None:
         """Prepare source files before building."""
@@ -298,7 +299,7 @@ source file '{source.url}', got {req.status_code}"
 
         self._print_logs(logs, adapter)
 
-    def _package(  # pylint: disable=no-self-use
+    def _package(
         self,
         adapter: BuildContextAdapter,
         package: Package,
@@ -442,36 +443,42 @@ source file '{source.url}', got {req.status_code}"
         # Set fixed atime and mtime for the resulting archive
         os.utime(ar_path, (epoch, epoch))
 
+    @staticmethod
     def _print_logs(
-        self,
-        logs: Generator[str, None, None],
+        logs: bash.LogGenerator,
         adapter: BuildContextAdapter,
-        function_name: str=None,
-        max_lines_on_fail: int=200
-    ):
+        function_name: str = None,
+        max_lines_on_fail: int = 200,
+    ) -> None:
         """
-        Output the logs of builder.run_script and run_script_in_container
-        to debug and up to max_lines_on_fail if a ScriptError is raised
-        (the ScriptError will get passed through).
+        Print logs to the debug output or buffer and print the last n log lines
+        if a ScriptError is caught.
+
+        :param logs: generator of log lines
+        :param adapter: logging output
+        :param function_name: calling function name
+        :param max_lines_on_fail: number of context lines to print
+            in non-debug mode
         """
-        log_buffer = []
+        log_buffer: Deque[str] = deque()
         try:
             for line in logs:
                 if adapter.getEffectiveLevel() <= logging.DEBUG:
                     adapter.debug(line)
                 else:
                     if len(log_buffer) == max_lines_on_fail:
-                        log_buffer.pop(0)
+                        log_buffer.popleft()
                     log_buffer.append(line)
-        except bash.ScriptError as e:
-            # Output recent lines that were added when logging level not debug
+        except bash.ScriptError as err:
             if len(log_buffer) > 0:
-                adapter.info(f"Only showing up to {max_lines_on_fail} lines of output. " + \
-                            "Use --verbose for the full output.")
+                adapter.info(
+                    f"Only showing up to {max_lines_on_fail} lines of context. "
+                    + "Use --verbose for the full output."
+                )
                 for line in log_buffer:
                     adapter.error(line)
 
             if function_name:
                 adapter.error(f"{function_name} failed")
 
-            raise e
+            raise err
