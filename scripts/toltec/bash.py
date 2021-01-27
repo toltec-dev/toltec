@@ -9,6 +9,7 @@ from docker.client import DockerClient
 
 AssociativeArray = Dict[str, str]
 IndexedArray = List[Optional[str]]
+LogGenerator = Generator[str, None, None]
 Any = Union[str, AssociativeArray, IndexedArray]
 Variables = Dict[str, Optional[Any]]
 Functions = Dict[str, str]
@@ -321,7 +322,7 @@ def _parse_func(lexer: shlex.shlex) -> Tuple[int, int]:
     return start_byte, end_byte
 
 
-def run_script(variables: Variables, script: str) -> Generator[str, None, None]:
+def run_script(variables: Variables, script: str) -> LogGenerator:
     """
     Run a Bash script and stream its output.
 
@@ -368,7 +369,7 @@ def run_script_in_container(
     mounts: List,
     variables: Variables,
     script: str,
-) -> Generator[str, None, None]:
+) -> LogGenerator:
     """
     Run a Bash script inside a Docker container and stream its output.
 
