@@ -32,7 +32,7 @@ jobs:
             - name: Setup Toltec dependencies
               uses: ./.github/actions/setup
             - name: Build packages
-              run: make repo-new FLAGS='--remote-repo ${{ secrets.REMOTE_HTTP }}/${{ github.base_ref }}'
+              run: make repo-new FLAGS='--remote-repo https://toltec-dev.org/${{ github.base_ref }}'
             - name: Save the build output
               uses: actions/upload-artifact@v2
               with:
