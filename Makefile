@@ -53,7 +53,7 @@ repo-local:
 	./scripts/repo_build.py --local $(FLAGS)
 
 repo-new:
-	./scripts/repo_build.py --no-fetch $(FLAGS)
+	./scripts/repo_build.py --diff $(FLAGS)
 
 repo-check:
 	./scripts/repo-check build/repo

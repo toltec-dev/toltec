@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+# Copyright (c) 2021 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgnames=(libdlib libdlib-dev)
+pkgdesc="Toolkit for making machine learning and data analysis applications in C++"
+url=http://dlib.net
+pkgver=19.21-1
+timestamp=2020-08-08T19:41:07Z
+section="devel"
+maintainer="Mattéo Delabre <spam@delab.re>"
+license=BSL-1.0
+
+image=base:v1.3.1
+source=("http://dlib.net/files/dlib-${pkgver%-*}.tar.bz2")
+sha256sums=(be728a03ae8c4dc8b48408d90392a3c28bc6642a6eb22f3885895b434d7df53c)
+
+build() {
+    cmake -B build \
+        -DCMAKE_TOOLCHAIN_FILE="/usr/share/cmake/$CHOST.cmake" \
+        -DCMAKE_INSTALL_PREFIX="/opt" \
+        -DBUILD_SHARED_LIBS=ON
+    cmake --build build
+    cmake --build build --target install -- DESTDIR=../install
+}
+
+libdlib() {
+    package() {
+        install -d "$pkgdir"/opt/lib "$pkgdir"/usr/lib
+        cp --no-dereference "$srcdir"/install/opt/lib/lib*.so* "$pkgdir"/opt/lib
+
+        for file in "$pkgdir"/opt/lib/lib*.so*; do
+            base="${file#"$pkgdir"}"
+            ln -s "$base" "${file/\/opt/\/usr}"
+        done
+    }
+}
+
+libdlib-dev() {
+    pkgdesc="$pkgdesc - development files"
+
+    package() {
+        install -d "$pkgdir"/opt/lib
+        cp -r "$srcdir"/install/opt/lib/pkgconfig "$pkgdir"/opt/lib
+        cp -r "$srcdir"/install/opt/lib/cmake "$pkgdir"/opt/lib
+        cp -r "$srcdir"/install/opt/include "$pkgdir"/opt
+    }
+}

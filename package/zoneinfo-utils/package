@@ -5,6 +5,8 @@
 # Inspired by https://github.com/archlinux/svntogit-packages/blob/packages/tzdata/trunk/PKGBUILD
 
 pkgnames=(zoneinfo-utils)
+depends=(host:zoneinfo-core)
+makedepends=(build:gawk)
 pkgdesc="Utilities for interacting with zoneinfo files"
 url=https://www.iana.org/time-zones
 _tzver=2020f
@@ -13,8 +15,7 @@ timestamp=2020-05-04T06:16Z
 section=utils
 maintainer="Eeems <eeems@eeems.email>"
 license="custom: public domain"
-depends=(zoneinfo-core)
-image=base:v1.2.1
+image=base:v1.3.2
 
 source=(
     "https://www.iana.org/time-zones/repository/releases/tzcode${_tzver}.tar.gz"
@@ -30,11 +31,6 @@ prepare() {
 }
 
 build() {
-    # Upgrade gawk to latest to avoid a bug
-    export DEBIAN_FRONTEND=noninteractive
-    apt-get update -y
-    apt-get install -y gawk
-
     mkdir .x86
     pushd .x86 > /dev/null
 
