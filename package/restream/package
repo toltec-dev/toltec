@@ -33,10 +33,5 @@ This app is only the device-side half of reStream. The companion script for
 consuming the output of this app can be found at
 <https://github.com/rien/reStream>.
 
-The script may need to be adjusted to target '/opt/bin/restream' instead of
-'$HOME/restream', or you can create a symlink on your device with:
-
-    ln -s /opt/bin/restream $HOME/restream
-
 MSG
 }
