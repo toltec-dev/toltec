@@ -5,10 +5,10 @@
 import shutil
 from typing import (
     Any,
-    Deque,
     Dict,
-    Iterable,
+    Deque,
     List,
+    Mapping,
     MutableMapping,
     Optional,
     Tuple,
@@ -21,7 +21,7 @@ import textwrap
 import docker
 import requests
 from . import bash, util, ipk, paths
-from .recipe import Recipe, Package
+from .recipe import GenericRecipe, Recipe, Package
 from .version import DependencyKind
 
 logger = logging.getLogger(__name__)
@@ -41,6 +41,9 @@ class BuildContextAdapter(logging.LoggerAdapter):
 
         if "recipe" in self.extra:
             prefix += self.extra["recipe"]
+
+        if "arch" in self.extra:
+            prefix += f" [{self.extra['arch']}]"
 
         if "package" in self.extra:
             prefix += f" ({self.extra['package']})"
@@ -79,13 +82,13 @@ class Builder:  # pylint: disable=too-few-public-methods
         self.install_lib = ""
         install_lib_path = os.path.join(paths.SCRIPTS_DIR, "install-lib")
 
+        self.context: Dict[str, str] = {}
+        self.adapter = BuildContextAdapter(logger, self.context)
+
         with open(install_lib_path, "r") as file:
             for line in file:
                 if not line.strip().startswith("#"):
                     self.install_lib += line
-
-        self.context: Dict[str, str] = {}
-        self.adapter = BuildContextAdapter(logger, self.context)
 
         try:
             self.docker = docker.from_env()
@@ -97,35 +100,60 @@ permissions."
             ) from err
 
     def make(
-        self, recipe: Recipe, packages: Optional[Iterable[Package]] = None
+        self,
+        generic_recipe: GenericRecipe,
+        arch_packages: Optional[Mapping[str, Optional[List[Package]]]] = None,
     ) -> bool:
         """
-        Build a recipe and create its associated packages.
+        Build packages defined by a recipe.
 
-        :param recipe: recipe to make
-        :param packages: list of packages of the recipe to make
-            (default: all of them)
-        :returns: true if all packages were built correctly
+        :param generic_recipe: recipe to make
+        :param arch_packages: set of packages to build for each
+            architecture (default: all supported architectures
+            and all declared packages)
+        :returns: true if all the requested packages were built correctly
         """
-        self.context["recipe"] = recipe.name
-        build_dir = os.path.join(self.work_dir, recipe.name)
+        self.context["recipe"] = generic_recipe.name
+        build_dir = os.path.join(self.work_dir, generic_recipe.name)
 
         if not util.check_directory(
             build_dir,
             f"The build directory '{os.path.relpath(build_dir)}' for recipe \
-'{recipe.name}' already exists.\nWould you like to [c]ancel, [r]emove \
+'{generic_recipe.name}' already exists.\nWould you like to [c]ancel, [r]emove \
 that directory, or [k]eep it (not recommended)?",
         ):
             return False
 
+        for name in (
+            list(arch_packages.keys())
+            if arch_packages is not None
+            else list(generic_recipe.recipes.keys())
+        ):
+            if not self._make_arch(
+                generic_recipe.recipes[name],
+                os.path.join(build_dir, name),
+                arch_packages[name] if arch_packages is not None else None,
+            ):
+                return False
+
+        return True
+
+    def _make_arch(
+        self,
+        recipe: Recipe,
+        build_dir: str,
+        packages: Optional[List[Package]] = None,
+    ) -> bool:
+        self.context["arch"] = recipe.arch
+
         src_dir = os.path.join(build_dir, "src")
         os.makedirs(src_dir, exist_ok=True)
+        self._fetch_sources(recipe, src_dir)
+        self._prepare(recipe, src_dir)
 
         base_pkg_dir = os.path.join(build_dir, "pkg")
         os.makedirs(base_pkg_dir, exist_ok=True)
 
-        self._fetch_source(recipe, src_dir)
-        self._prepare(recipe, src_dir)
         self._build(recipe, src_dir)
         self._strip(recipe, src_dir)
 
@@ -133,7 +161,6 @@ that directory, or [k]eep it (not recommended)?",
             packages if packages is not None else recipe.packages.values()
         ):
             self.context["package"] = package.name
-
             pkg_dir = os.path.join(base_pkg_dir, package.name)
             os.makedirs(pkg_dir, exist_ok=True)
 
@@ -141,9 +168,10 @@ that directory, or [k]eep it (not recommended)?",
             self._archive(package, pkg_dir)
             del self.context["package"]
 
+        del self.context["arch"]
         return True
 
-    def _fetch_source(
+    def _fetch_sources(
         self,
         recipe: Recipe,
         src_dir: str,
@@ -157,7 +185,9 @@ that directory, or [k]eep it (not recommended)?",
 
             if self.URL_REGEX.match(source.url) is None:
                 # Get source file from the recipe’s directory
-                shutil.copy2(os.path.join(recipe.path, source.url), local_path)
+                shutil.copy2(
+                    os.path.join(recipe.parent.path, source.url), local_path
+                )
             else:
                 # Fetch source file from the network
                 req = requests.get(source.url)
@@ -253,11 +283,32 @@ source file '{source.url}', got {req.status_code}"
             )
 
         if host_deps:
+            opkg_conf_path = "$SYSROOT/etc/opkg/opkg.conf"
             pre_script.extend(
                 (
-                    "opkg update --verbosity=0 --offline-root $SYSROOT",
+                    'echo -n "dest root /',
+                    "arch all 100",
+                    "arch armv7-3.2 160",
+                    "src/gz entware https://bin.entware.net/armv7sf-k3.2",
+                    "arch rmall 200",
+                    "src/gz toltec-rmall file:///repo/rmall",
+                    f'" > "{opkg_conf_path}"',
+                )
+            )
+
+            if recipe.arch != "rmall":
+                pre_script.extend(
+                    (
+                        f'echo -n "arch {recipe.arch} 250',
+                        f"src/gz toltec-{recipe.arch} file:///repo/{recipe.arch}",
+                        f'" >> "{opkg_conf_path}"',
+                    )
+                )
+
+            pre_script.extend(
+                (
+                    "opkg update --verbosity=0",
                     "opkg install --verbosity=0 --no-install-recommends"
-                    " --offline-root $SYSROOT"
                     " -- " + " ".join(host_deps),
                 )
             )
@@ -334,6 +385,8 @@ source file '{source.url}', got {req.status_code}"
         logs = bash.run_script(
             script=package.functions["package"],
             variables={
+                **package.parent.parent.variables,
+                **package.parent.variables,
                 **package.variables,
                 **package.custom_variables,
                 "srcdir": src_dir,
@@ -356,6 +409,8 @@ source file '{source.url}', got {req.status_code}"
         """Create an archive for a package."""
         self.adapter.info("Creating archive")
         ar_path = os.path.join(paths.REPO_DIR, package.filename())
+        ar_dir = os.path.dirname(ar_path)
+        os.makedirs(ar_dir, exist_ok=True)
 
         # Inject Oxide-specific hook for reloading apps
         if os.path.exists(os.path.join(pkg_dir, "opt/usr/share/applications")):
@@ -376,6 +431,7 @@ source file '{source.url}', got {req.status_code}"
                 ),
                 bash.put_variables(
                     {
+                        **package.parent.parent.variables,
                         **package.parent.variables,
                         **package.variables,
                         **package.custom_variables,

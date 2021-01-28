@@ -1,17 +1,20 @@
 #!/usr/bin/env bash
-# Copyright (c) 2020 The Toltec Contributors
+# Copyright (c) 2021 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
 pkgnames=(zshelf)
 pkgdesc="Z-Library browser and downloader"
 url=https://github.com/khanhas/zshelf
-pkgver=0.3.1-1
+pkgver=0.3.1-2
 section=utils
 timestamp=2021-02-20T01:45Z
 maintainer="khanhas <xuankhanh963@gmail.com>"
 license=GPL-3.0
-depends=(node)
+installdepends=(node display rm2fb-shim)
+makedepends=(build:imagemagick build:librsvg2-bin build:patchelf)
+flags=(nostrip)
 
+image=qt:v1.4
 source=(
     https://github.com/khanhas/zshelf/archive/v0.3.1.zip
     zshelf.draft
@@ -23,7 +26,6 @@ sha256sums=(
     SKIP
 )
 
-image=qt:v1.3.2
 build() {
     qmake zshelf.pro
     make
@@ -31,6 +33,11 @@ build() {
     curl https://nodejs.org/dist/v14.15.4/node-v14.15.4-linux-x64.tar.xz > /root/node.tar.xz
     tar -C / -xf /root/node.tar.xz
     export PATH="/node-v14.15.4-linux-x64/bin:$PATH"
+
+    # Inject rm2fb shim after running strip, otherwise strip removes
+    # too much information
+    "${CROSS_COMPILE}strip" --strip-all zshelf
+    patchelf --add-needed librm2fb_client.so zshelf
 
     cd backend
     npm install

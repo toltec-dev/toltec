@@ -1,25 +1,41 @@
 #!/usr/bin/env bash
-# Copyright (c) 2020 The Toltec Contributors
+# Copyright (c) 2021 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
 pkgnames=(erode fret oxide rot tarnish decay)
-pkgver=2.1.2~1
+pkgver=2.1.2-2
 timestamp=2021-01-07T03:28Z
 maintainer="Eeems <eeems@eeems.email>"
 license=MIT
+makedepends=(build:patchelf)
+flags=(nostrip)
 
-source=(https://github.com/Eeems/oxide/releases/download/v2.1.2/oxide.zip)
-sha256sums=(c9e8214dd60346b0865bc41e8180064cbb7e108ed676b6726abecff0b4adb710)
+image=qt:v1.4
+source=("https://github.com/Eeems/oxide/archive/v${pkgver%-*}.tar.gz")
+sha256sums=(1a6c97ec8c836a9491d3f943d4034132d96b488fd773de3a75b789e2e028aa58)
+
+build() {
+    find . -name "*.pro" -type f -print0 \
+        | xargs -0 sed -i 's/linux-oe-g++/linux-arm-remarkable-g++/g'
+    make release
+
+    # Inject rm2fb shim
+    # (after running strip, otherwise strip removes too much information)
+    for bin in release/opt/bin/{erode,fret,oxide,decay}; do
+        "${CROSS_COMPILE}strip" --strip-all "$bin"
+        patchelf --add-needed librm2fb_client.so "$bin"
+    done
+}
 
 erode() {
     pkgdesc="Task manager"
     url=https://github.com/Eeems/oxide/tree/master/applications/process-manager
     section="admin"
-    depends=("tarnish=$pkgver")
+    installdepends=(display rm2fb-shim "tarnish=$pkgver")
 
     package() {
-        install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/opt/bin/erode
-        install -D -m 644 -t "$pkgdir"/opt/usr/share/applications "$srcdir"/opt/usr/share/applications/codes.eeems.erode.oxide
+        install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/release/opt/bin/erode
+        install -D -m 644 -t "$pkgdir"/opt/usr/share/applications "$srcdir"/release/opt/usr/share/applications/codes.eeems.erode.oxide
     }
 }
 
@@ -27,11 +43,11 @@ fret() {
     pkgdesc="Take screenshots"
     url=https://github.com/Eeems/oxide/tree/master/applications/screenshot-tool
     section="utils"
-    depends=("tarnish=$pkgver")
+    installdepends=(display rm2fb-shim "tarnish=$pkgver")
 
     package() {
-        install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/opt/bin/fret
-        install -D -m 644 -t "$pkgdir"/opt/usr/share/applications "$srcdir"/opt/usr/share/applications/codes.eeems.fret.oxide
+        install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/release/opt/bin/fret
+        install -D -m 644 -t "$pkgdir"/opt/usr/share/applications "$srcdir"/release/opt/usr/share/applications/codes.eeems.fret.oxide
     }
 }
 
@@ -39,12 +55,12 @@ oxide() {
     pkgdesc="Launcher application"
     url=https://github.com/Eeems/oxide/tree/master/applications/launcher
     section="launchers"
-    depends=("erode=$pkgver" "fret=$pkgver" "tarnish=$pkgver" "rot=$pkgver" "decay=$pkgver")
+    installdepends=(display rm2fb-shim "erode=$pkgver" "fret=$pkgver" "tarnish=$pkgver" "rot=$pkgver" "decay=$pkgver")
 
     package() {
-        install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/opt/bin/oxide
-        install -D -m 644 -t "$pkgdir"/opt/etc "$srcdir"/opt/etc/oxide.conf
-        install -D -m 644 -t "$pkgdir"/opt/usr/share/applications "$srcdir"/opt/usr/share/applications/codes.eeems.oxide.oxide
+        install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/release/opt/bin/oxide
+        install -D -m 644 -t "$pkgdir"/opt/etc "$srcdir"/release/opt/etc/oxide.conf
+        install -D -m 644 -t "$pkgdir"/opt/usr/share/applications "$srcdir"/release/opt/usr/share/applications/codes.eeems.oxide.oxide
     }
     configure() {
         if ! is-enabled "tarnish.service"; then
@@ -60,10 +76,10 @@ rot() {
     pkgdesc="Manage Oxide settings through the command line"
     url=https://github.com/Eeems/oxide/tree/master/applications/settings-manager
     section="admin"
-    depends=("tarnish=$pkgver")
+    installdepends=("tarnish=$pkgver")
 
     package() {
-        install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/opt/bin/rot
+        install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/release/opt/bin/rot
     }
 }
 
@@ -71,12 +87,12 @@ tarnish() {
     pkgdesc="Service managing power states, connectivity and buttons"
     url=https://github.com/Eeems/oxide/tree/master/applications/system-service
     section="devel"
-    depends=(xochitl)
+    installdepends=(xochitl)
 
     package() {
-        install -D -m 644 -t "$pkgdir"/etc/dbus-1/system.d "$srcdir"/etc/dbus-1/system.d/codes.eeems.oxide.conf
-        install -D -m 644 -t "$pkgdir"/lib/systemd/system "$srcdir"/etc/systemd/system/tarnish.service
-        install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/opt/bin/tarnish
+        install -D -m 644 -t "$pkgdir"/etc/dbus-1/system.d "$srcdir"/release/etc/dbus-1/system.d/codes.eeems.oxide.conf
+        install -D -m 644 -t "$pkgdir"/lib/systemd/system "$srcdir"/release/etc/systemd/system/tarnish.service
+        install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/release/opt/bin/tarnish
     }
     configure() {
         systemctl daemon-reload
@@ -100,10 +116,10 @@ decay() {
     pkgdesc="Lockscreen application"
     url=https://github.com/Eeems/oxide/tree/master/applications/lockscreen
     section="utils"
-    depends=("tarnish=$pkgver")
+    installdepends=(display rm2fb-shim "tarnish=$pkgver")
 
     package() {
-        install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/opt/bin/decay
-        install -D -m 644 -t "$pkgdir"/opt/usr/share/applications "$srcdir"/opt/usr/share/applications/codes.eeems.decay.oxide
+        install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/release/opt/bin/decay
+        install -D -m 644 -t "$pkgdir"/opt/usr/share/applications "$srcdir"/release/opt/usr/share/applications/codes.eeems.decay.oxide
     }
 }

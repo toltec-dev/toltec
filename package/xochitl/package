@@ -1,17 +1,19 @@
 #!/usr/bin/env bash
-# Copyright (c) 2020 The Toltec Contributors
+# Copyright (c) 2021 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
 pkgnames=(xochitl)
 pkgdesc="Read documents and take notes"
 url=https://remarkable.com
-pkgver=0.0.0-3
-timestamp=2020-09-24T18:48Z
+pkgver=0.0.0-4
+timestamp=2021-03-10T13:01Z
 section="readers"
 maintainer="Mattéo Delabre <spam@delab.re>"
 license=Apache-2.0
+installdepends=(display rm2fb-shim)
 
 source=(
+    xochitl
     xochitl.png
     xochitl.draft
     xochitl.oxide
@@ -20,10 +22,12 @@ sha256sums=(
     SKIP
     SKIP
     SKIP
+    SKIP
 )
 
 package() {
     install -d "$pkgdir"/opt/etc/draft "$pkgdir"/opt/etc/draft/icons
+    install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/xochitl
     install -D -m 644 -t "$pkgdir"/opt/etc/draft "$srcdir"/xochitl.draft
     install -D -m 644 -t "$pkgdir"/opt/etc/draft/icons "$srcdir"/xochitl.png
     install -D -m 644 -t "$pkgdir"/opt/usr/share/applications "$srcdir"/xochitl.oxide

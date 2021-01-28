@@ -1,3 +1,0 @@
-#!/usr/bin/env bash
-# shellcheck disable=SC2048
-LD_PRELOAD=/opt/lib/librm2fb_client.so.1.0.0 $*

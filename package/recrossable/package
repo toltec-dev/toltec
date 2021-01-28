@@ -1,19 +1,20 @@
 #!/usr/bin/env bash
-# Copyright (c) 2020 The Toltec Contributors
+# Copyright (c) 2021 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
 pkgnames=(recrossable)
 pkgdesc="Solve crossword puzzles"
 url=https://github.com/sandsmark/recrossable
-pkgver=0.0.0-4
+pkgver=0.0.0-5
 timestamp=2020-10-05T08:43Z
 section="games"
 maintainer="Mattéo Delabre <spam@delab.re>"
 license=GPL-2.0-or-later
-depends=(libdlib)
-makedepends=(build:imagemagick build:librsvg2-bin host:libdlib-dev)
+installdepends=(libdlib display rm2fb-shim)
+makedepends=(build:imagemagick build:librsvg2-bin build:patchelf host:libdlib host:libdlib-dev)
+flags=(nostrip)
 
-image=qt:v1.3.2
+image=qt:v1.4
 source=(
     https://github.com/sandsmark/recrossable/archive/5faa37c6e8a13e3ddeb0fe6d9d5f15717f83b662.zip
     recrossable.draft
@@ -39,12 +40,16 @@ QMAKE
     qmake
     make
 
+    # Inject rm2fb shim
+    # (after running strip, otherwise strip removes too much information)
+    "${CROSS_COMPILE}strip" --strip-all recrossable
+    patchelf --add-needed librm2fb_client.so recrossable
+
     convert +set date:create +set date:modify recrossable.{svg,png}
 }
 
 package() {
     install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/recrossable
-
     install -D -m 644 -t "$pkgdir"/opt/etc/draft "$srcdir"/recrossable.draft
     install -D -m 644 -t "$pkgdir"/opt/etc/draft/icons "$srcdir"/recrossable.png
 }

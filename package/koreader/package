@@ -1,16 +1,16 @@
 #!/usr/bin/env bash
-# Copyright (c) 2020 The Toltec Contributors
+# Copyright (c) 2021 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
 pkgnames=(koreader)
 pkgdesc="Ebook reader supporting PDF, DjVu, EPUB, FB2 and many more formats"
 url=https://github.com/koreader/koreader
-pkgver=2020.12-4
+pkgver=2020.12-5
 timestamp=2020-10-10T20:13Z
 section="readers"
 maintainer="raisjn <of.raisjn@gmail.com>"
 license=AGPL-3.0-or-later
-depends=(fbink fbdepth)
+installdepends=(fbink fbdepth display rm2fb-shim)
 
 _srcver="v${pkgver%-*}"
 source=(

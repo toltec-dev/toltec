@@ -2,6 +2,7 @@
 # Copyright (c) 2021 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
+archs=(rm1)
 pkgnames=(vnsee)
 pkgdesc="VNC client allowing you to use the device as a second screen"
 url=https://github.com/matteodelabre/vnsee
@@ -10,10 +11,10 @@ timestamp=2021-01-25T12:54:25Z
 section="screensharing"
 maintainer="Mattéo Delabre <spam@delab.re>"
 license=GPL-3.0-only
-depends=(libvncclient)
-makedepends=(host:libvncserver-dev)
+installdepends=(libvncclient)
+makedepends=(host:libvncclient host:libvncserver-dev)
 
-image=base:v1.3.2
+image=base:v1.4
 source=("https://github.com/matteodelabre/vnsee/archive/3f07c04e1991c1c5ff3b5a4758aa42301bf86fae.zip")
 sha256sums=(57cef02f066ba26f0258e476339586f5c7a0f67ad31bf35cb479a362f1eba525)
 

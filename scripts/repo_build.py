@@ -8,7 +8,7 @@ import logging
 import os
 from toltec import paths
 from toltec.builder import Builder
-from toltec.repo import Repo
+from toltec.repo import Repo, PackageStatus
 from toltec.util import argparse_add_verbose, LOGGING_FORMAT
 
 parser = argparse.ArgumentParser(description=__doc__)
@@ -50,21 +50,24 @@ repo = Repo(paths.RECIPE_DIR, paths.REPO_DIR)
 builder = Builder(paths.WORK_DIR, paths.REPO_DIR)
 results = repo.fetch_packages(remote)
 
-fetched = results.fetched
-missing = results.missing
-ordered_missing = repo.order_dependencies(list(missing.keys()))
+fetched = results[PackageStatus.Fetched]
+missing = results[PackageStatus.Missing]
+ordered_missing = repo.order_dependencies(
+    [repo.generic_recipes[name] for name in missing]
+)
 
-for recipe in ordered_missing:
-    if missing[recipe]:
-        builder.make(recipe, missing[recipe])
+for generic_recipe in ordered_missing:
+    if missing[generic_recipe.name]:
+        builder.make(generic_recipe, missing[generic_recipe.name])
         repo.make_index()
 
 if args.diff:
-    for packages in fetched.values():
-        for package in packages:
-            filename = package.filename()
-            local_path = os.path.join(repo.repo_dir, filename)
-            os.remove(local_path)
+    for name in fetched:
+        for packages in fetched[name].values():
+            for package in packages:
+                filename = package.filename()
+                local_path = os.path.join(repo.repo_dir, filename)
+                os.remove(local_path)
 
 repo.make_index()
 repo.make_listing()

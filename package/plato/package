@@ -1,18 +1,20 @@
 #!/usr/bin/env bash
-# Copyright (c) 2020 The Toltec Contributors
+# Copyright (c) 2021 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
 pkgnames=(plato)
 pkgdesc="Document reader"
 url=https://github.com/LinusCDE/plato
-pkgver=0.9.13-1
+pkgver=0.9.13-2
 timestamp=2021-01-13T23:43Z
 section="readers"
 maintainer="Linus K. <linus@cosmos-ink.net>"
 license=AGPL-3.0-or-later
+installdepends=(display rm2fb-shim)
 makedepends=(build:jq build:patchelf build:unzip build:wget)
+flags=(nostrip)
 
-image=rust:v1.2.1
+image=rust:v1.4
 source=("https://github.com/LinusCDE/plato/archive/${pkgver%-*}-rm-release-7.zip")
 sha256sums=(17718d74066e5cbec043c98b52958a311eb793674751d6b7789b5baff2227f96)
 
@@ -34,6 +36,11 @@ build() {
     ./clean.sh
     ./build.sh
     ./dist.sh
+
+    # Inject rm2fb shim
+    # (after running strip, otherwise strip removes too much information)
+    "${CROSS_COMPILE}strip" --strip-all dist/plato
+    patchelf --add-needed librm2fb_client.so dist/plato
 }
 
 package() {

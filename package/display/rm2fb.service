@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MIT
 
 [Unit]
-Description=Remarkable2 Framebuffer Server
+Description=reMarkable 2 Framebuffer Server
 Before=xochitl.service
 After=opt.mount
 StartLimitInterval=30
@@ -14,7 +14,7 @@ ExecStart=/usr/bin/remarkable-shutdown
 Restart=on-failure
 RestartSec=5
 Environment="HOME=/home/root"
-Environment="LD_PRELOAD=/opt/lib/librm2fb_server.so.1.0.0"
+Environment="LD_PRELOAD=/opt/lib/librm2fb_server.so"
 
 [Install]
 WantedBy=multi-user.target xochitl.service

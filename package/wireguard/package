@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Copyright (c) 2020 The Toltec Contributors
+# Copyright (c) 2021 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
 pkgnames=(wireguard)
@@ -11,7 +11,7 @@ timestamp=2020-12-21T11:54Z
 section=utils
 maintainer="Jonah Weissman <jonahrweissman+toltec@gmail.com>"
 license=GPL-2.0
-depends=(wireguard-tools)
+installdepends=(wireguard-tools)
 makedepends=(build:bc build:lzop build:git)
 flags=(nostrip)
 

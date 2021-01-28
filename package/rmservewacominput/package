@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
-# Copyright (c) 2020 The Toltec Contributors
+# Copyright (c) 2021 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
+archs=(rm1)
 pkgnames=(rmservewacominput)
 pkgdesc="Serve pen input on port 33333"
 url=https://github.com/LinusCDE/rmWacomToMouse
@@ -10,7 +11,7 @@ timestamp=2020-09-06T23:23Z
 section="utils"
 maintainer="Linus K. <linus@cosmos-ink.net>"
 license=MIT
-depends=(appmarkable)
+installdepends=(appmarkable)
 
 image=base:v1.3.2
 source=(https://github.com/LinusCDE/rmWacomToMouse/archive/1a45d3446c8bc11de04800a702576056016875ed.zip)

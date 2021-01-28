@@ -1,29 +1,40 @@
 #!/usr/bin/env bash
-# Copyright (c) 2020 The Toltec Contributors
+# Copyright (c) 2021 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
 pkgnames=(chessmarkable)
 pkgdesc="Chess game"
 url=https://github.com/LinusCDE/chessmarkable
-pkgver=0.6.0-3
+pkgver=0.6.0-4
 timestamp=2021-01-03T05:26Z
 section="games"
 maintainer="Linus K. <linus@cosmos-ink.net>"
 license=MIT
+installdepends=(display rm2fb-shim)
+makedepends=(build:patchelf)
+flags=(nostrip)
 
-image=rust:v1.2.1
+image=rust:v1.4
 source=(https://github.com/LinusCDE/chessmarkable/archive/0.6.0-1.zip)
 sha256sums=(3ad10a46da5a42f603947ad4dce960bdac2d646c0cd29b7bb3a60b8d308dd82a)
+
+_target="armv7-unknown-linux-gnueabihf"
 
 build() {
     # Fall back to system-wide config
     rm .cargo/config
-
     cargo build --release --bin chessmarkable
+
+    # Inject rm2fb shim
+    # (after running strip, otherwise strip removes too much information)
+    pushd target/"$_target"/release
+    "${CROSS_COMPILE}strip" --strip-all chessmarkable
+    patchelf --add-needed librm2fb_client.so chessmarkable
+    popd
 }
 
 package() {
-    install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/target/armv7-unknown-linux-gnueabihf/release/chessmarkable
+    install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/target/"$_target"/release/chessmarkable
     install -D -m 644 "$srcdir"/oxide "$pkgdir"/opt/etc/draft/chessmarkable
     install -D -m 644 "$srcdir"/icon.png "$pkgdir"/opt/etc/draft/icons/chessmarkable.png
 }

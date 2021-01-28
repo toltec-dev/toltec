@@ -1,29 +1,40 @@
 #!/usr/bin/env bash
-# Copyright (c) 2020 The Toltec Contributors
+# Copyright (c) 2021 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
 pkgnames=(retris)
 pkgdesc="Tetris game"
 url=https://github.com/LinusCDE/retris
-pkgver=0.6.3-1
+pkgver=0.6.3-2
 timestamp=2021-01-30T02:41Z
 section="games"
 maintainer="Linus K. <linus@cosmos-ink.net>"
 license=MIT
+installdepends=(display rm2fb-shim)
+makedepends=(build:patchelf)
+flags=(nostrip)
 
-image=rust:v1.3
+image=rust:v1.4
 source=(https://github.com/LinusCDE/retris/archive/0.6.3-1.zip)
 sha256sums=(ecc7215098c03e79cd92b1835626e6739a5a932d5aa709899d183347e2a4108e)
+
+_target="armv7-unknown-linux-gnueabihf"
 
 build() {
     # Fall back to system-wide config
     rm .cargo/config
-
     cargo build --release
+
+    # Inject rm2fb shim
+    # (after running strip, otherwise strip removes too much information)
+    pushd target/"$_target"/release
+    "${CROSS_COMPILE}strip" --strip-all retris
+    patchelf --add-needed librm2fb_client.so retris
+    popd
 }
 
 package() {
-    install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/target/armv7-unknown-linux-gnueabihf/release/retris
+    install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/target/"$_target"/release/retris
     install -D -m 644 "$srcdir"/oxide "$pkgdir"/opt/etc/draft/retris
     install -D -m 644 "$srcdir"/icon.png "$pkgdir"/opt/etc/draft/icons/retris.png
 }

@@ -5,13 +5,16 @@
 pkgnames=(keywriter)
 pkgdesc="Markdown-enabled free writing app"
 url=https://github.com/dps/remarkable-keywriter
-pkgver=0.1.0-1
+pkgver=0.1.0-2
 timestamp=2019-07-13T06:27Z
 section="writing"
 maintainer="Mattéo Delabre <spam@delab.re>"
 license=MIT
+installdepends=(display rm2fb-shim)
+makedepends=(build:patchelf)
+flags=(nostrip)
 
-image=qt:v1.2.2
+image=qt:v1.4
 _sundown=37728fb2d7137ff7c37d0a474cb827a8d6d846d8
 source=(
     https://github.com/dps/remarkable-keywriter/archive/c77ec3f65d9ff769f3f5dc85cc91abbf05aa163f.zip
@@ -33,9 +36,14 @@ prepare() {
 }
 
 build() {
-    sed -i 's/linux-oe-g++/linux-arm-gnueabihf-g++/' edit.pro
+    sed -i 's/linux-oe-g++/linux-arm-remarkable-g++/' edit.pro
     qmake edit.pro
     make
+
+    # Inject rm2fb shim
+    # (after running strip, otherwise strip removes too much information)
+    "${CROSS_COMPILE}strip" --strip-all edit
+    patchelf --add-needed librm2fb_client.so edit
 }
 
 package() {

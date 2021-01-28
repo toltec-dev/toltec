@@ -1,23 +1,31 @@
 #!/usr/bin/env bash
-# Copyright (c) 2020 The Toltec Contributors
+# Copyright (c) 2021 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
 pkgnames=(remarkable-splash)
 pkgdesc="Show splashscreens + remarkable-shutdown replacement that does not clear the screen"
 url=https://github.com/ddvk/remarkable-splash
-pkgver=1.0-3
+pkgver=1.0-4
 timestamp=2019-12-31T10:07Z
 section="utils"
 maintainer="Eeems <eeems@eeems.email>"
 license=MIT
+installdepends=(display rm2fb-shim)
+makedepends=(build:patchelf)
+flags=(nostrip)
 
-image=qt:v1.1
+image=qt:v1.4
 source=(https://github.com/ddvk/remarkable-splash/archive/e6e0b1e1f3604ab99fb7b476cd290b19c5644025.zip)
 sha256sums=(4aa3988707f9b66752ec9ec2f407cce2ac6e433ae7f06affea9f26957d206b4a)
 
 build() {
     qmake
     make
+
+    # Inject rm2fb shim after running strip, otherwise strip removes
+    # too much information
+    "${CROSS_COMPILE}strip" --strip-all remarkable-splash
+    patchelf --add-needed librm2fb_client.so remarkable-splash
 }
 
 package() {

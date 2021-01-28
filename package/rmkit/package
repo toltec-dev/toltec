@@ -1,11 +1,14 @@
 #!/usr/bin/env bash
-# Copyright (c) 2020 The Toltec Contributors
+# Copyright (c) 2021 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
 pkgnames=(bufshot genie harmony iago lamp mines nao remux simple)
 timestamp=2021-02-24T13:20-08:00
 maintainer="raisjn <of.raisjn@gmail.com>"
 license=MIT
+installdepends=(display rm2fb-shim)
+makedepends=(build:patchelf)
+flags=(nostrip)
 
 image=python:v1.1
 source=(
@@ -25,12 +28,19 @@ build() {
     pip3 install okp
     patch -p1 < 2021_03_05_genie.diff
     make
+
+    # Inject rm2fb shim
+    # (after running strip, otherwise strip removes too much information)
+    for bin in src/build/{bufshot,genie,harmony,iago,lamp,mines,remux,simple}; do
+        "${CROSS_COMPILE}strip" --strip-all "$bin"
+        patchelf --add-needed librm2fb_client.so "$bin"
+    done
 }
 
 bufshot() {
     pkgdesc="program for saving the framebuffer as a png"
     url="https://github.com/rmkit-dev/rmkit/tree/master/src/bufshot"
-    pkgver=0.1.0-2
+    pkgver=0.1.0-3
     section="utils"
 
     package() {
@@ -41,7 +51,7 @@ bufshot() {
 genie() {
     pkgdesc="Gesture engine that connects commands to gestures"
     url="https://rmkit.dev/apps/genie"
-    pkgver=0.1.4-2
+    pkgver=0.1.4-3
     section="utils"
 
     package() {
@@ -68,7 +78,7 @@ genie() {
 harmony() {
     pkgdesc="Procedural sketching app"
     url="https://rmkit.dev/apps/harmony"
-    pkgver=0.1.2-1
+    pkgver=0.1.2-2
     section="drawing"
 
     package() {
@@ -85,9 +95,9 @@ harmony() {
 iago() {
     pkgdesc="overlay for drawing shapes via stroke injection"
     url="https://rmkit.dev/apps/iago"
-    pkgver=0.1.0-1
+    pkgver=0.1.0-2
     section="utils"
-    depends=("lamp")
+    installdepends+=("lamp")
 
     package() {
         install -D -m 755 "$srcdir"/src/build/iago "$pkgdir"/opt/bin/iago
@@ -97,7 +107,7 @@ iago() {
 lamp() {
     pkgdesc="config based stroke injection utility"
     url="https://rmkit.dev/apps/lamp"
-    pkgver=0.1.0-1
+    pkgver=0.1.0-2
     section="utils"
 
     package() {
@@ -108,7 +118,7 @@ lamp() {
 mines() {
     pkgdesc="Mine detection game"
     url="https://rmkit.dev/apps/minesweeper"
-    pkgver=0.1.2-1
+    pkgver=0.1.2-2
     section="games"
 
     package() {
@@ -121,9 +131,9 @@ mines() {
 nao() {
     pkgdesc="Nao Package Manager: opkg UI built with SAS"
     url="https://rmkit.dev/apps/nao"
-    pkgver=0.1.2-1
+    pkgver=0.1.2-2
     section="admin"
-    depends=(simple)
+    installdepends+=(simple)
 
     package() {
         install -D -m 755 "$srcdir"/src/build/nao.sh "$pkgdir"/opt/bin/nao
@@ -135,7 +145,7 @@ nao() {
 remux() {
     pkgdesc="Launcher that supports multi-tasking applications"
     url="https://rmkit.dev/apps/remux"
-    pkgver=0.1.8-1
+    pkgver=0.1.8-2
     section="launchers"
 
     package() {
@@ -167,7 +177,7 @@ remux() {
 simple() {
     pkgdesc="Simple app script for writing scripted applications"
     url="https://rmkit.dev/apps/sas"
-    pkgver=0.1.3-1
+    pkgver=0.1.3-2
     section="devel"
 
     package() {

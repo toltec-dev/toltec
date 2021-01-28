@@ -1,18 +1,20 @@
 #!/usr/bin/env bash
-# Copyright (c) 2020 The Toltec Contributors
+# Copyright (c) 2021 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
 pkgnames=(draft)
 pkgdesc="Launcher which wraps around the standard interface"
 url=https://github.com/dixonary/draft-reMarkable
-pkgver=0.2.0-18
+pkgver=0.2.0-19
 timestamp=2020-07-20T10:23Z
 section="launchers"
 maintainer="Mattéo Delabre <spam@delab.re>"
 license=Apache-2.0
-depends=(xochitl)
+installdepends=(xochitl display rm2fb-shim)
+makedepends=(build:patchelf)
+flags=(nostrip)
 
-image=qt:v1.3.2
+image=qt:v1.4
 source=(
     https://github.com/dixonary/draft-reMarkable/archive/5bd660a2fd07eba166c6110d2b48cfc58ee67e58.zip
     draft.service
@@ -25,6 +27,11 @@ sha256sums=(
 build() {
     qmake draft.pro
     make
+
+    # Inject rm2fb shim
+    # (after running strip, otherwise strip removes too much information)
+    "${CROSS_COMPILE}strip" --strip-all draft
+    patchelf --add-needed librm2fb_client.so draft
 }
 
 package() {
