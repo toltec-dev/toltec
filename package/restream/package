@@ -5,15 +5,15 @@
 pkgnames=(restream)
 pkgdesc="Binary framebuffer capture tool for the reStream script"
 url=https://github.com/rien/reStream
-pkgver=1.0.0-1
-timestamp=2021-01-05T19:08:03Z
+pkgver=1.1-1
+timestamp=2021-01-28T23:25:40Z
 section="screensharing"
 maintainer="Dan Shick <dan.shick@gmail.com>"
 license=MIT
 conflicts=(rm2fb)
 image=rust:v1.3
-source=(https://github.com/rien/reStream/archive/1.0.tar.gz)
-sha256sums=(07457895927c9dd3d9566d6d432dbd0b76f97dfff45dc2964adfcc3091a2ce0f)
+source=("https://github.com/rien/reStream/archive/${pkgver%-*}.tar.gz")
+sha256sums=(89fa4c8adfcdfb5266e11d1f8ed4c5d8dac12a68a7ee5622cf21f833bca1704f)
 
 build() {
     # Fall back to system-wide config
