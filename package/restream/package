@@ -5,15 +5,14 @@
 pkgnames=(restream)
 pkgdesc="Binary framebuffer capture tool for the reStream script"
 url=https://github.com/rien/reStream
-pkgver=0.0.0-2
-timestamp=2021-01-01T13:55:28Z
+pkgver=1.1-1
+timestamp=2021-01-28T23:25:40Z
 section="screensharing"
 maintainer="Dan Shick <dan.shick@gmail.com>"
 license=MIT
-conflicts=(rm2fb)
-image=rust:v1.2.1
-source=(https://github.com/rien/reStream/archive/c41b87778953513cd52d9c58b3cc5ce52825700e.zip)
-sha256sums=(89da0932f17a546f194b816eb28a83f84f2484a1508d545bfce2115908248fc3)
+image=rust:v1.3
+source=("https://github.com/rien/reStream/archive/${pkgver%-*}.tar.gz")
+sha256sums=(89fa4c8adfcdfb5266e11d1f8ed4c5d8dac12a68a7ee5622cf21f833bca1704f)
 
 build() {
     # Fall back to system-wide config
@@ -32,11 +31,6 @@ configure() {
 This app is only the device-side half of reStream. The companion script for
 consuming the output of this app can be found at
 <https://github.com/rien/reStream>.
-
-The script may need to be adjusted to target '/opt/bin/restream' instead of
-'$HOME/restream', or you can create a symlink on your device with:
-
-    ln -s /opt/bin/restream $HOME/restream
 
 MSG
 }
