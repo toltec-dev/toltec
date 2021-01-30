@@ -11,7 +11,7 @@ section="games"
 maintainer="Linus K. <linus@cosmos-ink.net>"
 license=MIT
 
-image=rust:v1.2.1
+image=rust:v1.3
 source=(https://github.com/LinusCDE/retris/archive/0.6.3-1.zip)
 sha256sums=(ecc7215098c03e79cd92b1835626e6739a5a932d5aa709899d183347e2a4108e)
 
