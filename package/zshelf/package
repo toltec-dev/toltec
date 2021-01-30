@@ -31,11 +31,11 @@ build() {
 
 package() {
     install -d "$pkgdir"/opt/share/zshelf
-    
+
     cp -r "$srcdir"/backend "$pkgdir"/opt/share/zshelf/backend
     cp "$srcdir"/config.json "$pkgdir"/opt/share/zshelf
     install -D -m 755 -t "$pkgdir"/opt/share/zshelf "$srcdir"/zshelf
-    
+
     ln -s "$pkgdir"/opt/share/zshelf/zshelf "$pkgdir"/opt/bin
 
     install -D -m 644 -t "$pkgdir"/opt/etc/draft "$srcdir"/zshelf.draft
@@ -43,10 +43,10 @@ package() {
 }
 
 configure() {
-      echo ""
-      echo "To download books, you have to configure domain and cookie first."
-      echo "Please follow instructions on:"
-      echo "https://github.com/khanhas/zshelf#important-configure-domain-and-cookie"
-      echo "Config file locates at:" "$pkgdir"/opt/share/zshelf/config.json
-      echo ""
+    echo ""
+    echo "To download books, you have to configure domain and cookie first."
+    echo "Please follow instructions on:"
+    echo "https://github.com/khanhas/zshelf#important-configure-domain-and-cookie"
+    echo "Config file locates at:" "$pkgdir"/opt/share/zshelf/config.json
+    echo ""
 }
