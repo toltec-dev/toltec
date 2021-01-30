@@ -22,6 +22,7 @@ sha256sums=(
     SKIP
 )
 
+image=qt:v1.1
 build() {
     qmake zshelf.pro
     make
