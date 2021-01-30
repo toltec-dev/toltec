@@ -2,19 +2,19 @@
 # Copyright (c) 2020 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
-pkgnames=(genie harmony mines nao remux simple)
-timestamp=2021-02-20T13:20-08:00
+pkgnames=(bufshot genie harmony iago lamp mines nao remux simple)
+timestamp=2021-02-24T13:20-08:00
 maintainer="raisjn <of.raisjn@gmail.com>"
 license=MIT
 
 image=python:v1.1
 source=(
-    https://github.com/rmkit-dev/rmkit/archive/af8ab3339acda1065110efa61d7d59be2ab52b9d.zip
+    https://github.com/rmkit-dev/rmkit/archive/6f28e6441aa87103aac13ceb396ee77f5f3429ec.zip
     remux.service
     genie.service
 )
 sha256sums=(
-    0b797dc905438b02821f33d49dbaed8976cbacd70e6a7090cabdcd52159fcb89
+    340bf7011a160ccbbb3176d8fa42e54f2dd60e3eae9d740fa0bf333cba4f1cb9
     SKIP
     SKIP
 )
@@ -22,6 +22,17 @@ sha256sums=(
 build() {
     pip3 install okp
     make
+}
+
+bufshot() {
+    pkgdesc="program for saving the framebuffer as a png"
+    url="https://github.com/rmkit-dev/rmkit/tree/master/src/bufshot"
+    pkgver=0.1.0-2
+    section="utils"
+
+    package() {
+        install -D -m 755 "$srcdir"/src/build/bufshot "$pkgdir"/opt/bin/bufshot
+    }
 }
 
 genie() {
@@ -68,6 +79,29 @@ harmony() {
     }
 }
 
+iago() {
+    pkgdesc="overlay for drawing shapes via stroke injection"
+    url="https://rmkit.dev/apps/iago"
+    pkgver=0.1.0-1
+    section="utils"
+    depends=("lamp")
+
+    package() {
+        install -D -m 755 "$srcdir"/src/build/iago "$pkgdir"/opt/bin/iago
+    }
+}
+
+lamp() {
+    pkgdesc="config based stroke injection utility"
+    url="https://rmkit.dev/apps/lamp"
+    pkgver=0.1.0-1
+    section="utils"
+
+    package() {
+        install -D -m 755 "$srcdir"/src/build/lamp "$pkgdir"/opt/bin/lamp
+    }
+}
+
 mines() {
     pkgdesc="Mine detection game"
     url="https://rmkit.dev/apps/minesweeper"
@@ -96,7 +130,7 @@ nao() {
 }
 
 remux() {
-    pkgdesc="App launcher that supports multi-tasking applications"
+    pkgdesc="Launcher that supports multi-tasking applications"
     url="https://rmkit.dev/apps/remux"
     pkgver=0.1.8-1
     section="launchers"
