@@ -13,15 +13,32 @@ license=GPL-3.0
 depends=(node)
 
 source=(
-    https://github.com/khanhas/zshelf/releases/download/v0.1.0/zshelf-reMarkable-0.1.0.zip
+    https://github.com/khanhas/zshelf/archive/v0.1.0.zip
     zshelf.draft
     zshelf.png
 )
 sha256sums=(
-    d47d9e7f50e81c2432f7407c68613a5e18f9a26eff745febd897eedd42e86c5f
+    95252da324dbaec419f277532afe29c75cbac901a7a5da828ea6abb620687611
     SKIP
     SKIP
 )
+
+image=qt:v1.1
+build() {
+    qmake zshelf.pro
+    make
+
+    # Get needed build packages
+    export DEBIAN_FRONTEND=noninteractive
+    apt-get update -y
+    apt-get install -y \
+        --no-install-recommends \
+        -o Dpkg::Options::="--force-confdef" \
+        nodejs npm
+
+    cd backend
+    npm install
+}
 
 package() {
     install -d "$pkgdir"/opt/share/zshelf
