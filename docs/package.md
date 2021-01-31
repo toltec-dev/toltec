@@ -1,11 +1,11 @@
-## Writing a package recipe
+## Structure of a Recipe
 
-A **package recipe** is a Bash script containing the metadata and instructions needed to build a set of related packages from source.
-These recipes are used by the packaging script to generate installable package archives for the Opkg package manager.
+A **recipe** is a Bash script containing the metadata and instructions needed to build a set of related packages from source.
+These recipes are used by the packaging script to generate [installable package archives for the Opkg package manager](opkg.md).
 
-> **Note:** Recipe scripts should not be marked as executable because they are not meant to be executed directly but rather meant to be sourced by the packaging script.
+> **Note:** Recipes should not be marked as executable because they are not meant to be executed directly but rather meant to be parsed by the packaging script.
 
-Sourcing a package recipe must have no side effects: the metadata section can only execute commands that do not modify the system state, and stateful commands must be confined inside functions.
+Sourcing a recipe must have no side effects: the metadata section can only execute commands that do not modify the system state, and stateful commands must be confined inside functions.
 
 ### Contents
 
@@ -16,10 +16,11 @@ Sourcing a package recipe must have no side effects: the metadata section can on
 5. [Install section](#install-section)
 6. [Split packages](#split-packages)
 
-### Metadata section
+### Metadata Section
 
 At the top of the file is a block of fields that define metadata about the package.
 For consistency, declare those fields in the same order they are described below.
+You can also declare custom variables to reduce repetition, but make sure to prefix their name with `_`.
 
 > **Note:** The field names and semantics are inspired both by the [Debian control file format](https://www.debian.org/doc/debian-policy/ch-controlfields.html) and the [Arch Linux PKGBUILD format](https://wiki.archlinux.org/index.php/PKGBUILD).
 
@@ -130,11 +131,15 @@ A single category that best describes the primary purpose of the package. See [t
 
 Section         | Description
 ----------------|----------------------------------
+admin           | System administration tools.
+devel           | Dependencies for other apps, like runtimes or libraries.
 drawing         | Apps for drawing and whiteboarding.
 games           | Apps for playing games.
 launchers       | Apps that present to the user a list of other apps that they can launch. Usually started automatically after boot.
 math            | Apps to assist the user in performing mathematical tasks.
 readers         | Apps for reading and annotating documents (PDF, EPUB, …).
+screensharing   | Apps for streaming the display between the PC and tablet.
+templates       | Templates for xochitl notebooks.
 utils           | System tools and various apps.
 
 If the package does not fit into one of the existing sections, you are free to create a new one and document it here.
@@ -242,6 +247,22 @@ Each entry can either be a local path relative to the recipe file or a full URL 
 Archive files whose names end in `.zip`, `.tar.gz`, `.tar.xz`, or `.tar.bz` will be automatically extracted in place, with all container directories stripped.
 You can disable this behavior by adding the archive name to the `noextract` array.
 
+#### `flags`
+
+<table>
+    <tr>
+        <th>Required?</th>
+        <td>No, defaults to <code>()</code></th>
+    </tr>
+    <tr>
+        <th>Type</th>
+        <td>Array of strings</td>
+    </tr>
+</table>
+
+Set of flags that affect the build process.
+Currently, the only available flag is `nostrip`, which disables the automatic removal of unneeded symbols from binaries.
+
 #### `noextract`
 
 <table>
@@ -277,12 +298,13 @@ After copying or downloading a source file to the `$srcdir` directory, the build
 You can request to skip this verification by entering `SKIP` instead of a valid SHA-256 checksum (discouraged for files fetched from remote computers).
 This array must have exactly as many elements as the `source` array.
 
-### Prepare section
+### Prepare Section
 
 The prepare section contains the `prepare()` function in which the source files may be prepared for the building step that follows.
+This function has access to all the metadata fields declared above.
 Common tasks include patching sources, extracting archives, and moving downloaded sources to the right location.
 
-### Build section
+### Build Section
 
 The build section is made up of a function called `build()`, which runs in the context of a Docker container with the chosen `image`.
 This function has access to all the metadata fields declared above.
@@ -290,7 +312,7 @@ This function will only be run if the `image` field is defined and must be omitt
 The working directory is already populated with all the sources declared in `sources`.
 It can be omitted for packages that do not require a build step.
 
-### Package section
+### Package Section
 
 The package section comprises a function called `package()`, which runs outside of the Docker container in an unspecified working directory.
 It has access to all the metadata fields, plus the `$srcdir` and `$pkgdir` variables.
@@ -298,13 +320,13 @@ The `$pkgdir` directory is initially empty.
 The `$srcdir` directory is the working directory of the previous Docker container after running the build section.
 The `package()` function populates the `$pkgdir` directory with the files and directories that need to be installed using files from the `$srcdir` directory.
 
-### Install section
+### Install Section
 
 The install section can contain additional functions to customize the behavior of the package when it is installed, removed, or upgraded on the device.
 Those functions are `preinstall()`, `configure()`, `preremove()`, `postremove()`, `preupgrade()` and `postupgrade()`.
 Unlike the previous functions, all the install functions **run in the context of the target device.**
-They have access to all the metadata fields, but not to other functions.
-They can also use functions from the [install library](scripts/install-lib).
+They have access to all the metadata fields and to custom functions whose name starts with `_`.
+They can also use functions from the [install library](../scripts/install-lib).
 
 When installing a new package, the following happens:
 
@@ -327,7 +349,7 @@ When upgrading a package from version A to B, the following happens:
 * New package files are unpacked and installed
 * `configure`, if it exists, is called from version B
 
-### Split packages
+### Split Packages
 
 Split packages are sets of packages created from the build artifacts of a single recipe.
 To create a recipe for split packages, add the names of the additional packages to generate to the [`pkgnames`](#pkgnames) array.
