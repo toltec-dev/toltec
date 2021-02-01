@@ -5,20 +5,20 @@
 pkgnames=(zshelf)
 pkgdesc="Z-Library browser and downloader"
 url=https://github.com/khanhas/zshelf
-pkgver=0.1.1-1
+pkgver=0.2.0-1
 section=utils
-timestamp=2021-01-31T05:25Z
+timestamp=2021-02-01T09:29Z
 maintainer="khanhas <xuankhanh963@gmail.com>"
 license=GPL-3.0
 depends=(node)
 
 source=(
-    https://github.com/khanhas/zshelf/archive/v0.1.1.zip
+    https://github.com/khanhas/zshelf/archive/v0.2.0.zip
     zshelf.draft
     zshelf.png
 )
 sha256sums=(
-    c6bc1980c90e8ea05149f3bd609667edba4e8465f9db0f6882407ca4dc70e120
+    c8f364a64d89b5a0f0215befa76992d59914699d61f146f95c7176650864974f
     SKIP
     SKIP
 )
@@ -61,6 +61,6 @@ configure() {
     echo "To download books, you have to configure domain and cookie first."
     echo "Please follow instructions on:"
     echo "https://github.com/khanhas/zshelf#important-configure-domain-and-cookie"
-    echo "Config file locates at:" /opt/share/zshelf/config.json
+    echo "Config file locates at:" /opt/etc/zshelf/config.json
     echo ""
 }
