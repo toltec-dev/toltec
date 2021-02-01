@@ -28,13 +28,9 @@ build() {
     qmake zshelf.pro
     make
 
-    # Get needed build packages
-    export DEBIAN_FRONTEND=noninteractive
-    apt-get update -y
-    apt-get install -y \
-        --no-install-recommends \
-        -o Dpkg::Options::="--force-confdef" \
-        nodejs npm
+    curl https://nodejs.org/dist/v14.15.4/node-v14.15.4-linux-x64.tar.xz > /root/node.tar.xz
+    tar -C / -xf /root/node.tar.xz
+    export PATH="/node-v14.15.4-linux-x64/bin:$PATH"
 
     cd backend
     npm install
