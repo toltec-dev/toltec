@@ -17,7 +17,7 @@ Building packages:
                     on what exists in the remote repository.
     RECIPE          Build packages from the given recipe.
     RECIPE-push     Push built packages from the given recipe to the
-                    .cache/opkg directory on the reMarkable.
+                    .cache/toltec directory on the reMarkable.
 
 Building webpages:
 
@@ -65,6 +65,12 @@ push: %:
 	rsync --rsync-path /opt/bin/rsync \
 	      --archive --verbose --compress --delete \
 	      build/repo/ \
+	      root@"$(HOST)":~/.cache/toltec/
+
+$(RECIPES_PUSH): %:
+	rsync --rsync-path /opt/bin/rsync \
+	      --archive --verbose --compress --delete \
+          build/repo/"$(@:%-push=%)"*.ipk \
 	      root@"$(HOST)":~/.cache/toltec/
 
 format:
