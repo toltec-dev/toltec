@@ -65,13 +65,19 @@ push: %:
 	rsync --rsync-path /opt/bin/rsync \
 	      --archive --verbose --compress --delete \
 	      build/repo/ \
-	      root@"$(HOST)":~/.cache/toltec/
+	      root@"$(HOST)":~/.cache/toltec/; \
+	if [ $$? -eq 127 ]; then \
+		echo "Could not find rsync on remote host. Install with 'opkg install rsync'"; \
+	fi
 
 $(RECIPES_PUSH): %:
 	rsync --rsync-path /opt/bin/rsync \
 	      --archive --verbose --compress --delete \
           build/repo/"$(@:%-push=%)"*.ipk \
-	      root@"$(HOST)":~/.cache/toltec/
+	      root@"$(HOST)":~/.cache/toltec/; \
+	if [ $$? -eq 127 ]; then \
+		echo "Could not find rsync on remote host. Install with 'opkg install rsync'"; \
+	fi
 
 format:
 	@echo "==> Checking Bash formatting"
