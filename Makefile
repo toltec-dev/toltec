@@ -16,8 +16,14 @@ Building packages:
     repo-new        Build only the new packages in the repository based
                     on what exists in the remote repository.
     RECIPE          Build packages from the given recipe.
+    push            Push all built packages to the .cache/toltec directory
+                    on the reMarkable. Requires `rsync` on the reMarkable, which
+                    can be installed with `opkg install rsync`.
     RECIPE-push     Push built packages from the given recipe to the
-                    .cache/toltec directory on the reMarkable.
+                    .cache/toltec directory on the reMarkable. Requires `rsync`
+                    on the reMarkable, which can be installed with
+                    `opkg install rsync`.
+
 
 Building webpages:
 
@@ -62,21 +68,19 @@ $(RECIPES): %:
 	./scripts/package_build.py $(FLAGS) "$(@)"
 
 push: %:
-	rsync --rsync-path /opt/bin/rsync \
+	if ! rsync --rsync-path /opt/bin/rsync \
 	      --archive --verbose --compress --delete \
 	      build/repo/ \
-	      root@"$(HOST)":~/.cache/toltec/; \
-	if [ $$? -eq 127 ]; then \
-		echo "Could not find rsync on remote host. Install with 'opkg install rsync'"; \
+	      root@"$(HOST)":~/.cache/toltec/; then \
+		echo "Failed to push. Make sure rsync is installed on your reMarkable."; \
 	fi
 
 $(RECIPES_PUSH): %:
-	rsync --rsync-path /opt/bin/rsync \
+	if ! rsync --rsync-path /opt/bin/rsync \
 	      --archive --verbose --compress --delete \
-          build/repo/"$(@:%-push=%)"*.ipk \
-	      root@"$(HOST)":~/.cache/toltec/; \
-	if [ $$? -eq 127 ]; then \
-		echo "Could not find rsync on remote host. Install with 'opkg install rsync'"; \
+	      build/repo/"$(@:%-push=%)"*.ipk \
+	      root@"$(HOST)":~/.cache/toltec/; then \
+		echo "Failed to push. Make sure rsync is installed on your reMarkable."; \
 	fi
 
 format:
