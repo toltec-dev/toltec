@@ -77,7 +77,7 @@ push: %:
 
 $(RECIPES_PUSH): %:
 	if ! rsync --rsync-path /opt/bin/rsync \
-	      --archive --verbose --compress --delete \
+	      --archive --verbose --compress --delete --ignore-times \
 	      build/repo/"$(@:%-push=%)"*.ipk \
 	      root@"$(HOST)":~/.cache/toltec/; then \
 		echo "Failed to push. Make sure rsync is installed on your reMarkable."; \
