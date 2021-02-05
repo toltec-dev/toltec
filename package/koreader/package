@@ -3,7 +3,6 @@
 # SPDX-License-Identifier: MIT
 
 pkgnames=(koreader)
-depends=(host:fbink host:fbdepth)
 pkgdesc="Ebook reader supporting PDF, DjVu, EPUB, FB2 and many more formats"
 url=https://github.com/koreader/koreader
 pkgver=2020.12-4
@@ -11,6 +10,7 @@ timestamp=2020-10-10T20:13Z
 section="readers"
 maintainer="raisjn <of.raisjn@gmail.com>"
 license=AGPL-3.0-or-later
+depends=(fbink fbdepth)
 
 _srcver="v${pkgver%-*}"
 source=(

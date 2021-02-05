@@ -3,7 +3,6 @@
 # SPDX-License-Identifier: MIT
 
 pkgnames=(plato)
-makedepends=(build:jq build:patchelf build:unzip build:wget)
 pkgdesc="Document reader"
 url=https://github.com/LinusCDE/plato
 pkgver=0.9.13-1
@@ -11,6 +10,7 @@ timestamp=2021-01-13T23:43Z
 section="readers"
 maintainer="Linus K. <linus@cosmos-ink.net>"
 license=AGPL-3.0-or-later
+makedepends=(build:jq build:patchelf build:unzip build:wget)
 
 image=rust:v1.2.1
 source=("https://github.com/LinusCDE/plato/archive/${pkgver%-*}-rm-release-7.zip")

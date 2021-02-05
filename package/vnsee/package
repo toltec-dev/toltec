@@ -3,8 +3,6 @@
 # SPDX-License-Identifier: MIT
 
 pkgnames=(vnsee)
-depends=(host:libvncclient)
-makedepends=(host:libvncserver-dev)
 pkgdesc="VNC client allowing you to use the device as a second screen"
 url=https://github.com/matteodelabre/vnsee
 pkgver=0.3.1-2
@@ -12,6 +10,8 @@ timestamp=2021-01-25T12:54:25Z
 section="screensharing"
 maintainer="Mattéo Delabre <spam@delab.re>"
 license=GPL-3.0-only
+depends=(libvncclient)
+makedepends=(host:libvncserver-dev)
 
 image=base:v1.3.2
 source=("https://github.com/matteodelabre/vnsee/archive/3f07c04e1991c1c5ff3b5a4758aa42301bf86fae.zip")

@@ -3,7 +3,6 @@
 # SPDX-License-Identifier: MIT
 
 pkgnames=(zshelf)
-depends=(host:node)
 pkgdesc="Z-Library browser and downloader"
 url=https://github.com/khanhas/zshelf
 pkgver=0.2.0-1
@@ -11,6 +10,7 @@ section=utils
 timestamp=2021-02-01T09:29Z
 maintainer="khanhas <xuankhanh963@gmail.com>"
 license=GPL-3.0
+depends=(node)
 
 source=(
     https://github.com/khanhas/zshelf/archive/v0.2.0.zip

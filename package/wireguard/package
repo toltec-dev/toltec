@@ -3,8 +3,6 @@
 # SPDX-License-Identifier: MIT
 
 pkgnames=(wireguard)
-depends=(host:wireguard-tools)
-makedepends=(build:bc build:lzop build:git)
 pkgdesc="Fast, modern, secure VPN tunnel"
 url=https://www.wireguard.com
 _wireguardver=1.0.20201221
@@ -13,6 +11,8 @@ timestamp=2020-12-21T11:54Z
 section=utils
 maintainer="Jonah Weissman <jonahrweissman+toltec@gmail.com>"
 license=GPL-2.0
+depends=(wireguard-tools)
+makedepends=(build:bc build:lzop build:git)
 flags=(nostrip)
 
 _kernelrepo=https://github.com/remarkable/linux

@@ -3,7 +3,6 @@
 # SPDX-License-Identifier: MIT
 
 pkgnames=(draft)
-depends=(host:xochitl)
 pkgdesc="Launcher which wraps around the standard interface"
 url=https://github.com/dixonary/draft-reMarkable
 pkgver=0.2.0-18
@@ -11,6 +10,7 @@ timestamp=2020-07-20T10:23Z
 section="launchers"
 maintainer="Mattéo Delabre <spam@delab.re>"
 license=Apache-2.0
+depends=(xochitl)
 
 image=qt:v1.3.2
 source=(

@@ -3,7 +3,6 @@
 # SPDX-License-Identifier: MIT
 
 pkgnames=(calculator)
-makedepends=(build:imagemagick build:librsvg2-bin)
 pkgdesc="Touch-based calculator"
 url=https://github.com/reHackable/Calculator
 pkgver=0.0.0-13
@@ -11,6 +10,7 @@ timestamp=2020-08-20T12:28Z
 section="math"
 maintainer="Mattéo Delabre <spam@delab.re>"
 license=GPL-3.0-or-later
+makedepends=(build:imagemagick build:librsvg2-bin)
 
 image=qt:v1.1
 source=(
