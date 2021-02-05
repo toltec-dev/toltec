@@ -6,13 +6,13 @@ Build the package repository.
 
 from collections import namedtuple
 from datetime import datetime
-from graphlib import TopologicalSorter
 import gzip
 import itertools
 import logging
 import os
 from typing import Dict, Iterable, List, Optional
 import requests
+from .graphlib import TopologicalSorter
 from .recipe import Package, Recipe
 from .util import file_sha256, HTTP_DATE_FORMAT
 from .version import DependencyKind
