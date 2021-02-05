@@ -12,8 +12,8 @@ maintainer="Mattéo Delabre <spam@delab.re>"
 license=BSL-1.0
 
 image=base:v1.3.1
-source=("http://dlib.net/files/dlib-${pkgver%-*}.tar.bz2")
-sha256sums=(be728a03ae8c4dc8b48408d90392a3c28bc6642a6eb22f3885895b434d7df53c)
+source=("https://github.com/davisking/dlib/archive/v${pkgver%-*}.tar.gz")
+sha256sums=(116f52e58be04b47dab52057eaad4b5c4d5c3032d927fe23d55b0741fc4107a0)
 
 build() {
     cmake -B build \
