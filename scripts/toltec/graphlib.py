@@ -20,6 +20,7 @@ _T = TypeVar("_T")
 _NODE_OUT = -1
 _NODE_DONE = -2
 
+
 class _NodeInfo(Generic[_T]):  # pylint: disable=too-few-public-methods
     __slots__ = "node", "npredecessors", "successors"
 
@@ -38,6 +39,7 @@ class _NodeInfo(Generic[_T]):  # pylint: disable=too-few-public-methods
         # attribute).
         self.successors: List[_T] = []
 
+
 class CycleError(ValueError):
     """Subclass of ValueError raised by TopologicalSorter.prepare if cycles
     exist in the working graph.
@@ -50,6 +52,7 @@ class CycleError(ValueError):
     list. In the reported list, the first and the last node will be the
     same, to make it clear that it is cyclic.
     """
+
 
 class TopologicalSorter(Generic[_T]):
     """Provides functionality to topologically sort a graph of hashable
@@ -88,9 +91,7 @@ class TopologicalSorter(Generic[_T]):
         Raises ValueError if called after "prepare".
         """
         if self._ready_nodes is not None:
-            raise ValueError(
-                "Nodes cannot be added after a call to prepare()"
-            )
+            raise ValueError("Nodes cannot be added after a call to prepare()")
 
         # Create the node -> predecessor edges
         nodeinfo = self._get_nodeinfo(node)
@@ -201,9 +202,7 @@ class TopologicalSorter(Generic[_T]):
                         f"node {node!r} was not passed out (still not ready)"
                     )
                 if stat == _NODE_DONE:
-                    raise ValueError(
-                        f"node {node!r} was already marked done"
-                    )
+                    raise ValueError(f"node {node!r} was already marked done")
                 assert False, f"node {node!r}: unknown status {stat}"
 
             # Mark the node as processed
