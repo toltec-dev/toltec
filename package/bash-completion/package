@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+# Copyright (c) 2020 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgnames=(bash-completion)
+pkgdesc="Programmable completion functions for bash "
+url=https://github.com/scop/bash-completion
+pkgver=2.11-1
+timestamp=2020-07-25T00:00Z
+section="utils"
+maintainer="Linus K. <linus@cosmos-ink.net>"
+license=GPL-2.0-only
+
+# Based on the ArchLinux PKGBUILD file:
+# https://github.com/archlinux/svntogit-packages/blob/packages/bash-completion/trunk/PKGBUILD
+
+image=base:v1.3.2
+source=(https://github.com/scop/bash-completion/releases/download/2.11/bash-completion-2.11.tar.xz)
+sha256sums=(73a8894bad94dee83ab468fa09f628daffd567e8bef1a24277f1e9a0daf911ac)
+
+build() {
+    ./configure --prefix=/opt/usr --sysconfdir=/etc
+    make
+}
+
+package() {
+    (cd "$srcdir" && make DESTDIR="$pkgdir" install)
+}
+
+configure() {
+    echo "Bash completions should take affect on next login."
+    echo "Take apply them immediately, run"
+    echo " $ source /etc/profile.d/bash_completion.sh"
+}
