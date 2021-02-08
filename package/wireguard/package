@@ -1,0 +1,90 @@
+#!/usr/bin/env bash
+# Copyright (c) 2020 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgnames=(wireguard)
+pkgdesc="Fast, modern, secure VPN tunnel"
+url=https://www.wireguard.com
+_wireguardver=1.0.20201221
+pkgver=$_wireguardver-1
+timestamp=2020-12-21T11:54Z
+section=utils
+maintainer="Jonah Weissman <jonahrweissman+toltec@gmail.com>"
+license=GPL-2.0
+depends=(wireguard-tools)
+flags=(nostrip)
+
+_kernelrepo=https://github.com/remarkable/linux
+_kernelrevs=(
+    1774e2a6a091fdc081324e966d3db0aa9df75c0b
+    d4e7e07a390f8b2544ca09d69142d18114149004
+)
+_defconfigs=(
+    arch/arm/configs/zero-gravitas_defconfig
+    arch/arm/configs/zero-sugar_defconfig
+)
+_moddirs=(
+    4.9.84-zero-gravitas
+    4.14.78
+)
+
+image=base:v1.2.1
+source=(https://git.zx2c4.com/wireguard-linux-compat/snapshot/wireguard-linux-compat-"$_wireguardver".zip)
+sha256sums=(c74cedb10c9b830d937b5575e4b7d2625a8534d2c06a80368e5530db23e69d3b)
+
+build() {
+    apt-get update
+    apt-get install -y bc lzop git
+
+    # we will save the generated files in .pc,
+    # so that they will not be deleted by `make mrproper`
+    mkdir .pc
+    git init
+    for i in $(seq 0 1); do
+        git fetch --depth=1 "$_kernelrepo" "${_kernelrevs[$i]}"
+        git checkout -f "${_kernelrevs[$i]}"
+        touch .scmversion
+        cp "${_defconfigs[$i]}" .config
+        echo "CONFIG_NET_FOU=m" >> .config
+        make olddefconfig
+        make modules
+        make modules_prepare
+
+        # make wireguard.ko
+        KERNELDIR=$(pwd) make -C src/
+        export MOD_INSTALL_PATH=".pc/${_moddirs[$i]}"
+        install -D -m 644 net/ipv4/udp_tunnel.ko \
+            "$MOD_INSTALL_PATH/kernel/net/ipv4/udp_tunnel.ko"
+        install -D -m 644 net/ipv6/ip6_udp_tunnel.ko \
+            "$MOD_INSTALL_PATH/kernel/net/ipv6/ip6_udp_tunnel.ko"
+        install -D -m 644 src/wireguard.ko \
+            "$MOD_INSTALL_PATH/extra/wireguard.ko"
+        make mrproper
+    done
+}
+
+package() {
+    mkdir -p "$pkgdir/lib/modules"
+    cp -r "$srcdir/.pc"/* "$pkgdir/lib/modules"
+}
+
+configure() {
+    depmod -a
+}
+
+postremove() {
+    cat << MSG
+Wireguard has been removed.
+The kernel module will remain loaded until you reboot, or you can attempt
+to manually remove it by running "modprobe -r wireguard".
+MSG
+    depmod -a
+}
+
+postupgrade() {
+    cat << MSG
+Wireguard has been upgraded.
+The old kernel module will remain loaded until you reboot, or you can
+attempt to manually remove it by running "modprobe -r wireguard".
+MSG
+}

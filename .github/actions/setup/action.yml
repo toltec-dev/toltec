@@ -6,7 +6,7 @@ runs:
           shell: bash
           run: |
             sudo apt-get update -yq
-            sudo apt-get install -yq bsdtar tree
+            sudo apt-get install -yq bsdtar python3-docutils
         - name: Install shfmt and Shellcheck
           shell: bash
           run: |
@@ -35,3 +35,8 @@ runs:
             chmod a+x shellcheck
             sudo chown root:root shellcheck
             sudo mv shellcheck "$install_dir"
+        - name: Install Python dependencies
+          shell: bash
+          run: |
+            python -m pip install --upgrade pip
+            pip install -r requirements.txt

@@ -3,11 +3,11 @@
 # SPDX-License-Identifier: MIT
 
 pkgnames=(chessmarkable)
-pkgdesc="A chess game for the reMarkable"
+pkgdesc="Chess game"
 url=https://github.com/LinusCDE/chessmarkable
-pkgver=0.6.0-2
+pkgver=0.6.0-3
 timestamp=2021-01-03T05:26Z
-section=games
+section="games"
 maintainer="Linus K. <linus@cosmos-ink.net>"
 license=MIT
 

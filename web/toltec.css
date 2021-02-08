@@ -1,0 +1,89 @@
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+.center, h1, h2, h3, h4, h5 {
+    text-align: center;
+}
+
+h1 {
+    margin-top: 48px;
+    margin-bottom: 16px;
+}
+
+pre {
+    padding: 10px;
+    background-color: #131521;
+    color: #fefefe;
+    overflow: auto;
+    border-radius: 5px;
+    font-size: 24px;
+}
+
+body {
+    background-color: #f8fcf8;
+    margin: 0 auto;
+    padding: 20px;
+    max-width: 1024px;
+    font-family:"-apple-system", "BlinkMacSystemFont", "Helvetica Neue", "Roboto", sans-serif;
+    font-size: 18px;
+}
+
+h1.title {
+    font-size: 96px;
+    margin: 0;
+}
+
+.logo {
+    display: block;
+    margin: auto;
+    margin-bottom: 60px;
+}
+
+.screenshot {
+    border-radius: 5px;
+}
+
+.button {
+    display: inline-block;
+    background-color: #294a1e;
+    transition: background-color .1s ease-out;
+    color: #fefefe;
+    text-decoration: none;
+    padding: 8px 16px;
+    margin-top: 20px;
+    border-radius: 5px;
+}
+
+.button::after {
+    content: "»";
+    background-color: #536e4b;
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    text-align: center;
+    line-height: 12px;
+    border-radius: 100%;
+    margin-left: 8px;
+}
+
+.button:hover {
+    background-color: #536e4b;
+}
+
+@media screen and (min-width: 1024px) {
+    .columns {
+        display: flex;
+        flex-wrap: wrap;
+        margin: -32px -32px 0 -32px;
+    }
+
+    .columns > div {
+        flex: 0 0 calc(50% - 64px);
+        margin: 32px 32px 0 32px;
+    }
+
+    pre {
+        font-size: 90%;
+    }
+}

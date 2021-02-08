@@ -7,7 +7,7 @@ pkgdesc="Kernel evdev device information and monitor"
 url=https://gitlab.freedesktop.org/libevdev/evtest
 pkgver=1.34-2
 timestamp=2020-12-30T02:52Z
-section=utils
+section="utils"
 maintainer="Linus K. <linus@cosmos-ink.net>"
 license=GPL-2.0-only
 

@@ -3,11 +3,11 @@
 # SPDX-License-Identifier: MIT
 
 pkgnames=(remarkable-splash)
-pkgdesc="show a splashscreen + shutdown replacement that does not clear the screen"
+pkgdesc="Show splashscreens + remarkable-shutdown replacement that does not clear the screen"
 url=https://github.com/ddvk/remarkable-splash
-pkgver=1.0-2
+pkgver=1.0-3
 timestamp=2019-12-31T10:07Z
-section=utils
+section="utils"
 maintainer="Eeems <eeems@eeems.email>"
 license=MIT
 

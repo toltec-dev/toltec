@@ -5,13 +5,13 @@
 pkgnames=(vnsee)
 pkgdesc="VNC client allowing you to use the device as a second screen"
 url=https://github.com/matteodelabre/vnsee
-pkgver=0.3.0-2
-timestamp=2020-10-23T14:02Z
-section=utils
+pkgver=0.3.1-1
+timestamp=2021-01-25T12:54:25Z
+section="screensharing"
 maintainer="Mattéo Delabre <spam@delab.re>"
 license=GPL-3.0-only
 
-image=base:v1.2.1
+image=base:v1.3
 _vnclib=LibVNCServer-0.9.13
 source=(
     "https://github.com/matteodelabre/vnsee/archive/v${pkgver%-*}.zip"
@@ -19,7 +19,7 @@ source=(
 )
 noextract=("$_vnclib.zip")
 sha256sums=(
-    700005ff7b09f2fc329a05c06fce810705e1ef3523611022765cb13df9f4a815
+    f7aa113bd72d6128800501bf53840d127fe6711119f3c8ae60419a35ed2f8583
     d209d70998a9b98f9120eeb82df7a17767796c477eaa8297e0a55856a977c54f
 )
 

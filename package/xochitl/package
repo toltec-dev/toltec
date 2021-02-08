@@ -7,7 +7,7 @@ pkgdesc="Read documents and take notes"
 url=https://remarkable.com
 pkgver=0.0.0-3
 timestamp=2020-09-24T18:48Z
-section=readers
+section="readers"
 maintainer="Mattéo Delabre <spam@delab.re>"
 license=Apache-2.0
 
