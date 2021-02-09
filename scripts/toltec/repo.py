@@ -6,13 +6,14 @@ Build the package repository.
 
 from datetime import datetime
 import gzip
+import itertools
 import logging
 import os
 from typing import Dict, List, Optional
 import requests
 from .recipe import Recipe
 from .util import file_sha256, HTTP_DATE_FORMAT
-from . import paths
+from . import paths, templating
 
 logger = logging.getLogger(__name__)
 
@@ -110,3 +111,26 @@ Size: {os.path.getsize(local_path)}
 
                         index_file.write(control)
                         index_gzip_file.write(control)
+
+    def make_listing(self) -> None:
+        """Generate the static web listing for packages in the repo."""
+        logger.info("Generating web listing")
+
+        by_section = lambda package: package.section
+        packages = [
+            package
+            for recipe in self.recipes.values()
+            for package in recipe.packages.values()
+        ]
+        sections = dict(
+            (section, list(group))
+            for section, group in itertools.groupby(
+                sorted(packages, key=by_section), key=by_section
+            )
+        )
+
+        listing_path = os.path.join(paths.REPO_DIR, "index.html")
+        template = templating.env.get_template("listing.html")
+
+        with open(listing_path, "w") as listing_file:
+            listing_file.write(template.render(sections=sections))

@@ -53,3 +53,4 @@ for recipe_name, packages in missing.items():
         builder.make(recipe_name, packages)
 
 repo.make_index()
+repo.make_listing()
