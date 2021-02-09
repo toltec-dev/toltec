@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-# Copyright (c) 2020 The Toltec Contributors
+# Copyright (c) 2021 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
 pkgnames=(bash-completion)
-pkgdesc="Programmable completion functions for bash "
+pkgdesc="Programmable completion functions for bash"
 url=https://github.com/scop/bash-completion
 pkgver=2.11-1
 timestamp=2020-07-25T00:00Z

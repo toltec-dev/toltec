@@ -23,7 +23,7 @@ _opkg() {
     # the user partiall typed one) compreply handles only returning
     # the relevant ones
 
-    if [ $cword -eq 1 ]; then
+    if [[ $cword -eq 1 ]]; then
         OPKG_COMMANDS=("update" "upgrade" "install" "configure" "remove" "flag")
         OPKG_COMMANDS+=("list" "list-installed" "list-upgradable" "list-changed-conffiles")
         OPKG_COMMANDS+=("files" "search" "find" "info" "status" "download" "compare-versions")
@@ -36,12 +36,12 @@ _opkg() {
 
     COMPREPLY=()
     OPKG_COMMANDS_WITH_PKG_COMPLETE=("install" "remove") # Todo: more
-    if [ $cword -gt 1 ] && [[ " ${OPKG_COMMANDS_WITH_PKG_COMPLETE[@]} " =~ " ${words[1]} " ]]; then
+    if [[ $cword -gt 1 ]] && [[ " ${OPKG_COMMANDS_WITH_PKG_COMPLETE[@]} " =~ " ${words[1]} " ]]; then
         COMPREPLY+=($(compgen -W '$(opkg list | awk '\''{ print $1 }'\'')' -- "$cur"))
     fi
 
     OPKG_COMMANDS_WITH_FILE_COMPLETE=("install") # Todo: more
-    if [ $cword -gt 1 ] && [[ " ${OPKG_COMMANDS_WITH_FILE_COMPLETE[@]} " =~ " ${words[1]} " ]]; then
+    if [[ $cword -gt 1 ]] && [[ " ${OPKG_COMMANDS_WITH_FILE_COMPLETE[@]} " =~ " ${words[1]} " ]]; then
         # Pretty primitive and does subdirectories not properly
         COMPREPLY+=($(compgen -W '$(ls)' -- "$cur"))
     fi
