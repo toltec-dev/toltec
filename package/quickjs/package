@@ -11,7 +11,7 @@ timestamp=2020-11-08T13:44Z
 maintainer="khanhas <xuankhanh963@gmail.com>"
 license=MIT
 
-image=base:v1.1
+image=base:v1.3.2
 source=(
     https://bellard.org/quickjs/quickjs-2020-11-08.tar.xz
     quickjs.patch
