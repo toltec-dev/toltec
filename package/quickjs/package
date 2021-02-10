@@ -14,14 +14,15 @@ license=MIT
 image=base:v1.3.2
 source=(
     https://bellard.org/quickjs/quickjs-2020-11-08.tar.xz
+    quickjs.patch
 )
 sha256sums=(
     2e9d63dab390a95ed365238f21d8e9069187f7ed195782027f0ab311bb64187b
+    SKIP
 )
 
 build() {
-    export CROSS_COMPILE=arm-linux-gnueabihf-
-    export EXE=.arm
+    patch -u Makefile -i quickjs.patch
     make qjs.arm
 }
 
