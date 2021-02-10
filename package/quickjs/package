@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+# Copyright (c) 2020 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgnames=(quickjs)
+pkgdesc="A small and embeddable Javascript engine"
+url=https://bellard.org/quickjs/
+pkgver=2020.11.08-1
+section=utils
+timestamp=2020-11-08T00:00Z
+maintainer="khanhas <xuankhanh963@gmail.com>"
+license=MIT
+
+source=(
+    https://bellard.org/quickjs/quickjs-2020-11-08.tar.xz
+    quickjs.patch
+)
+sha256sums=(
+    2e9d63dab390a95ed365238f21d8e9069187f7ed195782027f0ab311bb64187b
+    SKIP
+)
+
+build() {
+    patch -u Makefile -i quickjs.patch
+    make qjs.arm
+}
+
+package() {
+    install -d "$pkgdir"/opt/bin
+    install -D -m 755 -t "$pkgdir"/opt/bin/qjs "$srcdir"/qjs.arm
+}
