@@ -28,5 +28,5 @@ build() {
 
 package() {
     install -d "$pkgdir"/opt/bin
-    install -D -m 755 "$pkgdir"/opt/bin/qjs "$srcdir"/qjs.arm
+    install -D -m -T 755 "$pkgdir"/opt/bin/qjs "$srcdir"/qjs.arm
 }
