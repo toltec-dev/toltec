@@ -72,14 +72,15 @@ push: %:
 	      --archive --verbose --compress --delete \
 	      build/repo/ \
 	      root@"$(HOST)":~/.cache/toltec/; then \
-		echo "Failed to push. Make sure rsync is installed on your reMarkable."; \
+		echo "rysnc exited with an error." \
+	         "Make sure rsync is installed on your reMarkable."; \
 	fi
 
 $(RECIPES_PUSH): SHELL:=/bin/bash
 $(RECIPES_PUSH): %:
 	source package/$(@:%-push=%)/package; \
 	if ! rsync --rsync-path /opt/bin/rsync \
-	      --archive --verbose --compress --delete --ignore-times \
+	      --archive --verbose --compress --ignore-times \
 	      $$(for pkg in $${pkgnames[@]}; do \
 	             echo build/repo/"$$pkg"_*.ipk; \
 	         done) \
