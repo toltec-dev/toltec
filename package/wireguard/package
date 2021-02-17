@@ -10,7 +10,7 @@ timestamp=2021-01-24T13:45Z
 section=utils
 maintainer="Jonah Weissman <jonahrweissman+toltec@gmail.com>"
 license=GPL-2.0-only
-depends=(wireguard-tools)
+depends=(wg-tools)
 flags=(nostrip)
 
 _kernelrepo=https://github.com/remarkable/linux
