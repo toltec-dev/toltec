@@ -5,12 +5,11 @@
 pkgnames=(wireguard)
 pkgdesc="Fast, modern, secure VPN tunnel"
 url=https://www.wireguard.com
-_wireguardver=1.0.20201221
-pkgver=$_wireguardver-1
-timestamp=2020-12-21T11:54Z
+pkgver=1.0.20210124-1
+timestamp=2021-01-24T13:45Z
 section=utils
 maintainer="Jonah Weissman <jonahrweissman+toltec@gmail.com>"
-license=GPL-2.0
+license=GPL-2.0-only
 depends=(wireguard-tools)
 flags=(nostrip)
 
@@ -23,14 +22,10 @@ _defconfigs=(
     arch/arm/configs/zero-gravitas_defconfig
     arch/arm/configs/zero-sugar_defconfig
 )
-_moddirs=(
-    4.9.84-zero-gravitas
-    4.14.78
-)
 
 image=base:v1.2.1
-source=(https://git.zx2c4.com/wireguard-linux-compat/snapshot/wireguard-linux-compat-"$_wireguardver".zip)
-sha256sums=(c74cedb10c9b830d937b5575e4b7d2625a8534d2c06a80368e5530db23e69d3b)
+source=("https://git.zx2c4.com/wireguard-linux-compat/snapshot/wireguard-linux-compat-${pkgver%-*}.tar.xz")
+sha256sums=(dac6e68cd4c3db441499850dfa8a70706384a3295f37fda1b839a50b79faef54)
 
 build() {
     apt-get update
@@ -43,23 +38,24 @@ build() {
     for i in $(seq 0 1); do
         git fetch --depth=1 "$_kernelrepo" "${_kernelrevs[$i]}"
         git checkout -f "${_kernelrevs[$i]}"
+        make mrproper
         touch .scmversion
         cp "${_defconfigs[$i]}" .config
         echo "CONFIG_NET_FOU=m" >> .config
         make olddefconfig
-        make modules
+        make net/ipv4/udp_tunnel.ko
+        make net/ipv6/ip6_udp_tunnel.ko
         make modules_prepare
 
-        # make wireguard.ko
-        KERNELDIR=$(pwd) make -C src/
-        export MOD_INSTALL_PATH=".pc/${_moddirs[$i]}"
+        make -C src/ "KERNELDIR=$(pwd)"
+        KERNELRELEASE=$(cat include/config/kernel.release)
+        export MOD_INSTALL_PATH=".pc/$KERNELRELEASE"
         install -D -m 644 net/ipv4/udp_tunnel.ko \
             "$MOD_INSTALL_PATH/kernel/net/ipv4/udp_tunnel.ko"
         install -D -m 644 net/ipv6/ip6_udp_tunnel.ko \
             "$MOD_INSTALL_PATH/kernel/net/ipv6/ip6_udp_tunnel.ko"
         install -D -m 644 src/wireguard.ko \
             "$MOD_INSTALL_PATH/extra/wireguard.ko"
-        make mrproper
     done
 }
 
