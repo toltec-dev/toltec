@@ -13,12 +13,12 @@ license=GPL-3.0
 depends=(node)
 
 source=(
-    https://github.com/khanhas/zshelf/archive/v0.2.0.zip
+    https://github.com/khanhas/zshelf/archive/v0.3.0.zip
     zshelf.draft
     zshelf.png
 )
 sha256sums=(
-    c8f364a64d89b5a0f0215befa76992d59914699d61f146f95c7176650864974f
+    3716fbd2293279dbf6fdf72410e9ac34c88a33cbcbdc490b49f1f6ee20470ab0
     SKIP
     SKIP
 )
