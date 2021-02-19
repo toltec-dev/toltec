@@ -5,7 +5,7 @@
 pkgnames=(zshelf)
 pkgdesc="Z-Library browser and downloader"
 url=https://github.com/khanhas/zshelf
-pkgver=0.2.0-1
+pkgver=0.3.0-1
 section=utils
 timestamp=2021-02-01T09:29Z
 maintainer="khanhas <xuankhanh963@gmail.com>"
