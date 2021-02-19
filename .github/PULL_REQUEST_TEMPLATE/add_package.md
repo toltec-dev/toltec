@@ -10,7 +10,7 @@ labels: packages
   - Hi! Thanks for adding a new package to toltec and helping the community
   - to grow and enjoy more software on their devices!
   -
-  - First off, may may want to change the branch from `stable` to `testing`
+  - First off, you may want to change the branch from `stable` to `testing`
   - above to get rid of the pesky cross (❌).
   - 
   - A good starting point would be give a rough description of:
