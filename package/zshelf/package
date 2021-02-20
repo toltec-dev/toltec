@@ -5,20 +5,20 @@
 pkgnames=(zshelf)
 pkgdesc="Z-Library browser and downloader"
 url=https://github.com/khanhas/zshelf
-pkgver=0.3.0-1
+pkgver=0.3.1-1
 section=utils
-timestamp=2021-02-01T09:29Z
+timestamp=2021-02-20T01:45Z
 maintainer="khanhas <xuankhanh963@gmail.com>"
 license=GPL-3.0
 depends=(node)
 
 source=(
-    https://github.com/khanhas/zshelf/archive/v0.3.0.zip
+    https://github.com/khanhas/zshelf/archive/v0.3.1.zip
     zshelf.draft
     zshelf.png
 )
 sha256sums=(
-    3716fbd2293279dbf6fdf72410e9ac34c88a33cbcbdc490b49f1f6ee20470ab0
+    8069277e24b58b44466b038c5b319daa824f39bdcbdea0731fedb0b5263e3bd7
     SKIP
     SKIP
 )
