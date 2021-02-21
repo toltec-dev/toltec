@@ -3,18 +3,18 @@
 # SPDX-License-Identifier: MIT
 
 pkgnames=(genie harmony mines nao remux simple)
-timestamp=2021-02-17T20:03-08:00
+timestamp=2021-02-20T13:20-08:00
 maintainer="raisjn <of.raisjn@gmail.com>"
 license=MIT
 
 image=python:v1.1
 source=(
-    https://github.com/rmkit-dev/rmkit/archive/a0c2daad97afb15b2bfeeba65b647f246c0c7372.zip
+    https://github.com/rmkit-dev/rmkit/archive/af8ab3339acda1065110efa61d7d59be2ab52b9d.zip
     remux.service
     genie.service
 )
 sha256sums=(
-    c841cdb0303c2cb580d92a524c6ca493298b96562bc7018f8f6998d5e08dd4e6
+    0b797dc905438b02821f33d49dbaed8976cbacd70e6a7090cabdcd52159fcb89
     SKIP
     SKIP
 )
