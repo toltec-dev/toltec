@@ -61,7 +61,7 @@ repo-check:
 $(RECIPES): %:
 	./scripts/package_build.py $(FLAGS) "$(@)"
 
-push: %:
+$(RECIPES_PUSH): %:
 	rsync --rsync-path /opt/bin/rsync \
 	      --archive --verbose --compress --delete \
 	      build/repo/ \

@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+# Copyright (c) 2020 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgnames=(rpncalculator)
+pkgdesc="RPN Calculator. Very early release. See https://github.com/meatpi/rmkit/blob/calculator/src/rpncalculator/README.md for documentation"
+## URL to where the project can be found on the Internet
+url=""
+pkgver=0.0.1
+timestamp=2021-02-21T21:37+00:00
+section=math
+maintainer="Keith Poole <keith@meatpi.es>"
+
+license=MIT
+image=python:v1.1
+source=(
+    https://github.com/meatpi/rmkit/archive/076b227d74762c0e3670955304fe0e9a7bca595b.zip
+)
+sha256sums=(
+    232b3ea4130fd5813216e29a4c992812210e9179733c5ac74e191d54de9e55ec
+)
+
+build() {
+    pip3 install okp
+    make
+}
+
+package() {
+        install -D -m 755 "$srcdir"/src/build/rpncalc "$pkgdir"/opt/bin/rpncalc
+        install -D -m 644 "$srcdir"/src/rpncalculator/rpncalc.draft "$pkgdir"/opt/etc/draft/rpncalc.draft
+        install -D -m 644 "$srcdir"/src/rpncalculator/calculator.png "$pkgdir"/opt/etc/draft/icons/calculator.png
+}
