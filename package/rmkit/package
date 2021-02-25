@@ -3,18 +3,18 @@
 # SPDX-License-Identifier: MIT
 
 pkgnames=(genie harmony mines nao remux simple)
-timestamp=2021-01-12T14:03-08:00
+timestamp=2021-02-20T13:20-08:00
 maintainer="raisjn <of.raisjn@gmail.com>"
 license=MIT
 
 image=python:v1.1
 source=(
-    https://github.com/rmkit-dev/rmkit/archive/3d8ba83684f76b3e4146af9f295de4615a416cb8.zip
+    https://github.com/rmkit-dev/rmkit/archive/af8ab3339acda1065110efa61d7d59be2ab52b9d.zip
     remux.service
     genie.service
 )
 sha256sums=(
-    3f37bf01547395404d27df788c959895f194711e80ef26839f521d1dedc4faed
+    0b797dc905438b02821f33d49dbaed8976cbacd70e6a7090cabdcd52159fcb89
     SKIP
     SKIP
 )
@@ -27,7 +27,7 @@ build() {
 genie() {
     pkgdesc="Gesture engine that connects commands to gestures"
     url="https://rmkit.dev/apps/genie"
-    pkgver=0.1.2-3
+    pkgver=0.1.3-1
     section="utils"
 
     package() {
@@ -54,7 +54,7 @@ genie() {
 harmony() {
     pkgdesc="Procedural sketching app"
     url="https://rmkit.dev/apps/harmony"
-    pkgver=0.1.1-2
+    pkgver=0.1.2-1
     section="drawing"
 
     package() {
@@ -71,7 +71,7 @@ harmony() {
 mines() {
     pkgdesc="Mine detection game"
     url="https://rmkit.dev/apps/minesweeper"
-    pkgver=0.1.1-2
+    pkgver=0.1.2-1
     section="games"
 
     package() {
@@ -84,7 +84,7 @@ mines() {
 nao() {
     pkgdesc="Nao Package Manager: opkg UI built with SAS"
     url="https://rmkit.dev/apps/nao"
-    pkgver=0.1.1-1
+    pkgver=0.1.2-1
     section="admin"
     depends=(simple)
 
@@ -98,7 +98,7 @@ nao() {
 remux() {
     pkgdesc="App launcher that supports multi-tasking applications"
     url="https://rmkit.dev/apps/remux"
-    pkgver=0.1.7-3
+    pkgver=0.1.8-1
     section="launchers"
 
     package() {
@@ -130,7 +130,7 @@ remux() {
 simple() {
     pkgdesc="Simple app script for writing scripted applications"
     url="https://rmkit.dev/apps/sas"
-    pkgver=0.1.2-2
+    pkgver=0.1.3-1
     section="devel"
 
     package() {
