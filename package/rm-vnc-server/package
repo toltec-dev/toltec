@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+# Copyright (c) 2020 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgnames=(rm-vnc-server)
+timestamp=2021-02-28T01:41+00:00
+maintainer="None"
+license=GPL-2.0-or-later
+pkgdesc="fast vnc server"
+url="https://github.com/pl-semiotics/rM-vnc-server"
+pkgver=0.0.2-1
+section="utils"
+
+_release="0.0.2"
+_url="https://github.com/pl-semiotics/rM-vnc-server/releases/download/v${_release}/"
+image=qt:v1.1
+source=(
+    "${_url}/rM1-vnc-server-standalone"
+    "${_url}/rM2-vnc-server-standalone"
+    rm-vnc-server
+)
+sha256sums=(
+    SKIP
+    SKIP
+    SKIP
+)
+
+build() {
+    echo "NO NEED TO BUILD"
+}
+
+package() {
+    mkdir -p "$pkgdir"/opt/bin
+    install -D -m 755 "$srcdir"/rM1-vnc-server-standalone "$pkgdir"/opt/bin/
+    install -D -m 755 "$srcdir"/rM2-vnc-server-standalone "$pkgdir"/opt/bin/
+    install -D -m 755 "$srcdir"/rm-vnc-server "$pkgdir"/opt/bin/
+}

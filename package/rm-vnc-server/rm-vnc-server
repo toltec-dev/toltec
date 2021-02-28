@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+MACHINE=$(cat /sys/devices/soc0/machine 2> /dev/null)
+if [[ ${MACHINE} = "reMarkable 2.0" ]]; then
+    /opt/bin/rM2-vnc-server-standalone
+else
+    /opt/bin/rM1-vnc-server-standalone
+fi
