@@ -17,7 +17,7 @@ image=qt:v1.1
 source=(
     "${_url}/rM1-vnc-server-standalone"
     "${_url}/rM2-vnc-server-standalone"
-    rm-vnc-server
+    rM-vnc-server-standalone
 )
 sha256sums=(
     SKIP
@@ -33,5 +33,5 @@ package() {
     mkdir -p "$pkgdir"/opt/bin
     install -D -m 755 "$srcdir"/rM1-vnc-server-standalone "$pkgdir"/opt/bin/
     install -D -m 755 "$srcdir"/rM2-vnc-server-standalone "$pkgdir"/opt/bin/
-    install -D -m 755 "$srcdir"/rm-vnc-server "$pkgdir"/opt/bin/
+    install -D -m 755 "$srcdir"/rM-vnc-server-standalone "$pkgdir"/opt/bin/
 }
