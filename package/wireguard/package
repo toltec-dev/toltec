@@ -12,6 +12,7 @@ section=utils
 maintainer="Jonah Weissman <jonahrweissman+toltec@gmail.com>"
 license=GPL-2.0
 depends=(wireguard-tools)
+makedepends=(build:bc build:lzop build:git)
 flags=(nostrip)
 
 _kernelrepo=https://github.com/remarkable/linux
@@ -28,14 +29,11 @@ _moddirs=(
     4.14.78
 )
 
-image=base:v1.2.1
+image=base:v1.3.2
 source=(https://git.zx2c4.com/wireguard-linux-compat/snapshot/wireguard-linux-compat-"$_wireguardver".zip)
 sha256sums=(c74cedb10c9b830d937b5575e4b7d2625a8534d2c06a80368e5530db23e69d3b)
 
 build() {
-    apt-get update
-    apt-get install -y bc lzop git
-
     # we will save the generated files in .pc,
     # so that they will not be deleted by `make mrproper`
     mkdir .pc
