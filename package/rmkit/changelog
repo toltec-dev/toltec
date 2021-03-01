@@ -1,0 +1,221 @@
+2021-02-25 raisjn <of.raisjn@chalk>
+
+	lamp:
+
+	* add new binary lamp for injecting pen strokes
+
+	iago:
+
+	* add new binary iago for drawing shapes
+
+
+2021-02-17 raisjn <of.raisjn@chalk>
+
+	remux:
+
+	* better multi-touch gesture support
+	* launch more consistently after closing or stylus touches
+	* better power management and ability to toggle (manage_power=no)
+	* update to use less power
+
+	genie:
+
+	* better gesture support
+
+	mines:
+
+	* speed up game over screen
+
+	harmony:
+
+	* add 4 shades of gray
+	* better support for rM1 buffer
+	* faster drawing on first draw
+
+2021-02-04 raisjn <of.raisjn@chalk>
+
+	bufshot -> 0.1.0-1
+
+	* add new binary bufshot for taking screenshots
+
+2021-01-20 raisjn <of.raisjn@chalk>
+
+	rmkit (requires bumping all apps):
+
+	* fix font artifacts when using large font
+	* warn when running on rM2 without rm2fb
+
+	remux:
+
+	* use ?MB for apps we don't know mem usage of
+	* idle fixes for rM2
+	* properly draw 8bit grayscale suspend screens
+	* fix touch flood to use ABS_DISTANCE=2 instead of 0
+
+2021-01-16 raisjn <of.raisjn@chalk>
+
+	rmkit:
+
+	* fix touch event handling while dragging
+
+	harmony:
+
+	* faster drawing on pen down on rM2
+
+	remux:
+
+	* add "quick back" feature
+	* add config file to configure gestures
+	* make killing xochitl harder
+	* remove three finger launch
+
+	nao:
+
+	* use built in wget when available
+
+2021-01-14 raisjn <of.raisjn@chalk>
+
+
+	simple -> 0.1.1:
+
+	* add underline to button text
+	* add widget ID implementation
+
+	remux -> 0.1.6:
+
+	* add "back" feature
+	* add /run/remux.api fifo which accepts "show", "hide" and "back" as input
+
+2021-01-10 raisjn <of.raisjn@chalk>
+
+
+	genie -> 1.1-1:
+
+	* add gesture invalidator when pen is writing
+	* fix environment in service file
+
+2021-01-07 raisjn <of.raisjn@chalk>
+
+
+	genie -> 1.0
+
+	* genie is a gesture based launcher that recognizes gestures and runs commands
+
+2021-01-5 raisjn <of.raisjn@chalk>
+
+
+	remux -> 0.1.5-1
+
+	* launch remux on 3 finger tap (much more useful on rM2)
+
+2020-12-31 raisjn <of.raisjn@chalk>
+
+
+	remux -> 0.1.4
+
+	* use remux with fix for suspend/shutdown threshold == 0
+	* use suspended.png if sleeping.png isn't available
+
+	rmkit
+
+	* update build to make src/build before building stb.o
+
+2020-12-26 raisjn <of.raisjn@chalk>
+
+	rmkit:
+
+	* update remux with fix for broken wifi on suspend
+
+	package:
+
+	* add icons for harmony, mines and nao
+
+2020-12-25 raisjn <of.raisjn@chalk>
+
+	remux:
+
+	* correctly suspend on remux for rM2
+	* add fix to remux so that koreader doesn't restart when focused
+
+2020-12-21 raisjn <of.raisjn@chalk>
+
+	harmony:
+
+	 * create saved_images dir in package configure script
+
+
+2020-12-19 raisjn <of.raisjn@chalk>
+
+	remux:
+
+	* update remux with shutdown fix for rM1
+	* update to remux for better cmdline parsing
+	* update remux so LAST_ACTION defaults to now
+
+2020-12-14 raisjn <of.raisjn@chalk>
+
+	rmkit:
+
+	* update rmkit to latest version which supports rm2, release as 0.1.0
+
+	remux:
+
+	* continued rm2 support in remux
+	* fix suspend screen in remux on rm2
+
+2020-11-08 raisjn <of.raisjn@chalk>
+
+	rmkit:
+
+	* update to latest version (11.07.2020)
+
+2020-10-15 raisjn <of.raisjn@chalk>
+
+	remux:
+
+	* add memory usage analyzer to remux
+
+2020-10-08 raisjn <of.raisjn@chalk>
+
+	remux:
+
+	* make remux properly dismissable on first launch
+
+
+2020-09-30 raisjn <of.raisjn@chalk>
+
+	remux:
+
+	* read xochitl command from systemd service file
+	* use rgb565 to draw better quality suspend screen
+	* better KOReader integration
+
+2020-09-27 raisjn <of.raisjn@chalk>
+
+	remux:
+
+	* use process groups for managing programs
+
+	nao:
+
+	* add exit button to main screen
+
+2020-09-21 raisjn <of.raisjn@chalk>
+
+	remux:
+
+	* better plato interaction
+	* fixes for power management
+	* rename remux from remux.exe
+
+	nao:
+
+	* add sync, check and upgrade to main menu
+
+2020-09-14 raisjn <of.raisjn@chalk>
+
+	* split rmkit into harmony, mines, nao and simple packages
+
+2020-09-02 raisjn <of.raisjn@chalk>
+
+	* add rmkit apps: harmony, remux, mines, ...

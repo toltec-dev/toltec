@@ -7,10 +7,11 @@ pkgdesc="Fast, modern, secure VPN tunnel"
 url=https://www.wireguard.com
 pkgver=1.0.20210219-1
 _wireguardtoolsver=1.0.20210223
-timestamp=2021-01-24T13:45Z
+timestamp=2021-02-19T14:08Z
 section=utils
 maintainer="Jonah Weissman <jonahrweissman+toltec@gmail.com>"
 license=GPL-2.0-only
+makedepends=(build:bc build:lzop build:git)
 flags=(nostrip)
 
 _kernelrepo=https://github.com/remarkable/linux
@@ -45,9 +46,6 @@ prepare() {
 
 build() {
     make -C wireguard-tools/src PLATFORM=linux "CC=${CROSS_COMPILE}cc"
-
-    apt-get update
-    apt-get install -y bc lzop git
 
     mkdir pkg
     git init linux
