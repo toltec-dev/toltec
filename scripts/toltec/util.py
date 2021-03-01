@@ -232,6 +232,38 @@ def query_user(
         print("Invalid answer. Please choose among the valid options.")
 
 
+def check_directory(path: str, message: str) -> bool:
+    """
+    Create a directory and ask the user what to do if it already exists.
+
+    :param path: path to the directory to create
+    :param message: message to display before asking the user interactively
+    :returns: false if the user chose to cancel the current operation
+    """
+    try:
+        os.mkdir(path)
+    except FileExistsError:
+        ans = query_user(
+            message,
+            default="c",
+            options=["c", "r", "k"],
+            aliases={
+                "cancel": "c",
+                "remove": "r",
+                "keep": "k",
+            },
+        )
+
+        if ans == "c":
+            return False
+
+        if ans == "r":
+            shutil.rmtree(path)
+            os.mkdir(path)
+
+    return True
+
+
 def list_tree(root: str) -> List[str]:
     """
     Get a sorted list of all files and folders under a given root folder.

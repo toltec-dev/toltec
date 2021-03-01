@@ -10,21 +10,13 @@ timestamp=2021-01-13T23:43Z
 section="readers"
 maintainer="Linus K. <linus@cosmos-ink.net>"
 license=AGPL-3.0-or-later
+makedepends=(build:jq build:patchelf build:unzip build:wget)
 
 image=rust:v1.2.1
-source=(https://github.com/LinusCDE/plato/archive/0.9.13-rm-release-7.zip)
+source=("https://github.com/LinusCDE/plato/archive/${pkgver%-*}-rm-release-7.zip")
 sha256sums=(17718d74066e5cbec043c98b52958a311eb793674751d6b7789b5baff2227f96)
 
 build() {
-    # Get needed build packages
-    export DEBIAN_FRONTEND=noninteractive
-    apt-get update -y
-    apt-get install -y \
-        jq \
-        patchelf \
-        unzip \
-        wget
-
     # Fall back to system-wide config
     rm .cargo/config
 
