@@ -123,7 +123,7 @@ If the build completes without errors, use the following procedure to test out y
 
 1. Plug in the tablet via USB.
 2. Use `make <name>-push` to copy the resulting package to your device.
-3. Start a SSH session and run `opkg install .cache/opkg/<name>.ipk` to install the package.
+3. Start a SSH session and run `opkg install .cache/toltec/<name>_<version and arch>.ipk` to install the package.
 4. Make sure that everything is working.
 5. Use `opkg remove <name>` to uninstall the package.
 
