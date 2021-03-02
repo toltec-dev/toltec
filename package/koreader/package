@@ -17,7 +17,6 @@ source=(
     "https://build.koreader.rocks/download/stable/$_srcver/koreader-remarkable-$_srcver.zip"
     koreader.draft
     KOReader.oxide
-    rm2-support.patch
     koreader
 )
 sha256sums=(
@@ -25,13 +24,7 @@ sha256sums=(
     SKIP
     SKIP
     SKIP
-    SKIP
 )
-
-prepare() {
-    patch -p1 -d"$srcdir" < "$srcdir"/rm2-support.patch
-    rm "$srcdir"/rm2-support.patch
-}
 
 package() {
     install -d "$pkgdir"/opt/koreader
