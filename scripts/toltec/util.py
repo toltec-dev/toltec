@@ -46,7 +46,7 @@ def file_sha256(path: str) -> str:
     return sha256.hexdigest()
 
 
-def split_all(path: str) -> List[str]:
+def split_all_parts(path: str) -> List[str]:
     """Split a file path into all its directory components."""
     parts = []
     prefix = path
@@ -60,6 +60,21 @@ def split_all(path: str) -> List[str]:
     return parts
 
 
+def split_all_exts(path: str) -> List[str]:
+    """Get the list of extensions in a file path."""
+    exts = []
+    remaining = path
+
+    while True:
+        remaining, ext = os.path.splitext(remaining)
+        if ext:
+            exts.append(ext)
+        else:
+            break
+
+    return exts
+
+
 def all_equal(seq: Iterable) -> bool:
     """Check that all elements of a sequence are equal."""
     grouped = itertools.groupby(seq)
@@ -70,7 +85,7 @@ def all_equal(seq: Iterable) -> bool:
 
 def remove_prefix(filenames: List[str]) -> Dict[str, str]:
     """Find and remove the longest directory prefix shared by all files."""
-    split_filenames = [split_all(filename) for filename in filenames]
+    split_filenames = [split_all_parts(filename) for filename in filenames]
 
     # Find the longest directory prefix shared by all files
     min_len = min(len(filename) for filename in split_filenames)
@@ -102,7 +117,12 @@ def auto_extract(archive_path: str, dest_path: str) -> bool:
     :param dest_path: destination folder for the archive contents
     :returns: true if something was extracted, false if not a supported archive
     """
-    if archive_path.endswith(".zip"):
+    exts = split_all_exts(archive_path)
+
+    if not exts:
+        return False
+
+    if exts[0] == ".zip":
         with zipfile.ZipFile(archive_path) as zip_archive:
             _auto_extract(
                 zip_archive.namelist(),
@@ -114,8 +134,12 @@ def auto_extract(archive_path: str, dest_path: str) -> bool:
             )
         return True
 
-    if archive_path.endswith(".tar.gz"):
-        with tarfile.open(archive_path, mode="r:gz") as tar_archive:
+    if exts[0] == ".tar" or (
+        len(exts) >= 2
+        and exts[0] in (".gz", ".bz2", ".xz")
+        and exts[1] == ".tar"
+    ):
+        with tarfile.open(archive_path, mode="r") as tar_archive:
             _auto_extract(
                 tar_archive.getnames(),
                 tar_archive.getmember,
@@ -206,6 +230,38 @@ def query_user(
             return aliases[choice]
 
         print("Invalid answer. Please choose among the valid options.")
+
+
+def check_directory(path: str, message: str) -> bool:
+    """
+    Create a directory and ask the user what to do if it already exists.
+
+    :param path: path to the directory to create
+    :param message: message to display before asking the user interactively
+    :returns: false if the user chose to cancel the current operation
+    """
+    try:
+        os.mkdir(path)
+    except FileExistsError:
+        ans = query_user(
+            message,
+            default="c",
+            options=["c", "r", "k"],
+            aliases={
+                "cancel": "c",
+                "remove": "r",
+                "keep": "k",
+            },
+        )
+
+        if ans == "c":
+            return False
+
+        if ans == "r":
+            shutil.rmtree(path)
+            os.mkdir(path)
+
+    return True
 
 
 def list_tree(root: str) -> List[str]:

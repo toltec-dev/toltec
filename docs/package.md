@@ -186,13 +186,44 @@ Note that this may be different from the license of the recipe itself, which is 
     </tr>
     <tr>
         <th>Type</th>
-        <td>Array of strings</td>
+        <td>Array of dependency specifications (strings)</td>
     </tr>
 </table>
 
-A list of package names that must be installed on the device before this package can be configured and used.
+The list of Toltec or Entware packages that are needed to build, configure and use this package.
+Dependency specifications have the following format: `package-name[(<<|<=|=|=>|>>)version]`.
+For example, `xochitl`, `oxide=1.2`, and `draft<<2.0` are valid dependency specifications.
 
-See <https://www.debian.org/doc/debian-policy/ch-relationships.html#binary-dependencies-depends-recommends-suggests-enhances-pre-depends>.
+*At build time,* all the dependencies of a recipe are offline-installed (i.e., no [install script](#install-section) is run) in the build container’s `$SYSROOT` before its build script is executed (see [below](#build-section)).
+For [split packages](#split-packages), only recipe-level dependencies are honoured at this stage.
+Circular dependencies are disallowed.
+
+*At install time,* it is guaranteed that all needed packages are unpacked and configured before this package is configured (i.e., before its `configure()` script is run).
+
+A version constraint can be added after each dependency declaration.
+Repeat the dependency twice to specify the two ends of a version range.
+Version constraints are only checked at install time.
+
+#### `makedepends`
+
+<table>
+    <tr>
+        <th>Required?</th>
+        <td>No, defaults to <code>()</code></th>
+    </tr>
+    <tr>
+        <th>Type</th>
+        <td>Array of dependency specifications (strings)</td>
+    </tr>
+</table>
+
+The list of Debian, Toltec or Entware packages that are needed only to build this package.
+Dependency specifications have the following format: `[host:|build:]package-name`.
+For example, `build:autotools` and `libvncserver>=0.9.13` are valid dependency specifications.
+
+*Host-type dependencies* (prefixed with `host:`) are packages from Toltec or Entware that will be installed in the container’s `$SYSROOT` before the recipe’s build script is executed.
+
+*Build-type dependencies* (prefixed with `build:`) are packages from Debian that will be installed in the container’s root system before the recipe’s build script is executed.
 
 #### `conflicts`
 
@@ -207,9 +238,8 @@ See <https://www.debian.org/doc/debian-policy/ch-relationships.html#binary-depen
     </tr>
 </table>
 
-A list of package names that must **NOT** be unpacked at the same time as this package.
-
-See <https://www.debian.org/doc/debian-policy/ch-relationships.html#conflicting-binary-packages-conflicts>.
+A list of package names that cannot be installed at the same time as this package.
+Note that providing the same functionality as another package is not a sufficient reason for declaring a conflict, unless that package cannot be used in the presence of the other package.
 
 #### `image`
 
@@ -244,7 +274,7 @@ Conversely, you must not define a `build()` function if you omit this field.
 The list of sources files and archives needed to build the package.
 The [`build()`](#build-section) and [`package()`](#package-section) sections can access the files referenced in this array from the `$srcdir` directory.
 Each entry can either be a local path relative to the recipe file or a full URL that will be fetched from the Internet (any protocol supported by [curl](https://curl.haxx.se/) can be used here) when building the package.
-Archive files whose names end in `.zip`, `.tar.gz`, `.tar.xz`, or `.tar.bz` will be automatically extracted in place, with all container directories stripped.
+Archive files whose names end in `.zip`, `.tar`, `.tar.gz`, `.tar.bz2`, or `.tar.xz` will be automatically extracted in place, with all container directories stripped.
 You can disable this behavior by adding the archive name to the `noextract` array.
 
 #### `flags`

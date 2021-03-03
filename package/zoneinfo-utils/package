@@ -14,7 +14,8 @@ section=utils
 maintainer="Eeems <eeems@eeems.email>"
 license="custom: public domain"
 depends=(zoneinfo-core)
-image=base:v1.2.1
+makedepends=(build:gawk)
+image=base:v1.3.2
 
 source=(
     "https://www.iana.org/time-zones/repository/releases/tzcode${_tzver}.tar.gz"
@@ -30,11 +31,6 @@ prepare() {
 }
 
 build() {
-    # Upgrade gawk to latest to avoid a bug
-    export DEBIAN_FRONTEND=noninteractive
-    apt-get update -y
-    apt-get install -y gawk
-
     mkdir .x86
     pushd .x86 > /dev/null
 

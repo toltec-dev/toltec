@@ -15,7 +15,7 @@ erode() {
     pkgdesc="Task manager"
     url=https://github.com/Eeems/oxide/tree/master/applications/process-manager
     section="admin"
-    depends=("tarnish (= $pkgver)")
+    depends=("tarnish=$pkgver")
 
     package() {
         install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/opt/bin/erode
@@ -27,7 +27,7 @@ fret() {
     pkgdesc="Take screenshots"
     url=https://github.com/Eeems/oxide/tree/master/applications/screenshot-tool
     section="utils"
-    depends=("tarnish (= $pkgver)")
+    depends=("tarnish=$pkgver")
 
     package() {
         install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/opt/bin/fret
@@ -39,7 +39,7 @@ oxide() {
     pkgdesc="Launcher application"
     url=https://github.com/Eeems/oxide/tree/master/applications/launcher
     section="launchers"
-    depends=("erode  (= $pkgver)" "fret (= $pkgver)" "tarnish (= $pkgver)" "rot (= $pkgver)" "decay (= $pkgver)")
+    depends=("erode=$pkgver" "fret=$pkgver" "tarnish=$pkgver" "rot=$pkgver" "decay=$pkgver")
 
     package() {
         install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/opt/bin/oxide
@@ -60,7 +60,7 @@ rot() {
     pkgdesc="Manage Oxide settings through the command line"
     url=https://github.com/Eeems/oxide/tree/master/applications/settings-manager
     section="admin"
-    depends=("tarnish (= $pkgver)")
+    depends=("tarnish=$pkgver")
 
     package() {
         install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/opt/bin/rot
@@ -100,7 +100,7 @@ decay() {
     pkgdesc="Lockscreen application"
     url=https://github.com/Eeems/oxide/tree/master/applications/lockscreen
     section="utils"
-    depends=("tarnish (= $pkgver)")
+    depends=("tarnish=$pkgver")
 
     package() {
         install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/opt/bin/decay

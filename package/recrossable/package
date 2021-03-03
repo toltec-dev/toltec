@@ -5,13 +5,15 @@
 pkgnames=(recrossable)
 pkgdesc="Solve crossword puzzles"
 url=https://github.com/sandsmark/recrossable
-pkgver=0.0.0-3
+pkgver=0.0.0-4
 timestamp=2020-10-05T08:43Z
 section="games"
 maintainer="Mattéo Delabre <spam@delab.re>"
 license=GPL-2.0-or-later
+depends=(libdlib)
+makedepends=(build:imagemagick build:librsvg2-bin host:libdlib-dev)
 
-image=qt:v1.2
+image=qt:v1.3.2
 source=(
     https://github.com/sandsmark/recrossable/archive/5faa37c6e8a13e3ddeb0fe6d9d5f15717f83b662.zip
     recrossable.draft
@@ -24,15 +26,16 @@ sha256sums=(
 )
 
 build() {
-    # Get needed build packages
-    export DEBIAN_FRONTEND=noninteractive
-    apt-get update -y
-    apt-get install -y \
-        --no-install-recommends \
-        -o Dpkg::Options::="--force-confdef" \
-        imagemagick librsvg2-bin
+    cat << QMAKE >> recrossable.pro
+linux-arm-remarkable-g++ {
+    LIBS += -lqsgepaper
+    DEFINES += REMARKABLE_DEVICE
 
-    sed -i 's/linux-oe-g++/linux-arm-gnueabihf-g++/' recrossable.pro
+    CONFIG += link_pkgconfig
+    PKGCONFIG += dlib-1
+}
+QMAKE
+
     qmake
     make
 

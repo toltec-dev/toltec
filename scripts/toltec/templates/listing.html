@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Toltec Package Listing</title>
+
+        <style>
+            body {
+                font-family:"-apple-system", "BlinkMacSystemFont", "Helvetica Neue", "Roboto", sans-serif;
+                background-color: #fcfaf8;
+            }
+
+            .listing {
+                width: 100%;
+                table-layout: fixed;
+            }
+
+            .listing td {
+                padding: 0 20px;
+            }
+
+            .listing tr:nth-child(even) {
+                background-color: #dcdfdc;
+            }
+
+            .listing th {
+                text-align: left;
+                padding-left: 20px;
+            }
+
+            .listing-name, .listing-version, .listing-license {
+                width: 15%;
+            }
+
+            .listing-desc {
+                width: 45%;
+            }
+
+            .sortable th {
+                cursor: pointer;
+            }
+
+            .sortable th.sort-asc::after {
+                content: " ↓";
+            }
+
+            .sortable th.sort-desc::after {
+                content: " ↑";
+            }
+        </style>
+    </head>
+    <body>
+        <a href="..">Back to Repository Home Page</a>
+        <h1>Toltec Package Listing</h1>
+
+        {% for section, packages in sections.items() %}
+            <h2>{{ section }}</h2>
+
+            <table class="listing sortable">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Version</th>
+                        <th>License</th>
+                    </tr>
+                </thead>
+
+                <colgroup>
+                    <col class="listing-name">
+                    <col class="listing-desc">
+                    <col class="listing-version">
+                    <col class="listing-license">
+                </colgroup>
+
+                {% for package in packages %}
+                    <tr>
+                        <td><a href="{{ package.url }}">{{ package.name }}</a></td>
+                        <td>{{ package.desc }}</td>
+                        <td><a href="./{{ package.filename() }}">{{ package.version }}</a></td>
+                        <td><a href="https://spdx.org/licenses/{{ package.license }}.html">{{ package.license }}</a></td>
+                    </tr>
+                {% endfor %}
+            </table>
+        {% endfor %}
+
+
+        <script>
+            const selectCell = (index, row) =>
+                row.querySelector(`td:nth-child(${index + 1})`);
+
+            const compareRows = (index, asc, row1, row2) => {
+                const direction = asc ? 1 : -1;
+                const cell1 = selectCell(index, row1);
+                const cell2 = selectCell(index, row2);
+                return (direction
+                    * (cell1.textContent < cell2.textContent ? -1 : 1));
+            };
+
+            const makeSortable = table => {
+                const heads = table.querySelectorAll("thead th");
+                const body = table.querySelector("tbody");
+                const rows = body.querySelectorAll("tr");
+
+                let currentHead = null;
+                let currentSortAsc = true;
+
+                const sortBy = (index) => {
+                    const head = heads[index];
+
+                    if (currentHead === null || currentHead !== head) {
+                        if (currentHead) {
+                            currentHead.classList.remove("sort-asc");
+                            currentHead.classList.remove("sort-desc");
+                        }
+
+                        currentHead = head;
+                        currentSortAsc = true;
+                        head.classList.add("sort-asc");
+                    } else {
+                        currentSortAsc = !currentSortAsc;
+
+                        if (currentSortAsc) {
+                            head.classList.add("sort-asc");
+                            head.classList.remove("sort-desc");
+                        } else {
+                            head.classList.add("sort-desc");
+                            head.classList.remove("sort-asc");
+                        }
+                    }
+
+                    Array.from(rows)
+                        .sort(compareRows.bind(null, index, currentSortAsc))
+                        .forEach(row => body.appendChild(row));
+                };
+
+                heads.forEach((head, index) => {
+                    head.addEventListener("click", () => {
+                        sortBy(index);
+                    });
+                });
+
+                sortBy(0);
+            };
+
+            document.querySelectorAll("table.sortable").forEach(makeSortable);
+        </script>
+    </body>
+</html>
