@@ -180,15 +180,18 @@ def _auto_extract(  # pylint:disable=too-many-arguments
         if isdir(member):
             os.makedirs(file_path, exist_ok=True)
         else:
-            source = extract(member)
-            assert source is not None
+            if hasattr(member, 'issym') and member.issym():
+                os.symlink(member.linkname, file_path)
+            else:
+                source = extract(member)
+                assert source is not None
 
-            with source, open(file_path, "wb") as target:
-                shutil.copyfileobj(source, target)
+                with source, open(file_path, "wb") as target:
+                    shutil.copyfileobj(source, target)
 
-            mode = getmode(member)
-            if mode != 0:
-                os.chmod(file_path, mode)
+                mode = getmode(member)
+                if mode != 0:
+                    os.chmod(file_path, mode)
 
 
 def query_user(
