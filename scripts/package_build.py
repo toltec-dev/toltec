@@ -6,7 +6,9 @@
 import argparse
 import logging
 import sys
+from toltec import paths
 from toltec.builder import Builder
+from toltec.repo import Repo
 from toltec.util import argparse_add_verbose, LOGGING_FORMAT
 
 parser = argparse.ArgumentParser(description=__doc__)
@@ -28,9 +30,18 @@ argparse_add_verbose(parser)
 
 args = parser.parse_args()
 logging.basicConfig(format=LOGGING_FORMAT, level=args.verbose)
-builder = Builder()
 
-if not builder.make(
-    args.recipe_name, args.packages_names if args.packages_names else None
-):
+repo = Repo(paths.RECIPE_DIR, paths.REPO_DIR)
+builder = Builder(paths.WORK_DIR, paths.REPO_DIR)
+
+recipe = repo.recipes[args.recipe_name]
+packages = (
+    [recipe.packages[name] for name in args.packages_names]
+    if args.packages_names
+    else None
+)
+
+if not builder.make(recipe, packages):
     sys.exit(1)
+
+repo.make_index()
