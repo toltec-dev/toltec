@@ -180,7 +180,7 @@ def _auto_extract(  # pylint:disable=too-many-arguments
         if isdir(member):
             os.makedirs(file_path, exist_ok=True)
         else:
-            if hasattr(member, 'issym') and member.issym():
+            if hasattr(member, "issym") and member.issym():
                 os.symlink(member.linkname, file_path)
             else:
                 source = extract(member)
