@@ -12,15 +12,18 @@ source=(
     https://github.com/rmkit-dev/rmkit/archive/681354803a158eca9c267b1f1976affda391bdff.zip
     remux.service
     genie.service
+    2021_03_05_genie.diff
 )
 sha256sums=(
     6e2b1fb7fa52f6412268b1d063e9dd117d1913411fe26627c34cf3d02a836de5
+    SKIP
     SKIP
     SKIP
 )
 
 build() {
     pip3 install okp
+    patch -p1 < 2021_03_05_genie.diff
     make
 }
 
@@ -38,7 +41,7 @@ bufshot() {
 genie() {
     pkgdesc="Gesture engine that connects commands to gestures"
     url="https://rmkit.dev/apps/genie"
-    pkgver=0.1.4-1
+    pkgver=0.1.4-2
     section="utils"
 
     package() {
