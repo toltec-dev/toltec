@@ -1,0 +1,3 @@
+#!/bin/bash
+
+/opt/bin/appmarkable /opt/bin/rmservewacominput -n rmServeWacomInput -i /opt/etc/draft/icons/rmservewacominput.png
