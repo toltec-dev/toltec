@@ -21,7 +21,7 @@ build() {
 
     # Inject rm2fb shim
     # (after running strip, otherwise strip removes too much information)
-    for bin in release/opt/bin/{erode,fret,oxide,decay}; do
+    for bin in release/opt/bin/{erode,oxide,tarnish,decay}; do
         "${CROSS_COMPILE}strip" --strip-all "$bin"
         patchelf --add-needed librm2fb_client.so "$bin"
     done
