@@ -2,17 +2,16 @@
 # Copyright (c) 2021 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
-pkgnames=(keywriter)
+pkgnames=(wikipedia)
 pkgdesc="The free encyclopedia"
 url=https://github.com/dps/remarkable-wikipedia
 pkgver=0.1.0-1
-timestamp=2019-07-13T06:27Z
+timestamp=2021-03-11T04:50Z
 section="readers"
 maintainer="David Singleton <david@singleton.io>"
 license=MIT
 
 image=qt:v1.2.2
-_sundown=37728fb2d7137ff7c37d0a474cb827a8d6d846d8
 source=(
     https://github.com/dps/remarkable-wikipedia/archive/eb00876ef49e7deedc127bc6c1486e3ed13aedcc.zip
     wikipedia.draft
