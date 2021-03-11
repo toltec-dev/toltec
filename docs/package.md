@@ -377,8 +377,25 @@ Repeat the dependency twice to specify a version range.
     </tr>
 </table>
 
-A list of package names that cannot be installed at the same time as this package.
+A list of packages that cannot be installed at the same time as this package.
 Note that providing the same functionality as another package is not a sufficient reason for declaring a conflict, unless that package cannot be used in the presence of the other package.
+
+#### `replaces` field
+
+<table>
+    <tr>
+        <th>Required?</th>
+        <td>No, defaults to <code>()</code></th>
+    </tr>
+    <tr>
+        <th>Type</th>
+        <td>Array of strings</td>
+    </tr>
+</table>
+
+A list of packages that the current package replaces.
+Setting this field allows the current package to overwrite and take ownership of files from other packages.
+Note that the replaced packages will not be automatically uninstalled unless you also declare a conflict with them using the [`conflicts` field](#conflicts-field).
 
 #### `package()` function
 
