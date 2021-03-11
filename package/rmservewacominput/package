@@ -16,7 +16,7 @@ image=base:v1.4
 source=(
     https://github.com/LinusCDE/rmWacomToMouse/archive/fd1c5454b65f456f6e890b99109e50a8f576dad1.zip
     rmservewacominput.draft
-    rmservewacominput_gui
+    rmservewacominput-gui
 )
 sha256sums=(
     c2c15b519a8352a5b52e1b15154e4024acc423552c6cf7559c23fcb8beffcd56
@@ -31,7 +31,7 @@ build() {
 
 package() {
     install -D -m 755 "$srcdir"/c_implementation/rmServeWacomInput "$pkgdir"/opt/bin/rmservewacominput
-    install -D -m 755 "$srcdir"/rmservewacominput_gui "$pkgdir"/opt/bin/rmservewacominput-gui
+    install -D -m 755 "$srcdir"/rmservewacominput-gui "$pkgdir"/opt/bin/rmservewacominput-gui
     install -D -m 644 "$srcdir"/rmservewacominput.draft "$pkgdir"/opt/etc/draft/rmservewacominput.draft
     install -D -m 644 "$srcdir"/icon.png "$pkgdir"/opt/etc/draft/icons/rmservewacominput.png
 }
