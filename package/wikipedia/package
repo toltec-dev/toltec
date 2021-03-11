@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+# Copyright (c) 2021 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgnames=(wikipedia)
+pkgdesc="The free encyclopedia"
+url=https://github.com/dps/remarkable-wikipedia
+pkgver=0.1.0-1
+timestamp=2021-03-11T04:50Z
+section="readers"
+maintainer="David Singleton <david@singleton.io>"
+license=MIT
+
+image=qt:v1.2.2
+source=(
+    https://github.com/dps/remarkable-wikipedia/archive/eb00876ef49e7deedc127bc6c1486e3ed13aedcc.zip
+    wikipedia.draft
+)
+sha256sums=(
+    9139cf41c8950126780273977b3d70f8126da8a87066db6c21845d8409ad34b2
+    SKIP
+)
+
+build() {
+    sed -i 's/linux-oe-g++/linux-arm-gnueabihf-g++/' qtwikipedia.pro
+    qmake qtwikipedia.pro
+    make
+}
+
+package() {
+    install -D -m 755 "$srcdir"/qtwikipedia "$pkgdir"/opt/bin/qtwikipedia
+    install -D -m 644 -t "$pkgdir"/opt/etc/draft "$srcdir"/wikipedia.draft
+}
