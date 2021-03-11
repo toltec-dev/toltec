@@ -1,3 +1,6 @@
+# Copyright (c) 2021 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
 name=rmServeWacomInput
 desc=Open a server on port 33333 and serve pen input
 call=/opt/bin/rmservewacominput_gui
