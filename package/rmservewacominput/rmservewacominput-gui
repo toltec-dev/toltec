@@ -1,5 +1,6 @@
+#!/bin/bash
+
 # Copyright (c) 2021 The Toltec Contributors
 # SPDX-License-Identifier: MIT
-#!/bin/bash
 
 exec /opt/bin/appmarkable /opt/bin/rmservewacominput -n rmServeWacomInput -i /opt/etc/draft/icons/rmservewacominput.png
