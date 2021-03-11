@@ -22,6 +22,7 @@ sha256sums=(
 )
 
 build() {
+    sed -i 's/linux-oe-g++/linux-arm-gnueabihf-g++/' qtwikipedia.pro
     qmake qtwikipedia.pro
     make
 }
