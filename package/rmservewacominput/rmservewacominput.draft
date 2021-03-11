@@ -3,6 +3,6 @@
 
 name=rmServeWacomInput
 desc=Open a server on port 33333 and serve pen input
-call=/opt/bin/rmservewacominput_gui
+call=/opt/bin/rmservewacominput-gui
 term=:
 imgFile=rmservewacominput
