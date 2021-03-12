@@ -5,3 +5,4 @@ name=wikipedia
 desc=The free encyclopedia
 call=/opt/bin/qtwikipedia
 term=:
+imgFile=wikipedia
