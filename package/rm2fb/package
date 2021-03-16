@@ -3,24 +3,24 @@
 # SPDX-License-Identifier: MIT
 
 pkgnames=(rm2fb)
-timestamp=2020-10-10T01:41+00:00
+timestamp=2021-02-21T01:41+00:00
 maintainer="raisjn <of.raisjn@gmail.com>"
 license=MIT
 pkgdesc="Interface to the reMarkable 2 framebuffer"
 url="https://github.com/ddvk/remarkable2-framebuffer"
-pkgver=1.0.0-7
+pkgver=1.0.0-8
 section="devel"
 
 image=qt:v1.1
 source=(
-    https://github.com/ddvk/remarkable2-framebuffer/archive/cd2766864c7985fa50cdf85f4ae0a411d7ca4e56.zip
+    https://github.com/ddvk/remarkable2-framebuffer/archive/0724acfcc87c24ae2fcb45db4cad033981f3f4a9.zip
     rm2fb.conf
     rm2fb.service
     rm2fb-server
     rm2fb-client
 )
 sha256sums=(
-    c274c458270eec28950834bd28ff069a0af65e40fcc288a8ff28235001e8914f
+    bf398905f43e189671692325444e0cac131ab9856f215adabe6b8747aaa41351
     SKIP
     SKIP
     SKIP
