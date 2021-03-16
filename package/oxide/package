@@ -3,19 +3,19 @@
 # SPDX-License-Identifier: MIT
 
 pkgnames=(erode fret oxide rot tarnish decay)
-pkgver=2.1~beta-5
+pkgver=2.1.2~1
 timestamp=2021-01-07T03:28Z
 maintainer="Eeems <eeems@eeems.email>"
 license=MIT
 
-source=(https://github.com/Eeems/oxide/releases/download/v2.1/oxide.zip)
-sha256sums=(f3f50688db7a11fab74caeb607f23f26f8315ff1d3ec28566f408d4301af26be)
+source=(https://github.com/Eeems/oxide/releases/download/v2.1.2/oxide.zip)
+sha256sums=(c9e8214dd60346b0865bc41e8180064cbb7e108ed676b6726abecff0b4adb710)
 
 erode() {
     pkgdesc="Task manager"
     url=https://github.com/Eeems/oxide/tree/master/applications/process-manager
     section="admin"
-    depends=("tarnish (= $pkgver)")
+    depends=("tarnish=$pkgver")
 
     package() {
         install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/opt/bin/erode
@@ -27,7 +27,7 @@ fret() {
     pkgdesc="Take screenshots"
     url=https://github.com/Eeems/oxide/tree/master/applications/screenshot-tool
     section="utils"
-    depends=("tarnish (= $pkgver)")
+    depends=("tarnish=$pkgver")
 
     package() {
         install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/opt/bin/fret
@@ -39,7 +39,7 @@ oxide() {
     pkgdesc="Launcher application"
     url=https://github.com/Eeems/oxide/tree/master/applications/launcher
     section="launchers"
-    depends=("erode  (= $pkgver)" "fret (= $pkgver)" "tarnish (= $pkgver)" "rot (= $pkgver)" "decay (= $pkgver)")
+    depends=("erode=$pkgver" "fret=$pkgver" "tarnish=$pkgver" "rot=$pkgver" "decay=$pkgver")
 
     package() {
         install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/opt/bin/oxide
@@ -60,7 +60,7 @@ rot() {
     pkgdesc="Manage Oxide settings through the command line"
     url=https://github.com/Eeems/oxide/tree/master/applications/settings-manager
     section="admin"
-    depends=("tarnish (= $pkgver)")
+    depends=("tarnish=$pkgver")
 
     package() {
         install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/opt/bin/rot
@@ -100,7 +100,7 @@ decay() {
     pkgdesc="Lockscreen application"
     url=https://github.com/Eeems/oxide/tree/master/applications/lockscreen
     section="utils"
-    depends=("tarnish (= $pkgver)")
+    depends=("tarnish=$pkgver")
 
     package() {
         install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/opt/bin/decay
