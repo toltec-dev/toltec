@@ -1,0 +1,180 @@
+#!/usr/bin/env bash
+# Copyright (c) 2021 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgnames=(ddvk-hacks)
+pkgdesc="Enhance Xochitl with additional features"
+url=https://github.com/ddvk/remarkable-hacks
+pkgver=17.04-1
+timestamp=2020-12-25T14:32Z
+section="readers"
+maintainer="Mattéo Delabre <spam@delab.re>"
+license=MIT
+flags=(nostrip)
+
+source=(https://github.com/ddvk/remarkable-hacks/archive/4b75aeaffa2794ff7d4c106c75e47278d5855401.zip)
+sha256sums=(41b2e2c3c740c109bc33bb3a2d6db9d52bfe8a282a10029d9da07fa70e0808d3)
+
+_patches_dir="/opt/share/ddvk-hacks"
+_xochitl_path="/usr/bin/xochitl"
+_work_dir="/home/root/.local/share/ddvk-hacks"
+_backup_path="$_work_dir/xochitl.backup"
+_old_backup_path="$_backup_path.old"
+_patched_path="$_work_dir/xochitl.patched"
+
+package() {
+    install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/2113/patch_09
+    install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/22048/patch_10.10
+    install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/22182/patch_11.01
+    install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/23016/patch_12.11
+    install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/23023/patch_13.07
+    install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/23127/patch_14.01
+    install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/24027_rm1/patch_15.1.02
+    install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/24027_rm2/patch_15.2.01
+    install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/24130_rm1/patch_16.1.06
+    install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/24130_rm2/patch_16.2.03
+    install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/25027_rm1/patch_17.1.04
+    install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/25027_rm2/patch_17.2.04
+}
+
+configure() {
+    local build_date
+    build_date="$(cat /etc/version)"
+    local patch_version
+    local device
+    local original_hash
+    local xochitl_version
+
+    case "$build_date" in
+        "20201127104549")
+            patch_version="17.2.04"
+            device="reMarkable 2"
+            original_hash="0ed1af968a31e816513d15321bd02b9625ccb073"
+            xochitl_version="2.5.0.27"
+            ;;
+        "20201127104105")
+            patch_version="17.1.04"
+            device="reMarkable 1"
+            original_hash="4296b9c6d7a66aadd12e1cf61a13b7b19504673d"
+            xochitl_version="2.5.0.27"
+            ;;
+        "20201028164335")
+            patch_version="16.1.06"
+            device="reMarkable 1"
+            original_hash="336529ce6e7ef9d6fadd30872708556ca8711f0b"
+            xochitl_version="2.4.1.30"
+            ;;
+        "20201028163830")
+            patch_version="16.2.03"
+            device="reMarkable 2"
+            original_hash="c88d155b7ca8c770240b2c00048968f8445f8115"
+            xochitl_version="2.4.1.30"
+            ;;
+        "20201016123042")
+            patch_version="15.2.01"
+            device="reMarkable 2"
+            original_hash="797f58ed93d2e22e7d77fcd9de6c6eb5d49a3a7f"
+            xochitl_version="2.4.0.27"
+            ;;
+        "20201016123325")
+            patch_version="15.1.02"
+            device="reMarkable 1"
+            original_hash="891e06535c0ae742eeaa3b9a20e9ff03d0f659d3"
+            xochitl_version="2.4.0.27"
+            ;;
+        "20200914085553" | "20200914090635")
+            patch_version="14.01"
+            device="reMarkable 2"
+            original_hash="596b02f401fb0ceb6a73df470fbab418b305cdbc"
+            xochitl_version="2.3.1.27"
+            ;;
+        "20200904144143")
+            patch_version="13.07"
+            device="reMarkable 2"
+            original_hash="7eb1ed8b75b1b282fd4ecf30ef19118d3a41fcc7"
+            xochitl_version="2.3.0.23"
+            ;;
+        "20200709160645")
+            patch_version="12.11"
+            device="reMarkable 1"
+            original_hash="005b05ef64f079aaf377d373cb7e2889a2aa774a"
+            xochitl_version="2.3.0.16"
+            ;;
+        "20200805214933")
+            patch_version="11.01"
+            device="reMarkable 2"
+            original_hash="c7d965972a5a6d2bf8503b1b09b52a89c422505b"
+            xochitl_version="2.2.1.82"
+            ;;
+        "20200528081414")
+            patch_version="10.10"
+            device="reMarkable 1"
+            original_hash="7e92c177df685972a699db6c4a7a918296447f74"
+            xochitl_version="2.2.0.48"
+            ;;
+        "20200320131825")
+            patch_version="09"
+            device="reMarkable 1"
+            original_hash="c8661fbd74a049134509dc22da415bb651d7feac"
+            xochitl_version="2.1.1.3"
+            ;;
+        *)
+            echo
+            echo "Error: The version the device is running is not supported, yet."
+            echo "Build date: $build_date"
+            echo
+            exit 1
+            ;;
+    esac
+
+    echo
+    echo "Device: $device"
+    echo "Xochitl version: $xochitl_version"
+    echo "Patch version: $patch_version"
+    echo
+
+    if ! sha1sum -c <(echo "$original_hash  $_xochitl_path") > /dev/null 2>&1; then
+        echo "Error: Invalid Xochitl checksum"
+        echo "Maybe ddvk-hacks are already installed?"
+        echo
+        exit 1
+    fi
+
+    if [[ -f "$_backup_path" ]]; then
+        mv "$_backup_path" "$_old_backup_path"
+    fi
+
+    mkdir -p "$(dirname "$_backup_path")"
+    cp "$_xochitl_path" "$_backup_path"
+
+    echo "Patching Xochitl"
+    bspatch "$_backup_path" "$_patched_path" "$_patches_dir"/patch_"$patch_version"
+    cp "$_patched_path" "$_xochitl_path"
+    rm -rf /home/root/.cache/remarkable/xochitl/qmlcache/*
+
+    echo "Please restart Xochitl to use the patches"
+    echo
+}
+
+_restore() {
+    echo
+    echo "Restoring the original Xochitl binary"
+
+    if ! diff "$_xochitl_path" "$_patched_path" > /dev/null 2>&1; then
+        echo "Warning: Xochitl binary has changed!"
+        echo "Not restoring the backup"
+    else
+        cp "$_backup_path" "$_xochitl_path"
+        rm -rf /home/root/.cache/remarkable/xochitl/qmlcache/*
+    fi
+
+    echo
+}
+
+preremove() {
+    _restore
+}
+
+preupgrade() {
+    _restore
+}
