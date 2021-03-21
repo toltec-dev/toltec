@@ -5,8 +5,8 @@
 pkgnames=(recrossable)
 pkgdesc="Solve crossword puzzles"
 url=https://github.com/sandsmark/recrossable
-pkgver=0.0.0-5
-timestamp=2020-10-05T08:43Z
+pkgver=0.0.0-6
+timestamp=2021-01-15T12:58:22Z
 section="games"
 maintainer="Mattéo Delabre <spam@delab.re>"
 license=GPL-2.0-or-later
@@ -16,12 +16,12 @@ flags=(nostrip)
 
 image=qt:v1.4
 source=(
-    https://github.com/sandsmark/recrossable/archive/5faa37c6e8a13e3ddeb0fe6d9d5f15717f83b662.zip
+    https://github.com/sandsmark/recrossable/archive/234d5744c0b20087a588d0ecead0a9f58c1f323d.zip
     recrossable.draft
     recrossable.svg
 )
 sha256sums=(
-    51e9f630204262fd2b839dafadb4e288797609467e9f07c29f7581711cb2eaec
+    24b7512d295df504583ccdde7307e8f59fc561da638b992902b4ebccc412fa92
     SKIP
     SKIP
 )
