@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Copyright (c) 2020 The Toltec Contributors
+# Copyright (c) 2021 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
 pkgnames=(rm2fb)
@@ -34,8 +34,10 @@ build() {
 
 package() {
     mkdir -p "$pkgdir"/opt/lib "$pkgdir"/opt/etc "$pkgdir"/opt/bin
-    install -D -m 755 "$srcdir"/src/client/librm2fb_client.so.${pkgver%-*} "$pkgdir"/opt/lib/
-    install -D -m 755 "$srcdir"/src/server/librm2fb_server.so.${pkgver%-*} "$pkgdir"/opt/lib/
+    install -D -m 755 "$srcdir/src/client/librm2fb_client.so.${pkgver%-*}" "$pkgdir"/opt/lib/
+    ln -s "librm2fb_client.so.${pkgver%-*}" "$pkgdir/opt/lib/librm2fb_client.so.${pkgver%.*.*-*}"
+    install -D -m 755 "$srcdir/src/server/librm2fb_server.so.${pkgver%-*}" "$pkgdir"/opt/lib/
+    ln -s "librm2fb_server.so.${pkgver%-*}" "$pkgdir/opt/lib/librm2fb_server.so.${pkgver%.*.*-*}"
     install -D -m 755 "$srcdir"/rm2fb-server "$pkgdir"/opt/bin/
     install -D -m 755 "$srcdir"/rm2fb-client "$pkgdir"/opt/bin/
     install -D -m 644 "$srcdir"/rm2fb.conf "$pkgdir"/etc/systemd/system.conf.d/01-rm2fb.conf
