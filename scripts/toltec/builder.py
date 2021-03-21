@@ -385,8 +385,6 @@ source file '{source.url}', got {req.status_code}"
         logs = bash.run_script(
             script=package.functions["package"],
             variables={
-                **package.parent.parent.variables,
-                **package.parent.variables,
                 **package.variables,
                 **package.custom_variables,
                 "srcdir": src_dir,
@@ -431,8 +429,6 @@ source file '{source.url}', got {req.status_code}"
                 ),
                 bash.put_variables(
                     {
-                        **package.parent.parent.variables,
-                        **package.parent.variables,
                         **package.variables,
                         **package.custom_variables,
                     }

@@ -38,8 +38,6 @@ class GenericRecipe:  # pylint:disable=too-many-instance-attributes
 
     name: str
     path: str
-
-    variables: bash.Variables
     recipes: Dict[str, "Recipe"]
 
     @staticmethod
@@ -66,7 +64,6 @@ class GenericRecipe:  # pylint:disable=too-many-instance-attributes
         self.name = name
         self.path = path
         variables, functions = bash.get_declarations(definition)
-        self.variables = {}
 
         archs = _pop_field_indexed(variables, "archs", ["rmall"])
         self.recipes = {}
@@ -295,7 +292,6 @@ corresponding package"
                 pkg_def = functions.pop(sub_pkg_name)
                 context = bash.put_variables(
                     {
-                        **self.parent.variables,
                         **self.variables,
                         **variables,
                         "pkgname": sub_pkg_name,
@@ -305,11 +301,7 @@ corresponding package"
                     context + pkg_def
                 )
 
-                # Parent variables are only included above for correct
-                # variable substitution but must not propagate down
-                for var_name in list(self.parent.variables) + list(
-                    self.variables
-                ):
+                for var_name in self.variables:
                     del pkg_decls[sub_pkg_name][0][var_name]
 
             for sub_pkg_name, (pkg_vars, pkg_funcs) in pkg_decls.items():
@@ -325,6 +317,7 @@ class Package:  # pylint:disable=too-many-instance-attributes
 
     variables: bash.Variables
     custom_variables: bash.Variables
+
     version: Version
     desc: str
     url: str
@@ -352,8 +345,7 @@ class Package:  # pylint:disable=too-many-instance-attributes
         :raises RecipeError: if the package contains an error
         """
         self.parent = parent
-
-        self.variables = {}
+        self.variables = parent.variables.copy()
         self.functions = {}
 
         self._load_fields(variables)
