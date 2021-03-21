@@ -43,7 +43,7 @@ QMAKE
     # Inject rm2fb shim
     # (after running strip, otherwise strip removes too much information)
     "${CROSS_COMPILE}strip" --strip-all recrossable
-    patchelf --add-needed librm2fb_client.so recrossable
+    patchelf --add-needed librm2fb_client.so.1 recrossable
 
     convert +set date:create +set date:modify recrossable.{svg,png}
 }

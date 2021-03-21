@@ -37,7 +37,7 @@ build() {
     # Inject rm2fb shim after running strip, otherwise strip removes
     # too much information
     "${CROSS_COMPILE}strip" --strip-all zshelf
-    patchelf --add-needed librm2fb_client.so zshelf
+    patchelf --add-needed librm2fb_client.so.1 zshelf
 
     cd backend
     npm install

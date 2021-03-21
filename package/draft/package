@@ -31,7 +31,7 @@ build() {
     # Inject rm2fb shim
     # (after running strip, otherwise strip removes too much information)
     "${CROSS_COMPILE}strip" --strip-all draft
-    patchelf --add-needed librm2fb_client.so draft
+    patchelf --add-needed librm2fb_client.so.1 draft
 }
 
 package() {

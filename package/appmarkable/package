@@ -29,7 +29,7 @@ build() {
     # (after running strip, otherwise strip removes too much information)
     pushd target/"$_target"/release
     "${CROSS_COMPILE}strip" --strip-all appmarkable
-    patchelf --add-needed librm2fb_client.so appmarkable
+    patchelf --add-needed librm2fb_client.so.1 appmarkable
     popd
 }
 

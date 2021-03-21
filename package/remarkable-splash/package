@@ -25,7 +25,7 @@ build() {
     # Inject rm2fb shim after running strip, otherwise strip removes
     # too much information
     "${CROSS_COMPILE}strip" --strip-all remarkable-splash
-    patchelf --add-needed librm2fb_client.so remarkable-splash
+    patchelf --add-needed librm2fb_client.so.1 remarkable-splash
 }
 
 package() {

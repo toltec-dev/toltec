@@ -29,7 +29,7 @@ build() {
     # (after running strip, otherwise strip removes too much information)
     pushd target/"$_target"/release
     "${CROSS_COMPILE}strip" --strip-all retris
-    patchelf --add-needed librm2fb_client.so retris
+    patchelf --add-needed librm2fb_client.so.1 retris
     popd
 }
 

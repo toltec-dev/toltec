@@ -34,7 +34,7 @@ build() {
     # Inject rm2fb shim
     # (after running strip, otherwise strip removes too much information)
     "${CROSS_COMPILE}strip" --strip-all fingerterm
-    patchelf --add-needed librm2fb_client.so fingerterm
+    patchelf --add-needed librm2fb_client.so.1 fingerterm
 }
 
 package() {
