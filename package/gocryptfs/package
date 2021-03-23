@@ -30,7 +30,7 @@ prepare() {
     # Official build script runs compiled binary to show version.
     # This will cause the build to fail if built on another architecture
     # So the line will be removed here.
-    sed -i "s/^.\/gocryptfs.*//" $srcdir/build.bash
+    sed -i "s/^.\/gocryptfs.*//" "$srcdir"/build.bash
 }
 
 build() {
