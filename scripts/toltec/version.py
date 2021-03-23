@@ -41,10 +41,14 @@ class Version:
         self.epoch = epoch
 
         if _VERSION_CHARS.fullmatch(upstream) is None:
-            raise InvalidVersionError("Invalid chars in upstream version")
+            raise InvalidVersionError(
+                f"Invalid chars in upstream version: '{upstream}'"
+            )
 
         if _VERSION_CHARS.fullmatch(revision) is None:
-            raise InvalidVersionError("Invalid chars in revision")
+            raise InvalidVersionError(
+                f"Invalid chars in revision: '{revision}'"
+            )
 
         self._original: Optional[str] = None
 

@@ -49,6 +49,7 @@ logging.basicConfig(format=LOGGING_FORMAT, level=args.verbose)
 repo = Repo(paths.RECIPE_DIR, paths.REPO_DIR)
 builder = Builder(paths.WORK_DIR, paths.REPO_DIR)
 results = repo.fetch_packages(remote)
+repo.make_index()
 
 fetched = results.fetched
 missing = results.missing
