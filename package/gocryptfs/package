@@ -6,7 +6,7 @@ pkgnames=(gocryptfs)
 pkgdesc="An encrypted overlay filesystem written in Go."
 url="https://nuetzlich.net/gocryptfs/"
 _srcver=2.0-beta2
-pkgver=$_srcver-1
+pkgver="$_srcver"-1
 timestamp=2021-03-22
 section=utils
 maintainer="plan5 <30434574+plan5@users.noreply.github.com>"
@@ -19,7 +19,7 @@ makedepends=(build:git)
 image=golang:v1.5
 
 source=(
-    https://github.com/rfjakob/gocryptfs/archive/v$_srcver.zip
+    https://github.com/rfjakob/gocryptfs/archive/v"$_srcver".zip
 )
 
 sha256sums=(
