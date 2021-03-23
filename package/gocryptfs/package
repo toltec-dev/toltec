@@ -14,9 +14,9 @@ license=MIT
 
 depends=(fuse-utils)
 
-makedepends=(build:golang build:git)
+makedepends=(build:git)
 
-image=base:v1.4
+image=golang:v1.5
 
 source=(
     https://github.com/rfjakob/gocryptfs/archive/$_srcver.zip
