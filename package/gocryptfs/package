@@ -5,7 +5,7 @@
 pkgnames=(gocryptfs)
 pkgdesc="An encrypted overlay filesystem written in Go."
 url="https://nuetzlich.net/gocryptfs/"
-_srcver=v2.0-beta2
+_srcver=2.0-beta2
 pkgver=$_srcver-1
 timestamp=2021-03-22
 section=utils
