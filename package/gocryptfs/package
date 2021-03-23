@@ -14,7 +14,7 @@ license=MIT
 
 depends=(fuse-utils)
 
-makedepends=(build:git)
+makedepends=()
 
 image=golang:v1.5
 
