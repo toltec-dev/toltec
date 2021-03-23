@@ -19,7 +19,7 @@ makedepends=(build:golang build:git)
 image=base:v1.4
 
 source=(
-    https://github.com/rfjakob/gocryptfs/archive/$_srcver.zip
+    https://github.com/rfjakob/gocryptfs/archive/v$_srcver.zip
 )
 
 sha256sums=(
