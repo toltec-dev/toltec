@@ -5,7 +5,7 @@
 pkgnames=(gocryptfs)
 pkgdesc="An encrypted overlay filesystem written in Go."
 url="https://nuetzlich.net/gocryptfs/"
-_srcver=v2.0-beta2
+_srcver=2.0-beta2
 pkgver=$_srcver-1
 timestamp=2021-03-22
 section=utils
@@ -19,7 +19,7 @@ makedepends=(build:git)
 image=golang:v1.5
 
 source=(
-    https://github.com/rfjakob/gocryptfs/archive/$_srcver.zip
+    https://github.com/rfjakob/gocryptfs/archive/v$_srcver.zip
 )
 
 sha256sums=(
@@ -30,7 +30,7 @@ prepare() {
     # Official build script runs compiled binary to show version.
     # This will cause the build to fail if built on another architecture
     # So the line will be removed here.
-    sed -i "s/^.\/gocryptfs.*//" $srcdir/build.bash
+    sed -i "s/^.\/gocryptfs.*//" "$srcdir"/build.bash
 }
 
 build() {
