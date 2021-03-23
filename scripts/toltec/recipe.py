@@ -14,7 +14,8 @@ from typing import Optional
 import os
 import textwrap
 import dateutil.parser
-from . import bash, version
+from .version import Version, Dependency, DependencyKind
+from . import bash
 
 
 class RecipeError(Exception):
@@ -33,15 +34,29 @@ class Source:
 class Recipe:  # pylint:disable=too-many-instance-attributes,disable=too-few-public-methods
     """Load recipes."""
 
-    def __init__(self, name: str, definition: str):
+    @staticmethod
+    def from_file(path: str) -> "Recipe":
+        """
+        Load a recipe from its directory.
+
+        :param path: path to the directory containing the recipe definition
+        :returns: loaded recipe
+        """
+        name = os.path.basename(path)
+        with open(os.path.join(path, "package"), "r") as recipe:
+            return Recipe(name, path, recipe.read())
+
+    def __init__(self, name: str, path: str, definition: str):
         """
         Load a recipe from a Bash source.
 
         :param name: name of the recipe
+        :param path: path to the directory containing the recipe definition
         :param definition: source string of the recipe
         :raises RecipeError: if the recipe contains an error
         """
         self.name = name
+        self.path = path
         variables, functions = bash.get_declarations(definition)
 
         # Original declarations of standard fields and functions
@@ -64,8 +79,7 @@ class Recipe:  # pylint:disable=too-many-instance-attributes,disable=too-few-pub
             self.timestamp = dateutil.parser.isoparse(timestamp_str)
         except ValueError as err:
             raise RecipeError(
-                "Field 'timestamp' does not contain a \
-valid ISO-8601 date"
+                "Field 'timestamp' does not contain a valid ISO-8601 date"
             ) from err
 
         self.maintainer = _pop_field_string(variables, "maintainer")
@@ -88,10 +102,19 @@ valid ISO-8601 date"
 
         if len(sources) != len(sha256sums):
             raise RecipeError(
-                f"Expected the same number of sources \
-and checksums, got {len(sources)} source(s) and \
-{len(sha256sums)} checksum(s)"
+                f"Expected the same number of sources and checksums, got \
+{len(sources)} source(s) and {len(sha256sums)} checksum(s)"
             )
+
+        depends_raw = _pop_field_indexed(variables, "depends", [])
+        variables["depends"] = depends_raw
+
+        makedepends_raw = _pop_field_indexed(variables, "makedepends", [])
+        self.variables["makedepends"] = makedepends_raw
+
+        self.makedepends = [
+            Dependency.parse(dep or "") for dep in depends_raw + makedepends_raw
+        ]
 
         self.sources = []
 
@@ -108,14 +131,14 @@ and checksums, got {len(sources)} source(s) and \
         """Parse and check standard functions."""
         if self.image and "build" not in functions:
             raise RecipeError(
-                "Missing build() function for a recipe \
-which declares a build image"
+                "Missing build() function for a recipe which declares a \
+build image"
             )
 
         if not self.image and "build" in functions:
             raise RecipeError(
-                "Missing image declaration for a recipe \
-which has a build() step"
+                "Missing image declaration for a recipe which has a \
+build() step"
             )
 
         self.functions["prepare"] = functions.pop("prepare", "")
@@ -141,8 +164,8 @@ which has a build() step"
             for pkg_name in pkgnames:
                 if pkg_name not in functions:
                     raise RecipeError(
-                        "Missing required function \
-{pkg_name}() for corresponding package"
+                        "Missing required function {pkg_name}() for \
+corresponding package"
                     )
 
                 pkg_def = functions.pop(pkg_name)
@@ -160,13 +183,6 @@ which has a build() step"
 
             for pkg_name, (pkg_vars, pkg_funcs) in pkg_decls.items():
                 self.packages[pkg_name] = Package(self, pkg_vars, pkg_funcs)
-
-    @staticmethod
-    def from_file(path: str) -> "Recipe":
-        """Load a recipe from a file."""
-        name = os.path.basename(path)
-        with open(os.path.join(path, "package"), "r") as recipe:
-            return Recipe(name, recipe.read())
 
 
 class Package:  # pylint:disable=too-many-instance-attributes
@@ -203,7 +219,7 @@ class Package:  # pylint:disable=too-many-instance-attributes
 
         pkgver_str = _pop_field_string(variables, "pkgver")
         self.variables["pkgver"] = pkgver_str
-        self.version = version.Version.parse(pkgver_str)
+        self.version = Version.parse(pkgver_str)
 
         self.arch = _pop_field_string(variables, "arch", "armv7-3.2")
         self.variables["arch"] = self.arch
@@ -220,18 +236,39 @@ class Package:  # pylint:disable=too-many-instance-attributes
         self.license = _pop_field_string(variables, "license")
         self.variables["license"] = self.license
 
-        self.depends = _pop_field_indexed(variables, "depends", [])
-        self.variables["depends"] = self.depends
+        depends_raw = _pop_field_indexed(variables, "depends", [])
+        self.variables["depends"] = depends_raw
+        self.depends = []
 
-        self.conflicts = _pop_field_indexed(variables, "conflicts", [])
-        self.variables["conflicts"] = self.conflicts
+        for dep_raw in depends_raw:
+            dep = Dependency.parse(dep_raw or "")
+
+            if dep.kind != DependencyKind.Host:
+                raise RecipeError(
+                    "Only host packages are supported in the 'depends' field"
+                )
+
+            self.depends.append(dep)
+
+        conflicts_raw = _pop_field_indexed(variables, "conflicts", [])
+        self.variables["conflicts"] = conflicts_raw
+        self.conflicts = []
+
+        for conflict_raw in conflicts_raw:
+            conflict = Dependency.parse(conflict_raw or "")
+
+            if dep.kind != DependencyKind.Host:
+                raise RecipeError(
+                    "Only host packages are supported in the 'conflicts' field"
+                )
+
+            self.conflicts.append(conflict)
 
     def _load_functions(self, functions: bash.Functions) -> None:
         """Parse and check standard functions."""
         if "package" not in functions:
             raise RecipeError(
-                f"Missing required function package() \
-for package {self.name}"
+                f"Missing required function package() for package {self.name}"
             )
 
         self.functions["package"] = functions.pop("package")
@@ -291,14 +328,14 @@ custom functions with '_'"
         if self.depends:
             control += (
                 "Depends: "
-                + ", ".join(item for item in self.depends if item)
+                + ", ".join(dep.to_debian() for dep in self.depends if dep)
                 + "\n"
             )
 
         if self.conflicts:
             control += (
                 "Conflicts: "
-                + ", ".join(item for item in self.conflicts if item)
+                + ", ".join(dep.to_debian() for dep in self.conflicts if dep)
                 + "\n"
             )
 
