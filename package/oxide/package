@@ -35,7 +35,7 @@ fret() {
     pkgdesc="Take screenshots"
     url=https://github.com/Eeems/oxide/tree/master/applications/screenshot-tool
     section="utils"
-    installdepends=(display "tarnish=$pkgver")
+    installdepends=("tarnish=$pkgver")
 
     package() {
         install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/release/opt/bin/fret
@@ -79,7 +79,7 @@ tarnish() {
     pkgdesc="Service managing power states, connectivity and buttons"
     url=https://github.com/Eeems/oxide/tree/master/applications/system-service
     section="devel"
-    installdepends=(xochitl)
+    installdepends=(display xochitl)
 
     package() {
         install -D -m 644 -t "$pkgdir"/etc/dbus-1/system.d "$srcdir"/release/etc/dbus-1/system.d/codes.eeems.oxide.conf
