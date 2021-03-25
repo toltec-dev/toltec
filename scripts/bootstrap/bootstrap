@@ -21,11 +21,8 @@ set -eE
 [[ -z $wget_path ]] && wget_path=/home/root/.local/bin/wget
 
 # Path for the systemd unit that mounts Entware to /opt
-[[ -z $old_systemd_opt_mount_path ]] && old_systemd_opt_mount_path=/etc/systemd/system/opt.mount
-[[ -z $systemd_opt_mount_path ]] && systemd_opt_mount_path=/lib/systemd/system/opt.mount
-
-# Path for the systemd unit that mounts /opt/share/zoneinfo to /usr/share/zoneinfo
-[[ -z $systemd_timezone_mount_path ]] && systemd_timezone_mount_path=/lib/systemd/system/usr-share-zoneinfo.mount
+[[ -z $old_systemd_mount_path ]] && old_systemd_mount_path=/etc/systemd/system/opt.mount
+[[ -z $systemd_mount_path ]] && systemd_mount_path=/lib/systemd/system/opt.mount
 
 # Path where the actual Entware distribution resides (will be mounted to /opt)
 [[ -z $entware_path ]] && entware_path=/home/root/.entware
@@ -68,15 +65,9 @@ error-cleanup() {
         rm -rf "$entware_path"
     fi
 
-    if [[ -f $systemd_opt_mount_path ]]; then
-        systemctl disable --now "$(basename "$systemd_opt_mount_path")" 2> /dev/null
-        rm "$systemd_opt_mount_path"
-        systemctl daemon-reload
-    fi
-
-    if [[ -f $systemd_timezone_mount_path ]]; then
-        systemctl disable --now "$(basename "$systemd_timezone_mount_path")" 2> /dev/null
-        rm "$systemd_timezone_mount_path"
+    if [[ -f $systemd_mount_path ]]; then
+        systemctl disable --now opt.mount 2> /dev/null
+        rm "$systemd_mount_path"
         systemctl daemon-reload
     fi
 
@@ -128,20 +119,20 @@ entware-mount() {
     mkdir -p /opt
     mkdir -p "$entware_path"
 
-    if [[ -f $old_systemd_opt_mount_path ]] && [[ ! -f $systemd_opt_mount_path ]]; then
+    if [[ -f $old_systemd_mount_path ]] && [[ ! -f $systemd_mount_path ]]; then
         # The user was probably using https://github.com/Evidlo/remarkable_entware
         # before switching to toltec. Removing old .mount file to prevent duplicate files
         log "Updating opt.mount location"
 
-        if systemctl -q is-enabled "$(basename "$old_systemd_opt_mount_path")"; then
+        if systemctl -q is-enabled opt.mount; then
             # Remove path to old file if still symlinked
-            systemctl disable "$(basename "$old_systemd_opt_mount_path")"
+            systemctl disable opt.mount
         fi
-        rm "$old_systemd_opt_mount_path"
+        rm $old_systemd_mount_path
     fi
 
     # Create systemd mount unit to mount over /opt on reboot
-    cat > "$systemd_opt_mount_path" << UNIT
+    cat > "$systemd_mount_path" << UNIT
 [Unit]
 Description=Bind mount Entware over /opt
 DefaultDependencies=no
@@ -159,7 +150,7 @@ WantedBy=local-fs.target
 UNIT
 
     systemctl daemon-reload
-    systemctl enable --now "$(basename "$systemd_opt_mount_path")" 2> /dev/null
+    systemctl enable --now opt.mount 2> /dev/null
 }
 
 # Install Entware to /opt
@@ -230,32 +221,6 @@ entware-install() {
     if [[ -f /etc/localtime ]]; then
         ln -sf /etc/localtime /opt/etc/localtime
     fi
-}
-
-# Mount /opt/share/zoneinfo to /usr/share/zoneinfo
-timezone-mount() {
-    mkdir -p "$entware_path"/share/zoneinfo
-
-    # Create systemd mount unit to mount over /opt on reboot
-    cat > "$systemd_timezone_mount_path" << UNIT
-[Unit]
-Description=Bind mount /opt/share/zoneinfo over /usr/share/zoneinfo
-DefaultDependencies=no
-Conflicts=umount.target
-Before=local-fs.target umount.target
-
-[Mount]
-What=/home/root/.entware/share/zoneinfo
-Where=/usr/share/zoneinfo
-Type=none
-Options=bind
-
-[Install]
-WantedBy=local-fs.target
-UNIT
-
-    systemctl daemon-reload
-    systemctl enable --now "$(basename "$systemd_timezone_mount_path")" 2> /dev/null
 }
 
 # Add Toltec configuration to an existing Entware install
@@ -370,14 +335,11 @@ main() {
         else
             log "Re-enabling existing Entware install"
             entware-mount
-            timezone-mount
         fi
     else
         log "Creating $entware_path and mounting to /opt"
         entware-mount
         entware-install
-        log "Mounting timezone info over /usr/share/zoneinfo"
-        timezone-mount
     fi
 
     toltec-install "$@"
