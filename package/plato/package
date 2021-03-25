@@ -10,9 +10,9 @@ timestamp=2021-01-13T23:43Z
 section="readers"
 maintainer="Linus K. <linus@cosmos-ink.net>"
 license=AGPL-3.0-or-later
-installdepends=(display rm2fb-shim)
-makedepends=(build:jq build:patchelf build:unzip build:wget)
-flags=(nostrip)
+installdepends=(display)
+makedepends=(build:jq build:unzip build:wget)
+flags=(patch_rm2fb)
 
 image=rust:v1.4
 source=("https://github.com/LinusCDE/plato/archive/${pkgver%-*}-rm-release-7.zip")
@@ -36,11 +36,6 @@ build() {
     ./clean.sh
     ./build.sh
     ./dist.sh
-
-    # Inject rm2fb shim
-    # (after running strip, otherwise strip removes too much information)
-    "${CROSS_COMPILE}strip" --strip-all dist/plato
-    patchelf --add-needed librm2fb_client.so.1 dist/plato
 }
 
 package() {

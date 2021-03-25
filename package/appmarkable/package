@@ -10,30 +10,20 @@ timestamp=2021-03-10T18:36Z
 section="devel"
 maintainer="Linus K. <linus@cosmos-ink.net>"
 license=MIT
-installdepends=(display rm2fb-shim)
-makedepends=(build:patchelf)
-flags=(nostrip)
+installdepends=(display)
+flags=(patch_rm2fb)
 
 image=rust:v1.4
 source=(https://github.com/LinusCDE/appmarkable/archive/c44ee87ea2b1f1e41c9592476c076150c9a1acf4.zip)
 sha256sums=(76e151aeae0f18b206dd3c6258bf74bcb5256ee2f803e1ed2073278831158f60)
 
-_target="armv7-unknown-linux-gnueabihf"
-
 build() {
     # Fall back to system-wide config
     rm .cargo/config
     cargo build --release --bin appmarkable
-
-    # Inject rm2fb shim
-    # (after running strip, otherwise strip removes too much information)
-    pushd target/"$_target"/release
-    "${CROSS_COMPILE}strip" --strip-all appmarkable
-    patchelf --add-needed librm2fb_client.so.1 appmarkable
-    popd
 }
 
 package() {
     install -D -m 755 -t "$pkgdir"/opt/bin \
-        "$srcdir"/target/"$_target"/release/appmarkable
+        "$srcdir"/target/armv7-unknown-linux-gnueabihf/release/appmarkable
 }

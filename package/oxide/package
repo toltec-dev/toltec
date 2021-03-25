@@ -7,8 +7,7 @@ pkgver=2.1.2-2
 timestamp=2021-01-07T03:28Z
 maintainer="Eeems <eeems@eeems.email>"
 license=MIT
-makedepends=(build:patchelf)
-flags=(nostrip)
+flags=(patch_rm2fb)
 
 image=qt:v1.4
 source=("https://github.com/Eeems/oxide/archive/v${pkgver%-*}.tar.gz")
@@ -18,20 +17,13 @@ build() {
     find . -name "*.pro" -type f -print0 \
         | xargs -0 sed -i 's/linux-oe-g++/linux-arm-remarkable-g++/g'
     make release
-
-    # Inject rm2fb shim
-    # (after running strip, otherwise strip removes too much information)
-    for bin in release/opt/bin/{erode,oxide,tarnish,decay}; do
-        "${CROSS_COMPILE}strip" --strip-all "$bin"
-        patchelf --add-needed librm2fb_client.so.1 "$bin"
-    done
 }
 
 erode() {
     pkgdesc="Task manager"
     url=https://github.com/Eeems/oxide/tree/master/applications/process-manager
     section="admin"
-    installdepends=(display rm2fb-shim "tarnish=$pkgver")
+    installdepends=(display "tarnish=$pkgver")
 
     package() {
         install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/release/opt/bin/erode
@@ -43,7 +35,7 @@ fret() {
     pkgdesc="Take screenshots"
     url=https://github.com/Eeems/oxide/tree/master/applications/screenshot-tool
     section="utils"
-    installdepends=(display rm2fb-shim "tarnish=$pkgver")
+    installdepends=(display "tarnish=$pkgver")
 
     package() {
         install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/release/opt/bin/fret
@@ -55,7 +47,7 @@ oxide() {
     pkgdesc="Launcher application"
     url=https://github.com/Eeems/oxide/tree/master/applications/launcher
     section="launchers"
-    installdepends=(display rm2fb-shim "erode=$pkgver" "fret=$pkgver" "tarnish=$pkgver" "rot=$pkgver" "decay=$pkgver")
+    installdepends=(display "erode=$pkgver" "fret=$pkgver" "tarnish=$pkgver" "rot=$pkgver" "decay=$pkgver")
 
     package() {
         install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/release/opt/bin/oxide
@@ -116,7 +108,7 @@ decay() {
     pkgdesc="Lockscreen application"
     url=https://github.com/Eeems/oxide/tree/master/applications/lockscreen
     section="utils"
-    installdepends=(display rm2fb-shim "tarnish=$pkgver")
+    installdepends=(display "tarnish=$pkgver")
 
     package() {
         install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/release/opt/bin/decay

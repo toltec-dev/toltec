@@ -181,8 +181,14 @@ It must be specified if and only if you declare a [`build()` function](#build-fu
     </tr>
 </table>
 
-Set of flags that affect the build process.
-Currently, the only available flag is `nostrip`, which disables the automatic removal of unneeded symbols from binaries.
+A set of flags that guard special behaviors of the build system.
+The following flags are available:
+
+* `nostrip`: Disables the automatic removal of unneeded symbols from binaries and shared libraries.
+* `patch_rm2fb`: Patches all the generated binaries to add a dynamic dependency on the [remarkable2-framebuffer](https://github.com/ddvk/remarkable2-framebuffer) client shim.
+  Adds an [install-time dependency](#installdepends-field) to all the produced packages on the `rm2fb-shim` package.
+  This is an easy way to make apps designed for the reMarkable 1 work on the reMarkable 2 with minimal changes.
+  Note: Only binaries that contain the `/dev/fb0` string in their read-only data segment will be patched.
 
 #### `makedepends`
 

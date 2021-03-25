@@ -4,7 +4,7 @@
 
 import shlex
 import subprocess
-from typing import Dict, Generator, List, Optional, Tuple, Union
+from typing import Dict, Generator, Iterable, List, Optional, Tuple, Union
 from docker.client import DockerClient
 
 AssociativeArray = Dict[str, str]
@@ -320,6 +320,38 @@ def _parse_func(lexer: shlex.shlex) -> Tuple[int, int]:
 
     end_byte = lexer.instream.tell() - 1
     return start_byte, end_byte
+
+
+def for_file_type(
+    root: str, patterns: Iterable[str], commands: Iterable[str]
+) -> str:
+    """
+    Build a shell line that runs the given commands for each file matching
+    the given file type.
+
+    :param root: root directory under which to search for matching files
+    :param patterns: patterns of allowed file type, matched against the
+        output of the `file` command - you can use any of the basic shell glob
+        operators here, i.e. *, ? and [] - see
+        <https://www.gnu.org/software/bash/manual/html_node/Pattern-Matching>
+    :param commands: list of commands to execute for each file found to
+        match the pattern - the {} placeholder will be replaced with the
+        file name
+    :returns: constructed shell line
+    """
+    result = f'find "{root}"'
+
+    # Filter files based on the given MIME type pattern
+    result += (
+        ' -exec sh -c \'case "$(file --brief -- "$0")" in'
+        + "".join(f" {pattern}) true;;" for pattern in patterns)
+        + " *) false;; esac' {} \\;"
+    )
+
+    for command in commands:
+        result += f" -exec {command} \\;"
+
+    return result
 
 
 def run_script(variables: Variables, script: str) -> LogGenerator:

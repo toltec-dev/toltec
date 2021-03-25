@@ -6,9 +6,8 @@ pkgnames=(bufshot genie harmony iago lamp mines nao remux simple)
 timestamp=2021-02-24T13:20-08:00
 maintainer="raisjn <of.raisjn@gmail.com>"
 license=MIT
-installdepends=(display rm2fb-shim)
-makedepends=(build:patchelf)
-flags=(nostrip)
+installdepends=(display)
+flags=(patch_rm2fb)
 
 image=python:v1.1
 source=(
@@ -28,13 +27,6 @@ build() {
     pip3 install okp
     patch -p1 < 2021_03_05_genie.diff
     make
-
-    # Inject rm2fb shim
-    # (after running strip, otherwise strip removes too much information)
-    for bin in src/build/{bufshot,genie,harmony,iago,lamp,mines,remux,simple}; do
-        "${CROSS_COMPILE}strip" --strip-all "$bin"
-        patchelf --add-needed librm2fb_client.so.1 "$bin"
-    done
 }
 
 bufshot() {

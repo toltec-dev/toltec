@@ -10,8 +10,9 @@ packages (in the latter case, it is called a split package).
 
 from dataclasses import dataclass
 from datetime import datetime
+from enum import auto, Flag
 from itertools import product
-from typing import Dict, List, Optional
+from typing import Dict, NamedTuple, Optional, Set
 import os
 import textwrap
 import dateutil.parser
@@ -21,15 +22,6 @@ from . import bash
 
 class RecipeError(Exception):
     """Raised when a recipe contains an error."""
-
-
-@dataclass
-class Source:
-    """Source item needed to build a recipe."""
-
-    url: str
-    checksum: str
-    noextract: bool
 
 
 @dataclass
@@ -138,6 +130,26 @@ class GenericRecipe:  # pylint:disable=too-many-instance-attributes
         )
 
 
+class Source(NamedTuple):
+    """Source item needed to build a recipe."""
+
+    url: str
+    checksum: str
+    noextract: bool
+
+
+class BuildFlags(Flag):
+    """Flags that guard special behaviors of the build system."""
+
+    NONE = auto()
+
+    # Disable the automatic stripping of generated binaries
+    NOSTRIP = auto()
+
+    # Patch all generated binaries with the rm2fb client shim
+    PATCH_RM2FB = auto()
+
+
 @dataclass
 class Recipe:  # pylint:disable=too-many-instance-attributes
     """Recipe specialized for a target architecture."""
@@ -148,12 +160,12 @@ class Recipe:  # pylint:disable=too-many-instance-attributes
     variables: bash.Variables
     custom_variables: bash.Variables
     timestamp: datetime
-    sources: List[Source]
-    makedepends: List[Dependency]
+    sources: Set[Source]
+    makedepends: Set[Dependency]
     maintainer: str
     image: str
     arch: str
-    flags: bash.IndexedArray
+    flags: BuildFlags
 
     functions: bash.Functions
     custom_functions: bash.Functions
@@ -191,6 +203,14 @@ class Recipe:  # pylint:disable=too-many-instance-attributes
 
     def _load_fields(self, variables: bash.Variables) -> None:
         """Parse and check standard fields."""
+        flags = _pop_field_indexed(variables, "flags", [])
+        self.variables["flags"] = flags
+        self.flags = BuildFlags.NONE
+
+        for flag in flags:
+            assert flag is not None
+            self.flags |= getattr(BuildFlags, flag.upper())
+
         timestamp_str = _pop_field_string(variables, "timestamp")
         self.variables["timestamp"] = timestamp_str
 
@@ -216,10 +236,10 @@ class Recipe:  # pylint:disable=too-many-instance-attributes
 {len(sources)} source(s) and {len(sha256sums)} checksum(s)"
             )
 
-        self.sources = []
+        self.sources = set()
 
         for source, checksum in zip(sources, sha256sums):
-            self.sources.append(
+            self.sources.add(
                 Source(
                     url=source or "",
                     checksum=checksum or "SKIP",
@@ -229,9 +249,9 @@ class Recipe:  # pylint:disable=too-many-instance-attributes
 
         makedepends_raw = _pop_field_indexed(variables, "makedepends", [])
         self.variables["makedepends"] = makedepends_raw
-        self.makedepends = [
+        self.makedepends = {
             Dependency.parse(dep or "") for dep in makedepends_raw
-        ]
+        }
 
         self.maintainer = _pop_field_string(variables, "maintainer")
         self.variables["maintainer"] = self.maintainer
@@ -241,9 +261,6 @@ class Recipe:  # pylint:disable=too-many-instance-attributes
 
         self.arch = _pop_field_string(variables, "arch")
         self.variables["arch"] = self.arch
-
-        self.flags = _pop_field_indexed(variables, "flags", [])
-        self.variables["flags"] = self.flags
 
     def _load_functions(self, functions: bash.Functions) -> None:
         """Parse and check standard functions."""
@@ -323,9 +340,9 @@ class Package:  # pylint:disable=too-many-instance-attributes
     url: str
     section: str
     license: str
-    installdepends: List[Dependency]
-    conflicts: List[Dependency]
-    replaces: List[Dependency]
+    installdepends: Set[Dependency]
+    conflicts: Set[Dependency]
+    replaces: Set[Dependency]
 
     functions: bash.Functions
     custom_functions: bash.Functions
@@ -376,7 +393,7 @@ class Package:  # pylint:disable=too-many-instance-attributes
         for field in ("installdepends", "conflicts", "replaces"):
             field_raw = _pop_field_indexed(variables, field, [])
             self.variables[field] = field_raw
-            setattr(self, field, [])
+            setattr(self, field, set())
 
             for dep_raw in field_raw:
                 assert dep_raw is not None
@@ -388,7 +405,15 @@ class Package:  # pylint:disable=too-many-instance-attributes
 '{field}' field"
                     )
 
-                getattr(self, field).append(dep)
+                getattr(self, field).add(dep)
+
+        if self.parent.flags & BuildFlags.PATCH_RM2FB:
+            self.installdepends.add(
+                Dependency(
+                    DependencyKind.Host,
+                    "rm2fb-shim",
+                )
+            )
 
     def _load_functions(self, functions: bash.Functions) -> None:
         """Parse and check standard functions."""
