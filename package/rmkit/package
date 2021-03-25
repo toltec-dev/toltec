@@ -3,34 +3,31 @@
 # SPDX-License-Identifier: MIT
 
 pkgnames=(bufshot genie harmony iago lamp mines nao remux simple)
-timestamp=2021-02-24T13:20-08:00
+timestamp=2021-03-14T14:20-08:00
 maintainer="raisjn <of.raisjn@gmail.com>"
 license=MIT
 
 image=python:v1.1
 source=(
-    https://github.com/rmkit-dev/rmkit/archive/681354803a158eca9c267b1f1976affda391bdff.zip
+    https://github.com/rmkit-dev/rmkit/archive/a99b2f70c72539bedc1d201e3899da6e19c197da.zip
     remux.service
     genie.service
-    2021_03_05_genie.diff
 )
 sha256sums=(
-    6e2b1fb7fa52f6412268b1d063e9dd117d1913411fe26627c34cf3d02a836de5
-    SKIP
+    db54abfa385017b7d60b1d332efa695756f61caa81644fdadeb4c1b26f8bf923
     SKIP
     SKIP
 )
 
 build() {
     pip3 install okp
-    patch -p1 < 2021_03_05_genie.diff
     make
 }
 
 bufshot() {
     pkgdesc="program for saving the framebuffer as a png"
     url="https://github.com/rmkit-dev/rmkit/tree/master/src/bufshot"
-    pkgver=0.1.0-2
+    pkgver=0.1.0-3
     section="utils"
 
     package() {
@@ -41,7 +38,7 @@ bufshot() {
 genie() {
     pkgdesc="Gesture engine that connects commands to gestures"
     url="https://rmkit.dev/apps/genie"
-    pkgver=0.1.4-2
+    pkgver=0.1.5-1
     section="utils"
 
     package() {
@@ -68,7 +65,7 @@ genie() {
 harmony() {
     pkgdesc="Procedural sketching app"
     url="https://rmkit.dev/apps/harmony"
-    pkgver=0.1.2-1
+    pkgver=0.1.3-1
     section="drawing"
 
     package() {
@@ -85,7 +82,7 @@ harmony() {
 iago() {
     pkgdesc="overlay for drawing shapes via stroke injection"
     url="https://rmkit.dev/apps/iago"
-    pkgver=0.1.0-1
+    pkgver=0.1.0-2
     section="utils"
     depends=("lamp")
 
@@ -97,7 +94,7 @@ iago() {
 lamp() {
     pkgdesc="config based stroke injection utility"
     url="https://rmkit.dev/apps/lamp"
-    pkgver=0.1.0-1
+    pkgver=0.1.0-2
     section="utils"
 
     package() {
@@ -108,7 +105,7 @@ lamp() {
 mines() {
     pkgdesc="Mine detection game"
     url="https://rmkit.dev/apps/minesweeper"
-    pkgver=0.1.2-1
+    pkgver=0.1.2-2
     section="games"
 
     package() {
@@ -135,7 +132,7 @@ nao() {
 remux() {
     pkgdesc="Launcher that supports multi-tasking applications"
     url="https://rmkit.dev/apps/remux"
-    pkgver=0.1.8-1
+    pkgver=0.1.9-1
     section="launchers"
 
     package() {
@@ -167,7 +164,7 @@ remux() {
 simple() {
     pkgdesc="Simple app script for writing scripted applications"
     url="https://rmkit.dev/apps/sas"
-    pkgver=0.1.3-1
+    pkgver=0.1.4-1
     section="devel"
 
     package() {
