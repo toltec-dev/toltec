@@ -421,7 +421,7 @@ source file '{source.url}', got {req.status_code}"
                         os.path.relpath(file_path, src_dir),
                     )
 
-        # Add a dynamic dependency on rm2fb-shim
+        # Add a dynamic dependency on the rm2fb client shim
         if recipe.flags & BuildFlags.PATCH_RM2FB and cand.patch_rm2fb:
             script = (
                 [
@@ -439,7 +439,7 @@ source file '{source.url}', got {req.status_code}"
                 ]
             )
 
-            self.adapter.debug("Binaries to be patched with rm2fb shim:")
+            self.adapter.debug("Binaries to be patched with rm2fb client:")
 
             for file_path in cand.patch_rm2fb:
                 self.adapter.debug(

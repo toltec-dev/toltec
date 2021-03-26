@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: MIT
 
 archs=(rm1 rm2)
-pkgnames=(display rm2fb-shim)
+pkgnames=(display rm2fb-client)
 timestamp=2021-02-21T01:41+00:00
 maintainer="raisjn <of.raisjn@gmail.com>"
 license=MIT
@@ -15,7 +15,7 @@ image=qt:v1.4
 source=(
     https://github.com/ddvk/remarkable2-framebuffer/archive/aa70ce37c71f84b91434f5c469fa71f4b1bb328c.zip
     rm2fb.service
-    rm2fb-shim
+    rm2fb-client
 )
 sha256sums=(
     76f1c0b72260a9743f3e008100ffddf1f89cd44c6f0376d906e98ae66eaea716
@@ -83,7 +83,7 @@ display() {
     }
 }
 
-rm2fb-shim() {
+rm2fb-client() {
     pkgdesc="Shim to make reMarkable 1 apps work on reMarkable 2"
     installdepends=(display)
     conflicts=(rm2fb)
@@ -99,6 +99,6 @@ rm2fb-shim() {
             ln -s "$libname" "$pkgdir/$dest/${libname%.*.*}"
         done
 
-        install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/rm2fb-shim
+        install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/rm2fb-client
     }
 }

@@ -411,7 +411,7 @@ class Package:  # pylint:disable=too-many-instance-attributes
             self.installdepends.add(
                 Dependency(
                     DependencyKind.Host,
-                    "rm2fb-shim",
+                    "rm2fb-client",
                 )
             )
 

@@ -10,7 +10,7 @@ timestamp=2021-03-10T13:01Z
 section="readers"
 maintainer="Mattéo Delabre <spam@delab.re>"
 license=Apache-2.0
-installdepends=(display rm2fb-shim)
+installdepends=(display rm2fb-client)
 
 source=(
     xochitl
