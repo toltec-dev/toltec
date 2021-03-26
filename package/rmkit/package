@@ -12,6 +12,7 @@ flags=(patch_rm2fb)
 image=python:v1.1
 source=(
     https://github.com/rmkit-dev/rmkit/archive/a99b2f70c72539bedc1d201e3899da6e19c197da.zip
+    patch-remux-duplicate-xochitl.diff
     remux.service
     genie.service
 )
@@ -19,7 +20,13 @@ sha256sums=(
     db54abfa385017b7d60b1d332efa695756f61caa81644fdadeb4c1b26f8bf923
     SKIP
     SKIP
+    SKIP
 )
+
+prepare() {
+    patch -p1 -d"$srcdir" < "$srcdir"/patch-remux-duplicate-xochitl.diff
+    rm "$srcdir"/patch-remux-duplicate-xochitl.diff
+}
 
 build() {
     pip3 install okp
