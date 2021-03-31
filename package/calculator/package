@@ -10,6 +10,7 @@ timestamp=2020-08-20T12:28Z
 section="math"
 maintainer="Mattéo Delabre <spam@delab.re>"
 license=GPL-3.0-or-later
+makedepends=(build:imagemagick build:librsvg2-bin)
 
 image=qt:v1.1
 source=(
@@ -24,14 +25,6 @@ sha256sums=(
 )
 
 build() {
-    # Get needed build packages
-    export DEBIAN_FRONTEND=noninteractive
-    apt-get update -y
-    apt-get install -y \
-        --no-install-recommends \
-        -o Dpkg::Options::="--force-confdef" \
-        imagemagick librsvg2-bin
-
     qmake Calculator.pro
     make
 

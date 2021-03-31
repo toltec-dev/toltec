@@ -1,0 +1,62 @@
+#!/usr/bin/env bash
+# Copyright (c) 2021 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgnames=(libvncserver libvncclient libvncserver-dev)
+pkgdesc="C libraries for implementing VNC servers or clients"
+url=https://libvnc.github.io
+pkgver=0.9.13-1
+timestamp=2020-06-13T19:19:11Z
+section="devel"
+maintainer="Mattéo Delabre <spam@delab.re>"
+license=GPL-2.0-or-later
+
+image=base:v1.3.1
+source=("https://github.com/LibVNC/libvncserver/archive/LibVNCServer-${pkgver%-*}.zip")
+sha256sums=(d209d70998a9b98f9120eeb82df7a17767796c477eaa8297e0a55856a977c54f)
+
+build() {
+    cmake -B build \
+        -DCMAKE_TOOLCHAIN_FILE="/usr/share/cmake/$CHOST.cmake" \
+        -DCMAKE_INSTALL_PREFIX="/opt"
+    cmake --build build
+    cmake --build build --target install -- DESTDIR=../install
+}
+
+libvncserver() {
+    pkgdesc="$pkgdesc - server library"
+
+    package() {
+        install -d "$pkgdir"/opt/lib "$pkgdir"/usr/lib
+        cp --no-dereference "$srcdir"/install/opt/lib/libvncserver*.so* "$pkgdir"/opt/lib
+
+        for file in "$pkgdir"/opt/lib/lib*.so*; do
+            base="${file#"$pkgdir"}"
+            ln -s "$base" "${file/\/opt/\/usr}"
+        done
+    }
+}
+
+libvncclient() {
+    pkgdesc="$pkgdesc - client library"
+
+    package() {
+        install -d "$pkgdir"/opt/lib "$pkgdir"/usr/lib
+        cp --no-dereference "$srcdir"/install/opt/lib/libvncclient*.so* "$pkgdir"/opt/lib
+
+        for file in "$pkgdir"/opt/lib/lib*.so*; do
+            base="${file#"$pkgdir"}"
+            ln -s "$base" "${file/\/opt/\/usr}"
+        done
+    }
+}
+
+libvncserver-dev() {
+    pkgdesc="$pkgdesc - development files"
+
+    package() {
+        install -d "$pkgdir"/opt/lib
+        cp -r "$srcdir"/install/opt/lib/pkgconfig "$pkgdir"/opt/lib
+        cp -r "$srcdir"/install/opt/include "$pkgdir"/opt
+    }
+}

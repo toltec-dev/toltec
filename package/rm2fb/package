@@ -1,26 +1,26 @@
 #!/usr/bin/env bash
-# Copyright (c) 2020 The Toltec Contributors
+# Copyright (c) 2021 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
 pkgnames=(rm2fb)
-timestamp=2020-10-10T01:41+00:00
+timestamp=2021-02-21T01:41+00:00
 maintainer="raisjn <of.raisjn@gmail.com>"
 license=MIT
 pkgdesc="Interface to the reMarkable 2 framebuffer"
 url="https://github.com/ddvk/remarkable2-framebuffer"
-pkgver=1.0.0-7
+pkgver=1.0.1-1
 section="devel"
 
 image=qt:v1.1
 source=(
-    https://github.com/ddvk/remarkable2-framebuffer/archive/cd2766864c7985fa50cdf85f4ae0a411d7ca4e56.zip
+    https://github.com/ddvk/remarkable2-framebuffer/archive/aa70ce37c71f84b91434f5c469fa71f4b1bb328c.zip
     rm2fb.conf
     rm2fb.service
     rm2fb-server
     rm2fb-client
 )
 sha256sums=(
-    c274c458270eec28950834bd28ff069a0af65e40fcc288a8ff28235001e8914f
+    76f1c0b72260a9743f3e008100ffddf1f89cd44c6f0376d906e98ae66eaea716
     SKIP
     SKIP
     SKIP
@@ -34,8 +34,10 @@ build() {
 
 package() {
     mkdir -p "$pkgdir"/opt/lib "$pkgdir"/opt/etc "$pkgdir"/opt/bin
-    install -D -m 755 "$srcdir"/src/client/librm2fb_client.so.${pkgver%-*} "$pkgdir"/opt/lib/
-    install -D -m 755 "$srcdir"/src/server/librm2fb_server.so.${pkgver%-*} "$pkgdir"/opt/lib/
+    install -D -m 755 "$srcdir/src/client/librm2fb_client.so.${pkgver%-*}" "$pkgdir"/opt/lib/
+    ln -s "librm2fb_client.so.${pkgver%-*}" "$pkgdir/opt/lib/librm2fb_client.so.${pkgver%.*.*-*}"
+    install -D -m 755 "$srcdir/src/server/librm2fb_server.so.${pkgver%-*}" "$pkgdir"/opt/lib/
+    ln -s "librm2fb_server.so.${pkgver%-*}" "$pkgdir/opt/lib/librm2fb_server.so.${pkgver%.*.*-*}"
     install -D -m 755 "$srcdir"/rm2fb-server "$pkgdir"/opt/bin/
     install -D -m 755 "$srcdir"/rm2fb-client "$pkgdir"/opt/bin/
     install -D -m 644 "$srcdir"/rm2fb.conf "$pkgdir"/etc/systemd/system.conf.d/01-rm2fb.conf
