@@ -8,7 +8,7 @@ maintainer="raisjn <of.raisjn@gmail.com>"
 license=MIT
 pkgdesc="Interface to the reMarkable 2 framebuffer"
 url="https://github.com/ddvk/remarkable2-framebuffer"
-pkgver=1.0.1-1
+pkgver=1.0.1-2
 section="devel"
 
 image=qt:v1.1
@@ -18,9 +18,11 @@ source=(
     rm2fb.service
     rm2fb-server
     rm2fb-client
+    overwrite-server-argv0.patch
 )
 sha256sums=(
     76f1c0b72260a9743f3e008100ffddf1f89cd44c6f0376d906e98ae66eaea716
+    SKIP
     SKIP
     SKIP
     SKIP
@@ -30,6 +32,11 @@ sha256sums=(
 build() {
     qmake
     make
+}
+
+prepare() {
+    patch -p1 -d"$srcdir" < "$srcdir"/overwrite-server-argv0.patch
+    rm "$srcdir"/overwrite-server-argv0.patch
 }
 
 package() {
