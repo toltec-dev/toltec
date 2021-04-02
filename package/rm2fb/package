@@ -8,7 +8,7 @@ maintainer="raisjn <of.raisjn@gmail.com>"
 license=MIT
 pkgdesc="Interface to the reMarkable 2 framebuffer"
 url="https://github.com/ddvk/remarkable2-framebuffer"
-pkgver=1.0.1-1
+pkgver=1.0.1-2
 section="devel"
 
 image=qt:v1.1
