@@ -5,23 +5,26 @@
 import shutil
 from typing import (
     Any,
-    Deque,
     Dict,
-    Iterable,
+    Deque,
     List,
+    Mapping,
     MutableMapping,
+    NamedTuple,
     Optional,
     Tuple,
 )
 from collections import deque
 import re
 import os
+import shlex
 import logging
 import textwrap
 import docker
+from elftools.elf.elffile import ELFFile, ELFError
 import requests
 from . import bash, util, ipk, paths
-from .recipe import Recipe, Package
+from .recipe import GenericRecipe, Recipe, Package, BuildFlags
 from .version import DependencyKind
 
 logger = logging.getLogger(__name__)
@@ -29,6 +32,14 @@ logger = logging.getLogger(__name__)
 
 class BuildError(Exception):
     """Raised when a build step fails."""
+
+
+class PostprocessingCandidates(NamedTuple):
+    """List of binaries on which post-processing needs to be done."""
+
+    strip_arm: List[str]
+    strip_x86: List[str]
+    patch_rm2fb: List[str]
 
 
 class BuildContextAdapter(logging.LoggerAdapter):
@@ -41,6 +52,9 @@ class BuildContextAdapter(logging.LoggerAdapter):
 
         if "recipe" in self.extra:
             prefix += self.extra["recipe"]
+
+        if "arch" in self.extra:
+            prefix += f" [{self.extra['arch']}]"
 
         if "package" in self.extra:
             prefix += f" ({self.extra['package']})"
@@ -79,13 +93,13 @@ class Builder:  # pylint: disable=too-few-public-methods
         self.install_lib = ""
         install_lib_path = os.path.join(paths.SCRIPTS_DIR, "install-lib")
 
+        self.context: Dict[str, str] = {}
+        self.adapter = BuildContextAdapter(logger, self.context)
+
         with open(install_lib_path, "r") as file:
             for line in file:
                 if not line.strip().startswith("#"):
                     self.install_lib += line
-
-        self.context: Dict[str, str] = {}
-        self.adapter = BuildContextAdapter(logger, self.context)
 
         try:
             self.docker = docker.from_env()
@@ -97,43 +111,67 @@ permissions."
             ) from err
 
     def make(
-        self, recipe: Recipe, packages: Optional[Iterable[Package]] = None
+        self,
+        generic_recipe: GenericRecipe,
+        arch_packages: Optional[Mapping[str, Optional[List[Package]]]] = None,
     ) -> bool:
         """
-        Build a recipe and create its associated packages.
+        Build packages defined by a recipe.
 
-        :param recipe: recipe to make
-        :param packages: list of packages of the recipe to make
-            (default: all of them)
-        :returns: true if all packages were built correctly
+        :param generic_recipe: recipe to make
+        :param arch_packages: set of packages to build for each
+            architecture (default: all supported architectures
+            and all declared packages)
+        :returns: true if all the requested packages were built correctly
         """
-        self.context["recipe"] = recipe.name
-        build_dir = os.path.join(self.work_dir, recipe.name)
+        self.context["recipe"] = generic_recipe.name
+        build_dir = os.path.join(self.work_dir, generic_recipe.name)
 
         if not util.check_directory(
             build_dir,
             f"The build directory '{os.path.relpath(build_dir)}' for recipe \
-'{recipe.name}' already exists.\nWould you like to [c]ancel, [r]emove \
+'{generic_recipe.name}' already exists.\nWould you like to [c]ancel, [r]emove \
 that directory, or [k]eep it (not recommended)?",
         ):
             return False
 
+        for name in (
+            list(arch_packages.keys())
+            if arch_packages is not None
+            else list(generic_recipe.recipes.keys())
+        ):
+            if not self._make_arch(
+                generic_recipe.recipes[name],
+                os.path.join(build_dir, name),
+                arch_packages[name] if arch_packages is not None else None,
+            ):
+                return False
+
+        return True
+
+    def _make_arch(
+        self,
+        recipe: Recipe,
+        build_dir: str,
+        packages: Optional[List[Package]] = None,
+    ) -> bool:
+        self.context["arch"] = recipe.arch
+
         src_dir = os.path.join(build_dir, "src")
         os.makedirs(src_dir, exist_ok=True)
+        self._fetch_sources(recipe, src_dir)
+        self._prepare(recipe, src_dir)
 
         base_pkg_dir = os.path.join(build_dir, "pkg")
         os.makedirs(base_pkg_dir, exist_ok=True)
 
-        self._fetch_source(recipe, src_dir)
-        self._prepare(recipe, src_dir)
         self._build(recipe, src_dir)
-        self._strip(recipe, src_dir)
+        self._postprocessing(recipe, src_dir)
 
         for package in (
             packages if packages is not None else recipe.packages.values()
         ):
             self.context["package"] = package.name
-
             pkg_dir = os.path.join(base_pkg_dir, package.name)
             os.makedirs(pkg_dir, exist_ok=True)
 
@@ -141,9 +179,10 @@ that directory, or [k]eep it (not recommended)?",
             self._archive(package, pkg_dir)
             del self.context["package"]
 
+        del self.context["arch"]
         return True
 
-    def _fetch_source(
+    def _fetch_sources(
         self,
         recipe: Recipe,
         src_dir: str,
@@ -157,7 +196,9 @@ that directory, or [k]eep it (not recommended)?",
 
             if self.URL_REGEX.match(source.url) is None:
                 # Get source file from the recipe’s directory
-                shutil.copy2(os.path.join(recipe.path, source.url), local_path)
+                shutil.copy2(
+                    os.path.join(recipe.parent.path, source.url), local_path
+                )
             else:
                 # Fetch source file from the network
                 req = requests.get(source.url)
@@ -253,11 +294,32 @@ source file '{source.url}', got {req.status_code}"
             )
 
         if host_deps:
+            opkg_conf_path = "$SYSROOT/etc/opkg/opkg.conf"
             pre_script.extend(
                 (
-                    "opkg update --verbosity=0 --offline-root $SYSROOT",
+                    'echo -n "dest root /',
+                    "arch all 100",
+                    "arch armv7-3.2 160",
+                    "src/gz entware https://bin.entware.net/armv7sf-k3.2",
+                    "arch rmall 200",
+                    "src/gz toltec-rmall file:///repo/rmall",
+                    f'" > "{opkg_conf_path}"',
+                )
+            )
+
+            if recipe.arch != "rmall":
+                pre_script.extend(
+                    (
+                        f'echo -n "arch {recipe.arch} 250',
+                        f"src/gz toltec-{recipe.arch} file:///repo/{recipe.arch}",
+                        f'" >> "{opkg_conf_path}"',
+                    )
+                )
+
+            pre_script.extend(
+                (
+                    "opkg update --verbosity=0",
                     "opkg install --verbosity=0 --no-install-recommends"
-                    " --offline-root $SYSROOT"
                     " -- " + " ".join(host_deps),
                 )
             )
@@ -294,39 +356,163 @@ source file '{source.url}', got {req.status_code}"
 
         self._print_logs(logs, "build()")
 
-    def _strip(self, recipe: Recipe, src_dir: str) -> None:
-        """Strip all debugging symbols from binaries."""
-        if "nostrip" in recipe.flags:
-            self.adapter.debug("Not stripping binaries (nostrip flag set)")
+    def _postprocessing(self, recipe: Recipe, src_dir: str) -> None:
+        """Perform binary post-processing tasks such as stripping."""
+        if (
+            recipe.flags & BuildFlags.NOSTRIP
+            and not recipe.flags & BuildFlags.PATCH_RM2FB
+        ):
+            self.adapter.debug("Skipping post-processing (nothing to do)")
             return
 
-        self.adapter.info("Stripping binaries")
+        self.adapter.info("Post-processing binaries")
+
+        # Search for candidates
+        cand = self._postprocessing_candidates(src_dir)
+
+        # Save original mtimes to restore them afterwards
+        # This will prevent any Makefile rules to be triggered again
+        # in packaging scripts that use `make install`
+        original_mtime = {}
+
+        for file_path in (file for file_list in cand for file in file_list):
+            original_mtime[file_path] = os.stat(file_path).st_mtime_ns
+
+        script = []
         mount_src = "/src"
 
-        logs = bash.run_script_in_container(
-            self.docker,
-            image=self.IMAGE_PREFIX + self.DEFAULT_IMAGE,
-            mounts=[
-                docker.types.Mount(
-                    type="bind",
-                    source=os.path.abspath(src_dir),
-                    target=mount_src,
-                )
-            ],
-            variables={},
-            script="\n".join(
-                (
-                    # Strip binaries in the target arch
-                    f'find "{mount_src}" -type f -executable -print0 \
-| xargs --no-run-if-empty --null "${{CROSS_COMPILE}}strip" --strip-all || true',
-                    # Strip binaries in the host arch
-                    f'find "{mount_src}" -type f -executable -print0 \
-| xargs --no-run-if-empty --null strip --strip-all || true',
-                )
-            ),
+        docker_file_path = lambda file_path: shlex.quote(
+            os.path.join(mount_src, os.path.relpath(file_path, src_dir))
         )
 
-        self._print_logs(logs)
+        # Strip debugging symbols and unneeded sections
+        if not recipe.flags & BuildFlags.NOSTRIP:
+            if cand.strip_x86:
+                script.append(
+                    "strip --strip-all -- "
+                    + " ".join(
+                        docker_file_path(file_path)
+                        for file_path in cand.strip_x86
+                    )
+                )
+
+                self.adapter.debug("x86 binaries to be stripped:")
+
+                for file_path in cand.strip_x86:
+                    self.adapter.debug(
+                        " - %s",
+                        os.path.relpath(file_path, src_dir),
+                    )
+
+            if cand.strip_arm:
+                script.append(
+                    '"${CROSS_COMPILE}strip" --strip-all -- '
+                    + " ".join(
+                        docker_file_path(file_path)
+                        for file_path in cand.strip_arm
+                    )
+                )
+
+                self.adapter.debug("ARM binaries to be stripped:")
+
+                for file_path in cand.strip_arm:
+                    self.adapter.debug(
+                        " - %s",
+                        os.path.relpath(file_path, src_dir),
+                    )
+
+        # Add a dynamic dependency on the rm2fb client shim
+        if recipe.flags & BuildFlags.PATCH_RM2FB and cand.patch_rm2fb:
+            script = (
+                [
+                    "export DEBIAN_FRONTEND=noninteractive",
+                    "apt-get update -qq",
+                    "apt-get install -qq --no-install-recommends patchelf",
+                ]
+                + script
+                + [
+                    "patchelf --add-needed librm2fb_client.so.1 "
+                    + " ".join(
+                        docker_file_path(file_path)
+                        for file_path in cand.patch_rm2fb
+                    )
+                ]
+            )
+
+            self.adapter.debug("Binaries to be patched with rm2fb client:")
+
+            for file_path in cand.patch_rm2fb:
+                self.adapter.debug(
+                    " - %s",
+                    os.path.relpath(file_path, src_dir),
+                )
+
+        if script:
+            logs = bash.run_script_in_container(
+                self.docker,
+                image=self.IMAGE_PREFIX + self.DEFAULT_IMAGE,
+                mounts=[
+                    docker.types.Mount(
+                        type="bind",
+                        source=os.path.abspath(src_dir),
+                        target=mount_src,
+                    )
+                ],
+                variables={},
+                script="\n".join(script),
+            )
+
+            self._print_logs(logs)
+
+        # Restore original mtimes
+        for file_path, mtime in original_mtime.items():
+            os.utime(file_path, ns=(mtime, mtime))
+
+    @staticmethod
+    def _postprocessing_candidates(src_dir: str) -> PostprocessingCandidates:
+        """Search for binaries that need to be post-processed."""
+        strip_arm = []
+        strip_x86 = []
+        patch_rm2fb = []
+
+        for directory, _, files in os.walk(src_dir):
+            for file_name in files:
+                file_path = os.path.join(directory, file_name)
+
+                try:
+                    with open(file_path, "rb") as file:
+                        info = ELFFile(file)
+                        symtab = info.get_section_by_name(".symtab")
+
+                        if info.get_machine_arch() == "ARM":
+                            if symtab:
+                                strip_arm.append(file_path)
+
+                            dynamic = info.get_section_by_name(".dynamic")
+                            rodata = info.get_section_by_name(".rodata")
+
+                            if (
+                                dynamic
+                                and rodata
+                                and rodata.data().find(b"/dev/fb0") != -1
+                            ):
+                                patch_rm2fb.append(file_path)
+                        elif (
+                            info.get_machine_arch() in ("x86", "x64") and symtab
+                        ):
+                            strip_x86.append(file_path)
+                except ELFError:
+                    # Ignore non-ELF files
+                    pass
+                except IsADirectoryError:
+                    # Ignore directories
+                    pass
+
+        return PostprocessingCandidates(
+            strip_arm=strip_arm,
+            strip_x86=strip_x86,
+            patch_rm2fb=patch_rm2fb,
+        )
 
     def _package(self, package: Package, src_dir: str, pkg_dir: str) -> None:
         """Make a package from a recipe’s build artifacts."""
@@ -356,6 +542,8 @@ source file '{source.url}', got {req.status_code}"
         """Create an archive for a package."""
         self.adapter.info("Creating archive")
         ar_path = os.path.join(paths.REPO_DIR, package.filename())
+        ar_dir = os.path.dirname(ar_path)
+        os.makedirs(ar_dir, exist_ok=True)
 
         # Inject Oxide-specific hook for reloading apps
         if os.path.exists(os.path.join(pkg_dir, "opt/usr/share/applications")):
@@ -376,7 +564,6 @@ source file '{source.url}', got {req.status_code}"
                 ),
                 bash.put_variables(
                     {
-                        **package.parent.variables,
                         **package.variables,
                         **package.custom_variables,
                     }

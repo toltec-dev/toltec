@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MIT
 
 [Unit]
-Description=Remarkable2 Framebuffer Server
+Description=reMarkable 2 Framebuffer Server
 Before=xochitl.service
 After=opt.mount
 StartLimitInterval=30

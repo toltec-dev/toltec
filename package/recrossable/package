@@ -1,17 +1,18 @@
 #!/usr/bin/env bash
-# Copyright (c) 2020 The Toltec Contributors
+# Copyright (c) 2021 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
 pkgnames=(recrossable)
 pkgdesc="Solve crossword puzzles"
 url=https://github.com/sandsmark/recrossable
-pkgver=0.0.0-5
+pkgver=0.0.0-6
 timestamp=2021-01-15T12:58:22Z
 section="games"
 maintainer="Mattéo Delabre <spam@delab.re>"
 license=GPL-2.0-or-later
-depends=(libdlib)
-makedepends=(build:imagemagick build:librsvg2-bin host:libdlib-dev)
+installdepends=(libdlib display)
+makedepends=(build:imagemagick build:librsvg2-bin host:libdlib host:libdlib-dev)
+flags=(patch_rm2fb)
 
 image=qt:v1.4
 source=(
@@ -38,13 +39,11 @@ QMAKE
 
     qmake
     make
-
     convert +set date:create +set date:modify recrossable.{svg,png}
 }
 
 package() {
     install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/recrossable
-
     install -D -m 644 -t "$pkgdir"/opt/etc/draft "$srcdir"/recrossable.draft
     install -D -m 644 -t "$pkgdir"/opt/etc/draft/icons "$srcdir"/recrossable.png
 }
