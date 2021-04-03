@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+# Copyright (c) 2021 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgnames=(libepaper-qpa)
+pkgdesc="Qt Platform plugin for the reMarkable"
+url=https://remarkable.com
+pkgver=0.0.0-1
+timestamp=2021-04-04T12:04Z
+section="devel"
+maintainer="Mattéo Delabre <spam@delab.re>"
+license=NONE
+installdepends=(libqt5-base)
+makedepends=(host:libqt5-base host:libqt5-base-dev)
+
+image=base:v1.5
+source=(https://github.com/reMarkable/epaper-qpa/archive/5cce0a31e364931e32de604cda644563b6b1e2b3.tar.gz)
+sha256sums=(eb029f32f14c07c7066739ed1e040bce720abb439869d7d242e6a2f861c3d9ab)
+
+build() {
+    PATH="$SYSROOT"/opt/bin:$PATH
+    qmake epaper-qpa.pro
+    make
+}
+
+package() {
+    install -D -m 755 -t "$pkgdir"/opt/lib/plugins/platforms "$srcdir"/libepaper.so
+}

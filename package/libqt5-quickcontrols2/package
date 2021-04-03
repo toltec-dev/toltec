@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+# Copyright (c) 2021 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgnames=(libqt5-quickcontrols2 libqt5-quickcontrols2-dev)
+pkgdesc="Next generation user interface controls based on Qt Quick"
+url=https://www.qt.io
+pkgver=5.15.2-1
+timestamp=2020-11-20T00:00Z
+section="devel"
+maintainer="Mattéo Delabre <spam@delab.re>"
+license=GPL-3.0-or-later
+installdepends=(libqt5-declarative)
+makedepends=(host:libqt5-base-dev host:libqt5-declarative host:libqt5-declarative-dev)
+
+image=base:v1.5
+source=("https://download.qt.io/official_releases/qt/${pkgver%.*-*}/${pkgver%-*}/submodules/qtquickcontrols2-everywhere-src-${pkgver%-*}.tar.xz")
+sha256sums=(671b6ce5f4b8ecc94db622d5d5fb29ef4ff92819be08e5ea55bfcab579de8919)
+
+build() {
+    mkdir build install
+
+    pushd build
+    PATH="$SYSROOT"/opt/bin:$PATH
+    qmake ../qtquickcontrols2.pro
+    make
+    make INSTALL_ROOT="$srcdir"/install install
+    popd
+
+    mv install"$SYSROOT"/opt/* install/opt
+    rm -r install/opt/x-tools
+}
+
+libqt5-quickcontrols2() {
+    package() {
+        install -d "$pkgdir"/opt/lib
+        cp -r --no-dereference "$srcdir"/install/opt/lib/lib*.so* \
+            "$srcdir"/install/opt/lib/qml \
+            "$pkgdir"/opt/lib
+    }
+}
+
+libqt5-quickcontrols2-dev() {
+    pkgdesc="$pkgdesc - development files"
+
+    package() {
+        install -d "$pkgdir"/opt/lib
+        install -D -m 644 -t "$pkgdir"/opt/lib "$srcdir"/install/opt/lib/lib*.prl
+        cp -r "$srcdir"/install/opt/lib/{cmake,mkspecs,pkgconfig} "$pkgdir"/opt/lib
+        cp -r "$srcdir"/install/opt/include "$pkgdir"/opt
+    }
+}

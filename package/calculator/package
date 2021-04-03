@@ -10,11 +10,15 @@ timestamp=2020-08-20T12:28Z
 section="math"
 maintainer="Mattéo Delabre <spam@delab.re>"
 license=GPL-3.0-or-later
-installdepends=(display)
-makedepends=(build:imagemagick build:librsvg2-bin)
+installdepends=(libqt5-base libqt5-declarative display)
+makedepends=(
+    host:libqt5-base host:libqt5-base-dev host:libqsgepaper-dev
+    host:libqt5-declarative host:libqt5-declarative-dev
+    build:imagemagick build:librsvg2-bin
+)
 flags=(patch_rm2fb)
 
-image=qt:v1.4
+image=base:v1.5
 source=(
     https://github.com/reHackable/Calculator/archive/7b8be5de12f1536bc04b6216abbf26f998097bf4.zip
     calculator.draft
@@ -27,6 +31,7 @@ sha256sums=(
 )
 
 build() {
+    PATH="$SYSROOT"/opt/bin:$PATH
     qmake Calculator.pro
     make
     convert +set date:create +set date:modify calculator.{svg,png}

@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+# Copyright (c) 2021 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgnames=(libqt5-websockets libqt5-websockets-dev)
+pkgdesc="Provides WebSocket communication compliant with RFC 6455"
+url=https://www.qt.io
+pkgver=5.15.2-1
+timestamp=2020-11-20T00:00Z
+section="devel"
+maintainer="Mattéo Delabre <spam@delab.re>"
+license=GPL-3.0-or-later
+installdepends=(libqt5-declarative)
+makedepends=(host:libqt5-base-dev host:libqt5-declarative host:libqt5-declarative-dev)
+
+image=base:v1.5
+source=("https://download.qt.io/official_releases/qt/${pkgver%.*-*}/${pkgver%-*}/submodules/qtwebsockets-everywhere-src-${pkgver%-*}.tar.xz")
+sha256sums=(a0b42d85dd34ff6e2d23400e02f83d8b85bcd80e60efd1521d12d9625d4a233f)
+
+build() {
+    mkdir build install
+
+    pushd build
+    PATH="$SYSROOT"/opt/bin:$PATH
+    qmake ../qtwebsockets.pro
+    make
+    make INSTALL_ROOT="$srcdir"/install install
+    popd
+
+    mv install"$SYSROOT"/opt/* install/opt
+    rm -r install/opt/x-tools
+}
+
+libqt5-websockets() {
+    package() {
+        install -d "$pkgdir"/opt/lib
+        cp -r --no-dereference "$srcdir"/install/opt/lib/lib*.so* \
+            "$srcdir"/install/opt/lib/qml \
+            "$pkgdir"/opt/lib
+    }
+}
+
+libqt5-websockets-dev() {
+    pkgdesc="$pkgdesc - development files"
+
+    package() {
+        install -d "$pkgdir"/opt/lib
+        install -D -m 644 -t "$pkgdir"/opt/lib "$srcdir"/install/opt/lib/lib*.prl
+        cp -r "$srcdir"/install/opt/lib/{cmake,mkspecs,pkgconfig} "$pkgdir"/opt/lib
+        cp -r "$srcdir"/install/opt/include "$pkgdir"/opt
+    }
+}

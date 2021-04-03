@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+# Copyright (c) 2021 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgnames=(libqsgepaper-dev)
+pkgdesc="Qt Quick Scene Graph plugin for the reMarkable"
+url=https://remarkable.com
+pkgver=0.0.0-1
+timestamp=2021-04-04T12:04Z
+section="devel"
+maintainer="Mattéo Delabre <spam@delab.re>"
+license=NONE
+
+source=(
+    https://toltec-dev.org/thirdparty/lib/libqsgepaper-5.15-v2.a
+    https://toltec-dev.org/thirdparty/include/epframebuffer.h
+)
+sha256sums=(
+    acd55568a81e7b67bf9c8bc9b55f918373554b236ca1da58bd8ac663e0a9ab47
+    c28e9ff825f67766ae86b57859377aa0111622030a029cfc53c6926a7063aa7f
+)
+
+package() {
+    install -D -m 644 "$srcdir"/libqsgepaper-5.15-v2.a "$pkgdir"/usr/lib/libqsgepaper.a
+    install -D -m 644 -t "$pkgdir"/usr/include "$srcdir"/epframebuffer.h
+}

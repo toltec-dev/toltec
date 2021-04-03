@@ -504,6 +504,9 @@ source file '{source.url}', got {req.status_code}"
                 except ELFError:
                     # Ignore non-ELF files
                     pass
+                except OSError:
+                    # Ignore malformed files
+                    pass
                 except IsADirectoryError:
                     # Ignore directories
                     pass

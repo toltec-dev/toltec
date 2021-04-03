@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+# Copyright (c) 2021 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgnames=(libqt5-declarative libqt5-declarative-dev)
+pkgdesc="Classes for QML and JavaScript languages"
+url=https://www.qt.io
+pkgver=5.15.2-1
+timestamp=2020-11-20T00:00Z
+section="devel"
+maintainer="Mattéo Delabre <spam@delab.re>"
+license=GPL-3.0-or-later
+installdepends=(libqt5-base)
+makedepends=(host:libqt5-base host:libqt5-base-dev)
+
+image=base:v1.5
+source=("https://download.qt.io/official_releases/qt/${pkgver%.*-*}/${pkgver%-*}/submodules/qtdeclarative-everywhere-src-${pkgver%-*}.tar.xz")
+sha256sums=(c600d09716940f75d684f61c5bdaced797f623a86db1627da599027f6c635651)
+
+build() {
+    mkdir build install
+
+    pushd build
+    PATH="$SYSROOT"/opt/bin:$PATH
+    qmake ../qtdeclarative.pro
+    make
+    make INSTALL_ROOT="$srcdir"/install install
+    popd
+
+    mv install"$SYSROOT"/opt/* install/opt
+    rm -r install/opt/x-tools
+}
+
+libqt5-declarative() {
+    package() {
+        install -d "$pkgdir"/opt/lib
+        cp -r --no-dereference "$srcdir"/install/opt/lib/lib*.so* \
+            "$srcdir"/install/opt/lib/{plugins,qml} \
+            "$pkgdir"/opt/lib
+    }
+}
+
+libqt5-declarative-dev() {
+    pkgdesc="$pkgdesc - development files"
+
+    package() {
+        install -d "$pkgdir"/opt/bin "$pkgdir"/opt/lib
+        install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/install/opt/bin/*
+        install -D -m 644 -t "$pkgdir"/opt/lib "$srcdir"/install/opt/lib/lib*.{a,prl}
+        cp -r "$srcdir"/install/opt/lib/{cmake,metatypes,mkspecs,pkgconfig} \
+            "$pkgdir"/opt/lib
+        cp -r "$srcdir"/install/opt/include "$pkgdir"/opt
+    }
+}

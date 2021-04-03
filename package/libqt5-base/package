@@ -1,0 +1,79 @@
+#!/usr/bin/env bash
+# Copyright (c) 2021 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgnames=(libqt5-base libqt5-base-dev)
+pkgdesc="Application and UI framework"
+url=https://www.qt.io
+pkgver=5.15.2-1
+timestamp=2020-11-20T00:00Z
+section="devel"
+maintainer="Mattéo Delabre <spam@delab.re>"
+license=GPL-3.0-or-later
+
+image=base:v1.5
+source=(
+    "https://download.qt.io/official_releases/qt/${pkgver%.*-*}/${pkgver%-*}/submodules/qtbase-everywhere-src-${pkgver%-*}.tar.xz"
+    qmake.conf
+    qplatformdefs.h
+)
+sha256sums=(
+    909fad2591ee367993a75d7e2ea50ad4db332f05e1c38dd7a5a274e156a4e0f8
+    SKIP
+    SKIP
+)
+
+prepare() {
+    mkdir "$srcdir"/mkspecs/devices/linux-arm-remarkable-g++
+    mv "$srcdir"/qmake.conf "$srcdir"/qplatformdefs.h \
+        "$srcdir"/mkspecs/devices/linux-arm-remarkable-g++
+}
+
+build() {
+    mkdir build install
+
+    pushd build
+    ../configure \
+        -confirm-license \
+        -opensource \
+        -prefix /opt \
+        -archdatadir /opt/lib \
+        -datadir /opt/share \
+        -sysroot "$SYSROOT" \
+        -device linux-arm-remarkable-g++ \
+        -device-option CROSS_COMPILE="$CROSS_COMPILE" \
+        -nomake examples \
+        -nomake tests  \
+        -no-rpath \
+        -no-opengl \
+        -no-feature-sql \
+        -reduce-exports
+    make
+    make INSTALL_ROOT="$srcdir"/install install
+    popd
+
+    mv install"$SYSROOT"/opt/* install/opt
+    rm -r install/opt/x-tools
+}
+
+libqt5-base() {
+    package() {
+        install -d "$pkgdir"/opt/lib
+        cp -r --no-dereference "$srcdir"/install/opt/lib/lib*.so* \
+            "$srcdir"/install/opt/lib/plugins \
+            "$pkgdir"/opt/lib
+    }
+}
+
+libqt5-base-dev() {
+    pkgdesc="$pkgdesc - development files"
+
+    package() {
+        install -d "$pkgdir"/opt/bin "$pkgdir"/opt/lib
+        install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/install/opt/bin/*
+        install -D -m 644 -t "$pkgdir"/opt/lib "$srcdir"/install/opt/lib/lib*.{a,prl}
+        cp -r "$srcdir"/install/opt/lib/{cmake,metatypes,mkspecs,pkgconfig} \
+            "$pkgdir"/opt/lib
+        cp -r "$srcdir"/install/opt/{include,share} "$pkgdir"/opt
+    }
+}

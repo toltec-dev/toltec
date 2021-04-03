@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+# Copyright (c) 2021 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgnames=(libqt5-svg libqt5-svg-dev)
+pkgdesc="Provides WebSocket communication compliant with RFC 6455"
+url=https://www.qt.io
+pkgver=5.15.2-1
+timestamp=2020-11-20T00:00Z
+section="devel"
+maintainer="Mattéo Delabre <spam@delab.re>"
+license=GPL-3.0-or-later
+installdepends=(libqt5-base)
+makedepends=(host:libqt5-base-dev host:libqt5-base)
+
+image=base:v1.5
+source=("https://download.qt.io/official_releases/qt/${pkgver%.*-*}/${pkgver%-*}/submodules/qtsvg-everywhere-src-${pkgver%-*}.tar.xz")
+sha256sums=(8bc3c2c1bc2671e9c67d4205589a8309b57903721ad14c60ea21a5d06acb585e)
+
+build() {
+    mkdir build install
+
+    pushd build
+    PATH="$SYSROOT"/opt/bin:$PATH
+    qmake ../qtsvg.pro
+    make
+    make INSTALL_ROOT="$srcdir"/install install
+    popd
+
+    mv install"$SYSROOT"/opt/* install/opt
+    rm -r install/opt/x-tools
+}
+
+libqt5-svg() {
+    package() {
+        install -d "$pkgdir"/opt/lib
+        cp -r --no-dereference "$srcdir"/install/opt/lib/lib*.so* \
+            "$srcdir"/install/opt/lib/plugins \
+            "$pkgdir"/opt/lib
+    }
+}
+
+libqt5-svg-dev() {
+    pkgdesc="$pkgdesc - development files"
+
+    package() {
+        install -d "$pkgdir"/opt/lib
+        install -D -m 644 -t "$pkgdir"/opt/lib "$srcdir"/install/opt/lib/lib*.prl
+        cp -r "$srcdir"/install/opt/lib/{cmake,mkspecs,pkgconfig} "$pkgdir"/opt/lib
+        cp -r "$srcdir"/install/opt/include "$pkgdir"/opt
+    }
+}
