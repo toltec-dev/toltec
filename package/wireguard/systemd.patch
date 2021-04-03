@@ -1,0 +1,12 @@
+diff --git a/src/systemd/wg-quick@.service b/src/systemd/wg-quick@.service
+index dbdab44..86316fb 100644
+--- a/src/systemd/wg-quick@.service
++++ b/src/systemd/wg-quick@.service
+@@ -17,6 +17,7 @@ ExecStart=/usr/bin/wg-quick up %i
+ ExecStop=/usr/bin/wg-quick down %i
+ ExecReload=/bin/bash -c 'exec /usr/bin/wg syncconf %i <(exec /usr/bin/wg-quick strip %i)'
+ Environment=WG_ENDPOINT_RESOLUTION_RETRIES=infinity
++Environment=PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin:/opt/bin:/opt/sbin
+ 
+ [Install]
+ WantedBy=multi-user.target

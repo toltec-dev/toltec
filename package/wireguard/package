@@ -11,6 +11,7 @@ timestamp=2021-02-19T14:08Z
 section=utils
 maintainer="Jonah Weissman <jonahrweissman+toltec@gmail.com>"
 license=GPL-2.0-only
+installdepends=(unshare)
 makedepends=(build:bc build:lzop build:git)
 flags=(nostrip)
 
@@ -28,11 +29,13 @@ image=base:v1.3.2
 source=(
     "https://git.zx2c4.com/wireguard-linux-compat/snapshot/wireguard-linux-compat-${pkgver%-*}.tar.xz"
     "https://git.zx2c4.com/wireguard-tools/snapshot/wireguard-tools-${_wireguardtoolsver}.tar.xz"
+    systemd.patch
 )
 noextract=("wireguard-tools-${_wireguardtoolsver}.tar.xz")
 sha256sums=(
     99d35296b8d847a0d4db97a4dda96b464311a6354e75fe0bef6e7c4578690f00
     af001d5492be6bf58ef0bebe04b446b6f50eb53e1226fab679cc34af40733a22
+    SKIP
 )
 
 prepare() {
@@ -46,6 +49,8 @@ prepare() {
 
 build() {
     make -C wireguard-tools/src PLATFORM=linux "CC=${CROSS_COMPILE}cc"
+    patch wireguard-tools/src/systemd/wg-quick\@.service < systemd.patch
+    ./wireguard-tools/contrib/dns-hatchet/apply.sh
 
     mkdir pkg
     git init linux
