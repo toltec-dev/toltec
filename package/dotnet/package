@@ -41,7 +41,7 @@ dotnet-profile() {
 
 dotnet-host() {
     pkgdesc="Generic driver for the .NET Core Command Line Interface"
-    depends=(dotnet-profile)
+    installdepends=(dotnet-profile)
 
     package() {
         install -dm 755 "$pkgdir"/opt/{bin,usr/{lib,share/{dotnet,licenses/dotnet-host}}}
@@ -53,7 +53,7 @@ dotnet-host() {
 }
 dotnet-sdk() {
     pkgdesc=".NET Core SDK"
-    depends=(
+    installdepends=(
         dotnet-runtime
         dotnet-targeting-pack
         netstandard-targeting-pack
@@ -67,7 +67,7 @@ dotnet-sdk() {
 }
 dotnet-runtime() {
     pkgdesc=".NET Core runtime"
-    depends=(dotnet-host icu zlib libcurl)
+    installdepends=(dotnet-host icu zlib libcurl)
 
     package() {
         install -dm 755 "$pkgdir"/opt/usr/share/{dotnet/shared,licenses}
@@ -77,7 +77,7 @@ dotnet-runtime() {
 }
 aspnet-runtime() {
     pkgdesc="ASP.NET Core runtime"
-    depends=(dotnet-runtime)
+    installdepends=(dotnet-runtime)
 
     package() {
         install -dm 755 "$pkgdir"/opt/usr/share/{dotnet/shared,licenses}
@@ -87,7 +87,7 @@ aspnet-runtime() {
 }
 dotnet-targeting-pack() {
     pkgdesc=".NET Core targeting pack"
-    depends=(netstandard-targeting-pack)
+    installdepends=(netstandard-targeting-pack)
 
     package() {
         install -dm 755 "$pkgdir"/opt/usr/share/{dotnet,dotnet/packs,licenses}
@@ -98,7 +98,7 @@ dotnet-targeting-pack() {
 aspnet-targeting-pack() {
     pkgdesc="ASP.NET Core targeting pack"
     license=Apache
-    depends=(dotnet-targeting-pack)
+    installdepends=(dotnet-targeting-pack)
 
     package() {
         install -dm 755 "$pkgdir"/opt/usr/share/{dotnet,dotnet/packs,licenses}

@@ -13,7 +13,7 @@ timestamp=2020-05-04T06:16Z
 section=utils
 maintainer="Eeems <eeems@eeems.email>"
 license="custom: public domain"
-depends=(zoneinfo-core)
+installdepends=(zoneinfo-core)
 makedepends=(build:gawk)
 image=base:v1.3.2
 
