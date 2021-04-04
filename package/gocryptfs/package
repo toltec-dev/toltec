@@ -12,9 +12,8 @@ section=utils
 maintainer="plan5 <30434574+plan5@users.noreply.github.com>"
 license=MIT
 
-depends=(fuse-utils)
-
 makedepends=()
+installdepends=(fuse-utils)
 
 image=golang:v1.5
 
