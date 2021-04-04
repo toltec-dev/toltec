@@ -1,0 +1,111 @@
+#!/usr/bin/env bash
+# Copyright (c) 2021 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+archs=(rm1 rm2)
+pkgnames=(display rm2fb-client)
+timestamp=2021-02-21T01:41+00:00
+maintainer="raisjn <of.raisjn@gmail.com>"
+license=MIT
+url="https://github.com/ddvk/remarkable2-framebuffer"
+pkgver=1.0.1-2
+section="devel"
+
+image=qt:v1.4
+source=(
+    https://github.com/ddvk/remarkable2-framebuffer/archive/aa70ce37c71f84b91434f5c469fa71f4b1bb328c.zip
+    rm2fb.service
+    rm2fb-client
+    overwrite-server-argv0.patch
+)
+sha256sums=(
+    76f1c0b72260a9743f3e008100ffddf1f89cd44c6f0376d906e98ae66eaea716
+    SKIP
+    SKIP
+    SKIP
+)
+
+prepare() {
+    patch -p1 -d"$srcdir" < "$srcdir"/overwrite-server-argv0.patch
+    rm "$srcdir"/overwrite-server-argv0.patch
+}
+
+build() {
+    if [[ $arch = rm1 ]]; then
+        # Create an empty client library for rM1
+        pushd src/client
+        echo | "${CROSS_COMPILE}gcc" \
+            -fPIC -fvisibility=hidden -shared \
+            -o librm2fb_client.so.${pkgver%-*} \
+            -xc -
+        popd
+    else
+        qmake
+        make
+    fi
+}
+
+display() {
+    pkgdesc="Interface to the reMarkable framebuffer"
+    installdepends=(xochitl)
+    conflicts=(rm2fb)
+    replaces=(rm2fb)
+
+    package() {
+        if [[ $arch = rm2 ]]; then
+            libname="librm2fb_server.so.${pkgver%-*}"
+            install -D -m 644 -t "$pkgdir"/opt/lib "$srcdir"/src/server/"$libname"
+            ln -s "$libname" "$pkgdir"/opt/lib/"${libname%.*.*}"
+            install -D -m 644 -t "$pkgdir"/lib/systemd/system \
+                "$srcdir"/rm2fb.service
+        fi
+    }
+
+    configure() {
+        if [[ $arch = rm2 ]]; then
+            systemctl daemon-reload
+            systemctl enable rm2fb --now
+            # Restart xochitl if it's running
+            if systemctl --quiet is-active xochitl; then
+                # Reset the crash count so we don't trigger remarkable-fail
+                echo "0" > /tmp/crashnum
+                systemctl restart xochitl
+            fi
+        fi
+    }
+
+    preremove() {
+        if [[ $arch = rm2 ]]; then
+            if systemctl list-units --full -all | grep -Fq 'rm2fb.service'; then
+                systemctl disable rm2fb --now
+            fi
+            echo -n "make sure "
+            if ! is-enabled xochitl.service; then
+                echo "to re-enable xochitl with 'systemctl enable xochitl --now'"
+                echo -n "and "
+            fi
+            echo "to disable / uninstall any launchers like draft, oxide or remux before"
+            echo "rebooting your tablet to complete the uninstallation"
+        fi
+    }
+}
+
+rm2fb-client() {
+    pkgdesc="Shim to make reMarkable 1 apps work on reMarkable 2"
+    installdepends=(display)
+    conflicts=(rm2fb)
+    replaces=(rm2fb)
+
+    package() {
+        libname="librm2fb_client.so.${pkgver%-*}"
+        install -D -m 644 -t "$pkgdir"/opt/lib "$srcdir"/src/client/"$libname"
+        install -d "$pkgdir"/usr/lib
+        ln -s /opt/lib/"$libname" "$pkgdir"/usr/lib/"$libname"
+
+        for dest in opt/lib usr/lib; do
+            ln -s "$libname" "$pkgdir/$dest/${libname%.*.*}"
+        done
+
+        install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/rm2fb-client
+    }
+}
