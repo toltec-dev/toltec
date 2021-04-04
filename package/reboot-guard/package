@@ -10,7 +10,7 @@ timestamp=2020-05-04T06:16Z
 section="devel"
 maintainer="Eeems <eeems@eeems.email>"
 license=GPL-3.0
-depends=(xochitl python3)
+installdepends=(xochitl python3)
 
 source=(
     https://github.com/stephanritscher/reboot-guard/archive/34d5df49d9fb914ab74d9b85d726aaa503b972a9.zip
