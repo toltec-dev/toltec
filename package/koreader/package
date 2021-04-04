@@ -1,32 +1,41 @@
 #!/usr/bin/env bash
-# Copyright (c) 2020 The Toltec Contributors
+# Copyright (c) 2021 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
-pkgname=koreader
-pkgdesc="An ebook reader application supporting PDF, DjVu, EPUB, FB2 and many more formats"
+pkgnames=(koreader)
+pkgdesc="Ebook reader supporting PDF, DjVu, EPUB, FB2 and many more formats"
 url=https://github.com/koreader/koreader
-pkgver=2020.10-1
-timestamp=2020-10-10T20:13Z
-section=readers
+pkgver=2021.02-2
+timestamp=2021-02-19T19:49:35Z
+section="readers"
 maintainer="raisjn <of.raisjn@gmail.com>"
 license=AGPL-3.0-or-later
+installdepends=(fbink fbdepth display rm2fb-client)
 
 _srcver="v${pkgver%-*}"
-source=("https://build.koreader.rocks/download/stable/$_srcver/koreader-remarkable-$_srcver.zip")
-sha256sums=(a646c52e22c2ea47aa8b4677cc8060b979dcbadb718ce111ad8489233780da10)
+source=(
+    "https://build.koreader.rocks/download/stable/$_srcver/koreader-remarkable-$_srcver.zip"
+    koreader.draft
+    KOReader.oxide
+    koreader
+)
+sha256sums=(
+    0fecf246d79561cab079dfa07efb653b5a957635c29298ad4f8c6822f6d7b3c1
+    SKIP
+    SKIP
+    SKIP
+)
 
 package() {
     install -d "$pkgdir"/opt/koreader
     cp -R "$srcdir"/* "$pkgdir"/opt/koreader/
     rm "$pkgdir"/opt/koreader/koreader*zip
+    rm "$pkgdir"/opt/koreader/{fbink,fbdepth}
+    ln -s /opt/bin/fbink "$pkgdir"/opt/koreader/fbink
+    ln -s /opt/bin/fbdepth "$pkgdir"/opt/koreader/fbdepth
 
-    install -D -m 644 -t "$pkgdir"/opt/etc/draft/ "$recipedir"/koreader.draft
+    install -D -m 644 -t "$pkgdir"/opt/etc/draft/ "$srcdir"/koreader.draft
+    install -D -m 644 -t "$pkgdir"/opt/usr/share/applications/ "$srcdir"/KOReader.oxide
     install -D -m 644 -t "$pkgdir"/opt/etc/draft/icons/ "$srcdir"/resources/koreader.png
-    install -D -m 755 -t "$pkgdir"/opt/bin/ "$recipedir"/koreader
-}
-
-configure() {
-    if systemctl list-units --full -all | grep -Fq "tarnish.service"; then
-        echo "KOReader has an outstanding bug where it doesn't resize the screen properly when returning to Oxide. See Oxide's release notes for a workaround."
-    fi
+    install -D -m 755 -t "$pkgdir"/opt/bin/ "$srcdir"/koreader
 }

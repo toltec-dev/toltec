@@ -1,0 +1,118 @@
+#!/usr/bin/env bash
+# Copyright (c) 2020 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgnames=(
+    dotnet-profile
+    dotnet-host
+    dotnet-sdk
+    dotnet-runtime
+    aspnet-runtime
+    dotnet-targeting-pack
+    aspnet-targeting-pack
+    netstandard-targeting-pack
+)
+pkgver=3.1.10-3
+timestamp=2020-12-27T18:48Z
+maintainer="Eeems <eeems@eeems.email>"
+url=https://www.microsoft.com/net/core
+section="devel"
+license=MIT
+
+source=(
+    https://download.visualstudio.microsoft.com/download/pr/2ebe1f4b-4423-4694-8f5b-57f22a315d66/4bceeffda88fc6f19fad7dfb2cd30487/dotnet-sdk-3.1.404-linux-arm.tar.gz
+    dotnet-profile.sh
+)
+sha256sums=(
+    c95e8cf72abbcde1ac3974158ed9355d8d5588bade463fdf69d6932f915f453a
+    SKIP
+)
+
+dotnet-profile() {
+    pkgdesc="Default profile script to ensure that the .NET Core Command Line Interface runs properly"
+
+    package() {
+        install -Dm 744 -t "$pkgdir"/etc/profile.d/ "$srcdir"/dotnet-profile.sh
+    }
+    configure() {
+        echo "Make sure to source /etc/profile.d/dotnet-profile.sh before running dotnet"
+    }
+}
+
+dotnet-host() {
+    pkgdesc="Generic driver for the .NET Core Command Line Interface"
+    installdepends=(dotnet-profile)
+
+    package() {
+        install -dm 755 "$pkgdir"/opt/{bin,usr/{lib,share/{dotnet,licenses/dotnet-host}}}
+        cp -dr --no-preserve='ownership' "$srcdir"/{dotnet,host} "$pkgdir"/opt/usr/share/dotnet/
+        cp -dr --no-preserve='ownership' "$srcdir"/{LICENSE,ThirdPartyNotices}.txt "$pkgdir"/opt/usr/share/licenses/dotnet-host
+        ln -sf /opt/usr/share/dotnet/dotnet "$pkgdir"/opt/bin/dotnet
+        ln -sf /opt/usr/share/dotnet/host/fxr/3.1.10/libhostfxr.so "$pkgdir"/opt/usr/lib/libhostfxr.so
+    }
+}
+dotnet-sdk() {
+    pkgdesc=".NET Core SDK"
+    installdepends=(
+        dotnet-runtime
+        dotnet-targeting-pack
+        netstandard-targeting-pack
+    )
+
+    package() {
+        install -dm 755 "$pkgdir"/opt/usr/share/{dotnet,licenses}
+        cp -dr --no-preserve='ownership' "$srcdir"/{sdk,templates} "$pkgdir"/opt/usr/share/dotnet/
+        ln -s dotnet-host-bin "$pkgdir"/opt/usr/share/licenses/dotnet-sdk-bin
+    }
+}
+dotnet-runtime() {
+    pkgdesc=".NET Core runtime"
+    installdepends=(dotnet-host icu zlib libcurl)
+
+    package() {
+        install -dm 755 "$pkgdir"/opt/usr/share/{dotnet/shared,licenses}
+        cp -dr --no-preserve='ownership' "$srcdir"/shared/Microsoft.NETCore.App "$pkgdir"/opt/usr/share/dotnet/shared/
+        ln -s dotnet-host-bin "$pkgdir"/opt/usr/share/licenses/dotnet-runtime-bin
+    }
+}
+aspnet-runtime() {
+    pkgdesc="ASP.NET Core runtime"
+    installdepends=(dotnet-runtime)
+
+    package() {
+        install -dm 755 "$pkgdir"/opt/usr/share/{dotnet/shared,licenses}
+        cp -dr --no-preserve='ownership' "$srcdir"/shared/Microsoft.AspNetCore.App "$pkgdir"/opt/usr/share/dotnet/shared/
+        ln -s dotnet-host-bin "$pkgdir"/opt/usr/share/licenses/aspnet-runtime-bin
+    }
+}
+dotnet-targeting-pack() {
+    pkgdesc=".NET Core targeting pack"
+    installdepends=(netstandard-targeting-pack)
+
+    package() {
+        install -dm 755 "$pkgdir"/opt/usr/share/{dotnet,dotnet/packs,licenses}
+        cp -dr --no-preserve='ownership' "$srcdir"/packs/Microsoft.NETCore.App.{Host.linux-arm,Ref} "$pkgdir"/opt/usr/share/dotnet/packs/
+        ln -s dotnet-host-bin "$pkgdir"/opt/usr/share/licenses/dotnet-targeting-pack-bin
+    }
+}
+aspnet-targeting-pack() {
+    pkgdesc="ASP.NET Core targeting pack"
+    license=Apache
+    installdepends=(dotnet-targeting-pack)
+
+    package() {
+        install -dm 755 "$pkgdir"/opt/usr/share/{dotnet,dotnet/packs,licenses}
+        cp -dr --no-preserve='ownership' "$srcdir"/packs/Microsoft.AspNetCore.App.Ref "$pkgdir"/opt/usr/share/dotnet/packs/
+        ln -s dotnet-host-bin "$pkgdir"/opt/usr/share/licenses/aspnet-targeting-pack-bin
+    }
+}
+netstandard-targeting-pack() {
+    pkgdesc=".NET Standard targeting pack"
+    license=Apache
+
+    package() {
+        install -dm 755 "$pkgdir"/opt/usr/share/{dotnet,dotnet/packs,licenses}
+        cp -dr --no-preserve='ownership' "$srcdir"/packs/NETStandard.Library.Ref "$pkgdir"/opt/usr/share/dotnet/packs/
+        ln -s dotnet-host-bin "$pkgdir"/opt/usr/share/licenses/netstandard-targeting-pack
+    }
+}

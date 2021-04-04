@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# Copyright (c) 2021 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+LD_PRELOAD=/opt/lib/librm2fb_client.so.1 exec "$@"

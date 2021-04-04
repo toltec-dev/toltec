@@ -1,45 +1,117 @@
 #!/usr/bin/env bash
-# Copyright (c) 2020 The Toltec Contributors
+# Copyright (c) 2021 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
-pkgname=oxide
-pkgdesc="Launcher application"
-url=https://github.com/Eeems/oxide
-pkgver=2.0~beta-4
-timestamp=2020-09-26T20:53Z
-section=launchers
+pkgnames=(erode fret oxide rot tarnish decay)
+pkgver=2.1.2-2
+timestamp=2021-01-07T03:28Z
 maintainer="Eeems <eeems@eeems.email>"
 license=MIT
-depends=(xochitl)
+flags=(patch_rm2fb)
 
-source=(https://github.com/Eeems/oxide/releases/download/v2.0-beta/oxide.zip)
-sha256sums=(d3bac44b96c78726fcbfbd8f7a23d3bd4e4ae3f1f794714190100ebe602a8433)
+image=qt:v1.4
+source=("https://github.com/Eeems/oxide/archive/30aab3456b9f8b37ffb667cbc8b5e2a686f3e98e.tar.gz")
+sha256sums=(1ddd7bcd71aa12855348bde72bd0d0e7f91f1b958b054614c02eaa4b99168644)
 
-package() {
-    install -D -m 644 -t "$pkgdir"/etc/dbus-1/system.d "$srcdir"/etc/dbus-1/system.d/codes.eeems.oxide.conf
-    install -D -m 644 -t "$pkgdir"/lib/systemd/system "$srcdir"/etc/systemd/system/tarnish.service
-
-    install -d "$pkgdir"/opt
-    cp -r "$srcdir"/opt/bin "$pkgdir"/opt
-    install -D -m 644 -t "$pkgdir"/opt/etc "$srcdir"/opt/etc/oxide.conf
+build() {
+    find . -name "*.pro" -type f -print0 \
+        | xargs -0 sed -i 's/linux-oe-g++/linux-arm-remarkable-g++/g'
+    make release
 }
 
-configure() {
-    systemctl daemon-reload
+erode() {
+    pkgdesc="Task manager"
+    url=https://github.com/Eeems/oxide/tree/master/applications/process-manager
+    section="admin"
+    installdepends=(display "tarnish=$pkgver")
 
-    if ! is-enabled "$pkgname.service"; then
-        echo ""
-        echo "Run the following command(s) to use $pkgname as your launcher"
-        how-to-enable "tarnish.service"
-        echo ""
-    fi
+    package() {
+        install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/release/opt/bin/erode
+        install -D -m 644 -t "$pkgdir"/opt/usr/share/applications "$srcdir"/release/opt/usr/share/applications/codes.eeems.erode.oxide
+    }
 }
 
-preremove() {
-    echo "Disabling $pkgname"
-    systemctl disable --now tarnish
+fret() {
+    pkgdesc="Take screenshots"
+    url=https://github.com/Eeems/oxide/tree/master/applications/screenshot-tool
+    section="utils"
+    installdepends=("tarnish=$pkgver")
+
+    package() {
+        install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/release/opt/bin/fret
+        install -D -m 644 -t "$pkgdir"/opt/usr/share/applications "$srcdir"/release/opt/usr/share/applications/codes.eeems.fret.oxide
+    }
 }
 
-postremove() {
-    systemctl daemon-reload
+oxide() {
+    pkgdesc="Launcher application"
+    url=https://github.com/Eeems/oxide/tree/master/applications/launcher
+    section="launchers"
+    installdepends=(display "erode=$pkgver" "fret=$pkgver" "tarnish=$pkgver" "rot=$pkgver" "decay=$pkgver")
+
+    package() {
+        install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/release/opt/bin/oxide
+        install -D -m 644 -t "$pkgdir"/opt/etc "$srcdir"/release/opt/etc/oxide.conf
+        install -D -m 644 -t "$pkgdir"/opt/usr/share/applications "$srcdir"/release/opt/usr/share/applications/codes.eeems.oxide.oxide
+    }
+    configure() {
+        if ! is-enabled "tarnish.service"; then
+            echo ""
+            echo "Run the following command(s) to use $pkgname as your launcher"
+            how-to-enable "tarnish.service"
+            echo ""
+        fi
+    }
+}
+
+rot() {
+    pkgdesc="Manage Oxide settings through the command line"
+    url=https://github.com/Eeems/oxide/tree/master/applications/settings-manager
+    section="admin"
+    installdepends=("tarnish=$pkgver")
+
+    package() {
+        install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/release/opt/bin/rot
+    }
+}
+
+tarnish() {
+    pkgdesc="Service managing power states, connectivity and buttons"
+    url=https://github.com/Eeems/oxide/tree/master/applications/system-service
+    section="devel"
+    installdepends=(display xochitl)
+
+    package() {
+        install -D -m 644 -t "$pkgdir"/etc/dbus-1/system.d "$srcdir"/release/etc/dbus-1/system.d/codes.eeems.oxide.conf
+        install -D -m 644 -t "$pkgdir"/lib/systemd/system "$srcdir"/release/etc/systemd/system/tarnish.service
+        install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/release/opt/bin/tarnish
+    }
+    configure() {
+        systemctl daemon-reload
+    }
+    preremove() {
+        if is-active tarnish; then
+            echo "Stopping tarnish"
+            systemctl stop tarnish
+        fi
+        if is-enabled tarnish; then
+            echo "Disabling tarnish"
+            systemctl disable tarnish
+        fi
+    }
+    postremove() {
+        systemctl daemon-reload
+    }
+}
+
+decay() {
+    pkgdesc="Lockscreen application"
+    url=https://github.com/Eeems/oxide/tree/master/applications/lockscreen
+    section="utils"
+    installdepends=(display "tarnish=$pkgver")
+
+    package() {
+        install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/release/opt/bin/decay
+        install -D -m 644 -t "$pkgdir"/opt/usr/share/applications "$srcdir"/release/opt/usr/share/applications/codes.eeems.decay.oxide
+    }
 }

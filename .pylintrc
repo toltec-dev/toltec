@@ -1,0 +1,3 @@
+[SIMILARITIES]
+# Do not consider duplicate imports in several files as duplicated code
+ignore-imports=yes

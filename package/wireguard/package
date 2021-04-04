@@ -1,0 +1,105 @@
+#!/usr/bin/env bash
+# Copyright (c) 2021 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgnames=(wireguard)
+pkgdesc="Fast, modern, secure VPN tunnel"
+url=https://www.wireguard.com
+pkgver=1.0.20210219-1
+_wireguardtoolsver=1.0.20210223
+timestamp=2021-02-19T14:08Z
+section=utils
+maintainer="Jonah Weissman <jonahrweissman+toltec@gmail.com>"
+license=GPL-2.0-only
+makedepends=(build:bc build:lzop build:git)
+flags=(nostrip)
+
+_kernelrepo=https://github.com/remarkable/linux
+_kernelrevs=(
+    1774e2a6a091fdc081324e966d3db0aa9df75c0b
+    d4e7e07a390f8b2544ca09d69142d18114149004
+)
+_defconfigs=(
+    arch/arm/configs/zero-gravitas_defconfig
+    arch/arm/configs/zero-sugar_defconfig
+)
+
+image=base:v1.3.2
+source=(
+    "https://git.zx2c4.com/wireguard-linux-compat/snapshot/wireguard-linux-compat-${pkgver%-*}.tar.xz"
+    "https://git.zx2c4.com/wireguard-tools/snapshot/wireguard-tools-${_wireguardtoolsver}.tar.xz"
+)
+noextract=("wireguard-tools-${_wireguardtoolsver}.tar.xz")
+sha256sums=(
+    99d35296b8d847a0d4db97a4dda96b464311a6354e75fe0bef6e7c4578690f00
+    1f72da217044622d79e0bab57779e136a3df795e3761a3fc1dc0941a9055877c
+)
+
+prepare() {
+    bsdtar -x \
+        --directory "$srcdir" \
+        --file "$srcdir/wireguard-tools-${_wireguardtoolsver}.tar.xz"
+    mv "$srcdir/wireguard-tools-${_wireguardtoolsver}" "$srcdir/wireguard-tools"
+    # the symlink at src/wg-quick/wg needs something to point to
+    touch "$srcdir/wireguard-tools/src/wg"
+}
+
+build() {
+    make -C wireguard-tools/src PLATFORM=linux "CC=${CROSS_COMPILE}cc"
+
+    mkdir pkg
+    git init linux
+    for i in $(seq 0 1); do
+        (
+            cd linux
+            git fetch --depth=1 "$_kernelrepo" "${_kernelrevs[$i]}"
+            git checkout -f "${_kernelrevs[$i]}"
+            make mrproper
+            touch .scmversion
+            cp "${_defconfigs[$i]}" .config
+            echo "CONFIG_NET_FOU=m" >> .config
+            make olddefconfig
+            make net/ipv4/udp_tunnel.ko
+            make net/ipv6/ip6_udp_tunnel.ko
+            make modules_prepare
+        )
+
+        make -C src/ "KERNELDIR=$(realpath linux)"
+        KERNELRELEASE=$(cat linux/include/config/kernel.release)
+        export MOD_INSTALL_PATH="pkg/$KERNELRELEASE"
+        install -D -m 644 linux/net/ipv4/udp_tunnel.ko \
+            "$MOD_INSTALL_PATH/kernel/net/ipv4/udp_tunnel.ko"
+        install -D -m 644 linux/net/ipv6/ip6_udp_tunnel.ko \
+            "$MOD_INSTALL_PATH/kernel/net/ipv6/ip6_udp_tunnel.ko"
+        install -D -m 644 src/wireguard.ko \
+            "$MOD_INSTALL_PATH/extra/wireguard.ko"
+    done
+}
+
+package() {
+    make -C "$srcdir/wireguard-tools/src" DESTDIR="$pkgdir" WITH_WGQUICK=yes \
+        WITH_SYSTEMDUNITS=yes WITH_BASHCOMPLETION=no install
+    mkdir -p "$pkgdir/lib/modules"
+    cp -r "$srcdir/pkg"/* "$pkgdir/lib/modules"
+}
+
+configure() {
+    depmod -a
+}
+
+postremove() {
+    cat << MSG
+Wireguard has been removed.
+The kernel module will remain loaded until you reboot, or you can attempt
+to manually remove it by running "modprobe -r wireguard".
+MSG
+    depmod -a
+}
+
+postupgrade() {
+    cat << MSG
+Wireguard has been upgraded.
+The old kernel module will remain loaded until you reboot, or you can
+attempt to manually remove it by running "modprobe -r wireguard".
+MSG
+}

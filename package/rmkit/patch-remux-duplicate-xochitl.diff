@@ -1,0 +1,13 @@
+diff --git a/src/remux/apps.cpy b/src/remux/apps.cpy
+index f9207ff..4ee77a9 100644
+--- a/src/remux/apps.cpy
++++ b/src/remux/apps.cpy
+@@ -74,7 +74,7 @@ class AppReader:
+     else:
+       perror ("")
+
+-    vector<string> skip_list = { "remux", "remux.exe", "xochitl", "/usr/bin/xochitl" }
++    vector<string> skip_list = { "remux", "remux.exe", "xochitl", "/usr/bin/xochitl", "/opt/bin/xochitl" }
+     for auto a : apps:
+       dont_add := false
+       for auto s : skip_list:

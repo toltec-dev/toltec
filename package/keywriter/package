@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+# Copyright (c) 2021 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgnames=(keywriter)
+pkgdesc="Markdown-enabled free writing app"
+url=https://github.com/dps/remarkable-keywriter
+pkgver=0.1.0-2
+timestamp=2019-07-13T06:27Z
+section="writing"
+maintainer="Mattéo Delabre <spam@delab.re>"
+license=MIT
+installdepends=(display)
+flags=(patch_rm2fb)
+
+image=qt:v1.4
+_sundown=37728fb2d7137ff7c37d0a474cb827a8d6d846d8
+source=(
+    https://github.com/dps/remarkable-keywriter/archive/c77ec3f65d9ff769f3f5dc85cc91abbf05aa163f.zip
+    "https://github.com/vmg/sundown/archive/$_sundown.zip"
+    keywriter.draft
+)
+noextract=("$_sundown.zip")
+sha256sums=(
+    acbd0b0f74793320b1399d2adb68c4647f128578c7786f80c1cf8472b16a36f7
+    3c594d8219b17acd140b7011b44ebc69ab9d68910da827494f8c9cc2f5b12ecf
+    SKIP
+)
+
+prepare() {
+    bsdtar -x \
+        --strip-components 1 \
+        --directory "$srcdir/sundown" \
+        --file "$srcdir/$_sundown.zip"
+}
+
+build() {
+    sed -i 's/linux-oe-g++/linux-arm-remarkable-g++/' edit.pro
+    qmake edit.pro
+    make
+}
+
+package() {
+    install -D -m 755 "$srcdir"/edit "$pkgdir"/opt/bin/keywriter
+    install -D -m 644 -t "$pkgdir"/opt/etc/draft "$srcdir"/keywriter.draft
+}
+
+configure() {
+    mkdir -p /home/root/edit
+    echo "Created /home/root/edit for storing your Markdown files"
+}

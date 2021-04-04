@@ -1,0 +1,12 @@
+{
+  "displayName": "KOReader",
+  "description": "An ebook reader application supporting PDF, DjVu, EPUB, FB2 and many more formats",
+  "bin": "/opt/bin/koreader",
+  "icon": "/opt/etc/draft/icons/koreader.png",
+  "type": "foreground",
+  "events": {
+    "pause": "/opt/koreader/fbdepth -d 16 -r 1",
+    "stop": "/opt/koreader/fbdepth -d 16 -r 1",
+    "resume": "/opt/koreader/fbdepth -d 8 -r 1"
+  }
+}
