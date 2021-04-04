@@ -10,6 +10,7 @@ license=MIT
 pkgdesc="Simon Tatham's Puzzle Package"
 url="https://github.com/mrichards42/remarkable_puzzles"
 section="games"
+flags=(patch_rm2fb)
 
 image=python:v1.4
 source=(
