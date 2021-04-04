@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Copyright (c) 2020 The Toltec Contributors
+# Copyright (c) 2021 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
 pkgnames=(rmservewacominput)
@@ -10,7 +10,7 @@ timestamp=2021-03-10T18:36Z
 section="utils"
 maintainer="Linus K. <linus@cosmos-ink.net>"
 license=MIT
-depends=(appmarkable)
+installdepends=(appmarkable)
 
 image=base:v1.4
 source=(
