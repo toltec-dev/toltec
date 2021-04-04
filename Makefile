@@ -59,7 +59,7 @@ repo-local:
 	./scripts/repo_build.py --local $(FLAGS)
 
 repo-new:
-	./scripts/repo_build.py --no-fetch $(FLAGS)
+	./scripts/repo_build.py --diff $(FLAGS)
 
 repo-check:
 	./scripts/repo-check build/repo
@@ -82,7 +82,7 @@ $(RECIPES_PUSH): %:
 	if ! rsync --rsync-path /opt/bin/rsync \
 	      --archive --verbose --compress --ignore-times \
 	      $$(for pkg in $${pkgnames[@]}; do \
-	             echo build/repo/"$$pkg"_*.ipk; \
+	             echo build/repo/*/"$$pkg"_*.ipk; \
 	         done) \
 	      root@"$(HOST)":~/.cache/toltec/; then \
 		echo "rysnc exited with an error." \

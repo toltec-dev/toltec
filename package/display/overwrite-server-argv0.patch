@@ -1,0 +1,15 @@
+diff --git a/src/server/main.cpp b/src/server/main.cpp
+index 755be17..4186060 100755
+--- a/src/server/main.cpp
++++ b/src/server/main.cpp
+@@ -173,6 +173,10 @@ int __libc_start_main(int (*_main)(int, char **, char **), int argc,
+   swtfb::SDK_BIN = argv[0];
+   fprintf(stderr, "BIN FILE: %s\n", argv[0]);
+ 
++  size_t argv0_len = strlen(argv[0]);
++  strncpy(argv[0], "rm2fb-server", argv0_len);
++  argv[0][argv0_len] = 0;
++
+   return func_main(server_main, argc, argv, init, fini, rtld_fini, stack_end);
+ };
+ };

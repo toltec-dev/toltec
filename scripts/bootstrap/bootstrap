@@ -30,13 +30,15 @@ set -eE
 # Path where the actual Entware distribution resides (will be mounted to /opt)
 [[ -z $entware_path ]] && entware_path=/home/root/.entware
 
+# Path to the Opkg configuration file
+opkg_conf_path="/opt/etc/opkg.conf"
+
 # Find out current branch or get default one
 get-branch() {
-    local opkg_conf="$entware_path/etc/opkg.conf"
     local branch
-    if [[ -f "$opkg_conf" ]]; then
+    if [[ -f "$opkg_conf_path" ]]; then
         # Get the first (...) value (aka \1) of the pattern if matching
-        branch="$(sed -E 's|^src/gz\s+toltec\s+https://toltec-dev.org/([[:alnum:]]*).*$|\1|;t;d' "$opkg_conf" | head -n1)"
+        branch="$(sed -E 's|^src/gz\s+toltec\s+https://toltec-dev.org/([[:alnum:]]*).*$|\1|;t;d' "$opkg_conf_path" | head -n1)"
     fi
     echo "${branch:-stable}"
 }
@@ -181,8 +183,8 @@ entware-install() {
 
     wget --no-verbose "$entware_remote/opkg" -O /opt/bin/opkg
     chmod 755 /opt/bin/opkg
-    wget --no-verbose "$entware_remote/opkg.conf" -O /opt/etc/opkg.conf
-    sed -i 's|http://|https://|g' /opt/etc/opkg.conf
+    wget --no-verbose "$entware_remote/opkg.conf" -O "$opkg_conf_path"
+    sed -i 's|http://|https://|g' "$opkg_conf_path"
     wget --no-verbose "$entware_remote/ld-2.27.so" -O /opt/lib/ld-2.27.so
     wget --no-verbose "$entware_remote/libc-2.27.so" -O /opt/lib/libc-2.27.so
     wget --no-verbose "$entware_remote/libgcc_s.so.1" -O /opt/lib/libgcc_s.so.1
@@ -262,15 +264,38 @@ UNIT
 #
 # Arguments: List of additional packages to install, one package per argument
 toltec-install() {
-    # Make sure that Opkg is configured to fetch the chosen Toltec branch
-    if grep -q "^src/gz\b.*\bhttps://toltec-dev\.org/$toltec_branch$" /opt/etc/opkg.conf; then
-        log "Already on the Toltec $toltec_branch branch"
-    else
-        log "Adding the Toltec $toltec_branch repository"
-        sed -i '/^src\/gz\b.*\bhttps:\/\/toltec\.delab\.re\//d' /opt/etc/opkg.conf
-        sed -i '/^src\/gz\b.*\bhttps:\/\/toltec-dev\.org\//d' /opt/etc/opkg.conf
-        echo "src/gz toltec https://toltec-dev.org/$toltec_branch" >> /opt/etc/opkg.conf
+    log "Configuring the Toltec $toltec_branch repository"
+
+    # Select architectures matching the current device
+    local device_id_path=/sys/devices/soc0/machine
+    local device_arch
+
+    if ! grep -q "^arch rmall" "$opkg_conf_path"; then
+        echo "arch rmall 200" >> "$opkg_conf_path"
     fi
+
+    if grep -q "reMarkable 1.0" "$device_id_path" \
+        || grep -q "reMarkable Prototype 1" "$device_id_path"; then
+        device_arch=rm1
+        if ! grep -q "^arch rm1" "$opkg_conf_path"; then
+            echo "arch rm1 250" >> "$opkg_conf_path"
+        fi
+    elif grep -q "reMarkable 2.0" "$device_id_path"; then
+        device_arch=rm2
+        if ! grep -q "^arch rm2" "$opkg_conf_path"; then
+            echo "arch rm2 250" >> "$opkg_conf_path"
+        fi
+    else
+        log ERROR "Unsupported device: '$(cat "$device_id_path")'"
+        error-cleanup
+        exit 1
+    fi
+
+    # Make sure that Opkg is configured to fetch the chosen Toltec branch
+    sed -i '/^src\/gz\s\+toltec[a-z-]*\s\+/d' "$opkg_conf_path"
+    echo "src/gz toltec-rmall https://toltec-dev.org/$toltec_branch/rmall" >> "$opkg_conf_path"
+    echo "src/gz toltec-$device_arch https://toltec-dev.org/$toltec_branch/$device_arch" >> "$opkg_conf_path"
+
     /opt/bin/opkg update
 
     # Make sure that the packages needed for wget TLS support are installed

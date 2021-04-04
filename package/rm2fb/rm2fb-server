@@ -1,4 +1,0 @@
-#!/usr/bin/env bash
-# we actually do want to execute this command
-# shellcheck disable=SC2091
-LD_PRELOAD=/opt/lib/librm2fb_server.so.1.0.0 $(command -v remarkable-shutdown)

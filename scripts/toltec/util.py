@@ -10,7 +10,17 @@ import itertools
 import os
 import shutil
 import sys
-from typing import Any, Callable, Dict, IO, List, Optional
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    IO,
+    List,
+    Optional,
+    Protocol,
+    Sequence,
+    TypeVar,
+)
 import zipfile
 import tarfile
 
@@ -129,6 +139,7 @@ def auto_extract(archive_path: str, dest_path: str) -> bool:
                 zip_archive.getinfo,
                 zip_archive.open,
                 lambda member: member.is_dir(),
+                lambda member: False,
                 lambda member: member.external_attr >> 16 & 0x1FF,
                 dest_path,
             )
@@ -145,6 +156,7 @@ def auto_extract(archive_path: str, dest_path: str) -> bool:
                 tar_archive.getmember,
                 tar_archive.extractfile,
                 lambda member: member.isdir(),
+                lambda member: member.issym(),
                 lambda member: member.mode,
                 dest_path,
             )
@@ -153,11 +165,12 @@ def auto_extract(archive_path: str, dest_path: str) -> bool:
     return False
 
 
-def _auto_extract(  # pylint:disable=too-many-arguments
+def _auto_extract(  # pylint:disable=too-many-arguments,disable=too-many-locals
     members: List[str],
     getinfo: Callable[[str], Any],
     extract: Callable[[Any], Optional[IO[bytes]]],
     isdir: Callable[[Any], bool],
+    issym: Callable[[Any], bool],
     getmode: Callable[[Any], int],
     dest_path: str,
 ) -> None:
@@ -168,6 +181,7 @@ def _auto_extract(  # pylint:disable=too-many-arguments
     :param getinfo: get an entry object from an entry name in the archive
     :param extract: get a reading stream corresponding to an archive entry
     :param isdir: get whether an entry is a directory or not
+    :param issym: get whether an entry is a symbolic link or not
     :param getmode: get the permission bits for an entry
     :param destpath: destinatio folder for the archive contents
     """
@@ -180,15 +194,22 @@ def _auto_extract(  # pylint:disable=too-many-arguments
         if isdir(member):
             os.makedirs(file_path, exist_ok=True)
         else:
-            source = extract(member)
-            assert source is not None
+            if issym(member):
+                os.symlink(member.linkname, file_path)
+            else:
+                basedir = os.path.dirname(file_path)
+                if not os.path.exists(basedir):
+                    os.makedirs(basedir, exist_ok=True)
 
-            with source, open(file_path, "wb") as target:
-                shutil.copyfileobj(source, target)
+                source = extract(member)
+                assert source is not None
 
-            mode = getmode(member)
-            if mode != 0:
-                os.chmod(file_path, mode)
+                with source, open(file_path, "wb") as target:
+                    shutil.copyfileobj(source, target)
+
+                mode = getmode(member)
+                if mode != 0:
+                    os.chmod(file_path, mode)
 
 
 def query_user(
@@ -232,6 +253,38 @@ def query_user(
         print("Invalid answer. Please choose among the valid options.")
 
 
+def check_directory(path: str, message: str) -> bool:
+    """
+    Create a directory and ask the user what to do if it already exists.
+
+    :param path: path to the directory to create
+    :param message: message to display before asking the user interactively
+    :returns: false if the user chose to cancel the current operation
+    """
+    try:
+        os.mkdir(path)
+    except FileExistsError:
+        ans = query_user(
+            message,
+            default="c",
+            options=["c", "r", "k"],
+            aliases={
+                "cancel": "c",
+                "remove": "r",
+                "keep": "k",
+            },
+        )
+
+        if ans == "c":
+            return False
+
+        if ans == "r":
+            shutil.rmtree(path)
+            os.mkdir(path)
+
+    return True
+
+
 def list_tree(root: str) -> List[str]:
     """
     Get a sorted list of all files and folders under a given root folder.
@@ -247,3 +300,33 @@ def list_tree(root: str) -> List[str]:
             result.append(os.path.join(directory, file))
 
     return sorted(result)
+
+
+# See <https://github.com/python/typing/issues/760>
+class SupportsLessThan(Protocol):  # pylint:disable=too-few-public-methods
+    """Types that support the less-than operator."""
+
+    def __lt__(self, other: Any) -> bool:
+        ...
+
+
+Key = TypeVar("Key", bound=SupportsLessThan)
+Value = TypeVar("Value")
+
+
+def group_by(
+    in_seq: Sequence[Value], key_fn: Callable[[Value], Key]
+) -> Dict[Key, List[Value]]:
+    """
+    Group elements of a list.
+
+    :param in_seq: list of elements to group
+    :param key_fn: mapping of each element onto a group
+    :returns: dictionary of groups
+    """
+    return dict(
+        (key, list(group))
+        for key, group in itertools.groupby(
+            sorted(in_seq, key=key_fn), key=key_fn
+        )
+    )
