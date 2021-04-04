@@ -137,6 +137,8 @@ class Repo:
         if req.status_code != 200:
             return PackageStatus.Missing
 
+        os.makedirs(os.path.dirname(local_path), exist_ok=True)
+
         with open(local_path, "wb") as local:
             for chunk in req.iter_content(chunk_size=1024):
                 local.write(chunk)
