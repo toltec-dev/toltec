@@ -6,7 +6,7 @@ on:
 jobs:
     testing:
         name: Build and publish the testing channel
-        runs-on: ubuntu-latest
+        runs-on: ubuntu-20.04
         steps:
             - name: Checkout the Git repository
               uses: actions/checkout@v2
@@ -19,7 +19,6 @@ jobs:
             - name: Build packages
               run: |
                 make repo FLAGS='--remote-repo ${{ secrets.REMOTE_HTTP }}/testing'
-                ./scripts/repo-build-web package build/repo
             - name: Sync packages with the remote repository
               uses: ./.github/actions/sync-repository
               with:

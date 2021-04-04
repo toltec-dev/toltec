@@ -5,17 +5,19 @@
 
 import argparse
 import logging
+import os
+from toltec import paths
 from toltec.builder import Builder
-from toltec.repo import Repo
+from toltec.repo import Repo, PackageStatus
 from toltec.util import argparse_add_verbose, LOGGING_FORMAT
 
 parser = argparse.ArgumentParser(description=__doc__)
 
 parser.add_argument(
-    "-n",
-    "--no-fetch",
+    "-d",
+    "--diff",
     action="store_true",
-    help="do not fetch missing packages from the remote repository",
+    help="only keep new packages that do not exist on the remote repository",
 )
 
 argparse_add_verbose(parser)
@@ -44,12 +46,29 @@ args = parser.parse_args()
 remote = args.remote_repo if not args.local else None
 logging.basicConfig(format=LOGGING_FORMAT, level=args.verbose)
 
-repo = Repo()
-builder = Builder()
-missing = repo.fetch_packages(remote, fetch_missing=not args.no_fetch)
+repo = Repo(paths.RECIPE_DIR, paths.REPO_DIR)
+builder = Builder(paths.WORK_DIR, paths.REPO_DIR)
+results = repo.fetch_packages(remote)
+repo.make_index()
 
-for recipe_name, packages in missing.items():
-    if packages:
-        builder.make(recipe_name, packages)
+fetched = results[PackageStatus.Fetched]
+missing = results[PackageStatus.Missing]
+ordered_missing = repo.order_dependencies(
+    [repo.generic_recipes[name] for name in missing]
+)
+
+for generic_recipe in ordered_missing:
+    if missing[generic_recipe.name]:
+        builder.make(generic_recipe, missing[generic_recipe.name])
+        repo.make_index()
+
+if args.diff:
+    for name in fetched:
+        for packages in fetched[name].values():
+            for package in packages:
+                filename = package.filename()
+                local_path = os.path.join(repo.repo_dir, filename)
+                os.remove(local_path)
 
 repo.make_index()
+repo.make_listing()

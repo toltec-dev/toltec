@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
-# Copyright (c) 2020 The Toltec Contributors
+# Copyright (c) 2021 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
+archs=(rm2)
 pkgnames=(rm2-suspend-fix)
 pkgdesc="Fix issue where suspend breaks networking on the reMarkable 2"
 url=https://toltec-dev.org/
