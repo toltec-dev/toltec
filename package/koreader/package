@@ -20,7 +20,7 @@ source=(
     koreader
 )
 sha256sums=(
-    0fecf246d79561cab079dfa07efb653b5a957635c29298ad4f8c6822f6d7b3c1
+    5120f0c9fc6c7f7f1f53a5f3b5b2aa29b63517ee3e9dc6f8d06f162db8b52501
     SKIP
     SKIP
     SKIP
