@@ -26,21 +26,23 @@ sha256sums=(
 build() {
     mkdir pkg
     git init linux
-    cd linux
-    git fetch --depth=1 "$_kernelrepo" "$_kernelrev"
-    git checkout -f "$_kernelrev"
-    make mrproper
-    touch .scmversion
-    cp "$_defconfig" .config
-    echo "CONFIG_FUSE_FS=m" >> .config
-    make olddefconfig
-    make fs/fuse/fuse.ko
-    make modules_prepare
+    (
+    	cd linux
+    	git fetch --depth=1 "$_kernelrepo" "$_kernelrev"
+    	git checkout -f "$_kernelrev"
+    	make mrproper
+    	touch .scmversion
+    	cp "$_defconfig" .config
+    	echo "CONFIG_FUSE_FS=m" >> .config
+    	make olddefconfig
+    	make fs/fuse/fuse.ko
+    	make modules_prepare
+    )
 
     KERNELRELEASE=$(cat linux/include/config/kernel.release)
     export MOD_INSTALL_PATH="pkg/$KERNELRELEASE"
-    install -D -m 644 linux/net/ipv4/udp_tunnel.ko \
-        "$MOD_INSTALL_PATH/kernel/net/ipv4/udp_tunnel.ko"
+    install -D -m 644 linux/fs/fuse/fuse.ko \
+        "$MOD_INSTALL_PATH/kernel/fs/fuse/fuse.ko"
 }
 
 package() {
