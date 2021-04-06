@@ -14,7 +14,7 @@ license=MIT
 
 makedepends=()
 installdepends=(fusemodule fuse-utils)
-installdepends_rm2=(fusemodule)
+installdepends_rm1=(fusemodule)
 
 image=golang:v1.5
 
