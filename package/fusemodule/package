@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+e!/usr/bin/env bash
 # Copyright (c) 2020 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
@@ -14,12 +14,8 @@ makedepends=(build:bc build:lzop build:git)
 flags=(nostrip)
 
 _kernelrepo=https://github.com/remarkable/linux
-_kernelrevs=(
-    1774e2a6a091fdc081324e966d3db0aa9df75c0b
-)
-_defconfigs=(
-    arch/arm/configs/zero-gravitas_defconfig
-)
+_kernelrev=1774e2a6a091fdc081324e966d3db0aa9df75c0b
+_defconfig=arch/arm/configs/zero-gravitas_defconfig
 
 image=base:v1.3.2
 source=(
@@ -31,11 +27,11 @@ build() {
     mkdir pkg
     git init linux
     cd linux
-    git fetch --depth=1 "$_kernelrepo" "${_kernelrevs[$i]}"
-    git checkout -f "${_kernelrevs[$i]}"
+    git fetch --depth=1 "$_kernelrepo" "$_kernelrev"
+    git checkout -f "$_kernelrev"
     make mrproper
     touch .scmversion
-    cp "${_defconfigs[$i]}" .config
+    cp "$_defconfig" .config
     echo "CONFIG_FUSE_FS=m" >> .config
     make olddefconfig
     make fs/fuse/fuse.ko
