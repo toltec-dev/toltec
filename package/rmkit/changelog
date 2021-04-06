@@ -1,3 +1,35 @@
+2021-03-22 raisjn <of.raisjn@arkose>
+
+
+	remux:
+
+	* allow specifying the start_app= (see README.md) in remux.conf
+	* better support for xochitl.service overrides using systemd override
+	* make xochitl killable again, delete vfb when killing an app (frees mem)
+
+
+	simple:
+
+	* add simple relative offsets using '-' and '+'
+	* bugfix: allow a UI with only a textinput/textarea
+
+	rmkit:
+
+	* support transparent bitmaps
+	* fix text rendering crash (when stack allocation grows too large)
+	* add virtual widget destructor (better memory usage)
+	* fix text underline style
+
+	genie:
+
+	* fix crash when running multiple commands in a row
+	* allow specifying distance in swipe gesture
+	* reduce cpu usage by not listening to stylus events
+
+	harmony:
+
+	* add disable history button
+
 2021-02-25 raisjn <of.raisjn@chalk>
 
 	lamp:

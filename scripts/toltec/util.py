@@ -10,7 +10,17 @@ import itertools
 import os
 import shutil
 import sys
-from typing import Any, Callable, Dict, IO, List, Optional
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    IO,
+    List,
+    Optional,
+    Protocol,
+    Sequence,
+    TypeVar,
+)
 import zipfile
 import tarfile
 
@@ -290,3 +300,33 @@ def list_tree(root: str) -> List[str]:
             result.append(os.path.join(directory, file))
 
     return sorted(result)
+
+
+# See <https://github.com/python/typing/issues/760>
+class SupportsLessThan(Protocol):  # pylint:disable=too-few-public-methods
+    """Types that support the less-than operator."""
+
+    def __lt__(self, other: Any) -> bool:
+        ...
+
+
+Key = TypeVar("Key", bound=SupportsLessThan)
+Value = TypeVar("Value")
+
+
+def group_by(
+    in_seq: Sequence[Value], key_fn: Callable[[Value], Key]
+) -> Dict[Key, List[Value]]:
+    """
+    Group elements of a list.
+
+    :param in_seq: list of elements to group
+    :param key_fn: mapping of each element onto a group
+    :returns: dictionary of groups
+    """
+    return dict(
+        (key, list(group))
+        for key, group in itertools.groupby(
+            sorted(in_seq, key=key_fn), key=key_fn
+        )
+    )

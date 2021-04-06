@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Copyright (c) 2020 The Toltec Contributors
+# Copyright (c) 2021 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
 # Inspired by https://github.com/archlinux/svntogit-packages/blob/packages/tzdata/trunk/PKGBUILD
@@ -13,7 +13,7 @@ timestamp=2020-05-04T06:16Z
 section=utils
 maintainer="Eeems <eeems@eeems.email>"
 license="custom: public domain"
-depends=(zoneinfo-core)
+installdepends=(zoneinfo-core)
 makedepends=(build:gawk)
 image=base:v1.3.2
 

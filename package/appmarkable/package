@@ -1,25 +1,29 @@
 #!/usr/bin/env bash
-# Copyright (c) 2020 The Toltec Contributors
+# Copyright (c) 2021 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
 pkgnames=(appmarkable)
 pkgdesc="Front-end for apps that do not have a graphical user interface"
 url="https://github.com/LinusCDE/appmarkable"
-pkgver=0.0.0-9
+pkgver=0.0.0-10
 timestamp=2021-03-10T18:36Z
 section="devel"
 maintainer="Linus K. <linus@cosmos-ink.net>"
 license=MIT
+installdepends=(display)
+flags=(patch_rm2fb)
 
 image=rust:v1.4
 source=(https://github.com/LinusCDE/appmarkable/archive/c44ee87ea2b1f1e41c9592476c076150c9a1acf4.zip)
 sha256sums=(76e151aeae0f18b206dd3c6258bf74bcb5256ee2f803e1ed2073278831158f60)
 
 build() {
-    rm -r .cargo/
-    cargo build --release --target=armv7-unknown-linux-gnueabihf
+    # Fall back to system-wide config
+    rm .cargo/config
+    cargo build --release --bin appmarkable
 }
 
 package() {
-    install -D -m 755 "$srcdir"/target/armv7-unknown-linux-gnueabihf/release/appmarkable "$pkgdir"/opt/bin/appmarkable
+    install -D -m 755 -t "$pkgdir"/opt/bin \
+        "$srcdir"/target/armv7-unknown-linux-gnueabihf/release/appmarkable
 }
