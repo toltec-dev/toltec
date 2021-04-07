@@ -4,7 +4,7 @@ e!/usr/bin/env bash
 
 pkgnames=(fusemodule)
 pkgdesc="FUSE (Filesystem in Userspace) Kernel Module"
-arch=(rm1)
+archs=(rm1)
 url=https://github.com/libfuse/libfuse
 pkgver=1.0.0-1
 timestamp=2021-04-06T22:16Z
