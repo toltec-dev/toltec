@@ -2,7 +2,7 @@ e!/usr/bin/env bash
 # Copyright (c) 2020 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
-pkgnames=(fusemodule)
+pkgnames=(fuse)
 pkgdesc="FUSE (Filesystem in Userspace) Kernel Module"
 archs=(rm1)
 url=https://github.com/libfuse/libfuse
