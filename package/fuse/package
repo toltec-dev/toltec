@@ -2,6 +2,7 @@
 # Copyright (c) 2020 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
+archs=(rm1 rm2)
 pkgnames=(fuse)
 pkgdesc="FUSE (Filesystem in Userspace) Kernel Module"
 url=https://github.com/libfuse/libfuse
