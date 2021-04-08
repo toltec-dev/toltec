@@ -19,10 +19,6 @@ _kernelrev=1774e2a6a091fdc081324e966d3db0aa9df75c0b
 _defconfig=arch/arm/configs/zero-gravitas_defconfig
 
 image=base:v1.3.2
-source=(
-)
-sha256sums=(
-)
 
 build() {
     mkdir pkg
