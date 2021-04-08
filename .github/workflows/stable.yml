@@ -49,4 +49,4 @@ jobs:
                 title: New Toltec stable update available
                 link: https://toltec-dev.org/stable
                 color: 0x2ea043
-                message: ${{ github.event.head_commit.message }}
+                message: ${{ github.event.commits[0].message }}
