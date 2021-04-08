@@ -56,17 +56,17 @@ configure() {
 
 postremove() {
     if [[ $arch = rm1 ]]; then
-	    echo 'Fuse (Kernel Module) has been removed.\n'\
-		'The kernel module will remain loaded until you reboot, or you can attempt\n'\
-		'to manually remove it by running "modprobe -r fuse".'
+	    echo 'Fuse (Kernel Module) has been removed.'
+	    echo 'The kernel module will remain loaded until you reboot, or you can attempt'
+	    echo 'to manually remove it by running "modprobe -r fuse".'
     	depmod -a
     fi
 }
 
 postupgrade() {
     if [[ $arch = rm1 ]]; then
-	    echo 'Fuse (Kernel Module) has been upgraded.\n'\
-		'The old kernel module will remain loaded until you reboot, or you can\n'\
-		'attempt to manually remove it by running "modprobe -r fuse".'
+	    echo 'Fuse (Kernel Module) has been upgraded.'
+	    echo 'The old kernel module will remain loaded until you reboot, or you can'
+	    echo 'attempt to manually remove it by running "modprobe -r fuse".'
     fi
 }
