@@ -23,16 +23,16 @@ build() {
     mkdir pkg
     git init linux
     (
-    	cd linux
-    	git fetch --depth=1 "$_kernelrepo" "$_kernelrev"
-    	git checkout -f "$_kernelrev"
-    	make mrproper
-    	touch .scmversion
-    	cp "$_defconfig" .config
-    	echo "CONFIG_FUSE_FS=m" >> .config
-    	make olddefconfig
-    	make fs/fuse/fuse.ko
-    	make modules_prepare
+        cd linux
+        git fetch --depth=1 "$_kernelrepo" "$_kernelrev"
+        git checkout -f "$_kernelrev"
+        make mrproper
+        touch .scmversion
+        cp "$_defconfig" .config
+        echo "CONFIG_FUSE_FS=m" >> .config
+        make olddefconfig
+        make fs/fuse/fuse.ko
+        make modules_prepare
     )
 
     KERNELRELEASE=$(cat linux/include/config/kernel.release)
@@ -56,17 +56,17 @@ configure() {
 
 postremove() {
     if [[ $arch = rm1 ]]; then
-	    echo 'Fuse (Kernel Module) has been removed.'
-	    echo 'The kernel module will remain loaded until you reboot, or you can attempt'
-	    echo 'to manually remove it by running "modprobe -r fuse".'
-    	depmod -a
+        echo 'Fuse (Kernel Module) has been removed.'
+        echo 'The kernel module will remain loaded until you reboot, or you can attempt'
+        echo 'to manually remove it by running "modprobe -r fuse".'
+        depmod -a
     fi
 }
 
 postupgrade() {
     if [[ $arch = rm1 ]]; then
-	    echo 'Fuse (Kernel Module) has been upgraded.'
-	    echo 'The old kernel module will remain loaded until you reboot, or you can'
-	    echo 'attempt to manually remove it by running "modprobe -r fuse".'
+        echo 'Fuse (Kernel Module) has been upgraded.'
+        echo 'The old kernel module will remain loaded until you reboot, or you can'
+        echo 'attempt to manually remove it by running "modprobe -r fuse".'
     fi
 }
