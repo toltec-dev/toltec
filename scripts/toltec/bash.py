@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: MIT
 """Bridge Bash with Python."""
 
+import os
 import shlex
 import subprocess
 from typing import Dict, Generator, List, Optional, Tuple, Union
@@ -94,7 +95,9 @@ def get_declarations(src: str) -> Tuple[Variables, Functions]:
 declare -f
 declare -p
 """
-    env: Dict[str, str] = {}
+    env: Dict[str, str] = {
+        "PATH": os.environ["PATH"],
+    }
 
     declarations_subshell = (
         subprocess.run(  # pylint:disable=subprocess-run-check
