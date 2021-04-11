@@ -1,8 +1,0 @@
-# Copyright (c) 2020 The Toltec Contributors
-# SPDX-License-Identifier: MIT
-
-name=tilem
-desc=TI-84+ calculator emulator
-call=/opt/bin/tilem /home/root/ti84p.rom
-term=:
-imgFile=tilem
