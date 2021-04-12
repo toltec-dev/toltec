@@ -5,8 +5,8 @@
 pkgnames=(netsurf)
 pkgdesc="Lightweight web browser"
 url=https://github.com/alex0809/netsurf-reMarkable
-pkgver=0.3.3-1
-timestamp=2021-04-12T15:14+00:00
+pkgver=0.3.4-1
+timestamp=2021-04-12T16:29+00:00
 maintainer="Alex Friesenhahn <rm-dev@alexfriesenhahn.de>"
 archs=(rmall)
 license=MIT
@@ -25,20 +25,17 @@ installdepends=(
 image=base:v1.5
 
 source=(
-    https://github.com/alex0809/netsurf-reMarkable/archive/refs/tags/v0.3.3.tar.gz
+    https://github.com/alex0809/netsurf-reMarkable/archive/refs/tags/v0.3.4.tar.gz
     netsurf.draft
 )
 sha256sums=(
-    9d6bb15af25604a390a45d665445b53b8b2530f01240054dbe1a7c306f1b90ac
+    21dde89b7fcaed04b142789d5dc4a2cbc025fc241f1577ff80d9ca2fb508d346
     SKIP
 )
 
 build() {
     scripts/install_dependencies.sh
     TARGET_WORKSPACE=$(pwd)/build scripts/build.sh
-
-    # After build, the Netsurf directory contains some broken symlinks, delete them before continuing
-    find build -xtype l -delete
 }
 
 package() {
