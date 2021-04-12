@@ -62,4 +62,3 @@ package() {
     # Default Choices file
     install -D -m 644 "$srcdir"/example/Choices "$pkgdir"/opt/usr/share/netsurf/Choices
 }
-
