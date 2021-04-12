@@ -35,6 +35,11 @@ jobs:
                 ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
                 ssh-known-hosts: ${{ secrets.SSH_KNOWN_HOSTS }}
                 remote-path: ${{ secrets.REMOTE_SSH }}:/srv/toltec/web
+            - name: Create Github Release
+              continue-on-error: true
+              run: hub release create -t ${{ github.sha }} -m "${{ github.event.commits[0].message }}" $(date +%G-W%V-%u)
+              env:
+                GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
             - name: Send notification to Discord
               continue-on-error: true
               uses: ./.github/actions/discord-send
@@ -44,4 +49,4 @@ jobs:
                 title: New Toltec stable update available
                 link: https://toltec-dev.org/stable
                 color: 0x2ea043
-                message: ${{ github.event.head_commit.message }}
+                message: ${{ github.event.commits[0].message }}
