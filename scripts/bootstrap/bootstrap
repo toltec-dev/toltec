@@ -292,7 +292,7 @@ toltec-install() {
     local additional_packages=()
 
     [[ ! -d /opt/etc/ssl/certs ]] && additional_packages+=(ca-certificates)
-    [[ ! -f /opt/bin/wget ]] && additional_packages+=(wget)
+    [[ ! -f /opt/bin/wget ]] && additional_packages+=(wget-ssl)
 
     if [[ ${#additional_packages[@]} -gt 0 ]]; then
         /opt/bin/opkg install "${additional_packages[@]}"
