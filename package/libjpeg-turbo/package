@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+# Copyright (c) 2021 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgnames=(libjpeg-turbo-dev)
+pkgdesc="Library with functions for handling the JPEG image data format - development files"
+url=https://libjpeg-turbo.org
+pkgver=2.0.6-1
+timestamp=2020-11-17T00:00:00Z
+section="devel"
+maintainer="TBD"
+license=BSD
+
+image=base:v1.5
+source=("https://sourceforge.net/projects/libjpeg-turbo/files/${pkgver%-*}/libjpeg-turbo-${pkgver%-*}.tar.gz")
+sha256sums=(d74b92ac33b0e3657123ddcf6728788c90dc84dcb6a52013d758af3c4af481bb)
+
+build() {
+    cmake \
+        -DCMAKE_SYSROOT="$SYSROOT" \
+        -DCMAKE_TOOLCHAIN_FILE=/usr/share/cmake/$CHOST.cmake \
+        -DCMAKE_INSTALL_LIBDIR=/opt/lib \
+        -DCMAKE_INSTALL_INCLUDEDIR=/opt/include \
+        -DENABLE_SHARED=ON \
+        -DENABLE_STATIC=ON \
+        -DWITH_JAVA=OFF \
+        -DWITH_TURBOJPEG=OFF \
+        .
+    make
+    DESTDIR="$srcdir"/install make install
+}
+
+package() {
+    install -d "$pkgdir"/opt/lib/pkgconfig
+    install -m 644 "$srcdir"/install/opt/lib/libjpeg.a "$pkgdir"/opt/lib/
+    install -m 644 "$srcdir"/install/opt/lib/pkgconfig/libjpeg.pc "$pkgdir"/opt/lib/pkgconfig/
+
+    install -d "$pkgdir"/opt/include
+    for file in "$srcdir"/install/opt/include/*; do
+        install -m 644 "$file" "$pkgdir"/opt/include/
+    done
+}
