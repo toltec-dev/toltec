@@ -17,7 +17,7 @@ source=(
     rm2fb.service
     rm2fb-client
     overwrite-server-argv0.patch
-    remux.service.conf
+    launcher.service.conf
 )
 sha256sums=(
     76f1c0b72260a9743f3e008100ffddf1f89cd44c6f0376d906e98ae66eaea716
@@ -60,8 +60,15 @@ display() {
             ln -s "$libname" "$pkgdir"/opt/lib/"${libname%.*.*}"
             install -D -m 644 -t "$pkgdir"/lib/systemd/system \
                 "$srcdir"/rm2fb.service
-            install -D -m 644 -t "$pkgdir"/etc/systemd/system/remux.service.d/ \
-                "$srcdir"/remux.service.conf
+            mkdir -p \
+                "$pkgdir"/etc/systemd/system/draft.service.d/ \
+                "$pkgdir"/etc/systemd/system/remux.service.d/ \
+                "$pkgdir"/etc/systemd/system/tarnish.service.d/
+
+            cp "$srcdir"/launcher.service.conf "$pkgdir"/etc/systemd/system/draft.service.d/draft.service.conf
+            cp "$srcdir"/launcher.service.conf "$pkgdir"/etc/systemd/system/remux.service.d/remux.service.conf
+            cp "$srcdir"/launcher.service.conf "$pkgdir"/etc/systemd/system/tarnish.service.d/tarnish.service.conf
+
         fi
     }
 
