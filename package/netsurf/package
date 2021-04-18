@@ -11,6 +11,20 @@ maintainer="Alex Friesenhahn <rm-dev@alexfriesenhahn.de>"
 archs=(rmall)
 license=MIT
 section="readers"
+makedepends=(
+    host:libcurl
+    host:libfreetype
+    host:libjpeg-turbo
+    host:libcurl-dev
+    host:libfreetype-dev
+    host:libjpeg-turbo-dev
+    build:automake
+    build:bison 
+    build:flex 
+    build:git 
+    build:gperf 
+    build:libpng-dev
+)
 installdepends=(
     dejavu-fonts-ttf-DejaVuSans
     dejavu-fonts-ttf-DejaVuSans-Bold
@@ -34,7 +48,6 @@ sha256sums=(
 )
 
 build() {
-    scripts/install_dependencies.sh
     TARGET_WORKSPACE=$(pwd)/build scripts/build.sh
 }
 
