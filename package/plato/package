@@ -102,7 +102,7 @@ configure() {
             jq "$change_cmds | del($del_list)" < $metadata_file_old > $metadata_file
             echo 'Metadata file was updated! The old one was renamed to ".metadata-old.json".'
 
-        elif [ $max_key_len -gt 16 ] &&  [ -e $metadata_file_old ]; then
+        elif [ $max_key_len -gt 16 ] && [ -e $metadata_file_old ]; then
             echo 'MANUAL INTERVENTION REQUIRED!!!'
             echo 'Plato 0.9.14 changed the format of metadata files.'
             echo 'Your metadata file not found but may be outdated!'
