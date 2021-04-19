@@ -77,12 +77,12 @@ configure() {
         local metadata_file_old=$mediadir/.metadata-old.json
 
         local max_key_len
-        max_key_len=$(jq --raw-output 'keys[]' < $metadata_file | wc -L)
+        [ -e $metadata_file ] && max_key_len=$(jq --raw-output 'keys[]' < $metadata_file | wc -L) || max_key_len=-1
         if [ "$max_key_len" -gt 16 ] && [ ! -e $metadata_file_old ]; then
 
-            echo 'Plato 0.9.14 changed the format of metadata files.'
-            echo 'Your metadata file was found and determined to be outdated!'
-            echo 'Automatically updating the file...'
+            echo ""
+            echo "In Plato 0.9.14 the metadata format for libraries changed."
+            echo "Found your outdated metadata file. Will update it automatically..."
 
             # Routine is based on baskerville's migrate-hex_keys.py (from the release page)
             # Rewritten in bash to only require jq rather than python.
@@ -101,19 +101,17 @@ configure() {
 
             # Create updated json file
             jq "$change_cmds | del($del_list)" < $metadata_file_old > $metadata_file
-            echo 'Metadata file was updated! The old one was renamed to ".metadata-old.json".'
+            echo "Update complete. The old file was renamed to '.metadata-old.json'."
+            echo ""
 
-        elif [ "$max_key_len" -gt 16 ] && [ -e $metadata_file_old ]; then
-            echo 'MANUAL INTERVENTION REQUIRED!!!'
-            echo 'Plato 0.9.14 changed the format of metadata files.'
-            echo 'Your metadata file not found but may be outdated!'
-            echo 'Since the file could not be found, you should update it yourself!'
-            echo 'Please launch plato only after this was done! See'
-            echo 'https://github.com/baskerville/plato/releases/tag/0.9.14 for how to do it.'
-        elif [ ! -e $metadata_file ]; then
-            echo 'Plato 0.9.14 changed the format of metadata files!'
-            echo 'If you already have a library in some non-standard location, please migrate it! See'
-            echo 'https://github.com/baskerville/plato/releases/tag/0.9.14 for more.'
+        elif [ "$max_key_len" -gt 16 ] && [ -e $metadata_file_old ] || [ ! -e $metadata_file ]; then
+            echo ""
+            echo "In Plato 0.9.14 the metadata format for libraries changed."
+            echo "MANUAL INTERVENTION REQUIRED\!\!\!"
+            echo "Please follow the following guide to update your library metadata manually:"
+            echo "https://github.com/baskerville/plato/releases/tag/0.9.14"
+            echo "Please LAUNCH plato ONLY AFTER this was done\!"
+            echo ""
         fi
     fi
 }
