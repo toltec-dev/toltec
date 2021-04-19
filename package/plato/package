@@ -76,8 +76,9 @@ configure() {
         local metadata_file=$mediadir/.metadata.json
         local metadata_file_old=$mediadir/.metadata-old.json
 
-        local max_key_len=$(cat $metadata_file | jq --raw-output 'keys[]' | wc -L)
-        if [ $max_key_len -gt 16 ] && [ ! -e $metadata_file_old ]; then
+        local max_key_len
+        max_key_len=$(jq --raw-output 'keys[]' < $metadata_file | wc -L)
+        if [ "$max_key_len" -gt 16 ] && [ ! -e $metadata_file_old ]; then
 
             echo 'Plato 0.9.14 changed the format of metadata files.'
             echo 'Your metadata file was found and determined to be outdated!'
@@ -89,7 +90,7 @@ configure() {
             local change_cmds=""
             local del_list=""
             for key in $(jq --raw-output 'keys[]' < $metadata_file_old); do
-                hex_key=$(printf %016X $key)
+                hex_key=$(printf %016X "$key")
                 #echo "Key: $key --> $hex_key"
 
                 [ -z "$del_list" ] || del_list="${del_list}, "
@@ -102,7 +103,7 @@ configure() {
             jq "$change_cmds | del($del_list)" < $metadata_file_old > $metadata_file
             echo 'Metadata file was updated! The old one was renamed to ".metadata-old.json".'
 
-        elif [ $max_key_len -gt 16 ] && [ -e $metadata_file_old ]; then
+        elif [ "$max_key_len" -gt 16 ] && [ -e $metadata_file_old ]; then
             echo 'MANUAL INTERVENTION REQUIRED!!!'
             echo 'Plato 0.9.14 changed the format of metadata files.'
             echo 'Your metadata file not found but may be outdated!'
