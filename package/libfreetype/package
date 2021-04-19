@@ -18,7 +18,7 @@ sha256sums=(4d47fca95debf8eebde5d27e93181f05b4758701ab5ce3e7b3c54b937e8f0962)
 
 build() {
     bash autogen.sh
-    ./configure --enable-static --enable-shared --with-bzip2=no --with-zlib=yes --host=arm-linux-gnueabihf --host="$CHOST" --prefix=/opt
+    ./configure --enable-static --enable-shared --without-png --with-bzip2=no --with-zlib=yes --host=arm-linux-gnueabihf --host="$CHOST" --prefix=/opt
     make
     DESTDIR="$srcdir"/install make install
 }
