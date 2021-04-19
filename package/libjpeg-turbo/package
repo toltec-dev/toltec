@@ -18,7 +18,7 @@ sha256sums=(d74b92ac33b0e3657123ddcf6728788c90dc84dcb6a52013d758af3c4af481bb)
 build() {
     cmake \
         -DCMAKE_SYSROOT="$SYSROOT" \
-        -DCMAKE_TOOLCHAIN_FILE=/usr/share/cmake/$CHOST.cmake \
+        -DCMAKE_TOOLCHAIN_FILE=/usr/share/cmake/"$CHOST".cmake \
         -DCMAKE_INSTALL_LIBDIR=/opt/lib \
         -DCMAKE_INSTALL_INCLUDEDIR=/opt/include \
         -DENABLE_SHARED=ON \
