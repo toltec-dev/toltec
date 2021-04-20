@@ -31,12 +31,8 @@ build() {
 }
 
 package() {
-    install -d "$pkgdir"/opt/lib/pkgconfig
-    install -m 644 "$srcdir"/install/opt/lib/libjpeg.a "$pkgdir"/opt/lib/
-    install -m 644 "$srcdir"/install/opt/lib/pkgconfig/libjpeg.pc "$pkgdir"/opt/lib/pkgconfig/
+    install -D -m 644 "$srcdir"/install/opt/lib/libjpeg.a "$pkgdir"/opt/lib/
+    install -D -m 644 "$srcdir"/install/opt/lib/pkgconfig/libjpeg.pc "$pkgdir"/opt/lib/pkgconfig/
 
-    install -d "$pkgdir"/opt/include
-    for file in "$srcdir"/install/opt/include/*; do
-        install -m 644 "$file" "$pkgdir"/opt/include/
-    done
+    install -D -m 644 "$srcdir"/install/opt/include/* "$pkgdir"/opt/include/
 }
