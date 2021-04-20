@@ -6,7 +6,7 @@ runs:
           shell: bash
           run: |
             sudo apt-get update -yq
-            sudo apt-get install -yq libarchive-tools python3-docutils
+            sudo apt-get install -yq libarchive-tools
         - name: Install shfmt and Shellcheck
           shell: bash
           run: |
