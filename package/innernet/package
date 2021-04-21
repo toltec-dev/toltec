@@ -4,27 +4,23 @@
 
 pkgnames=(innernet-client)
 pkgdesc="Innernet (client)"
-url=https://github.com/LinusCDE/chessmarkable
-pkgver=0.6.0-4
-timestamp=2021-01-03T05:26Z
-section="games"
-maintainer="Linus K. <linus@cosmos-ink.net>"
+url=https://github.com/tonarino/innernet
+pkgver=1.2.0_beta.1-1
+timestamp=2021-04-21T18:26Z
+section="utils"
+maintainer="plan5 <30434574+plan5@users.noreply.github.com>"
 license=MIT
 installdepends=(wireguard)
 makedepends=(build:libclang-dev)
-flags=(patch_rm2fb)
 
 image=rust:v1.4
 source=(https://github.com/tonarino/innernet/archive/refs/tags/v1.2.0-beta.1.zip)
 sha256sums=(7a360c2049ab99001ae457c1afa08048bf6f170de8f624625aa3e03d4552c6c0)
 
 build() {
-    # Fall back to system-wide config
-    #rm .cargo/config
     cargo build --release --bin innernet
 }
 
 package() {
     install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/target/release/innernet
-    #install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/target/armv7-unknown-linux-gnueabihf/release/chessmarkable
 }
