@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+# Copyright (c) 2021 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgnames=(innernet-client)
+pkgdesc="Innernet (client)"
+url=https://github.com/LinusCDE/chessmarkable
+pkgver=0.6.0-4
+timestamp=2021-01-03T05:26Z
+section="games"
+maintainer="Linus K. <linus@cosmos-ink.net>"
+license=MIT
+installdepends=(wireguard)
+builddepends=(host:libclang-dev)
+flags=(patch_rm2fb)
+
+image=rust:v1.4
+source=(https://github.com/tonarino/innernet/archive/refs/tags/v1.2.0-beta.1.zip)
+sha256sums=(7a360c2049ab99001ae457c1afa08048bf6f170de8f624625aa3e03d4552c6c0)
+
+build() {
+    # Fall back to system-wide config
+    #rm .cargo/config
+    cargo build --release --bin innernet
+}
+
+package() {
+    install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/target/release/innernet
+    #install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/target/armv7-unknown-linux-gnueabihf/release/chessmarkable
+}
