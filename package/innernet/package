@@ -17,6 +17,14 @@ image=rust:v1.4
 source=(https://github.com/tonarino/innernet/archive/refs/tags/v1.2.0-beta.1.zip)
 sha256sums=(7a360c2049ab99001ae457c1afa08048bf6f170de8f624625aa3e03d4552c6c0)
 
+prepare() {
+    #tbd: change config dir to /opt/etc/innernet?
+    #sed -i "s/\/etc\/innernet/\/opt\/etc\/innernet/g"  "$srcdir/shared/src/lib.rs"
+
+    #tbd: change wireguard config dir to /opt/etc/wireguard?
+    #sed -i "s/\/etc\/wireguard/\/opt\/etc\/wireguard/g"  "$srcdir/shared/src/lib.rs"
+}
+
 build() {
     cargo build --release --bin innernet
 }
