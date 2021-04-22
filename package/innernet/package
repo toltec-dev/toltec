@@ -5,13 +5,13 @@
 pkgnames=(innernet-client)
 pkgdesc="Innernet (client)"
 url=https://github.com/tonarino/innernet
-pkgver=1.2.0_beta.1-1
+pkgver=1.2.0-beta-1-1
 timestamp=2021-04-21T18:26Z
 section="utils"
 maintainer="plan5 <30434574+plan5@users.noreply.github.com>"
 license=MIT
 installdepends=(wireguard)
-makedepends=(build:libclang-dev)
+makedepends=(build:librust-clang-sys-dev build:libclang-dev build:libc6 build:libc6-dev build:clang build:gcc-multilib build:g++-multilib)
 
 image=rust:v1.4
 source=(https://github.com/tonarino/innernet/archive/refs/tags/v1.2.0-beta.1.zip)
@@ -22,5 +22,5 @@ build() {
 }
 
 package() {
-    install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/target/release/innernet
+    install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/target/armv7-unknown-linux-gnueabihf/release/innernet
 }
