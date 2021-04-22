@@ -3,8 +3,8 @@
 # SPDX-License-Identifier: MIT
 
 pkgnames=(innernet-client)
-pkgdesc="Innernet (client)"
-url=https://github.com/tonarino/innernet
+pkgdesc="A private network system that uses WireGuard under the hood."
+url="https://github.com/tonarino/innernet"
 pkgver=1.2.0-beta-1-1
 timestamp=2021-04-21T18:26Z
 section="utils"
