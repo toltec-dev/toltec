@@ -26,8 +26,6 @@ prepare() {
 
     #tbd: change wireguard config dir to /opt/etc/wireguard?
     #sed -i "s/\/etc\/wireguard/\/opt\/etc\/wireguard/g"  "$srcdir/shared/src/lib.rs"
-
-
 }
 
 build() {
