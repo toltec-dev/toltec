@@ -24,6 +24,9 @@ prepare() {
     #tbd: change config dir to /opt/etc/innernet?
     sed -i "s/\/var\/lib\/innernet/\/opt\/etc\/innernet/g"  "$srcdir/shared/src/lib.rs"
 
+    #Change binary path in service file
+    sed -i "s/\/usr\/bin\/innernet/\/opt\/bin\/innernet/g"  "$srcdir/client/innernet@.service"
+
     #tbd: change wireguard config dir to /opt/etc/wireguard?
     #sed -i "s/\/etc\/wireguard/\/opt\/etc\/wireguard/g"  "$srcdir/shared/src/lib.rs"
 }
@@ -34,4 +37,6 @@ build() {
 
 package() {
     install -D -m 700 -t "$pkgdir"/opt/bin "$srcdir"/target/armv7-unknown-linux-gnueabihf/release/innernet
+    install -D -m 644 -t "$pkgdir"/lib/systemd/system "$srcdir/client/innernet@.service"
+    install -D -m 644 -t "$pkgdir"/lib/systemd/system "$srcdir/client/innernet.target"
 }
