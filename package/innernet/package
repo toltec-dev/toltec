@@ -20,7 +20,7 @@ sha256sums=(7a360c2049ab99001ae457c1afa08048bf6f170de8f624625aa3e03d4552c6c0)
 prepare() {
     # Change config folders to live under /opt
     sed -i "s/\/etc\/innernet/\/opt\/etc\/innernet/g" "$srcdir/shared/src/lib.rs"
-    sed -i "s/\/var\/lib\/innernet/\/opt\/etc\/innernet/g" "$srcdir/shared/src/lib.rs"
+    sed -i "s/\/var\/lib\/innernet/\/opt\/var\/lib\/innernet/g" "$srcdir/shared/src/lib.rs"
 
     #Change binary path in service file
     sed -i "s/\/usr\/bin\/innernet/\/opt\/bin\/innernet/g" "$srcdir/client/innernet@.service"
