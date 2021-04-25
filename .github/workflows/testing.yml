@@ -35,4 +35,4 @@ jobs:
                 title: New Toltec testing update available
                 link: https://toltec-dev.org/testing
                 color: 0xe3b341
-                message: ${{ github.event.commits[0].message }}
+                message: ${{ github.event.head_commit.message }}
