@@ -1,9 +1,6 @@
 #!/usr/bin/env bash
 # Path for the systemd unit that mounts Entware to /opt
-systemd_opt_mount_path=/lib/systemd/system/opt.mount
-
-# Path for the systemd unit that mounts /opt/share/zoneinfo to /usr/share/zoneinfo
-systemd_timezone_mount_path=/lib/systemd/system/usr-share-zoneinfo.mount
+systemd_mount_path=/lib/systemd/system/opt.mount
 
 # Path where the actual Entware distribution resides (will be mounted to /opt)
 entware_path=/home/root/.entware
@@ -13,7 +10,7 @@ entware-mount() {
     mkdir -p "$entware_path"
 
     # Create systemd mount unit to mount over /opt on reboot
-    cat > "$systemd_opt_mount_path" << UNIT
+    cat > "$systemd_mount_path" << UNIT
 [Unit]
 Description=Bind mount Entware over /opt
 DefaultDependencies=no
@@ -31,33 +28,7 @@ WantedBy=local-fs.target
 UNIT
 
     systemctl daemon-reload
-    systemctl enable --now "$(basename "$systemd_opt_mount_path")" 2> /dev/null
-}
-
-# Mount /opt/share/zoneinfo to /usr/share/zoneinfo
-timezone-mount() {
-    mkdir -p "$entware_path"/share/zoneinfo
-
-    # Create systemd mount unit to mount over /opt on reboot
-    cat > "$systemd_timezone_mount_path" << UNIT
-[Unit]
-Description=Bind mount /opt/share/zoneinfo over /usr/share/zoneinfo
-DefaultDependencies=no
-Conflicts=umount.target
-Before=local-fs.target umount.target
-
-[Mount]
-What=/home/root/.entware/share/zoneinfo
-Where=/usr/share/zoneinfo
-Type=none
-Options=bind
-
-[Install]
-WantedBy=local-fs.target
-UNIT
-
-    systemctl daemon-reload
-    systemctl enable --now "$(basename "$systemd_timezone_mount_path")" 2> /dev/null
+    systemctl enable --now opt.mount 2> /dev/null
 }
 
 reinstall-root() {
@@ -77,7 +48,6 @@ reinstall-root() {
 
 main() {
     entware-mount
-    timezone-mount
     reinstall-root
 }
 
