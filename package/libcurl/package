@@ -22,20 +22,14 @@ build() {
 }
 
 package() {
-    install -d "$pkgdir"/opt/lib/pkgconfig
-    install -m 644 "$srcdir"/install/opt/lib/libcurl.a "$pkgdir"/opt/lib/
-    install -m 644 "$srcdir"/install/opt/lib/libcurl.la "$pkgdir"/opt/lib/
-    install -m 644 "$srcdir"/install/opt/lib/libcurl.so "$pkgdir"/opt/lib/
-    install -m 644 "$srcdir"/install/opt/lib/pkgconfig/libcurl.pc "$pkgdir"/opt/lib/pkgconfig/
+    install -D -m 644 -t "$pkgdir"/opt/lib/ \
+        "$srcdir"/install/opt/lib/libcurl.a "$srcdir"/install/opt/lib/libcurl.la "$srcdir"/install/opt/lib/libcurl.so
+    install -D -m 644 -t "$pkgdir"/opt/lib/pkgconfig "$srcdir"/install/opt/lib/pkgconfig/libcurl.pc
+    install -D -m 644 -t "$pkgdir"/opt/share/aclocal/ "$srcdir"/install/opt/share/aclocal/libcurl.m4
 
-    install -d "$pkgdir"/opt/share/aclocal/
-    install -m 644 "$srcdir"/install/opt/share/aclocal/libcurl.m4 "$pkgdir"/opt/share/aclocal/
+    install -D -m 755 -t "$pkgdir"/opt/bin/ "$srcdir"/install/opt/bin/curl-config
 
-    install -d "$pkgdir"/opt/bin/
-    install -m 755 "$srcdir"/install/opt/bin/curl-config "$pkgdir"/opt/bin/
-
-    install -d "$pkgdir"/opt/include/curl
     for file in "$srcdir"/install/opt/include/curl/*; do
-        install -m 644 "$file" "$pkgdir"/opt/include/curl/
+        install -D -m 644 -t "$pkgdir"/opt/include/curl "$file"
     done
 }
