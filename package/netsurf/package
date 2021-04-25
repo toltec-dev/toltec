@@ -67,7 +67,11 @@ package() {
         "$resdir"/adblock.css \
         "$resdir"/default.css \
         "$resdir"/quirks.css \
-        "$resdir"/en/Messages
+        "$resdir"/internal.css \
+        "$resdir"/en/Messages \
+        "$resdir"/en/credits.html \
+        "$resdir"/en/license.html \
+        "$resdir"/en/welcome.html
 
     # Default Choices file
     install -D -m 644 "$srcdir"/example/Choices "$pkgdir"/opt/usr/share/netsurf/Choices
