@@ -5,8 +5,8 @@
 pkgnames=(netsurf)
 pkgdesc="Lightweight web browser"
 url=https://github.com/alex0809/netsurf-reMarkable
-pkgver=0.3.4-1
-timestamp=2021-04-12T16:29+00:00
+pkgver=0.3.5-1
+timestamp=2021-04-25T17:33+00:00
 maintainer="Alex Friesenhahn <rm-dev@alexfriesenhahn.de>"
 archs=(rmall)
 license=GPL-2.0-or-later
@@ -39,11 +39,11 @@ installdepends=(
 image=base:v1.5
 
 source=(
-    https://github.com/alex0809/netsurf-reMarkable/archive/refs/tags/v0.3.4.tar.gz
+    https://github.com/alex0809/netsurf-reMarkable/archive/refs/tags/v0.3.5.tar.gz
     netsurf.draft
 )
 sha256sums=(
-    21dde89b7fcaed04b142789d5dc4a2cbc025fc241f1577ff80d9ca2fb508d346
+    aa6eb386e1b04dbef9d5721065dddad03f2964ebe977017609fcb854b5af13eb
     SKIP
 )
 
@@ -68,10 +68,11 @@ package() {
         "$resdir"/default.css \
         "$resdir"/quirks.css \
         "$resdir"/internal.css \
-        "$resdir"/en/Messages \
-        "$resdir"/en/credits.html \
-        "$resdir"/en/license.html \
-        "$resdir"/en/welcome.html
+        "$resdir"/Messages \
+        "$resdir"/credits.html \
+        "$resdir"/licence.html \
+        "$resdir"/welcome.html \
+        "$resdir"/welcome-netsurf.html
 
     # Default Choices file
     install -D -m 644 "$srcdir"/example/Choices "$pkgdir"/opt/usr/share/netsurf/Choices
