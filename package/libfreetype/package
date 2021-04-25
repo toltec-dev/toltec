@@ -24,20 +24,17 @@ build() {
 }
 
 package() {
-    install -d "$pkgdir"/opt/lib/pkgconfig
-    install -m 644 "$srcdir"/install/opt/lib/libfreetype.a "$pkgdir"/opt/lib/
-    install -m 644 "$srcdir"/install/opt/lib/libfreetype.la "$pkgdir"/opt/lib/
-    install -m 644 "$srcdir"/install/opt/lib/libfreetype.so "$pkgdir"/opt/lib/
-    install -m 644 "$srcdir"/install/opt/lib/pkgconfig/freetype2.pc "$pkgdir"/opt/lib/pkgconfig/
+    install -D -m 644 -t "$pkgdir"/opt/lib/ \
+        "$srcdir"/install/opt/lib/libfreetype.a "$srcdir"/install/opt/lib/libfreetype.la "$srcdir"/install/opt/lib/libfreetype.so
+    install -D -m 644 -t "$pkgdir"/opt/lib/pkgconfig/ "$srcdir"/install/opt/lib/pkgconfig/freetype2.pc
 
-    install -d "$pkgdir"/opt/include/freetype2/freetype/config
     for file in "$srcdir"/install/opt/include/freetype2/*.h; do
-        install -m 644 "$file" "$pkgdir"/opt/include/freetype2
+        install -D -m 644 -t "$pkgdir"/opt/include/freetype2 "$file"
     done
     for file in "$srcdir"/install/opt/include/freetype2/freetype/*.h; do
-        install -m 644 "$file" "$pkgdir"/opt/include/freetype2/freetype
+        install -D -m 644 -t "$pkgdir"/opt/include/freetype2/freetype "$file"
     done
     for file in "$srcdir"/install/opt/include/freetype2/freetype/config/*.h; do
-        install -m 644 "$file" "$pkgdir"/opt/include/freetype2/freetype/config
+        install -D -m 644 -t "$pkgdir"/opt/include/freetype2/freetype/config "$file"
     done
 }
