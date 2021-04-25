@@ -19,10 +19,10 @@ makedepends=(
     host:libfreetype-dev
     host:libjpeg-turbo-dev
     build:automake
-    build:bison 
-    build:flex 
-    build:git 
-    build:gperf 
+    build:bison
+    build:flex
+    build:git
+    build:gperf
     build:libpng-dev
 )
 installdepends=(
