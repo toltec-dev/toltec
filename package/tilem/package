@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+# Copyright (c) 2020 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgnames=(tilem)
+pkgdesc="TI-84+ calculator emulator"
+url=https://github.com/timower/rM2-stuff/tree/master/apps/tilem
+pkgver=0.0.6-1
+timestamp=2021-04-30T10:42Z
+maintainer="None <none@example.com>"
+license=GPL-3.0
+section="utils"
+image=base:v2.1
+
+source=(https://github.com/timower/rM2-stuff/archive/refs/tags/v0.0.6.tar.gz)
+sha256sums=(ff3e5a903cb5e375a66eb0445ef107ce93823cad723b37b85ec39dff87f6c015)
+
+build() {
+    mkdir build
+    mkdir install
+    cd build
+    cmake -DCMAKE_TOOLCHAIN_FILE="/usr/share/cmake/$CHOST.cmake" \
+        -DCMAKE_INSTALL_PREFIX="../install" -DCMAKE_BUILD_TYPE=Release ..
+    cd apps/tilem
+    make
+    make install
+}
+
+package() {
+    cp -r "$srcdir/install/." "$pkgdir"
+}
