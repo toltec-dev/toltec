@@ -5,8 +5,8 @@
 pkgnames=(yaft)
 pkgdesc="Yet another framebuffer terminal"
 url=https://github.com/timower/rM2-stuff/tree/master/apps/yaft
-pkgver=0.0.4-1
-timestamp=2021-04-11T10:42Z
+pkgver=0.0.4-2
+timestamp=2021-04-30T10:42Z
 maintainer="None <none@example.com>"
 license=GPL-3.0
 section="admin"
@@ -20,7 +20,7 @@ build() {
     mkdir install
     cd build
     cmake -DCMAKE_TOOLCHAIN_FILE="/usr/share/cmake/$CHOST.cmake" \
-        -DCMAKE_INSTALL_PREFIX="../install" ..
+        -DCMAKE_INSTALL_PREFIX="../install" -DCMAKE_BUILD_TYPE=Release ..
     cd apps/yaft
     make
     make install
