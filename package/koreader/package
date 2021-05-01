@@ -8,7 +8,7 @@ url=https://github.com/koreader/koreader
 pkgver=2021.04-1
 timestamp=2021-04-22T06:29:20Z
 section="readers"
-maintainer="Eeems <eeems@eeems.email>"
+maintainer="raisjn <of.raisjn@gmail.com>"
 license=AGPL-3.0-or-later
 installdepends=(fbink fbdepth display rm2fb-client)
 
