@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+# Copyright (c) 2020 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgnames=(puzzles)
+timestamp=2021-03-04T14:03-08:00
+maintainer="NONE"
+pkgver=0.2.2-1
+license=MIT
+pkgdesc="Simon Tatham's Puzzle Package"
+url="https://github.com/mrichards42/remarkable_puzzles"
+section="games"
+flags=(patch_rm2fb)
+
+image=python:v1.4
+source=(
+    https://github.com/mrichards42/remarkable_puzzles/releases/download/v0.2.2/puzzles-source.tar.gz
+    puzzles.draft
+)
+sha256sums=(
+    3fe3686757e69d1267e830ba527d15ff6d1a68e34f830842dcaf35f58b43d501
+    SKIP
+)
+
+build() {
+    apt update
+    apt install git -y
+    pip3 install okp
+
+    # do the build
+    ARCH=arm BUILD=release make puzzles -r
+}
+
+package() {
+    mkdir -p "$pkgdir"/opt/etc/draft
+    mkdir -p "$pkgdir"/opt/etc/puzzles
+    install -D -m 755 "$srcdir"/build/release/puzzles "$pkgdir"/opt/bin/puzzles
+    install -D -m 755 "$srcdir"/puzzles.draft "$pkgdir"/opt/etc/draft/
+    install -D -m 644 "$srcdir"/config/* -t "$pkgdir"/opt/etc/puzzles/config/
+    install -D -m 644 "$srcdir"/help/* -t "$pkgdir"/opt/etc/puzzles/help/
+    install -D -m 644 "$srcdir"/icons/* -t "$pkgdir"/opt/etc/puzzles/icons/
+}
