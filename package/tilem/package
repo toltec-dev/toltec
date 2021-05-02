@@ -12,8 +12,8 @@ license=GPL-3.0
 section="utils"
 image=base:v2.1
 
-source=(https://github.com/timower/rM2-stuff/archive/refs/tags/v0.0.6.tar.gz)
-sha256sums=(ff3e5a903cb5e375a66eb0445ef107ce93823cad723b37b85ec39dff87f6c015)
+source=(https://github.com/timower/rM2-stuff/archive/8dc94a360358bf74da244beda74739663dd44741.tar.gz)
+sha256sums=(23192117d3e8bb3ddba5d909e80dea7354aa4c5e2936047ca2cb3d35e906ecc1)
 
 build() {
     mkdir build
