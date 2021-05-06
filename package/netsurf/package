@@ -5,25 +5,20 @@
 pkgnames=(netsurf)
 pkgdesc="Lightweight web browser"
 url=https://github.com/alex0809/netsurf-reMarkable
-pkgver=0.3.5-1
-timestamp=2021-04-25T17:33+00:00
+pkgver=0.3.7-1
+timestamp=2021-05-06T19:46+00:00
 maintainer="Alex Friesenhahn <rm-dev@alexfriesenhahn.de>"
 archs=(rmall)
 license=GPL-2.0-or-later
 section="readers"
 makedepends=(
-    host:libcurl
-    host:libfreetype
-    host:libjpeg-turbo
-    host:libcurl-dev
-    host:libfreetype-dev
-    host:libjpeg-turbo-dev
     build:automake
     build:bison
     build:flex
     build:git
     build:gperf
     build:libpng-dev
+    build:libtool
 )
 installdepends=(
     dejavu-fonts-ttf-DejaVuSans
@@ -39,15 +34,16 @@ installdepends=(
 image=base:v1.5
 
 source=(
-    https://github.com/alex0809/netsurf-reMarkable/archive/refs/tags/v0.3.5.tar.gz
+    https://github.com/alex0809/netsurf-reMarkable/archive/refs/tags/v0.3.7.tar.gz
     netsurf.draft
 )
 sha256sums=(
-    aa6eb386e1b04dbef9d5721065dddad03f2964ebe977017609fcb854b5af13eb
+    24b30469c03f71f828dc22c31ba7f39340bf5d15e0a3a0493b3cc27ff3dfe511
     SKIP
 )
 
 build() {
+    scripts/install_dependencies.sh
     TARGET_WORKSPACE=$(pwd)/build scripts/build.sh
 }
 
