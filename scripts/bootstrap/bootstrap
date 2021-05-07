@@ -293,7 +293,7 @@ toltec-install() {
     if [[ ! -e /home/root/.bashrc ]] \
         || ! grep -q '^\(export \)\?PATH="\?/opt/bin:/opt/sbin:\$PATH"\?$' /home/root/.bashrc; then
         log "Adding /opt/bin and /opt/sbin to your PATH"
-        log "Please run '. \$HOME/.bashrc' to use Toltec"
+        log "Please run 'source \$HOME/.bashrc' to use Toltec"
         cat >> /home/root/.bashrc << 'SHELL'
 # Path added by Toltec bootstrap
 PATH="/opt/bin:/opt/sbin:$PATH"
