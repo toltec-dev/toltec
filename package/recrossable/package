@@ -5,7 +5,7 @@
 pkgnames=(recrossable)
 pkgdesc="Solve crossword puzzles"
 url=https://github.com/sandsmark/recrossable
-pkgver=0.0.0-6
+pkgver=0.0.0-7
 timestamp=2021-01-15T12:58:22Z
 section="games"
 maintainer="Mattéo Delabre <spam@delab.re>"
@@ -14,7 +14,7 @@ installdepends=(libdlib display)
 makedepends=(build:imagemagick build:librsvg2-bin host:libdlib host:libdlib-dev)
 flags=(patch_rm2fb)
 
-image=qt:v1.4
+image=qt:v2.1
 source=(
     https://github.com/sandsmark/recrossable/archive/234d5744c0b20087a588d0ecead0a9f58c1f323d.zip
     recrossable.draft

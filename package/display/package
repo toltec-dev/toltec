@@ -8,10 +8,10 @@ timestamp=2021-02-21T01:41+00:00
 maintainer="raisjn <of.raisjn@gmail.com>"
 license=MIT
 url="https://github.com/ddvk/remarkable2-framebuffer"
-pkgver=1.0.1-4
+pkgver=1.0.1-5
 section="devel"
 
-image=qt:v1.4
+image=qt:v2.1
 source=(
     https://github.com/ddvk/remarkable2-framebuffer/archive/v0.0.4.zip
     rm2fb.service

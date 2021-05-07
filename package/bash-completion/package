@@ -5,7 +5,7 @@
 pkgnames=(bash-completion)
 pkgdesc="Programmable completion functions for bash"
 url=https://github.com/scop/bash-completion
-pkgver=2.11-1
+pkgver=2.11-2
 timestamp=2020-07-25T00:00Z
 section="utils"
 maintainer="Linus K. <linus@cosmos-ink.net>"
@@ -14,7 +14,7 @@ license=GPL-2.0-only
 # Based on the ArchLinux PKGBUILD file:
 # https://github.com/archlinux/svntogit-packages/blob/packages/bash-completion/trunk/PKGBUILD
 
-image=base:v1.3.2
+image=base:v2.1
 source=(https://github.com/scop/bash-completion/releases/download/2.11/bash-completion-2.11.tar.xz)
 sha256sums=(73a8894bad94dee83ab468fa09f628daffd567e8bef1a24277f1e9a0daf911ac)
 
