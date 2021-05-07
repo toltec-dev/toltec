@@ -17,7 +17,7 @@ source=(
     rm2fb.service
     rm2fb-client
     overwrite-server-argv0.patch
-    launcher.service.conf
+    rm2fb-preload.conf
 )
 sha256sums=(
     76f1c0b72260a9743f3e008100ffddf1f89cd44c6f0376d906e98ae66eaea716
@@ -58,17 +58,7 @@ display() {
             libname="librm2fb_server.so.${pkgver%-*}"
             install -D -m 644 -t "$pkgdir"/opt/lib "$srcdir"/src/server/"$libname"
             ln -s "$libname" "$pkgdir"/opt/lib/"${libname%.*.*}"
-            install -D -m 644 -t "$pkgdir"/lib/systemd/system \
-                "$srcdir"/rm2fb.service
-            mkdir -p \
-                "$pkgdir"/etc/systemd/system/draft.service.d/ \
-                "$pkgdir"/etc/systemd/system/remux.service.d/ \
-                "$pkgdir"/etc/systemd/system/tarnish.service.d/
-
-            cp "$srcdir"/launcher.service.conf "$pkgdir"/etc/systemd/system/draft.service.d/draft.service.conf
-            cp "$srcdir"/launcher.service.conf "$pkgdir"/etc/systemd/system/remux.service.d/remux.service.conf
-            cp "$srcdir"/launcher.service.conf "$pkgdir"/etc/systemd/system/tarnish.service.d/tarnish.service.conf
-
+            install -D -m 644 -t "$pkgdir"/lib/systemd/system "$srcdir"/rm2fb.service
         fi
     }
 
@@ -118,5 +108,11 @@ rm2fb-client() {
         done
 
         install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/rm2fb-client
+
+        if [[ $arch = rm2 ]]; then
+            install -D -m 644 -t "$pkgdir"/etc/systemd/system/draft.service.d "$srcdir"/rm2fb-preload.conf
+            install -D -m 644 -t "$pkgdir"/etc/systemd/system/remux.service.d "$srcdir"/rm2fb-preload.conf
+            install -D -m 644 -t "$pkgdir"/etc/systemd/system/tarnish.service.d "$srcdir"/rm2fb-preload.conf
+        fi
     }
 }
