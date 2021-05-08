@@ -1,0 +1,192 @@
+#!/usr/bin/env bash
+# Copyright (c) 2021 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+set -euo pipefail
+
+# Path where Toltec resides (will be mounted to $toltec_dest)
+toltec_src=/home/root/.entware
+
+# Path where Toltec is mounted
+toltec_dest=/opt
+
+# Start and end markers of Toltec-managed section in bashrc
+bashrc_start_marker="# Added by Toltec bootstrap (do not modify!)"
+bashrc_old_start_marker="# Path added by Toltec bootstrap"
+bashrc_end_marker="# End of Toltec bootstrap additions"
+
+# Create or update a bind mount systemd unit and enable it
+#
+# Arguments:
+#
+# $1 - Source directory
+# $2 - Mount point
+add-bind-mount() {
+    local unit_name
+    local unit_path
+    unit_name="$(systemd-escape --path "$2").mount"
+    unit_path="/lib/systemd/system/$unit_name"
+
+    if [[ -e $unit_path ]]; then
+        echo "Bind mount configuration for '$2' already exists, updating"
+    else
+        echo "Mounting '$1' over '$2'"
+    fi
+
+    cat > "$unit_path" << UNIT
+[Unit]
+Description=Bind mount $1 over $2
+DefaultDependencies=no
+Conflicts=umount.target
+Before=local-fs.target umount.target
+[Mount]
+What=$1
+Where=$2
+Type=none
+Options=bind
+[Install]
+WantedBy=local-fs.target
+UNIT
+
+    systemctl daemon-reload
+    systemctl enable "$unit_name"
+    systemctl start "$unit_name"
+}
+
+# Disable and remove a bind mount systemd unit
+#
+# Arguments:
+#
+# $1 - Mount point
+remove-bind-mount() {
+    local unit_name
+    local unit_path
+    unit_name="$(systemd-escape --path "$1").mount"
+    unit_path="/lib/systemd/system/$unit_name"
+
+    if [[ ! -e $unit_path ]]; then
+        echo "No existing bind mount for '$1'"
+        return 1
+    fi
+
+    echo "Removing mount over '$1'"
+    systemctl disable "$unit_name"
+    umount -l "$1"
+    rm "$unit_path"
+    systemctl daemon-reload
+}
+
+# Reinstall all Toltec packages that had files installed outside of
+# $toltec_src, e.g. systemd configuration files
+reinstall-root() {
+    opkg update
+
+    # Get the list of installed packages with files on root
+    local pkgname
+    declare -A on_root_packages
+    while read -r inst_line; do
+        pkgname="$(echo "$inst_line" | awk '{ print $1 }')"
+        if opkg files "$pkgname" | grep -v -e "/home/root" -e "$toltec_dest" \
+            -e "is installed on root" -q; then
+            on_root_packages[$pkgname]=1
+        fi
+    done < <(opkg list-installed)
+
+    # Filter the list to keep only packages that can be installed
+    declare -A reinstall_packages
+    while read -r pkgname; do
+        if [[ -v "on_root_packages[$pkgname]" ]]; then
+            reinstall_packages[$pkgname]=1
+        fi
+    done < <(gunzip -c /opt/var/opkg-lists/* | grep "^Package:" | awk '{print $2}')
+
+    # Workaround: Checking the size of an empty array when the nounset option
+    # is active may throw an error on some Bash versions, so we disable it
+    # temporarily
+    set +u
+    if [[ ${#reinstall_packages[@]} -ne 0 ]]; then
+        opkg install --force-reinstall --force-remove "${!reinstall_packages[@]}"
+    else
+        echo "No package needs to be reinstalled"
+    fi
+    set -u
+}
+
+enable() {
+    # Create bind mount and reinstall packages
+    add-bind-mount "$toltec_src" "$toltec_dest"
+    reinstall-root
+
+    # Set PATH if needed
+    sed -i "/^$bashrc_start_marker\$/,/^$bashrc_end_marker\$/d" /home/root/.bashrc
+    sed -i "/^$bashrc_old_start_marker\$/!b;n;d" /home/root/.bashrc
+    sed -i "/^$bashrc_old_start_marker\$/d" /home/root/.bashrc
+    sed -i '/^\(export \)\?PATH="\?\.*\/opt\/bin:\/opt\/sbin.*"\?$/d' /home/root/.bashrc
+    cat >> /home/root/.bashrc << SHELL
+$bashrc_start_marker
+PATH="/opt/bin:/opt/sbin:/home/root/.local/bin:\$PATH"
+$bashrc_end_marker
+SHELL
+
+    # Check whether PATH has changed
+    old_path="$PATH"
+    new_path="$(bash -l -c "echo \$PATH")"
+    if [[ $old_path != "$new_path" ]]; then
+        echo "Please restart your SSH session or run 'exec bash -l' to use Toltec"
+    fi
+}
+
+disable() {
+    # Remove mount point
+    remove-bind-mount "$toltec_dest"
+    rmdir "$toltec_dest"
+}
+
+uninstall() {
+    # Remove all installed packages
+    opkg remove --force-depends --force-remove "*"
+    systemctl daemon-reload
+
+    disable
+
+    # Unset PATH
+    sed -i "/^$bashrc_start_marker\$/,/^$bashrc_end_marker\$/d" /home/root/.bashrc
+    sed -i "/^$bashrc_old_start_marker\$/!b;n;d" /home/root/.bashrc
+    sed -i "/^$bashrc_old_start_marker\$/d" /home/root/.bashrc
+    sed -i '/^\(export \)\?PATH="\?\.*\/opt\/bin:\/opt\/sbin.*"\?$/d' /home/root/.bashrc
+
+    # Remove Toltec data
+    rm -r "$toltec_src"
+
+    # Re-enable xochitl if needed
+    systemctl enable xochitl
+
+    # Reboot to make sure no Toltec processes remain
+    reboot
+}
+
+help() {
+    echo "Usage: $(basename "$0") COMMAND
+Manage your Toltec install. Available commands:
+
+    enable          Re-enable Toltec after a system update or after you
+                    disabled it manually.
+    disable         Disable (but do not uninstall) Toltec.
+    uninstall       Permanently remove Toltec."
+}
+
+if [[ $# -eq 0 ]]; then
+    help
+    exit 1
+fi
+
+case $1 in
+    enable) enable ;;
+    disable) disable ;;
+    uninstall) uninstall ;;
+    *)
+        echo -e "Error: Invalid command '$1'\n"
+        help
+        exit 1
+        ;;
+esac
