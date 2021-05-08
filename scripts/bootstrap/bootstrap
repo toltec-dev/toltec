@@ -92,39 +92,39 @@ check-installed() {
     has_systemd_mount=$?
     set -e
 
-    if (( has_entware_files == 0 )) && (( has_opt_files == 0 )) \
-            && (( has_bashrc_defs == 0)) && (( has_systemd_mount == 0 )); then
+    if ((has_entware_files == 0)) && ((has_opt_files == 0)) \
+        && ((has_bashrc_defs == 0)) && ((has_systemd_mount == 0)); then
         log "Toltec is already installed"
         log "To re-enable Toltec after a system upgrade, run 'toltecctl enable'"
         log "To reinstall Toltec, run 'toltecctl uninstall' first"
         exit
     fi
 
-    if (( has_entware_files != 0 )) && (( has_opt_files != 0 )) \
-            && (( has_bashrc_defs != 0 )) && (( has_old_systemd_mount != 0 )) \
-            && (( has_systemd_mount != 0 )); then
+    if ((has_entware_files != 0)) && ((has_opt_files != 0)) \
+        && ((has_bashrc_defs != 0)) && ((has_old_systemd_mount != 0)) \
+        && ((has_systemd_mount != 0)); then
         return
     fi
 
     log WARN "There are conflicting files and system settings:"
 
-    if (( has_entware_files == 0 )); then
+    if ((has_entware_files == 0)); then
         log WARN "  - Files in the $entware_path folder"
     fi
 
-    if (( has_opt_files == 0 )); then
+    if ((has_opt_files == 0)); then
         log WARN "  - Files in the /opt folder"
     fi
 
-    if (( has_bashrc_defs == 0 )); then
+    if ((has_bashrc_defs == 0)); then
         log WARN "  - PATH definitions pointing to /opt in /home/root/.bashrc"
     fi
 
-    if (( has_old_systemd_mount == 0 )); then
+    if ((has_old_systemd_mount == 0)); then
         log WARN "  - Mount configuration in $old_systemd_mount_path"
     fi
 
-    if (( has_systemd_mount == 0 )); then
+    if ((has_systemd_mount == 0)); then
         log WARN "  - Mount configuration in $systemd_mount_path"
     fi
 
