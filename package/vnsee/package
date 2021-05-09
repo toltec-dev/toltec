@@ -10,7 +10,7 @@ timestamp=2021-04-24T20:36:31Z
 section="screensharing"
 maintainer="Mattéo Delabre <spam@delab.re>"
 license=GPL-3.0-only
-installdepends=(libvncclient simple nmap)
+installdepends=(display libvncclient nmap simple)
 makedepends=(host:libvncclient host:libvncserver-dev)
 
 image=base:v1.4
