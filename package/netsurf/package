@@ -5,8 +5,8 @@
 pkgnames=(netsurf)
 pkgdesc="Lightweight web browser"
 url=https://github.com/alex0809/netsurf-reMarkable
-pkgver=0.3.7-1
-timestamp=2021-05-06T19:46+00:00
+pkgver=0.3.8-1
+timestamp=2021-05-11T19:14+00:00
 maintainer="Alex Friesenhahn <rm-dev@alexfriesenhahn.de>"
 archs=(rmall)
 license=GPL-2.0-or-later
@@ -34,11 +34,11 @@ installdepends=(
 image=base:v1.5
 
 source=(
-    https://github.com/alex0809/netsurf-reMarkable/archive/refs/tags/v0.3.7.tar.gz
+    https://github.com/alex0809/netsurf-reMarkable/archive/refs/tags/v0.3.8.tar.gz
     netsurf.draft
 )
 sha256sums=(
-    24b30469c03f71f828dc22c31ba7f39340bf5d15e0a3a0493b3cc27ff3dfe511
+    e7b63d46dfebaf237d6bdc1fe3ac0034943726326f9f61c64c4191ac7180d642
     SKIP
 )
 
@@ -68,7 +68,8 @@ package() {
         "$resdir"/credits.html \
         "$resdir"/licence.html \
         "$resdir"/welcome.html \
-        "$resdir"/welcome-netsurf.html
+        "$resdir"/welcome-netsurf.html \
+        "$resdir"/netsurf.png
 
     # Default Choices file
     install -D -m 644 "$srcdir"/example/Choices "$pkgdir"/opt/usr/share/netsurf/Choices
