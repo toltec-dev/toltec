@@ -2,18 +2,18 @@
 # Copyright (c) 2020 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
-pkgnames=(yaft)
-pkgdesc="Yet another framebuffer terminal"
-url=https://github.com/timower/rM2-stuff/tree/master/apps/yaft
-pkgver=0.0.4-2
+pkgnames=(tilem)
+pkgdesc="TI-84+ calculator emulator"
+url=https://github.com/timower/rM2-stuff/tree/master/apps/tilem
+pkgver=0.0.7-1
 timestamp=2021-04-30T10:42Z
 maintainer="None <none@example.com>"
 license=GPL-3.0
-section="admin"
-image=base:v1.6
+section="utils"
+image=base:v2.1
 
-source=(https://github.com/timower/rM2-stuff/archive/refs/tags/v0.0.4.tar.gz)
-sha256sums=(dee471ac19ea43ba741f826c9a0a17d7a01bda6472043d400fbcab6fad1931fe)
+source=(https://github.com/timower/rM2-stuff/archive/refs/tags/v0.0.7.tar.gz)
+sha256sums=(ed2db5f1aa7c9e8b0bead53bd60cb8fd9eec24c028d789fdbdc4b1655d6c78ce)
 
 build() {
     mkdir build
@@ -21,7 +21,7 @@ build() {
     cd build
     cmake -DCMAKE_TOOLCHAIN_FILE="/usr/share/cmake/$CHOST.cmake" \
         -DCMAKE_INSTALL_PREFIX="../install" -DCMAKE_BUILD_TYPE=Release ..
-    cd apps/yaft
+    cd apps/tilem
     make
     make install
 }
