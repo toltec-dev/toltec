@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+# Copyright (c) 2020 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgnames=(gocryptfs)
+pkgdesc="An encrypted overlay filesystem written in Go."
+url="https://nuetzlich.net/gocryptfs/"
+_srcver=2.0-beta2
+pkgver="$_srcver"-1
+timestamp=2021-03-22
+section=utils
+maintainer="plan5 <30434574+plan5@users.noreply.github.com>"
+license=MIT
+
+makedepends=()
+installdepends=(fuse fuse-utils)
+
+image=golang:v1.5
+
+source=(
+    https://github.com/rfjakob/gocryptfs/archive/v"$_srcver".zip
+)
+
+sha256sums=(
+    3d66368cfc79a300de5a22fe01788d0c702f9107731db63fcd8850157d105cc0
+)
+
+prepare() {
+    # Official build script runs compiled binary to show version.
+    # This will cause the build to fail if built on another architecture
+    # So the line will be removed here.
+    sed -i "s/^.\/gocryptfs.*//" "$srcdir"/build.bash
+}
+
+build() {
+    GOARCH=arm GOARM=7 ./build-without-openssl.bash
+}
+
+package() {
+    mkdir -p "$pkgdir"/opt/bin
+    install -D -m 755 "$srcdir"/gocryptfs "$pkgdir"/opt/bin/
+}
