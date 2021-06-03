@@ -10,7 +10,7 @@ timestamp=2021-02-07T13:47Z
 section="utils"
 maintainer="Linus K. <linus@cosmos-ink.net>"
 license=MIT
-depends=(bash-completion)
+installdepends=(bash-completion)
 
 source=(
     _opkg
