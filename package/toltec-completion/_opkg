@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# shellcheck disable=SC2199,SC2016
+# shellcheck disable=SC2016,SC2199,SC2207
 #
 # Some spellchecks were ignored to favor the style
 # files in the bash-completion project are layed out.
