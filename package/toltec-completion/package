@@ -24,9 +24,3 @@ package() {
     install -d "$target_dir"
     cp "$srcdir"/_* "$target_dir"
 }
-
-configure() {
-    echo "The new completions will take affect on next login."
-    echo "Take apply them immediately, run"
-    echo " $ source /etc/profile.d/bash_completion.sh"
-}
