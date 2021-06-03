@@ -1,37 +1,30 @@
 #!/usr/bin/env bash
-# Copyright (c) 2020 The Toltec Contributors
+# Copyright (c) 2021 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
 pkgnames=(koreader)
 pkgdesc="Ebook reader supporting PDF, DjVu, EPUB, FB2 and many more formats"
 url=https://github.com/koreader/koreader
-pkgver=2020.12-4
-timestamp=2020-10-10T20:13Z
+pkgver=2021.05-1
+timestamp=2021-05-18T19:52:22Z
 section="readers"
 maintainer="raisjn <of.raisjn@gmail.com>"
 license=AGPL-3.0-or-later
-depends=(fbink fbdepth)
+installdepends=(fbink fbdepth display rm2fb-client)
 
 _srcver="v${pkgver%-*}"
 source=(
     "https://build.koreader.rocks/download/stable/$_srcver/koreader-remarkable-$_srcver.zip"
     koreader.draft
     KOReader.oxide
-    rm2-support.patch
     koreader
 )
 sha256sums=(
-    38db8f3895472828d7c1d63fc54db426135a8dbf8425633e299a1a9abfdb69b2
-    SKIP
+    95934e4c1d5fe7ac71cdc73938425f0192fee4165f4bc4ed190e8bcb9734cb16
     SKIP
     SKIP
     SKIP
 )
-
-prepare() {
-    patch -p1 -d"$srcdir" < "$srcdir"/rm2-support.patch
-    rm "$srcdir"/rm2-support.patch
-}
 
 package() {
     install -d "$pkgdir"/opt/koreader

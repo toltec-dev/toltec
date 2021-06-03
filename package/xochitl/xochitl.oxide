@@ -1,6 +1,6 @@
 {
 	"displayName": "Xochitl",
 	"description": "Read documents and take notes",
-	"bin": "/usr/bin/xochitl",
+	"bin": "/opt/bin/xochitl",
 	"icon": "/opt/etc/draft/icons/xochitl.png"
 }

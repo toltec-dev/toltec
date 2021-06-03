@@ -5,8 +5,8 @@
 pkgnames=(toltec-bootstrap)
 pkgdesc="Toltec installation script"
 url=https://toltec-dev.org/
-pkgver=0.0.2-1
-timestamp=2021-01-15T20:15Z
+pkgver=0.0.4-1
+timestamp=2021-04-04T21:55Z
 section="utils"
 maintainer="Eeems <eeems@eeems.email>"
 license=MIT

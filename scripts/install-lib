@@ -89,3 +89,66 @@ reload-oxide-apps() {
         echo "Done!"
     fi
 }
+
+# Create or update a bind mount systemd unit and enable it
+#
+# Arguments:
+#
+# $1 - Source directory
+# $2 - Mount point
+add-bind-mount() {
+    local unit_name
+    local unit_path
+    unit_name="$(systemd-escape --path "$2").mount"
+    unit_path="/lib/systemd/system/$unit_name"
+
+    if [[ -e $unit_path ]]; then
+        echo "Bind mount configuration for '$2' already exists, updating"
+    else
+        echo "Mounting '$1' over '$2'"
+    fi
+
+    cat > "$unit_path" << UNIT
+[Unit]
+Description=Bind mount $1 over $2
+DefaultDependencies=no
+Conflicts=umount.target
+Before=local-fs.target umount.target
+
+[Mount]
+What=$1
+Where=$2
+Type=none
+Options=bind
+
+[Install]
+WantedBy=local-fs.target
+UNIT
+
+    systemctl daemon-reload
+    systemctl enable "$unit_name"
+    systemctl restart "$unit_name"
+}
+
+# Disable and remove a bind mount systemd unit
+#
+# Arguments:
+#
+# $1 - Mount point
+remove-bind-mount() {
+    local unit_name
+    local unit_path
+    unit_name="$(systemd-escape --path "$1").mount"
+    unit_path="/lib/systemd/system/$unit_name"
+
+    if [[ ! -e $unit_path ]]; then
+        echo "No existing bind mount for '$1'"
+        return 1
+    fi
+
+    echo "Removing mount over '$1'"
+    systemctl disable "$unit_name"
+    systemctl stop "$unit_name"
+    rm "$unit_path"
+    systemctl daemon-reload
+}
