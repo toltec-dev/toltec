@@ -1,0 +1,14 @@
+#!/bin/bash
+
+_toltecctl() {
+    local cur prev words cword split
+    _init_completion -s || return
+
+    if [[ $cword -eq 1 ]]; then
+        # shellcheck disable=SC2207
+        COMPREPLY=($(compgen -W 'enable disable uninstall' -- "$cur"))
+        return
+    fi
+}
+
+complete -F _toltecctl toltecctl

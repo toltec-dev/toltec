@@ -14,8 +14,10 @@ installdepends=(bash-completion)
 
 source=(
     _opkg
+    _toltecctl
 )
 sha256sums=(
+    SKIP
     SKIP
 )
 
