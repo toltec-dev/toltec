@@ -1,0 +1,59 @@
+#!/bin/bash
+#
+# shellcheck disable=SC2016,SC2199,SC2207
+#
+# Some spellchecks were ignored to favor the style
+# files in the bash-completion project are layed out.
+#
+# SC2016: Using '' after compgen commands is intentional
+# to make compgen evaluate the expression later.
+#
+
+# Currently pretty basic. Caveats / TODOs for anyone who has time:
+# - Does not support flag
+# - Only completes packages for install and remove commands
+# - The install command only supports very basic file (.ipkg) completion
+# - Package completion should probably get cached for speedup
+#
+# If this file gets properly supports opkg, we should probably
+# consider backporting this to https://github.com/scop/bash-completion
+
+_opkg() {
+    local cur prev words cword split
+    _init_completion -s || return
+
+    #echo "Cur: $cur" # Contains the partial word
+    #echo "Prev: $prev" # The previous word (the command if no previous one)
+    #echo "Words: $words" # Array of all words? (like $@ ?)
+    #echo "CWord: $cword" # Number for current word (first word = 1, ...)
+    #echo "Split: $split" # ???
+
+    # Since ALL words in $COMPREPLY get suggested (regardless whether
+    # the user partiall typed one) compreply handles only returning
+    # the relevant ones
+
+    if [[ $cword -eq 1 ]]; then
+        OPKG_COMMANDS=("update" "upgrade" "install" "configure" "remove" "flag")
+        OPKG_COMMANDS+=("list" "list-installed" "list-upgradable" "list-changed-conffiles")
+        OPKG_COMMANDS+=("files" "search" "find" "info" "status" "download" "compare-versions")
+        OPKG_COMMANDS+=("print-architecture" "depends" "whatdepends" "whatdependsrec")
+        OPKG_COMMANDS+=("whatrecommends" "whatsuggests" "whatprovides" "whatconflicts")
+        OPKG_COMMANDS+=("whatreplaces")
+        COMPREPLY=($(compgen -W '${OPKG_COMMANDS[@]}' -- "$cur"))
+        return
+    fi
+
+    COMPREPLY=()
+    OPKG_COMMANDS_WITH_PKG_COMPLETE=("install" "remove") # Todo: more
+    if [[ $cword -gt 1 ]] && [[ " ${OPKG_COMMANDS_WITH_PKG_COMPLETE[@]} " =~ \ ${words[1]}\  ]]; then
+        COMPREPLY+=($(compgen -W '$(opkg list | awk '\''{ print $1 }'\'')' -- "$cur"))
+    fi
+
+    OPKG_COMMANDS_WITH_FILE_COMPLETE=("install") # Todo: more
+    if [[ $cword -gt 1 ]] && [[ " ${OPKG_COMMANDS_WITH_FILE_COMPLETE[@]} " =~ \ ${words[1]}\  ]]; then
+        # Pretty primitive and does subdirectories not properly
+        COMPREPLY+=($(compgen -W '$(ls)' -- "$cur"))
+    fi
+}
+
+complete -F _opkg opkg

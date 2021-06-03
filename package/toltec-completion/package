@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+# Copyright (c) 2021 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgnames=(toltec-completion)
+pkgdesc="Expands bash-completion with functions for toltec-specific commands"
+url=https://github.com/toltec-dev/toltec
+pkgver=0.1.0-1
+timestamp=2021-02-07T13:47Z
+section="utils"
+maintainer="Linus K. <linus@cosmos-ink.net>"
+license=MIT
+installdepends=(bash-completion)
+
+source=(
+    _opkg
+    _toltecctl
+)
+sha256sums=(
+    SKIP
+    SKIP
+)
+
+package() {
+    local target_dir="$pkgdir"/opt/usr/share/bash-completion/completions
+    install -d "$target_dir"
+    cp "$srcdir"/_* "$target_dir"
+}
