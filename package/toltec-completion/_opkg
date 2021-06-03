@@ -1,4 +1,12 @@
 #!/bin/bash
+# shellcheck disable=SC2207,SC2199,SC2016
+#
+# Ignoring some of shellchecks issues (SC2207, SC2199), since the file
+# formatting was inspired by existing bash-completion scripts.
+#
+# SC2016 ('' after compgen commands) are intentional to make compgen
+# evaluate the expression later.
+
 
 # Currently pretty basic. Caveats / TODOs for anyone who has time:
 # - Does not support flag
@@ -36,12 +44,12 @@ _opkg() {
 
     COMPREPLY=()
     OPKG_COMMANDS_WITH_PKG_COMPLETE=("install" "remove") # Todo: more
-    if [[ $cword -gt 1 ]] && [[ " ${OPKG_COMMANDS_WITH_PKG_COMPLETE[@]} " =~ " ${words[1]} " ]]; then
+    if [[ $cword -gt 1 ]] && [[ " ${OPKG_COMMANDS_WITH_PKG_COMPLETE[@]} " =~ \ ${words[1]}\  ]]; then
         COMPREPLY+=( $( compgen -W '$(opkg list | awk '\''{ print $1 }'\'')' -- "$cur" ) )
     fi
 
     OPKG_COMMANDS_WITH_FILE_COMPLETE=("install") # Todo: more
-    if [[ $cword -gt 1 ]] && [[ " ${OPKG_COMMANDS_WITH_FILE_COMPLETE[@]} " =~ " ${words[1]} " ]]; then
+    if [[ $cword -gt 1 ]] && [[ " ${OPKG_COMMANDS_WITH_FILE_COMPLETE[@]} " =~ \ ${words[1]}\  ]]; then
         # Pretty primitive and does subdirectories not properly
         COMPREPLY+=( $( compgen -W '$(ls)' -- "$cur" ) )
     fi
