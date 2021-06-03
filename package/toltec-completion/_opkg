@@ -30,20 +30,20 @@ _opkg() {
         OPKG_COMMANDS+=("print-architecture" "depends" "whatdepends" "whatdependsrec")
         OPKG_COMMANDS+=("whatrecommends" "whatsuggests" "whatprovides" "whatconflicts")
         OPKG_COMMANDS+=("whatreplaces")
-        COMPREPLY=($(compgen -W '${OPKG_COMMANDS[@]}' -- "$cur"))
+        COMPREPLY=( $( compgen -W '${OPKG_COMMANDS[@]}' -- "$cur" ) )
         return
     fi
 
     COMPREPLY=()
     OPKG_COMMANDS_WITH_PKG_COMPLETE=("install" "remove") # Todo: more
     if [[ $cword -gt 1 ]] && [[ " ${OPKG_COMMANDS_WITH_PKG_COMPLETE[@]} " =~ " ${words[1]} " ]]; then
-        COMPREPLY+=($(compgen -W '$(opkg list | awk '\''{ print $1 }'\'')' -- "$cur"))
+        COMPREPLY+=( $( compgen -W '$(opkg list | awk '\''{ print $1 }'\'')' -- "$cur" ) )
     fi
 
     OPKG_COMMANDS_WITH_FILE_COMPLETE=("install") # Todo: more
     if [[ $cword -gt 1 ]] && [[ " ${OPKG_COMMANDS_WITH_FILE_COMPLETE[@]} " =~ " ${words[1]} " ]]; then
         # Pretty primitive and does subdirectories not properly
-        COMPREPLY+=($(compgen -W '$(ls)' -- "$cur"))
+        COMPREPLY+=( $( compgen -W '$(ls)' -- "$cur" ) )
     fi
 }
 
