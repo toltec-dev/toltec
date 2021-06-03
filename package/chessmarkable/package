@@ -5,17 +5,17 @@
 pkgnames=(chessmarkable)
 pkgdesc="Chess game"
 url=https://github.com/LinusCDE/chessmarkable
-pkgver=0.6.0-4
-timestamp=2021-01-03T05:26Z
+pkgver=0.7.0-1
+timestamp=2021-06-03T10:47Z
 section="games"
 maintainer="Linus K. <linus@cosmos-ink.net>"
 license=MIT
 installdepends=(display)
 flags=(patch_rm2fb)
 
-image=rust:v1.4
-source=(https://github.com/LinusCDE/chessmarkable/archive/0.6.0-1.zip)
-sha256sums=(3ad10a46da5a42f603947ad4dce960bdac2d646c0cd29b7bb3a60b8d308dd82a)
+image=rust:v1.6
+source=(https://github.com/LinusCDE/chessmarkable/archive/0.7.0-1.zip)
+sha256sums=(34d388f094863d849b23a9dd0e069575ff6a5dec547da3920d59308f2e369c9a)
 
 build() {
     # Fall back to system-wide config
