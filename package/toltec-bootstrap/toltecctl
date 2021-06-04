@@ -136,9 +136,6 @@ SHELL
     fi
 }
 
-disable() {
-}
-
 uninstall() {
     if [[ $# -gt 0 && ($1 = "-f" || $1 = "--force") ]]; then
         uninstall_force
