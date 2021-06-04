@@ -143,6 +143,23 @@ disable() {
 }
 
 uninstall() {
+    if [[ $# -gt 0 && ( $1 = "-f" || $1 = "--force" ) ]]; then
+        uninstall_force
+        return
+    fi
+
+    read -p "This will wipe out all files in '$toltec_src'. Continue? [y/n] " -n 1 -r
+    echo
+
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        uninstall_force
+        return
+    fi
+
+    echo "Canceled"
+}
+
+uninstall_force() {
     # Remove all installed packages
     opkg remove --force-depends --force-remove "*"
     systemctl daemon-reload
@@ -180,10 +197,13 @@ if [[ $# -eq 0 ]]; then
     exit 1
 fi
 
-case $1 in
-    enable) enable ;;
-    disable) disable ;;
-    uninstall) uninstall ;;
+action="$1"
+shift
+
+case $action in
+    enable) enable "$@" ;;
+    disable) disable "$@" ;;
+    uninstall) uninstall "$@" ;;
     *)
         echo -e "Error: Invalid command '$1'\n"
         help
