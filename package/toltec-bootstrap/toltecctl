@@ -11,6 +11,7 @@ toltec_src=/home/root/.entware
 toltec_dest=/opt
 
 # Start and end markers of Toltec-managed section in bashrc
+bashrc_path=/home/root/.bashrc
 bashrc_start_marker="# Added by Toltec bootstrap (do not modify!)"
 bashrc_old_start_marker="# Path added by Toltec bootstrap"
 bashrc_end_marker="# End of Toltec bootstrap additions"
@@ -112,23 +113,24 @@ reinstall-root() {
     set -u
 }
 
-reenable() {
-    # Create bind mount and reinstall packages
-    add-bind-mount "$toltec_src" "$toltec_dest"
-    reinstall-root
+clean-path() {
+    # Remove all PATH definitions for /opt in bashrc
+    sed -i "/^$bashrc_start_marker\$/,/^$bashrc_end_marker\$/d" "$bashrc_path"
+    sed -i "/^$bashrc_old_start_marker\$/!b;n;d" "$bashrc_path"
+    sed -i "/^$bashrc_old_start_marker\$/d" "$bashrc_path"
+    sed -i '/^\(export \)\?PATH="\?\.*\/opt\/bin:\/opt\/sbin.*"\?$/d' "$bashrc_path"
+}
 
-    # Set PATH if needed
-    sed -i "/^$bashrc_start_marker\$/,/^$bashrc_end_marker\$/d" /home/root/.bashrc
-    sed -i "/^$bashrc_old_start_marker\$/!b;n;d" /home/root/.bashrc
-    sed -i "/^$bashrc_old_start_marker\$/d" /home/root/.bashrc
-    sed -i '/^\(export \)\?PATH="\?\.*\/opt\/bin:\/opt\/sbin.*"\?$/d' /home/root/.bashrc
-    cat >> /home/root/.bashrc << SHELL
+set-path() {
+    # Fix PATH contents to include Toltec binaries
+    clean-path
+    cat >> "$bashrc_path" << SHELL
 $bashrc_start_marker
 PATH="/opt/bin:/opt/sbin:/home/root/.local/bin:\$PATH"
 $bashrc_end_marker
 SHELL
 
-    # Check whether PATH has changed
+    # Warn user if PATH contents have changed
     old_path="$PATH"
     new_path="$(bash -l -c "echo \$PATH")"
     if [[ $old_path != "$new_path" ]]; then
@@ -136,7 +138,37 @@ SHELL
     fi
 }
 
+reenable() {
+    # Re-enable Toltec install after system update
+    add-bind-mount "$toltec_src" "$toltec_dest"
+    reinstall-root
+    set-path
+}
+
+uninstall-force() {
+    # Remove all installed packages without prompting user
+    opkg remove --force-depends --force-remove "*"
+    systemctl daemon-reload
+
+    # Remove mount point
+    remove-bind-mount "$toltec_dest"
+    rmdir "$toltec_dest"
+
+    # Unset PATH
+    clean-path
+
+    # Remove Toltec data
+    rm -r "$toltec_src"
+
+    # Re-enable xochitl if needed
+    systemctl enable xochitl
+
+    # Reboot to make sure no Toltec processes remain
+    reboot
+}
+
 uninstall() {
+    # Remove all installed packages after prompting user
     if [[ $# -gt 0 && ($1 = "-f" || $1 = "--force") ]]; then
         uninstall_force
         return
@@ -153,36 +185,12 @@ uninstall() {
     echo "Canceled"
 }
 
-uninstall_force() {
-    # Remove all installed packages
-    opkg remove --force-depends --force-remove "*"
-    systemctl daemon-reload
-
-    # Remove mount point
-    remove-bind-mount "$toltec_dest"
-    rmdir "$toltec_dest"
-
-    # Unset PATH
-    sed -i "/^$bashrc_start_marker\$/,/^$bashrc_end_marker\$/d" /home/root/.bashrc
-    sed -i "/^$bashrc_old_start_marker\$/!b;n;d" /home/root/.bashrc
-    sed -i "/^$bashrc_old_start_marker\$/d" /home/root/.bashrc
-    sed -i '/^\(export \)\?PATH="\?\.*\/opt\/bin:\/opt\/sbin.*"\?$/d' /home/root/.bashrc
-
-    # Remove Toltec data
-    rm -r "$toltec_src"
-
-    # Re-enable xochitl if needed
-    systemctl enable xochitl
-
-    # Reboot to make sure no Toltec processes remain
-    reboot
-}
-
 help() {
     echo "Usage: $(basename "$0") COMMAND
 Manage your Toltec install. Available commands:
 
     reenable        Re-enable Toltec after a system update.
+    set-path        Fix PATH value if needed.
     uninstall       Permanently remove Toltec."
 }
 
@@ -196,9 +204,10 @@ shift
 
 case $action in
     reenable) reenable "$@" ;;
+    set-path) set-path "$@" ;;
     uninstall) uninstall "$@" ;;
     *)
-        echo -e "Error: Invalid command '$1'\n"
+        echo -e "Error: Invalid command '$action'\n"
         help
         exit 1
         ;;

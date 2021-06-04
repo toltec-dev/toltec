@@ -17,3 +17,7 @@ sha256sums=(SKIP)
 package() {
     install -D -m 744 -t "$pkgdir"/home/root/.local/bin "$srcdir"/toltecctl
 }
+
+configure() {
+    /home/root/.local/bin/toltecctl set-path
+}
