@@ -6,7 +6,7 @@ _toltecctl() {
 
     if [[ $cword -eq 1 ]]; then
         # shellcheck disable=SC2207
-        COMPREPLY=($(compgen -W 'enable disable uninstall' -- "$cur"))
+        COMPREPLY=($(compgen -W 'reenable uninstall' -- "$cur"))
         return
     fi
 }

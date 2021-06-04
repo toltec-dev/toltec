@@ -112,7 +112,7 @@ reinstall-root() {
     set -u
 }
 
-enable() {
+reenable() {
     # Create bind mount and reinstall packages
     add-bind-mount "$toltec_src" "$toltec_dest"
     reinstall-root
@@ -137,9 +137,6 @@ SHELL
 }
 
 disable() {
-    # Remove mount point
-    remove-bind-mount "$toltec_dest"
-    rmdir "$toltec_dest"
 }
 
 uninstall() {
@@ -164,7 +161,9 @@ uninstall_force() {
     opkg remove --force-depends --force-remove "*"
     systemctl daemon-reload
 
-    disable
+    # Remove mount point
+    remove-bind-mount "$toltec_dest"
+    rmdir "$toltec_dest"
 
     # Unset PATH
     sed -i "/^$bashrc_start_marker\$/,/^$bashrc_end_marker\$/d" /home/root/.bashrc
@@ -186,9 +185,7 @@ help() {
     echo "Usage: $(basename "$0") COMMAND
 Manage your Toltec install. Available commands:
 
-    enable          Re-enable Toltec after a system update or after you
-                    disabled it manually.
-    disable         Disable (but do not uninstall) Toltec.
+    reenable        Re-enable Toltec after a system update.
     uninstall       Permanently remove Toltec."
 }
 
@@ -201,8 +198,7 @@ action="$1"
 shift
 
 case $action in
-    enable) enable "$@" ;;
-    disable) disable "$@" ;;
+    reenable) reenable "$@" ;;
     uninstall) uninstall "$@" ;;
     *)
         echo -e "Error: Invalid command '$1'\n"
