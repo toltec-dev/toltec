@@ -174,7 +174,7 @@ uninstall() {
         return
     fi
 
-    read -p "This will wipe out all files in '$toltec_src'. Continue? [y/n] " -n 1 -r
+    read -p "This will wipe out all files in '$toltec_dest'. Continue? [y/n] " -n 1 -r
     echo
 
     if [[ $REPLY =~ ^[Yy]$ ]]; then
