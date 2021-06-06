@@ -8,29 +8,22 @@ timestamp=2021-02-21T01:41+00:00
 maintainer="raisjn <of.raisjn@gmail.com>"
 license=MIT
 url="https://github.com/ddvk/remarkable2-framebuffer"
-pkgver=1.0.1-3
+pkgver=1.0.1-4
 section="devel"
 
 image=qt:v1.4
 source=(
-    https://github.com/ddvk/remarkable2-framebuffer/archive/aa70ce37c71f84b91434f5c469fa71f4b1bb328c.zip
+    https://github.com/ddvk/remarkable2-framebuffer/archive/v0.0.4.zip
     rm2fb.service
     rm2fb-client
-    overwrite-server-argv0.patch
     rm2fb-preload.conf
 )
 sha256sums=(
-    76f1c0b72260a9743f3e008100ffddf1f89cd44c6f0376d906e98ae66eaea716
-    SKIP
+    945db410c233be0241c7bfa57c10cb5dd9fcddee17962090d8352a5b7b89f94a
     SKIP
     SKIP
     SKIP
 )
-
-prepare() {
-    patch -p1 -d"$srcdir" < "$srcdir"/overwrite-server-argv0.patch
-    rm "$srcdir"/overwrite-server-argv0.patch
-}
 
 build() {
     if [[ $arch = rm1 ]]; then
