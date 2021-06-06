@@ -1,14 +1,19 @@
 #!/usr/bin/env bash
 # Copyright (c) 2021 The Toltec Contributors
 # SPDX-License-Identifier: MIT
+# shellcheck disable=SC2016,SC2199,SC2207
 
 _toltecctl() {
     local cur prev words cword split
     _init_completion -s || return
 
     if [[ $cword -eq 1 ]]; then
-        # shellcheck disable=SC2207
-        COMPREPLY=($(compgen -W 'reenable set-path uninstall' -- "$cur"))
+        COMPREPLY=($(compgen -W 'generate-opkg-conf switch-branch reenable uninstall' -- "$cur"))
+        return
+    fi
+
+    if [[ $cword -eq 2 && ${words[1]} = 'switch-branch' ]]; then
+        COMPREPLY=($(compgen -W 'stable testing' -- "$cur"))
         return
     fi
 }
