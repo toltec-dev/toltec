@@ -170,15 +170,15 @@ uninstall-force() {
 uninstall() {
     # Remove all installed packages after prompting user
     if [[ $# -gt 0 && ($1 = "-f" || $1 = "--force") ]]; then
-        uninstall_force
+        uninstall-force
         return
     fi
 
-    read -p "This will wipe out all files in '$toltec_src'. Continue? [y/n] " -n 1 -r
+    read -p "This will wipe out all files in '$toltec_dest'. Continue? [y/n] " -n 1 -r
     echo
 
     if [[ $REPLY =~ ^[Yy]$ ]]; then
-        uninstall_force
+        uninstall-force
         return
     fi
 
