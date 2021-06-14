@@ -10,8 +10,18 @@ license=MIT
 flags=(patch_rm2fb)
 
 image=qt:v2.1
-source=("https://github.com/Eeems/oxide/archive/30aab3456b9f8b37ffb667cbc8b5e2a686f3e98e.tar.gz")
-sha256sums=(1ddd7bcd71aa12855348bde72bd0d0e7f91f1b958b054614c02eaa4b99168644)
+source=(
+    "https://github.com/Eeems/oxide/archive/30aab3456b9f8b37ffb667cbc8b5e2a686f3e98e.tar.gz"
+    support-2.6.patch
+)
+sha256sums=(
+    1ddd7bcd71aa12855348bde72bd0d0e7f91f1b958b054614c02eaa4b99168644
+    SKIP
+)
+
+prepare() {
+    patch -d "$srcdir" -p1 < "$srcdir"/support-2.6.patch
+}
 
 build() {
     find . -name "*.pro" -type f -print0 \
