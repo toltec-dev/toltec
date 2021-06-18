@@ -95,9 +95,6 @@ wget-bootstrap() {
 
         # Download and compare to hash
         mkdir -p "$(dirname "$wget_path")"
-        touch "$wget_path"
-        chmod +x "$wget_path"
-
         wget "$wget_remote" --output-document "$wget_path" 2> /dev/null
 
         if ! sha256sum -c <(echo "$wget_checksum  $wget_path") > /dev/null 2>&1; then
@@ -105,6 +102,8 @@ wget-bootstrap() {
             error-cleanup
             exit 1
         fi
+
+        chmod +x "$wget_path"
     fi
 
     # Ensure the local binary is used
