@@ -13,13 +13,13 @@ section="devel"
 
 image=qt:v2.1
 source=(
-    https://github.com/ddvk/remarkable2-framebuffer/archive/v0.0.4.zip
+    https://github.com/ddvk/remarkable2-framebuffer/archive/v0.0.5.zip
     rm2fb.service
     rm2fb-client
     rm2fb-preload.conf
 )
 sha256sums=(
-    945db410c233be0241c7bfa57c10cb5dd9fcddee17962090d8352a5b7b89f94a
+    002a4f819077194ca497a8d23da8a83c6f6fed7882fba7a5bdba93559394c96b
     SKIP
     SKIP
     SKIP
