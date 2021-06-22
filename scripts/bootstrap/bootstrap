@@ -95,7 +95,7 @@ check-installed() {
     if ((has_entware_files == 0)) && ((has_opt_files == 0)) \
         && ((has_bashrc_defs == 0)) && ((has_systemd_mount == 0)); then
         log "Toltec is already installed"
-        log "To re-enable Toltec after a system upgrade, run 'toltecctl enable'"
+        log "To re-enable Toltec after a system upgrade, run 'toltecctl reenable'"
         log "To reinstall Toltec, run 'toltecctl uninstall' first"
         exit
     fi
@@ -375,7 +375,7 @@ main() {
     entware-install
     toltec-install "$@"
 
-    log "After each system upgrade, run 'toltecctl enable' to re-enable Toltec"
+    log "After each system upgrade, run 'toltecctl reenable' to re-enable Toltec"
 }
 
 main "$@"
