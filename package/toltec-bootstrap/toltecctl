@@ -115,10 +115,12 @@ reinstall-root() {
 
 clean-path() {
     # Remove all PATH definitions for /opt in bashrc
-    sed -i "/^$bashrc_start_marker\$/,/^$bashrc_end_marker\$/d" "$bashrc_path"
-    sed -i "/^$bashrc_old_start_marker\$/!b;n;d" "$bashrc_path"
-    sed -i "/^$bashrc_old_start_marker\$/d" "$bashrc_path"
-    sed -i '/^\(export \)\?PATH="\?\.*\/opt\/bin:\/opt\/sbin.*"\?$/d' "$bashrc_path"
+    if [[ -f $bashrc_path ]]; then
+        sed -i "/^$bashrc_start_marker\$/,/^$bashrc_end_marker\$/d" "$bashrc_path"
+        sed -i "/^$bashrc_old_start_marker\$/!b;n;d" "$bashrc_path"
+        sed -i "/^$bashrc_old_start_marker\$/d" "$bashrc_path"
+        sed -i '/^\(export \)\?PATH="\?\.*\/opt\/bin:\/opt\/sbin.*"\?$/d' "$bashrc_path"
+    fi
 }
 
 set-path() {
