@@ -3,24 +3,21 @@
 # SPDX-License-Identifier: MIT
 
 pkgnames=(toltec-bootstrap)
-pkgdesc="Toltec installation script"
+pkgdesc="Manage your Toltec install"
 url=https://toltec-dev.org/
-pkgver=0.0.4-1
-timestamp=2021-04-04T21:55Z
+pkgver=0.0.8-1
+timestamp=2021-06-22T08:38Z
 section="utils"
 maintainer="Eeems <eeems@eeems.email>"
 license=MIT
 
-source=(
-    ../../scripts/bootstrap/bootstrap
-    entware-reenable
-)
-sha256sums=(
-    SKIP
-    SKIP
-)
+source=(toltecctl)
+sha256sums=(SKIP)
 
 package() {
-    install -D -m 744 -t "$pkgdir"/home/root/ "$srcdir"/bootstrap
-    install -D -m 744 -t "$pkgdir"/home/root/ "$srcdir"/entware-reenable
+    install -D -m 744 -t "$pkgdir"/home/root/.local/bin "$srcdir"/toltecctl
+}
+
+configure() {
+    /home/root/.local/bin/toltecctl set-path
 }
