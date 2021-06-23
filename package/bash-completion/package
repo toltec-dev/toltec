@@ -29,6 +29,6 @@ package() {
 
 configure() {
     echo "Bash completions should take affect on next login."
-    echo "Take apply them immediately, run"
+    echo "To apply them immediately, run"
     echo " $ source /etc/profile.d/bash_completion.sh"
 }
