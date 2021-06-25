@@ -5,7 +5,7 @@
 pkgnames=(bash-completion)
 pkgdesc="Programmable completion functions for bash"
 url=https://github.com/scop/bash-completion
-pkgver=2.11-1
+pkgver=2.11-2
 timestamp=2020-07-25T00:00Z
 section="utils"
 maintainer="Linus K. <linus@cosmos-ink.net>"
@@ -29,6 +29,6 @@ package() {
 
 configure() {
     echo "Bash completions should take affect on next login."
-    echo "Take apply them immediately, run"
+    echo "To apply them immediately, run"
     echo " $ source /etc/profile.d/bash_completion.sh"
 }
