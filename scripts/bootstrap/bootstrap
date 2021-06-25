@@ -150,9 +150,10 @@ main() {
 
     # Download and install the latest toltec-bootstrap package
     local pkg_basename
-    pkg_basename="$( \
+    pkg_basename="$(
         wget --quiet "$toltec_remote/Packages" -O - \
-        | awk '/^Package: toltec-bootstrap$/,/^$/ { if ($1 == "Filename:") print $2 }')"
+            | awk '/^Package: toltec-bootstrap$/,/^$/ { if ($1 == "Filename:") print $2 }'
+    )"
     local pkg_filename="/tmp/$pkg_basename"
     wget --no-verbose "$toltec_remote/$pkg_basename" -O "$pkg_filename"
 

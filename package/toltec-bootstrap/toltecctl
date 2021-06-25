@@ -327,7 +327,7 @@ if [[ $0 = "${BASH_SOURCE[0]}" ]]; then
 
         switch-branch)
             if [[ ($# -eq 1 && $1 = "testing") || ($# -eq 2 && $1 = "testing" && $2 != "-f" && $2 != "--force") ]]; then
-                cat <<MSG
+                cat << MSG
 Using packages from the testing branch may cause breakage or data loss.
 Please make sure you read the following before switching to testing:
 
