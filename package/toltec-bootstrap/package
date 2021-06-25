@@ -30,7 +30,7 @@ configure() {
 
         if [[ -f $opkg_conf ]]; then
             # Get the first (...) value (aka \1) of the pattern if matching
-            branch="$(sed -E 's|^src/gz\s+toltec.*\s+https://toltec-dev.org/([[:alnum:]]*).*$|\1|;t;d' "$opkg_conf" | head -n1)"
+            branch="$(sed -E 's|^src/gz\s+toltec.*\s+https://toltec-dev.org/([[:alnum:]-]*).*$|\1|;t;d' "$opkg_conf" | head -n1)"
         else
             branch=stable
         fi
