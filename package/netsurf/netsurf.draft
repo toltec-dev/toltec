@@ -1,0 +1,7 @@
+# Copyright (c) 2020 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+name=NetSurf
+desc=a lightweight web browser
+call=/opt/bin/netsurf
+term=killall -9 netsurf

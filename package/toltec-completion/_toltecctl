@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+# Copyright (c) 2021 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+_toltecctl() {
+    local cur prev words cword split
+    _init_completion -s || return
+
+    if [[ $cword -eq 1 ]]; then
+        # shellcheck disable=SC2207
+        COMPREPLY=($(compgen -W 'reenable set-path uninstall' -- "$cur"))
+        return
+    fi
+}
+
+complete -F _toltecctl toltecctl
