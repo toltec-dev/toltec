@@ -37,12 +37,13 @@ configure() {
 
         create-entware-conf
         switch-branch "$branch"
-        generate-opkg-conf
-        cat << MSG
+        echo "Your Opkg configuration has been migrated"
 
-Your Opkg configuration has been migrated
-Please run \`opkg update\` and \`opkg upgrade\` once more to complete the upgrade
-
-MSG
+        if generate-opkg-conf; then
+            echo
+            echo "! The upgrade is not finished! Please run \`opkg update\`"
+            echo "! and \`opkg upgrade\` once more to complete it."
+            echo
+        fi
     fi
 }

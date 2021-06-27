@@ -185,6 +185,17 @@ SHELL
     fi
 }
 
+# Print a file with its comments and blank lines removed
+#
+# Arguments:
+#
+# $1 - Path to the file
+#
+# Output: Cleaned file contents
+clean-file-comments() {
+    sed -e '/^#/d' -e '/^$/d' "$1"
+}
+
 # Rebuild the Opkg configuration file from split config files
 #
 # Exit code:
@@ -218,11 +229,12 @@ CONF
 
     for conf in "$opkg_conf_dir"/*; do
         echo "# $conf"
-        sed -e '/^#/d' -e '/^$/d' "$conf"
+        clean-file-comments "$conf"
         echo
     done >> "$opkg_conf"
 
-    ! diff "$old_opkg_conf" "$opkg_conf" > /dev/null
+    ! diff <(clean-file-comments "$old_opkg_conf" | sort) \
+           <(clean-file-comments "$opkg_conf" | sort) > /dev/null
 }
 
 # Create the Opkg configuration file for fetching Entware packages
