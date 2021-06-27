@@ -234,7 +234,7 @@ CONF
     done >> "$opkg_conf"
 
     ! diff <(clean-file-comments "$old_opkg_conf" | sort) \
-           <(clean-file-comments "$opkg_conf" | sort) > /dev/null
+        <(clean-file-comments "$opkg_conf" | sort) > /dev/null
 }
 
 # Create the Opkg configuration file for fetching Entware packages
