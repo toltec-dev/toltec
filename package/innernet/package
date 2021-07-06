@@ -5,8 +5,8 @@
 pkgnames=(innernet-client)
 pkgdesc="A private network system that uses WireGuard under the hood."
 url="https://github.com/tonarino/innernet"
-pkgver=1.3.0-1
-timestamp=2021-05-19T08:17:04Z
+pkgver=1.3.1-1
+timestamp=2021-06-01T12:50:04Z
 section="utils"
 maintainer="plan5 <30434574+plan5@users.noreply.github.com>"
 license=MIT
@@ -14,8 +14,8 @@ installdepends=(wireguard)
 makedepends=(build:librust-clang-sys-dev build:libclang-dev build:libc6 build:libc6-dev build:clang build:gcc-multilib build:g++-multilib)
 
 image=rust:v1.4
-source=(https://github.com/tonarino/innernet/archive/refs/tags/v1.3.0.zip)
-sha256sums=(de3feb881c64ff91aa626aaa5b16e24c2a2c37688c4989b8394e1e15a175112e)
+source=(https://github.com/tonarino/innernet/archive/refs/tags/v1.3.1.zip)
+sha256sums=(8a58914fa87d2f465b50fe715a7cf0c17fd4ec995469d675005b8b361630424c)
 
 prepare() {
     # Change config folders to live under /opt
