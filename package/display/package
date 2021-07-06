@@ -8,27 +8,22 @@ timestamp=2021-02-21T01:41+00:00
 maintainer="raisjn <of.raisjn@gmail.com>"
 license=MIT
 url="https://github.com/ddvk/remarkable2-framebuffer"
-pkgver=1.0.1-2
+pkgver=1.0.1-5
 section="devel"
 
 image=qt:v1.4
 source=(
-    https://github.com/ddvk/remarkable2-framebuffer/archive/aa70ce37c71f84b91434f5c469fa71f4b1bb328c.zip
+    https://github.com/ddvk/remarkable2-framebuffer/archive/v0.0.5.zip
     rm2fb.service
     rm2fb-client
-    overwrite-server-argv0.patch
+    rm2fb-preload.conf
 )
 sha256sums=(
-    76f1c0b72260a9743f3e008100ffddf1f89cd44c6f0376d906e98ae66eaea716
+    002a4f819077194ca497a8d23da8a83c6f6fed7882fba7a5bdba93559394c96b
     SKIP
     SKIP
     SKIP
 )
-
-prepare() {
-    patch -p1 -d"$srcdir" < "$srcdir"/overwrite-server-argv0.patch
-    rm "$srcdir"/overwrite-server-argv0.patch
-}
 
 build() {
     if [[ $arch = rm1 ]]; then
@@ -56,8 +51,7 @@ display() {
             libname="librm2fb_server.so.${pkgver%-*}"
             install -D -m 644 -t "$pkgdir"/opt/lib "$srcdir"/src/server/"$libname"
             ln -s "$libname" "$pkgdir"/opt/lib/"${libname%.*.*}"
-            install -D -m 644 -t "$pkgdir"/lib/systemd/system \
-                "$srcdir"/rm2fb.service
+            install -D -m 644 -t "$pkgdir"/lib/systemd/system "$srcdir"/rm2fb.service
         fi
     }
 
@@ -107,5 +101,11 @@ rm2fb-client() {
         done
 
         install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/rm2fb-client
+
+        if [[ $arch = rm2 ]]; then
+            install -D -m 644 -t "$pkgdir"/etc/systemd/system/draft.service.d "$srcdir"/rm2fb-preload.conf
+            install -D -m 644 -t "$pkgdir"/etc/systemd/system/remux.service.d "$srcdir"/rm2fb-preload.conf
+            install -D -m 644 -t "$pkgdir"/etc/systemd/system/tarnish.service.d "$srcdir"/rm2fb-preload.conf
+        fi
     }
 }

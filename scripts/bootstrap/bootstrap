@@ -15,36 +15,23 @@
 # <http://bin.entware.net/armv7sf-k3.2/installer/generic.sh>
 #
 
-set -eE
+set -eEuo pipefail
 
 # Path for the temporary local wget used in this installer
-[[ -z $wget_path ]] && wget_path=/home/root/.local/bin/wget
+wget_path="${wget_path:-/home/root/.local/bin/wget}"
 
 # Path for the systemd unit that mounts Entware to /opt
-[[ -z $old_systemd_opt_mount_path ]] && old_systemd_opt_mount_path=/etc/systemd/system/opt.mount
-[[ -z $systemd_opt_mount_path ]] && systemd_opt_mount_path=/lib/systemd/system/opt.mount
-
-# Path for the systemd unit that mounts /opt/share/zoneinfo to /usr/share/zoneinfo
-[[ -z $systemd_timezone_mount_path ]] && systemd_timezone_mount_path=/lib/systemd/system/usr-share-zoneinfo.mount
+old_systemd_mount_path="${old_systemd_mount_path:-/etc/systemd/system/opt.mount}"
+systemd_mount_path="${systemd_mount_path:-/lib/systemd/system/opt.mount}"
 
 # Path where the actual Entware distribution resides (will be mounted to /opt)
-[[ -z $entware_path ]] && entware_path=/home/root/.entware
+entware_path="${entware_path:-/home/root/.entware}"
 
 # Path to the Opkg configuration file
-opkg_conf_path="/opt/etc/opkg.conf"
-
-# Find out current branch or get default one
-get-branch() {
-    local branch
-    if [[ -f "$opkg_conf_path" ]]; then
-        # Get the first (...) value (aka \1) of the pattern if matching
-        branch="$(sed -E 's|^src/gz\s+toltec\s+https://toltec-dev.org/([[:alnum:]]*).*$|\1|;t;d' "$opkg_conf_path" | head -n1)"
-    fi
-    echo "${branch:-stable}"
-}
+opkg_conf_path="${opkg_conf_path:-/opt/etc/opkg.conf}"
 
 # Toltec branch to use for this install - you almost always want the default
-[[ -z $toltec_branch ]] && toltec_branch="$(get-branch)"
+toltec_branch="${toltec_branch:-stable}"
 
 # Remove all temporary files
 cleanup() {
@@ -70,15 +57,9 @@ error-cleanup() {
         rm -rf "$entware_path"
     fi
 
-    if [[ -f $systemd_opt_mount_path ]]; then
-        systemctl disable --now "$(basename "$systemd_opt_mount_path")" 2> /dev/null
-        rm "$systemd_opt_mount_path"
-        systemctl daemon-reload
-    fi
-
-    if [[ -f $systemd_timezone_mount_path ]]; then
-        systemctl disable --now "$(basename "$systemd_timezone_mount_path")" 2> /dev/null
-        rm "$systemd_timezone_mount_path"
+    if [[ -f $systemd_mount_path ]]; then
+        systemctl disable --now opt.mount 2> /dev/null
+        rm "$systemd_mount_path"
         systemctl daemon-reload
     fi
 
@@ -89,6 +70,66 @@ error-cleanup() {
         "" \
         "(Please also include these error logs to help solving the" \
         "problem faster. Thank you!)"
+}
+
+# Check whether a Toltec install already exists or if conflicting files
+# remain from previous installs
+check-installed() {
+    set +e
+    [[ -d $entware_path ]] && files="$(ls -A -- "$entware_path")" && [[ -n $files ]]
+    has_entware_files=$?
+
+    [[ -d /opt ]] && files="$(ls -A -- /opt)" && [[ -n $files ]]
+    has_opt_files=$?
+
+    [[ -e /home/root/.bashrc ]] && grep -q '^\(export \)\?PATH="\?.*/opt.*"\?$' /home/root/.bashrc
+    has_bashrc_defs=$?
+
+    [[ -f $old_systemd_mount_path ]]
+    has_old_systemd_mount=$?
+
+    [[ -f $systemd_mount_path ]]
+    has_systemd_mount=$?
+    set -e
+
+    if ((has_entware_files == 0)) && ((has_opt_files == 0)) \
+        && ((has_bashrc_defs == 0)) && ((has_systemd_mount == 0)); then
+        log "Toltec is already installed"
+        log "To re-enable Toltec after a system upgrade, run 'toltecctl reenable'"
+        log "To reinstall Toltec, run 'toltecctl uninstall' first"
+        exit
+    fi
+
+    if ((has_entware_files != 0)) && ((has_opt_files != 0)) \
+        && ((has_bashrc_defs != 0)) && ((has_old_systemd_mount != 0)) \
+        && ((has_systemd_mount != 0)); then
+        return
+    fi
+
+    log WARN "There are conflicting files and system settings:"
+
+    if ((has_entware_files == 0)); then
+        log WARN "  - Files in the $entware_path folder"
+    fi
+
+    if ((has_opt_files == 0)); then
+        log WARN "  - Files in the /opt folder"
+    fi
+
+    if ((has_bashrc_defs == 0)); then
+        log WARN "  - PATH definitions pointing to /opt in /home/root/.bashrc"
+    fi
+
+    if ((has_old_systemd_mount == 0)); then
+        log WARN "  - Mount configuration in $old_systemd_mount_path"
+    fi
+
+    if ((has_systemd_mount == 0)); then
+        log WARN "  - Mount configuration in $systemd_mount_path"
+    fi
+
+    log WARN "Please clean them up and run the bootstrap script again"
+    exit 1
 }
 
 # Install a local wget binary which supports TLS (the original one
@@ -106,9 +147,6 @@ wget-bootstrap() {
 
         # Download and compare to hash
         mkdir -p "$(dirname "$wget_path")"
-        touch "$wget_path"
-        chmod +x "$wget_path"
-
         wget "$wget_remote" --output-document "$wget_path" 2> /dev/null
 
         if ! sha256sum -c <(echo "$wget_checksum  $wget_path") > /dev/null 2>&1; then
@@ -116,6 +154,8 @@ wget-bootstrap() {
             error-cleanup
             exit 1
         fi
+
+        chmod +x "$wget_path"
     fi
 
     # Ensure the local binary is used
@@ -130,20 +170,8 @@ entware-mount() {
     mkdir -p /opt
     mkdir -p "$entware_path"
 
-    if [[ -f $old_systemd_opt_mount_path ]] && [[ ! -f $systemd_opt_mount_path ]]; then
-        # The user was probably using https://github.com/Evidlo/remarkable_entware
-        # before switching to toltec. Removing old .mount file to prevent duplicate files
-        log "Updating opt.mount location"
-
-        if systemctl -q is-enabled "$(basename "$old_systemd_opt_mount_path")"; then
-            # Remove path to old file if still symlinked
-            systemctl disable "$(basename "$old_systemd_opt_mount_path")"
-        fi
-        rm "$old_systemd_opt_mount_path"
-    fi
-
     # Create systemd mount unit to mount over /opt on reboot
-    cat > "$systemd_opt_mount_path" << UNIT
+    cat > "$systemd_mount_path" << UNIT
 [Unit]
 Description=Bind mount Entware over /opt
 DefaultDependencies=no
@@ -161,7 +189,7 @@ WantedBy=local-fs.target
 UNIT
 
     systemctl daemon-reload
-    systemctl enable --now "$(basename "$systemd_opt_mount_path")" 2> /dev/null
+    systemctl enable --now opt.mount 2> /dev/null
 }
 
 # Install Entware to /opt
@@ -170,12 +198,7 @@ entware-install() {
 
     # Create basic folders, entware-opt package creates the rest
     for folder in bin etc lib lib/opkg tmp var var/lock; do
-        if [ -d "/opt/$folder" ]; then
-            log WARN "Folder /opt/$folder exists!" \
-                "If something goes wrong please clean the /opt folder and try again."
-        else
-            mkdir "/opt/$folder"
-        fi
+        mkdir "/opt/$folder"
     done
 
     local dynamic_loader="ld-linux.so.3"
@@ -234,32 +257,6 @@ entware-install() {
     fi
 }
 
-# Mount /opt/share/zoneinfo to /usr/share/zoneinfo
-timezone-mount() {
-    mkdir -p "$entware_path"/share/zoneinfo
-
-    # Create systemd mount unit to mount over /opt on reboot
-    cat > "$systemd_timezone_mount_path" << UNIT
-[Unit]
-Description=Bind mount /opt/share/zoneinfo over /usr/share/zoneinfo
-DefaultDependencies=no
-Conflicts=umount.target
-Before=local-fs.target umount.target
-
-[Mount]
-What=/home/root/.entware/share/zoneinfo
-Where=/usr/share/zoneinfo
-Type=none
-Options=bind
-
-[Install]
-WantedBy=local-fs.target
-UNIT
-
-    systemctl daemon-reload
-    systemctl enable --now "$(basename "$systemd_timezone_mount_path")" 2> /dev/null
-}
-
 # Add Toltec configuration to an existing Entware install
 #
 # Arguments: List of additional packages to install, one package per argument
@@ -270,29 +267,22 @@ toltec-install() {
     local device_id_path=/sys/devices/soc0/machine
     local device_arch
 
-    if ! grep -q "^arch rmall" "$opkg_conf_path"; then
-        echo "arch rmall 200" >> "$opkg_conf_path"
-    fi
+    echo "arch rmall 200" >> "$opkg_conf_path"
 
     if grep -q "reMarkable 1.0" "$device_id_path" \
         || grep -q "reMarkable Prototype 1" "$device_id_path"; then
         device_arch=rm1
-        if ! grep -q "^arch rm1" "$opkg_conf_path"; then
-            echo "arch rm1 250" >> "$opkg_conf_path"
-        fi
+        echo "arch rm1 250" >> "$opkg_conf_path"
     elif grep -q "reMarkable 2.0" "$device_id_path"; then
         device_arch=rm2
-        if ! grep -q "^arch rm2" "$opkg_conf_path"; then
-            echo "arch rm2 250" >> "$opkg_conf_path"
-        fi
+        echo "arch rm2 250" >> "$opkg_conf_path"
     else
         log ERROR "Unsupported device: '$(cat "$device_id_path")'"
         error-cleanup
         exit 1
     fi
 
-    # Make sure that Opkg is configured to fetch the chosen Toltec branch
-    sed -i '/^src\/gz\s\+toltec[a-z-]*\s\+/d' "$opkg_conf_path"
+    # Configure Opkg to fetch the chosen Toltec branch
     echo "src/gz toltec-rmall https://toltec-dev.org/$toltec_branch/rmall" >> "$opkg_conf_path"
     echo "src/gz toltec-$device_arch https://toltec-dev.org/$toltec_branch/$device_arch" >> "$opkg_conf_path"
 
@@ -302,7 +292,7 @@ toltec-install() {
     local additional_packages=()
 
     [[ ! -d /opt/etc/ssl/certs ]] && additional_packages+=(ca-certificates)
-    [[ ! -f /opt/bin/wget ]] && additional_packages+=(wget)
+    [[ ! -f /opt/bin/wget ]] && additional_packages+=(wget-ssl)
 
     if [[ ${#additional_packages[@]} -gt 0 ]]; then
         /opt/bin/opkg install "${additional_packages[@]}"
@@ -316,24 +306,13 @@ toltec-install() {
         /opt/bin/opkg install "$@"
     fi
 
-    # Remove existing PATH definitions where the binaries in /opt/bin and
-    # /opt/sbin have lesser priority than the others
-    # shellcheck disable=SC2016
-    if [[ -e /home/root/.bashrc ]]; then
-        sed -i '/^\(export \)\?PATH="\?\$PATH:\/opt\/bin:\/opt\/sbin"\?$/d' /home/root/.bashrc
-    fi
-
     # Add binaries in /opt/bin and /opt/sbin to the PATH before any others
-    # shellcheck disable=SC2016
-    if [[ ! -e /home/root/.bashrc ]] \
-        || ! grep -q '^\(export \)\?PATH="\?/opt/bin:/opt/sbin:\$PATH"\?$' /home/root/.bashrc; then
-        log "Adding /opt/bin and /opt/sbin to your PATH"
-        log "Please run '. \$HOME/.bashrc' to use Toltec"
-        cat >> /home/root/.bashrc << 'SHELL'
-# Path added by Toltec bootstrap
-PATH="/opt/bin:/opt/sbin:$PATH"
+    cat >> /home/root/.bashrc << 'SHELL'
+# Added by Toltec bootstrap (do not modify!)
+PATH="/opt/bin:/opt/sbin:/home/root/.local/bin:$PATH"
+# End of Toltec bootstrap additions
 SHELL
-    fi
+    log "Please restart your SSH session or run 'exec bash -l' to use Toltec"
 }
 
 # Print a log message
@@ -381,6 +360,8 @@ log() {
 }
 
 main() {
+    check-installed
+
     trap cleanup EXIT
     trap error-cleanup ERR
 
@@ -389,24 +370,12 @@ main() {
         wget-bootstrap
     fi
 
-    if [[ -d $entware_path ]]; then
-        if [[ -d /opt ]] && files="$(ls -A -- /opt)" && [[ -n $files ]]; then
-            log "Entware is already installed and active"
-        else
-            log "Re-enabling existing Entware install"
-            entware-mount
-            timezone-mount
-        fi
-    else
-        log "Creating $entware_path and mounting to /opt"
-        entware-mount
-        entware-install
-        log "Mounting timezone info over /usr/share/zoneinfo"
-        timezone-mount
-    fi
-
+    log "Creating $entware_path and mounting to /opt"
+    entware-mount
+    entware-install
     toltec-install "$@"
-    log "Use '/home/root/entware-reenable' to re-enable Toltec after a system update"
+
+    log "After each system upgrade, run 'toltecctl reenable' to re-enable Toltec"
 }
 
 main "$@"
