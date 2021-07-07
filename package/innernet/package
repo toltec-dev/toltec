@@ -5,7 +5,7 @@
 pkgnames=(innernet-client)
 pkgdesc="A private network system that uses WireGuard under the hood."
 url="https://github.com/tonarino/innernet"
-pkgver=1.3.1-1
+pkgver=1.3.1-2
 timestamp=2021-06-01T12:50:04Z
 section="utils"
 maintainer="plan5 <30434574+plan5@users.noreply.github.com>"
