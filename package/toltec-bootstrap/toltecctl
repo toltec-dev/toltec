@@ -375,6 +375,9 @@ MSG
             uninstall
             ;;
 
+        --help)
+            help
+            ;;
         *)
             echo -e "Error: Invalid command '$action'\n"
             help
