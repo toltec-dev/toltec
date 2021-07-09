@@ -5,14 +5,14 @@
 pkgnames=(puzzles)
 timestamp=2021-03-04T14:03-08:00
 maintainer="NONE"
-pkgver=0.2.2-1
+pkgver=0.2.2-2
 license=MIT
 pkgdesc="Simon Tatham's Puzzle Package"
 url="https://github.com/mrichards42/remarkable_puzzles"
 section="games"
 flags=(patch_rm2fb)
 
-image=python:v1.4
+image=python:v2.1
 source=(
     https://github.com/mrichards42/remarkable_puzzles/releases/download/v0.2.2/puzzles-source.tar.gz
     puzzles.draft

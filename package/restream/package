@@ -5,12 +5,13 @@
 pkgnames=(restream)
 pkgdesc="Binary framebuffer capture tool for the reStream script"
 url=https://github.com/rien/reStream
-pkgver=1.1-1
+pkgver=1.1-2
 timestamp=2021-01-28T23:25:40Z
 section="screensharing"
 maintainer="Dan Shick <dan.shick@gmail.com>"
 license=MIT
-image=rust:v1.3
+
+image=rust:v2.1
 source=("https://github.com/rien/reStream/archive/${pkgver%-*}.tar.gz")
 sha256sums=(89fa4c8adfcdfb5266e11d1f8ed4c5d8dac12a68a7ee5622cf21f833bca1704f)
 
