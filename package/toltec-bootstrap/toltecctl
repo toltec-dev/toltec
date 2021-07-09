@@ -346,7 +346,7 @@ Please make sure you read the following before switching to testing:
     <https://github.com/toltec-dev/toltec/blob/stable/docs/branches.md>
 
 MSG
-                read -p "Continue? [y/n] " -n 1 -r
+                read -p "Continue? [y/N] " -n 1 -r
                 echo
 
                 if [[ ! $REPLY =~ ^[Yy]$ ]]; then
@@ -364,7 +364,7 @@ MSG
 
         uninstall)
             if [[ $# -eq 0 || ($1 != "-f" && $1 != "--force") ]]; then
-                read -p "This will wipe out all files in '$toltec_dest'. Continue? [y/n] " -n 1 -r
+                read -p "This will wipe out all files in '$toltec_dest'. Continue? [y/N] " -n 1 -r
                 echo
 
                 if [[ ! $REPLY =~ ^[Yy]$ ]]; then
