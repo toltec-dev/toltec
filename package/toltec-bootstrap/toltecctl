@@ -14,6 +14,10 @@ toltec_dest=/opt
 opkg_conf="$toltec_dest"/etc/opkg.conf
 opkg_conf_dir="$toltec_dest"/etc/opkg.conf.d
 
+# Path to the Xochitl configuration
+xochitl_conf=/home/root/.config/remarkable/xochitl.conf
+ssh_key_file=/home/root/.ssh/authorized_keys
+
 # Start and end markers of Toltec-managed section in bashrc
 bashrc_path=/home/root/.bashrc
 bashrc_start_marker="# Added by Toltec bootstrap (do not modify!)"
@@ -42,6 +46,13 @@ identify-model() {
             echo "unknown"
             ;;
     esac
+}
+
+# Get the password used to login to the SSH prompt
+#
+# Output: SSH password
+get-ssh-password() {
+    awk -F= '/DeveloperPassword=/{ printf "%s" $2 }' "$xochitl_conf"
 }
 
 # Get the path for a systemd bind mount unit
@@ -308,9 +319,6 @@ uninstall() {
 
     # Re-enable xochitl if needed
     systemctl enable xochitl
-
-    # Reboot to make sure no Toltec processes remain
-    reboot
 }
 
 help() {
@@ -364,7 +372,12 @@ MSG
             ;;
 
         uninstall)
-            if [[ $# -eq 0 || ($1 != "-f" && $1 != "--force") ]]; then
+            set +e
+            [[ $# -eq 0 || ($1 != "-f" && $1 != "--force") ]]
+            force=$?
+            set -e
+
+            if ((force == 0)); then
                 read -p "This will wipe out all files in '$toltec_dest'. Continue? [y/N] " -n 1 -r
                 echo
 
@@ -373,7 +386,25 @@ MSG
                     exit 1
                 fi
             fi
+
             uninstall
+
+            if ((force == 0)); then
+                read -p "To complete the uninstall process, the device needs to be rebooted. Reboot now? [Y/n] " -n 1 -r
+                echo
+
+                if [[ $REPLY =~ ^[Nn]$ ]]; then
+                    echo "Please reboot your device manually to complete the uninstall process"
+                    exit
+                fi
+            fi
+
+            if [[ ! -f $ssh_key_file ]]; then
+                echo "In case something goes wrong, your SSH password is: $(get-ssh-password)"
+            fi
+
+            echo "Rebooting"
+            reboot
             ;;
 
         help | -h | --help)
