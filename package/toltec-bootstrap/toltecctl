@@ -317,6 +317,7 @@ help() {
     echo "Usage: $(basename "$0") COMMAND
 Manage your Toltec install. Available commands:
 
+    help                    Show this help message.
     generate-opkg-conf      Rebuild the Opkg configuration file.
     switch-branch [BRANCH]  Change the current branch to BRANCH.
     reenable                Re-enable Toltec after a system update.
@@ -375,9 +376,10 @@ MSG
             uninstall
             ;;
 
-        --help)
+        help | -h | --help)
             help
             ;;
+
         *)
             echo -e "Error: Invalid command '$action'\n"
             help
