@@ -5,7 +5,7 @@
 pkgnames=(wireguard)
 pkgdesc="Fast, modern, secure VPN tunnel"
 url=https://www.wireguard.com
-pkgver=1.0.20210219-1
+pkgver=1.0.20210219-2
 _wireguardtoolsver=1.0.20210223
 timestamp=2021-02-19T14:08Z
 section=utils
@@ -24,15 +24,17 @@ _defconfigs=(
     arch/arm/configs/zero-sugar_defconfig
 )
 
-image=base:v1.3.2
+image=base:v2.1
 source=(
     "https://git.zx2c4.com/wireguard-linux-compat/snapshot/wireguard-linux-compat-${pkgver%-*}.tar.xz"
     "https://git.zx2c4.com/wireguard-tools/snapshot/wireguard-tools-${_wireguardtoolsver}.tar.xz"
+    fix-multiple-yylloc-definitions.patch
 )
 noextract=("wireguard-tools-${_wireguardtoolsver}.tar.xz")
 sha256sums=(
     99d35296b8d847a0d4db97a4dda96b464311a6354e75fe0bef6e7c4578690f00
     1f72da217044622d79e0bab57779e136a3df795e3761a3fc1dc0941a9055877c
+    SKIP
 )
 
 prepare() {
@@ -54,6 +56,7 @@ build() {
             cd linux
             git fetch --depth=1 "$_kernelrepo" "${_kernelrevs[$i]}"
             git checkout -f "${_kernelrevs[$i]}"
+            git apply "$srcdir"/fix-multiple-yylloc-definitions.patch || true
             make mrproper
             touch .scmversion
             cp "${_defconfigs[$i]}" .config

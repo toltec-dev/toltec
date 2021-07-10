@@ -1,0 +1,35 @@
+diff --git a/applications/launcher/main.qml b/applications/launcher/main.qml
+index a54f2b8..ada050e 100755
+--- a/applications/launcher/main.qml
++++ b/applications/launcher/main.qml
+@@ -34,7 +34,7 @@ ApplicationWindow {
+                 CustomMenu {
+                     BetterMenu {
+                         id: optionsMenu
+-                        title: "";
++                        title: qsTr("")
+                         font: iconFont.name
+                         width: 310
+                         Action { text: qsTr(" Reload"); onTriggered: appsView.model = controller.getApps() }
+@@ -142,7 +142,7 @@ ApplicationWindow {
+                 CustomMenu {
+                     BetterMenu {
+                         id: powerMenu
+-                        title: "";
++                        title: qsTr("")
+                         font: iconFont.name
+                         width: 260
+                         Action {
+diff --git a/applications/lockscreen/main.qml b/applications/lockscreen/main.qml
+index e835268..3fd18c1 100644
+--- a/applications/lockscreen/main.qml
++++ b/applications/lockscreen/main.qml
+@@ -94,7 +94,7 @@ ApplicationWindow {
+                 CustomMenu {
+                     BetterMenu {
+                         id: powerMenu
+-                        title: "";
++                        title: qsTr("");
+                         font: iconFont.name
+                         width: 260
+                         Action {

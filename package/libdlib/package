@@ -5,13 +5,13 @@
 pkgnames=(libdlib libdlib-dev)
 pkgdesc="Toolkit for making machine learning and data analysis applications in C++"
 url=http://dlib.net
-pkgver=19.21-1
+pkgver=19.21-2
 timestamp=2020-08-08T19:41:07Z
 section="devel"
 maintainer="Mattéo Delabre <spam@delab.re>"
 license=BSL-1.0
 
-image=base:v1.3.1
+image=base:v2.1
 source=("https://github.com/davisking/dlib/archive/v${pkgver%-*}.tar.gz")
 sha256sums=(116f52e58be04b47dab52057eaad4b5c4d5c3032d927fe23d55b0741fc4107a0)
 
