@@ -2,6 +2,7 @@
 # Copyright (c) 2021 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
+pkgnames=(remarkable-stylus)
 pkgver=0.0.3-1
 pkgdesc="hack to get the button of a lamy pen working"
 timestamp=2020-11-19T20:07:29Z
