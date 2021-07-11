@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
 # Copyright (c) 2021 The Toltec Contributors
 # SPDX-License-Identifier: MIT
-LD_PRELOAD=/opt/lib/librm2fb_client.so.1 exec /usr/bin/xochitl "$@"
+export $(grep -vh '^#' /opt/etc/xochitl.env.d/* | xargs)
+exec /usr/bin/xochitl "$@"
