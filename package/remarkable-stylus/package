@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+# Copyright (c) 2021 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgver=0.0.3-1
+pkgdesc="hack to get the button of a lamy pen working"
+timestamp=2020-11-19T20:07:29Z
+maintainer="Eeems <eeems@eeems.email>"
+license=LGPL-3.0
+url=https://github.com/ddvk/remarkable-stylus
+section="admin"
+installdepends=(display "tarnish=$pkgver")
+image=qt:v2.1
+source=("https://github.com/ddvk/remarkable-stylus/archive/refs/tags/0.0.3.tar.gz")
+sha256sums=(1328ff351e079ff9fd1fa83f0b686af4a51f3f5fb0bb36ae1646d5ddb87423a2)
+
+build() {
+    qmake
+    make
+}
+
+package() {
+    install -D -m 755 -t "$pkgdir"/usr/lib/plugins/generic "$srcdir"/libqevdevlamyplugin.so
+}
