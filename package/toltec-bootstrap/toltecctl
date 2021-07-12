@@ -343,11 +343,38 @@ if [[ $0 = "${BASH_SOURCE[0]}" ]]; then
 
     case $action in
         generate-opkg-conf)
-            generate-opkg-conf && opkg update
+            no_update=0
+
+            if (($# > 0)) && [[ $1 = "--no-update" || $1 = "-n" ]]; then
+                no_update=1
+            fi
+
+            if generate-opkg-conf && ((no_update == 0)); then
+                read -p "Your Opkg configuration changed. Reload it? [Y/n] " -n 1 -r
+                echo
+
+                if [[ $REPLY =~ ^[Nn]$ ]]; then
+                    echo "Not reloading. Use 'opkg update' to do it manually."
+                else
+                    opkg update
+                fi
+            fi
             ;;
 
         switch-branch)
-            if [[ ($# -eq 1 && $1 = "testing") || ($# -eq 2 && $1 = "testing" && $2 != "-f" && $2 != "--force") ]]; then
+            target_branch=stable
+            force=0
+
+            while (($#)); do
+                if [[ $1 = "--force" || $1 = "-f" ]]; then
+                    force=1
+                else
+                    target_branch="$1"
+                fi
+                shift
+            done
+
+            if [[ $target_branch = "testing" ]] && ((force == 0)); then
                 cat << MSG
 Using packages from the testing branch may cause breakage or data loss.
 Please make sure you read the following before switching to testing:
@@ -363,8 +390,22 @@ MSG
                     exit 1
                 fi
             fi
-            switch-branch "${1:-stable}"
-            generate-opkg-conf && opkg update
+
+            switch-branch "$target_branch"
+
+            if generate-opkg-conf; then
+                if ((force == 0)); then
+                    read -p "Your Opkg configuration changed. Reload it? [Y/n] " -n 1 -r
+                    echo
+
+                    if [[ $REPLY =~ ^[Nn]$ ]]; then
+                        echo "Not reloading. Use 'opkg update' to do it manually."
+                        exit
+                    fi
+                fi
+
+                opkg update
+            fi
             ;;
 
         reenable)
@@ -372,10 +413,11 @@ MSG
             ;;
 
         uninstall)
-            set +e
-            [[ $# -eq 0 || ($1 != "-f" && $1 != "--force") ]]
-            force=$?
-            set -e
+            force=0
+
+            if (($# > 0)) && [[ $1 = "--force" || $1 = "-f" ]]; then
+                force=1
+            fi
 
             if ((force == 0)); then
                 read -p "This will wipe out all files in '$toltec_dest'. Continue? [y/N] " -n 1 -r
