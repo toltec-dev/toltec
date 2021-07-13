@@ -2,6 +2,7 @@
 # Copyright (c) 2021 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
+archs=(rm1 rm2)
 pkgnames=(ddvk-hacks)
 pkgdesc="Enhance Xochitl with additional features"
 url=https://github.com/ddvk/remarkable-hacks
@@ -23,15 +24,18 @@ _old_backup_path="$_backup_path.old"
 _patched_path="$_work_dir/xochitl.patched"
 
 package() {
-    install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/26171_rm1/patch_19.1.02
-    install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/26171_rm2/patch_19.2.02
-    install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/26275_rm1/patch_20.1.03
-    install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/26275_rm2/patch_20.2.03
-    install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/27051_rm1/patch_21.1.04
-    install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/27051_rm2/patch_21.2.05
-    install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/27153_rm2/patch_22.2.01
-    install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/28098_rm1/patch_23.1.02
-    install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/28098_rm2/patch_23.2.02
+    if [[ $arch = rm1 ]]; then
+        install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/26171_rm1/patch_19.1.02
+        install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/26275_rm1/patch_20.1.03
+        install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/27051_rm1/patch_21.1.04
+        install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/28098_rm1/patch_23.1.02
+    elif [[ $arch = rm2 ]]; then
+        install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/26171_rm2/patch_19.2.02
+        install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/26275_rm2/patch_20.2.03
+        install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/27051_rm2/patch_21.2.05
+        install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/27153_rm2/patch_22.2.01
+        install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/28098_rm2/patch_23.2.02
+    fi
 }
 
 configure() {
@@ -41,70 +45,80 @@ configure() {
     local device
     local original_hash
     local xochitl_version
-
-    case "$build_date" in
-        "20210611153600")
-            patch_version="23.2.02"
-            device="reMarkable 2"
-            original_hash="02a851bc33231fcd253eee781eb127e3c942da69"
-            xochitl_version="2.8.0.98"
-            ;;
-        "20210611154039")
-            patch_version="23.2.02"
-            device="reMarkable 1"
-            original_hash="b688b4afbd5c13347bada20f26b9108d82658f9a"
-            xochitl_version="2.8.0.98"
-            ;;
-        "20210511153632")
-            patch_version="22.2.01"
-            device="reMarkable 2"
-            original_hash="f0846772da9b810aecc2a307ba5dae21c072674a"
-            xochitl_version="2.7.1.53"
-            ;;
-        "20210504114631")
-            patch_version="21.2.05"
-            device="reMarkable 2"
-            original_hash="f0846772da9b810aecc2a307ba5dae21c072674a"
-            xochitl_version="2.7.0.51"
-            ;;
-        "20210504114855")
-            patch_version="21.1.04"
-            device="reMarkable 1"
-            original_hash="123877bb7dd6133f4540e03d3912b1d4c4d76050"
-            xochitl_version="2.7.0.51"
-            ;;
-        "20210322075357")
-            patch_version="20.2.03"
-            device="reMarkable 2"
-            original_hash="7b314d6fb03c8789396f0ed43a4b27a18c649d2d"
-            xochitl_version="2.6.2.75"
-            ;;
-        "20210322075617")
-            patch_version="20.1.03"
-            device="reMarkable 1"
-            original_hash="50a44683ac1b8ce524e55e10f57b699e7c4ca409"
-            xochitl_version="2.6.2.75"
-            ;;
-        "20210311194323")
-            patch_version="19.2.02"
-            device="reMarkable 2"
-            original_hash="fc434bf45f1ff927af799ddccc7b2b0449f516f7"
-            xochitl_version="2.6.1.71"
-            ;;
-        "20210311193614")
-            patch_version="19.1.02"
-            device="reMarkable 1"
-            original_hash="2d31db3e7f1a7b98a493cc5a1351fe303f849cd3"
-            xochitl_version="2.6.1.71"
-            ;;
-        *)
-            echo
-            echo "Error: The version the device is running is not supported, yet."
-            echo "Build date: $build_date"
-            echo
-            exit 1
-            ;;
-    esac
+    if [[ $arch = rm1 ]]; then
+        device="reMarkable 1"
+        case "$build_date" in
+            "20210611154039")
+                patch_version="23.2.02"
+                original_hash="b688b4afbd5c13347bada20f26b9108d82658f9a"
+                xochitl_version="2.8.0.98"
+                ;;
+            "20210504114855")
+                patch_version="21.1.04"
+                original_hash="123877bb7dd6133f4540e03d3912b1d4c4d76050"
+                xochitl_version="2.7.0.51"
+                ;;
+            "20210322075617")
+                patch_version="20.1.03"
+                original_hash="50a44683ac1b8ce524e55e10f57b699e7c4ca409"
+                xochitl_version="2.6.2.75"
+                ;;
+            "20210311193614")
+                patch_version="19.1.02"
+                original_hash="2d31db3e7f1a7b98a493cc5a1351fe303f849cd3"
+                xochitl_version="2.6.1.71"
+                ;;
+            *)
+                echo
+                echo "Error: The version the device is running is not supported, yet."
+                echo "Build date: $build_date"
+                echo
+                exit 1
+                ;;
+        esac
+    elif [[ $arch = rm2 ]]; then
+        device="reMarkable 2"
+        case "$build_date" in
+            "20210611153600")
+                patch_version="23.2.02"
+                original_hash="02a851bc33231fcd253eee781eb127e3c942da69"
+                xochitl_version="2.8.0.98"
+                ;;
+            "20210511153632")
+                patch_version="22.2.01"
+                original_hash="f0846772da9b810aecc2a307ba5dae21c072674a"
+                xochitl_version="2.7.1.53"
+                ;;
+            "20210504114631")
+                patch_version="21.2.05"
+                original_hash="f0846772da9b810aecc2a307ba5dae21c072674a"
+                xochitl_version="2.7.0.51"
+                ;;
+            "20210322075357")
+                patch_version="20.2.03"
+                original_hash="7b314d6fb03c8789396f0ed43a4b27a18c649d2d"
+                xochitl_version="2.6.2.75"
+                ;;
+            "20210311194323")
+                patch_version="19.2.02"
+                original_hash="fc434bf45f1ff927af799ddccc7b2b0449f516f7"
+                xochitl_version="2.6.1.71"
+                ;;
+            *)
+                echo
+                echo "Error: The version the device is running is not supported, yet."
+                echo "Build date: $build_date"
+                echo
+                exit 1
+                ;;
+        esac
+    else
+        echo
+        echo "Error: The architecture the device is running is not supported, yet."
+        echo "Build date: $build_date"
+        echo
+        exit 1
+    fi
 
     echo
     echo "Device: $device"
