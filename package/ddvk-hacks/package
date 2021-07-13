@@ -5,7 +5,7 @@
 pkgnames=(ddvk-hacks)
 pkgdesc="Enhance Xochitl with additional features"
 url=https://github.com/ddvk/remarkable-hacks
-pkgver=18.01-1
+pkgver=23.02-1
 timestamp=2020-12-25T14:32Z
 section="readers"
 maintainer="Mattéo Delabre <spam@delab.re>"
