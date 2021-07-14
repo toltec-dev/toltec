@@ -40,3 +40,7 @@ package() {
     install -D -m 644 -t "$pkgdir"/opt/usr/share/applications "$srcdir"/xochitl.oxide
     install -D -m 644 -t "$pkgdir"/etc/systemd/system/xochitl.service.d "$srcdir"/toltec-wrapper.conf
 }
+
+configure() {
+    systemctl daemon-reload
+}
