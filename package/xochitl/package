@@ -10,6 +10,7 @@ timestamp=2021-07-11T22:10Z
 section="readers"
 maintainer="Mattéo Delabre <spam@delab.re>"
 license=MIT
+installdepends=(findutils)
 
 source=(
     xochitl
