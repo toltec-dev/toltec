@@ -10,7 +10,7 @@ maintainer="Eeems <eeems@eeems.email>"
 license=LGPL-3.0
 url=https://github.com/ddvk/remarkable-stylus
 section="utils"
-installdepends=(xochitl)
+installdepends=(xochitl ddvk-hacks)
 
 image=qt:v2.1
 source=(
