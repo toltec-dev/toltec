@@ -4,7 +4,7 @@
 
 pkgnames=(fbink fbdepth fbink-doom)
 url=https://github.com/NiLuJe/FBInk
-pkgver=1.23.1-4
+pkgver=1.23.2-1
 timestamp=2020-12-14T12:30Z
 maintainer="Mattéo Delabre <spam@delab.re>"
 license=GPL-3.0
@@ -14,7 +14,7 @@ source=()
 sha256sums=()
 
 prepare() {
-    git clone --depth=1 --recurse-submodules --branch v1.23.1 https://github.com/NiLuJe/FBInk.git "$srcdir"/FBInk
+    git clone --depth=1 --recurse-submodules --branch v${pkgver%-*} https://github.com/NiLuJe/FBInk.git "$srcdir"/FBInk
 }
 
 build() {
