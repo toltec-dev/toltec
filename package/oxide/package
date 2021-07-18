@@ -4,7 +4,7 @@
 
 pkgnames=(erode fret oxide rot tarnish decay corrupt anxiety)
 pkgver=2.2.1-1
-timestamp=2021-07-11T18:33:03Z
+timestamp=2021-07-18T16:43:24Z
 maintainer="Eeems <eeems@eeems.email>"
 license=MIT
 flags=(patch_rm2fb)
