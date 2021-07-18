@@ -14,7 +14,8 @@ installdepends=(wireguard)
 makedepends=(build:librust-clang-sys-dev build:libclang-dev build:libc6 build:libc6-dev build:clang build:gcc-multilib build:g++-multilib)
 
 image=rust:v2.1
-source=(https://github.com/tonarino/innernet/archive/refs/tags/v1.4.0.zip)
+_srcver="v${pkgver%-*}"
+source=(https://github.com/tonarino/innernet/archive/refs/tags/$_srcver.zip)
 sha256sums=(b1297177d377c1374be5db9e0ab9ccf82b2199d47969e1bbee58dcecbe2ca933)
 
 prepare() {
