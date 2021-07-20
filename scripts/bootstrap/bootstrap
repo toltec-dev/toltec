@@ -47,11 +47,13 @@ error-cleanup() {
     read -ra trace < <(caller 0)
     log ERROR "Unexpected error on line ${trace[2]}:${trace[0]} in function ${trace[1]}"
 
-    # Get out of /opt so it can be unmounted and removed
+    # Get out of /opt so it can be unmounted and removed (does not fail on error)
+    set +e
     cd /home/root
     clean-path
     remove-bind-mount "$toltec_dest"
     rm -rf "$toltec_dest" "$toltec_src" "$toltecctl_path"
+    set -e
 
     log ERROR "This script failed to install. If you can't solve the above" \
         "issue yourself, please report it at:" \
