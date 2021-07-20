@@ -18,6 +18,9 @@ opkg_conf_dir="$toltec_dest"/etc/opkg.conf.d
 xochitl_conf=/home/root/.config/remarkable/xochitl.conf
 ssh_key_file=/home/root/.ssh/authorized_keys
 
+# Root of the remote Toltec server
+toltec_srv_root=https://toltec-dev.org
+
 # Start and end markers of Toltec-managed section in bashrc
 bashrc_path=/home/root/.bashrc
 bashrc_start_marker="# Added by Toltec bootstrap (do not modify!)"
@@ -289,9 +292,9 @@ switch-branch() {
 # switch to a different Toltec branch
 
 arch rmall 200
-src/gz toltec-rmall https://toltec-dev.org/$branch/rmall
+src/gz toltec-rmall $toltec_srv_root/$branch/rmall
 arch $model 250
-src/gz toltec-$model https://toltec-dev.org/$branch/$model
+src/gz toltec-$model $toltec_srv_root/$branch/$model
 CONF
 }
 
@@ -343,13 +346,9 @@ if [[ $0 = "${BASH_SOURCE[0]}" ]]; then
 
     case $action in
         generate-opkg-conf)
-            no_update=0
+            no_update=$( (($# > 0)) && [[ $1 = "--no-update" || $1 = "-n" ]] && echo 1)
 
-            if (($# > 0)) && [[ $1 = "--no-update" || $1 = "-n" ]]; then
-                no_update=1
-            fi
-
-            if generate-opkg-conf && ((no_update == 0)); then
+            if generate-opkg-conf && [[ -z $no_update ]]; then
                 read -p "Your Opkg configuration changed. Reload it? [Y/n] " -n 1 -r
                 echo
 
@@ -363,7 +362,7 @@ if [[ $0 = "${BASH_SOURCE[0]}" ]]; then
 
         switch-branch)
             target_branch=stable
-            force=0
+            force=
 
             while (($#)); do
                 if [[ $1 = "--force" || $1 = "-f" ]]; then
@@ -374,7 +373,21 @@ if [[ $0 = "${BASH_SOURCE[0]}" ]]; then
                 shift
             done
 
-            if [[ $target_branch = "testing" ]] && ((force == 0)); then
+            if [[ -z $force ]] && ! wget --quiet --spider "$toltec_srv_root/$target_branch"; then
+                cat << MSG
+The '$target_branch' branch does not seem to exist. This may happen if you made
+a typo in the branch name or if you have no Internet access.
+MSG
+                read -p "Continue anyway? [y/N] " -n 1 -r
+                echo
+
+                if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+                    echo "Canceled"
+                    exit 1
+                fi
+            fi
+
+            if [[ -z $force ]] && [[ $target_branch = "testing" ]]; then
                 cat << MSG
 Using packages from the testing branch may cause breakage or data loss.
 Please make sure you read the following before switching to testing:
@@ -413,13 +426,10 @@ MSG
             ;;
 
         uninstall)
-            force=0
+            no_update=$( (($# > 0)) && [[ $1 = "--no-update" || $1 = "-n" ]] && echo 1)
+            force=$( (($# > 0)) && [[ $1 = "--force" || $1 = "-f" ]] && echo 1)
 
-            if (($# > 0)) && [[ $1 = "--force" || $1 = "-f" ]]; then
-                force=1
-            fi
-
-            if ((force == 0)); then
+            if [[ -z $force ]]; then
                 read -p "This will wipe out all files in '$toltec_dest'. Continue? [y/N] " -n 1 -r
                 echo
 
@@ -431,7 +441,7 @@ MSG
 
             uninstall
 
-            if ((force == 0)); then
+            if [[ -z $force ]]; then
                 read -p "To complete the uninstall process, the device needs to be rebooted. Reboot now? [Y/n] " -n 1 -r
                 echo
 
