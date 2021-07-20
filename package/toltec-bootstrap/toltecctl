@@ -346,7 +346,7 @@ if [[ $0 = "${BASH_SOURCE[0]}" ]]; then
 
     case $action in
         generate-opkg-conf)
-            no_update=$( (($# > 0)) && [[ $1 = "--no-update" || $1 = "-n" ]] && echo 1)
+            no_update=$( (($# > 0)) && [[ $1 = "--no-update" || $1 = "-n" ]] && echo 1 || true)
 
             if generate-opkg-conf && [[ -z $no_update ]]; then
                 read -p "Your Opkg configuration changed. Reload it? [Y/n] " -n 1 -r
@@ -426,8 +426,7 @@ MSG
             ;;
 
         uninstall)
-            no_update=$( (($# > 0)) && [[ $1 = "--no-update" || $1 = "-n" ]] && echo 1)
-            force=$( (($# > 0)) && [[ $1 = "--force" || $1 = "-f" ]] && echo 1)
+            force=$( (($# > 0)) && [[ $1 = "--force" || $1 = "-f" ]] && echo 1 || true)
 
             if [[ -z $force ]]; then
                 read -p "This will wipe out all files in '$toltec_dest'. Continue? [y/N] " -n 1 -r
