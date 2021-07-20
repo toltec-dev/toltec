@@ -5,7 +5,9 @@ As a user, **you always want to use the stable branch**, which is the default on
 The testing branch exists solely for the repository maintainers to make sure that packages work correctly before distributing them to users.
 It may contain packages that could cause breakage if you install them on your device.
 
-> To use the testing branch, update the `/opt/etc/opkg.conf` file on an existing install or set the `toltec_branch` variable to `testing` when installing through the bootstrap script.
+Use the `toltecctl switch-branch [stable|testing]` command to switch between the stable and testing branches.
+After switching from stable to testing, you should run `opkg upgrade` to upgrade your installed packages to their version in testing.
+After switching from testing to stable, you may need to manually downgrade the packages that were newer in testing.
 
 ### Adding or Updating a Package
 
