@@ -1,6 +1,28 @@
 {
-	"displayName": "Xochitl",
-	"description": "Read documents and take notes",
-	"bin": "/usr/bin/xochitl",
-	"icon": "/opt/etc/draft/icons/xochitl.png"
+    "displayName": "Xochitl",
+    "description": "Read documents and take notes",
+    "bin": "/opt/bin/xochitl",
+    "icon": "/opt/etc/draft/icons/xochitl.png",
+    "flags": ["nosplash", "chroot"],
+    "permissions": ["power"],
+    "directories": [
+        "/etc",
+        "/home/root",
+        "/tmp/runtime-root",
+        "/usr/share",
+        "/run/udev",
+        "/run/dbus",
+        "/run/systemd/resolve",
+        "/var/lib/dbus",
+        "/var/cache/fontconfig",
+        "/dev/shm",
+        "/opt/etc/xochitl.env.d"
+    ],
+    "environment": {
+        "QMLSCENE_DEVICE": "epaper",
+        "QT_QPA_PLATFORM": "epaper",
+        "QT_QPA_EVDEV_TOUCHSCREEN_PARAMETERS": "rotate=180",
+        "HOME": "/home/root",
+        "XDG_RUNTIME_DIR": "/tmp/runtime-root"
+    }
 }

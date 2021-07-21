@@ -9,8 +9,10 @@ packages (in the latter case, it is called a split package).
 """
 
 from dataclasses import dataclass
+from datetime import datetime
+from enum import auto, Flag
 from itertools import product
-from typing import Optional
+from typing import Dict, NamedTuple, Optional, Set
 import os
 import textwrap
 import dateutil.parser
@@ -23,19 +25,15 @@ class RecipeError(Exception):
 
 
 @dataclass
-class Source:
-    """Source item needed to build a recipe."""
-
-    url: str
-    checksum: str
-    noextract: bool
-
-
-class Recipe:  # pylint:disable=too-many-instance-attributes,disable=too-few-public-methods
+class GenericRecipe:  # pylint:disable=too-many-instance-attributes
     """Load recipes."""
 
+    name: str
+    path: str
+    recipes: Dict[str, "Recipe"]
+
     @staticmethod
-    def from_file(path: str) -> "Recipe":
+    def from_file(path: str) -> "GenericRecipe":
         """
         Load a recipe from its directory.
 
@@ -44,7 +42,7 @@ class Recipe:  # pylint:disable=too-many-instance-attributes,disable=too-few-pub
         """
         name = os.path.basename(path)
         with open(os.path.join(path, "package"), "r") as recipe:
-            return Recipe(name, path, recipe.read())
+            return GenericRecipe(name, path, recipe.read())
 
     def __init__(self, name: str, path: str, definition: str):
         """
@@ -59,9 +57,142 @@ class Recipe:  # pylint:disable=too-many-instance-attributes,disable=too-few-pub
         self.path = path
         variables, functions = bash.get_declarations(definition)
 
-        # Original declarations of standard fields and functions
-        self.variables: bash.Variables = {}
-        self.functions: bash.Functions = {}
+        archs = _pop_field_indexed(variables, "archs", ["rmall"])
+        self.recipes = {}
+
+        for arch in archs:
+            assert arch is not None
+            self._load_arch(arch, archs, variables.copy(), functions.copy())
+
+    def _load_arch(
+        self,
+        arch: str,
+        archs: bash.IndexedArray,
+        variables: bash.Variables,
+        functions: bash.Functions,
+    ) -> None:
+        """
+        Instantiate a recipe for a given architecture.
+
+        :param arch: target architecture
+        :param archs: available architectures
+        :param variables: Bash variables defined in the recipe
+        :param functions: Bash functions defined in the recipe
+        :raises RecipeError: if the recipe contains an error
+        """
+        variables["arch"] = arch
+
+        # Merge variables suffixed with the selected architecture
+        # into normal variables, drop other arch-specific variables
+        for name, value in list(variables.items()):
+            last_underscore = name.rfind("_")
+
+            if last_underscore == -1:
+                continue
+
+            var_arch = name[last_underscore + 1 :]
+
+            if var_arch not in archs:
+                continue
+
+            del variables[name]
+
+            if var_arch != arch:
+                continue
+
+            name = name[:last_underscore]
+
+            if name not in variables:
+                variables[name] = value
+            else:
+                normal_value = variables[name]
+
+                if isinstance(normal_value, str):
+                    if not isinstance(value, str):
+                        raise RecipeError(
+                            f"Recipe '{self.name}' declares the \
+'{name}' field several times with different types"
+                        )
+
+                    variables[name] = value
+
+                if isinstance(normal_value, list):
+                    if not isinstance(value, list):
+                        raise RecipeError(
+                            f"Recipe '{self.name}' declares the \
+'{name}' field several times with different types"
+                        )
+
+                    normal_value.extend(value)
+
+        self.recipes[arch] = Recipe(
+            self, f"{self.name}-{arch}", variables, functions
+        )
+
+
+class Source(NamedTuple):
+    """Source item needed to build a recipe."""
+
+    url: str
+    checksum: str
+    noextract: bool
+
+
+class BuildFlags(Flag):
+    """Flags that guard special behaviors of the build system."""
+
+    NONE = auto()
+
+    # Disable the automatic stripping of generated binaries
+    NOSTRIP = auto()
+
+    # Patch all generated binaries with the rm2fb client shim
+    PATCH_RM2FB = auto()
+
+
+@dataclass
+class Recipe:  # pylint:disable=too-many-instance-attributes
+    """Recipe specialized for a target architecture."""
+
+    parent: GenericRecipe
+    name: str
+
+    variables: bash.Variables
+    custom_variables: bash.Variables
+    timestamp: datetime
+    sources: Set[Source]
+    makedepends: Set[Dependency]
+    maintainer: str
+    image: str
+    arch: str
+    flags: BuildFlags
+
+    functions: bash.Functions
+    custom_functions: bash.Functions
+
+    packages: Dict[str, "Package"]
+
+    def __init__(
+        self,
+        parent: GenericRecipe,
+        name: str,
+        variables: bash.Variables,
+        functions: bash.Functions,
+    ):
+        """
+        Load an architecture-specialized recipe.
+
+        :param parent: recipe from which this is specialized
+        :param name: name of the recipe
+        :param variables: specialized Bash variables for the recipe
+        :param functions: specialized Bash functions for the recipe
+        :raises RecipeError: if the recipe contains an error
+        """
+        self.parent = parent
+        self.name = name
+
+        self.variables = {}
+        self.functions = {}
 
         self._load_fields(variables)
         self._load_functions(functions)
@@ -72,6 +203,14 @@ class Recipe:  # pylint:disable=too-many-instance-attributes,disable=too-few-pub
 
     def _load_fields(self, variables: bash.Variables) -> None:
         """Parse and check standard fields."""
+        flags = _pop_field_indexed(variables, "flags", [])
+        self.variables["flags"] = flags
+        self.flags = BuildFlags.NONE
+
+        for flag in flags:
+            assert flag is not None
+            self.flags |= getattr(BuildFlags, flag.upper())
+
         timestamp_str = _pop_field_string(variables, "timestamp")
         self.variables["timestamp"] = timestamp_str
 
@@ -81,15 +220,6 @@ class Recipe:  # pylint:disable=too-many-instance-attributes,disable=too-few-pub
             raise RecipeError(
                 "Field 'timestamp' does not contain a valid ISO-8601 date"
             ) from err
-
-        self.maintainer = _pop_field_string(variables, "maintainer")
-        self.variables["maintainer"] = self.maintainer
-
-        self.image = _pop_field_string(variables, "image", "")
-        self.variables["image"] = self.image
-
-        self.flags = _pop_field_indexed(variables, "flags", [])
-        self.variables["flags"] = self.flags
 
         sources = _pop_field_indexed(variables, "source", [])
         self.variables["source"] = sources
@@ -106,26 +236,31 @@ class Recipe:  # pylint:disable=too-many-instance-attributes,disable=too-few-pub
 {len(sources)} source(s) and {len(sha256sums)} checksum(s)"
             )
 
-        depends_raw = _pop_field_indexed(variables, "depends", [])
-        variables["depends"] = depends_raw
-
-        makedepends_raw = _pop_field_indexed(variables, "makedepends", [])
-        self.variables["makedepends"] = makedepends_raw
-
-        self.makedepends = [
-            Dependency.parse(dep or "") for dep in depends_raw + makedepends_raw
-        ]
-
-        self.sources = []
+        self.sources = set()
 
         for source, checksum in zip(sources, sha256sums):
-            self.sources.append(
+            self.sources.add(
                 Source(
                     url=source or "",
                     checksum=checksum or "SKIP",
                     noextract=os.path.basename(source or "") in noextract,
                 )
             )
+
+        makedepends_raw = _pop_field_indexed(variables, "makedepends", [])
+        self.variables["makedepends"] = makedepends_raw
+        self.makedepends = {
+            Dependency.parse(dep or "") for dep in makedepends_raw
+        }
+
+        self.maintainer = _pop_field_string(variables, "maintainer")
+        self.variables["maintainer"] = self.maintainer
+
+        self.image = _pop_field_string(variables, "image", "")
+        self.variables["image"] = self.image
+
+        self.arch = _pop_field_string(variables, "arch")
+        self.variables["arch"] = self.arch
 
     def _load_functions(self, functions: bash.Functions) -> None:
         """Parse and check standard functions."""
@@ -148,45 +283,69 @@ build() step"
         self, variables: bash.Variables, functions: bash.Functions
     ) -> None:
         """Load packages defined by this recipe."""
-        self.packages = {}
         pkgnames = _pop_field_indexed(variables, "pkgnames")
         self.variables["pkgnames"] = pkgnames
+        self.packages = {}
 
         if len(pkgnames) == 1:
             # Single-package recipe: use global declarations
             pkg_name = pkgnames[0]
+            assert pkg_name is not None
             variables["pkgname"] = pkg_name
             self.packages[pkg_name] = Package(self, variables, functions)
         else:
             # Split-package recipe: load package-local declarations
             pkg_decls = {}
 
-            for pkg_name in pkgnames:
-                if pkg_name not in functions:
+            for sub_pkg_name in pkgnames:
+                assert sub_pkg_name is not None
+
+                if sub_pkg_name not in functions:
                     raise RecipeError(
-                        "Missing required function {pkg_name}() for \
+                        "Missing required function {sub_pkg_name}() for \
 corresponding package"
                     )
 
-                pkg_def = functions.pop(pkg_name)
+                pkg_def = functions.pop(sub_pkg_name)
                 context = bash.put_variables(
                     {
                         **self.variables,
                         **variables,
-                        "pkgname": pkg_name,
+                        "pkgname": sub_pkg_name,
                     }
                 )
-                pkg_decls[pkg_name] = bash.get_declarations(context + pkg_def)
+                pkg_decls[sub_pkg_name] = bash.get_declarations(
+                    context + pkg_def
+                )
 
                 for var_name in self.variables:
-                    del pkg_decls[pkg_name][0][var_name]
+                    del pkg_decls[sub_pkg_name][0][var_name]
 
-            for pkg_name, (pkg_vars, pkg_funcs) in pkg_decls.items():
-                self.packages[pkg_name] = Package(self, pkg_vars, pkg_funcs)
+            for sub_pkg_name, (pkg_vars, pkg_funcs) in pkg_decls.items():
+                self.packages[sub_pkg_name] = Package(self, pkg_vars, pkg_funcs)
 
 
+@dataclass
 class Package:  # pylint:disable=too-many-instance-attributes
     """Load packages."""
+
+    parent: Recipe
+    name: str
+
+    variables: bash.Variables
+    custom_variables: bash.Variables
+
+    version: Version
+    desc: str
+    url: str
+    section: str
+    license: str
+    installdepends: Set[Dependency]
+    conflicts: Set[Dependency]
+    replaces: Set[Dependency]
+
+    functions: bash.Functions
+    custom_functions: bash.Functions
 
     def __init__(
         self,
@@ -197,16 +356,14 @@ class Package:  # pylint:disable=too-many-instance-attributes
         """
         Load a package.
 
-        :param parent: recipe which declares this package
+        :param parent: specialized recipe which declares this package
         :param variables: Bash variables declared in the package
         :param functions: Bash functions declared in the package
         :raises RecipeError: if the package contains an error
         """
         self.parent = parent
-
-        # Original declarations of standard fields and functions
-        self.variables: bash.Variables = {}
-        self.functions: bash.Functions = {}
+        self.variables = parent.variables.copy()
+        self.functions = {}
 
         self._load_fields(variables)
         self._load_functions(functions)
@@ -221,9 +378,6 @@ class Package:  # pylint:disable=too-many-instance-attributes
         self.variables["pkgver"] = pkgver_str
         self.version = Version.parse(pkgver_str)
 
-        self.arch = _pop_field_string(variables, "arch", "armv7-3.2")
-        self.variables["arch"] = self.arch
-
         self.desc = _pop_field_string(variables, "pkgdesc")
         self.variables["pkgdesc"] = self.desc
 
@@ -236,33 +390,30 @@ class Package:  # pylint:disable=too-many-instance-attributes
         self.license = _pop_field_string(variables, "license")
         self.variables["license"] = self.license
 
-        depends_raw = _pop_field_indexed(variables, "depends", [])
-        self.variables["depends"] = depends_raw
-        self.depends = []
+        for field in ("installdepends", "conflicts", "replaces"):
+            field_raw = _pop_field_indexed(variables, field, [])
+            self.variables[field] = field_raw
+            setattr(self, field, set())
 
-        for dep_raw in depends_raw:
-            dep = Dependency.parse(dep_raw or "")
+            for dep_raw in field_raw:
+                assert dep_raw is not None
+                dep = Dependency.parse(dep_raw)
 
-            if dep.kind != DependencyKind.Host:
-                raise RecipeError(
-                    "Only host packages are supported in the 'depends' field"
+                if dep.kind != DependencyKind.Host:
+                    raise RecipeError(
+                        f"Only host packages are supported in the \
+'{field}' field"
+                    )
+
+                getattr(self, field).add(dep)
+
+        if self.parent.flags & BuildFlags.PATCH_RM2FB:
+            self.installdepends.add(
+                Dependency(
+                    DependencyKind.Host,
+                    "rm2fb-client",
                 )
-
-            self.depends.append(dep)
-
-        conflicts_raw = _pop_field_indexed(variables, "conflicts", [])
-        self.variables["conflicts"] = conflicts_raw
-        self.conflicts = []
-
-        for conflict_raw in conflicts_raw:
-            conflict = Dependency.parse(conflict_raw or "")
-
-            if dep.kind != DependencyKind.Host:
-                raise RecipeError(
-                    "Only host packages are supported in the 'conflicts' field"
-                )
-
-            self.conflicts.append(conflict)
+            )
 
     def _load_functions(self, functions: bash.Functions) -> None:
         """Parse and check standard functions."""
@@ -304,11 +455,11 @@ custom functions with '_'"
 
     def pkgid(self) -> str:
         """Get the unique identifier of this package."""
-        return "_".join((self.name, str(self.version), self.arch))
+        return "_".join((self.name, str(self.version), self.parent.arch))
 
     def filename(self) -> str:
         """Get the name of the archive corresponding to this package."""
-        return self.pkgid() + ".ipk"
+        return os.path.join(self.parent.arch, self.pkgid() + ".ipk")
 
     def control_fields(self) -> str:
         """Get the control fields for this package."""
@@ -321,23 +472,22 @@ custom functions with '_'"
             Section: {self.section}
             Maintainer: {self.parent.maintainer}
             License: {self.license}
-            Architecture: {self.arch}
+            Architecture: {self.parent.arch}
             """
         )
 
-        if self.depends:
-            control += (
-                "Depends: "
-                + ", ".join(dep.to_debian() for dep in self.depends if dep)
-                + "\n"
-            )
-
-        if self.conflicts:
-            control += (
-                "Conflicts: "
-                + ", ".join(dep.to_debian() for dep in self.conflicts if dep)
-                + "\n"
-            )
+        for debian_name, field in (
+            ("Depends", self.installdepends),
+            ("Conflicts", self.conflicts),
+            ("Replaces", self.replaces),
+        ):
+            if field:
+                control += (
+                    debian_name
+                    + ": "
+                    + ", ".join(dep.to_debian() for dep in field if dep)
+                    + "\n"
+                )
 
         return control
 

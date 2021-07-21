@@ -5,13 +5,15 @@
 pkgnames=(wikipedia)
 pkgdesc="The free encyclopedia"
 url=https://github.com/dps/remarkable-wikipedia
-pkgver=0.1.0-2
+pkgver=0.1.0-3
 timestamp=2021-03-11T04:50Z
 section="readers"
 maintainer="David Singleton <david@singleton.io>"
 license=MIT
+installdepends=(display)
+flags=(patch_rm2fb)
 
-image=qt:v1.2.2
+image=qt:v2.1
 source=(
     https://github.com/dps/remarkable-wikipedia/archive/eb00876ef49e7deedc127bc6c1486e3ed13aedcc.zip
     wikipedia.draft
@@ -24,7 +26,7 @@ sha256sums=(
 )
 
 build() {
-    sed -i 's/linux-oe-g++/linux-arm-gnueabihf-g++/' qtwikipedia.pro
+    sed -i 's/linux-oe-g++/linux-arm-remarkable-g++/' qtwikipedia.pro
     qmake qtwikipedia.pro
     make
 }

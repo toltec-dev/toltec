@@ -63,6 +63,7 @@
                         <th>Description</th>
                         <th>Version</th>
                         <th>License</th>
+                        <th>Downloads</th>
                     </tr>
                 </thead>
 
@@ -73,12 +74,21 @@
                     <col class="listing-license">
                 </colgroup>
 
-                {% for package in packages %}
+                {% for name, sub_packages in packages.items() %}
                     <tr>
-                        <td><a href="{{ package.url }}">{{ package.name }}</a></td>
-                        <td>{{ package.desc }}</td>
-                        <td><a href="./{{ package.filename() }}">{{ package.version }}</a></td>
-                        <td><a href="https://spdx.org/licenses/{{ package.license }}.html">{{ package.license }}</a></td>
+                        <td><a href="{{ sub_packages[0].url }}">{{ name }}</a></td>
+                        <td>{{ sub_packages[0].desc }}</td>
+                        <td>{{ sub_packages[0].version }}</a></td>
+                        <td>
+                            <a href="https://spdx.org/licenses/{{ sub_packages[0].license }}.html">
+                                {{ sub_packages[0].license }}
+                            </a>
+                        </td>
+                        <td>
+                            {% for package in sub_packages %}
+                            <a href="./{{ package.filename() }}">{{ package.parent.arch }}</a>
+                            {% endfor %}
+                        </td>
                     </tr>
                 {% endfor %}
             </table>

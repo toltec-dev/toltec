@@ -4,7 +4,7 @@
 ![Status of the testing repository](https://github.com/toltec-dev/toltec/workflows/testing/badge.svg)
 [![rm1](https://img.shields.io/badge/rM1-supported-green)](https://remarkable.com/store/remarkable)
 [![rm2](https://img.shields.io/badge/rM2-experimental-yellow)](https://remarkable.com/store/remarkable-2)
-[![Discord](https://img.shields.io/discord/463752820026376202.svg?label=reMarkable&logo=discord&logoColor=ffffff&color=7389D8&labelColor=6A7EC2)](https://discord.gg/ATqQGfu)
+[![Discord](https://img.shields.io/discord/385916768696139794.svg?label=reMarkable&logo=discord&logoColor=ffffff&color=7389D8&labelColor=6A7EC2)](https://discord.gg/ATqQGfu)
 
 Toltec is a community-maintained repository of free software for [the reMarkable tablet](https://remarkable.com/).
 
@@ -15,7 +15,7 @@ To automatically install Opkg, Entware and Toltec, run the bootstrap script in a
 
 ```sh
 $ wget http://toltec-dev.org/bootstrap
-$ echo "5f826348764f664e577700c4d9d97e36f250ac27b616f7c09ba4a80e604a3012  bootstrap" | sha256sum -c && bash bootstrap
+$ echo "9195122984700c76ccdc58e25d09d0fca486324e8fc55ba781f6e1b812cc186c  bootstrap" | sha256sum -c && bash bootstrap
 ```
 
 > **Warning:**
