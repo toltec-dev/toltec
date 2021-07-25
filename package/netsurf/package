@@ -5,7 +5,7 @@
 pkgnames=(netsurf)
 pkgdesc="Lightweight web browser"
 url=https://github.com/alex0809/netsurf-reMarkable
-pkgver=0.4.0-1
+pkgver=0.4.0-2
 timestamp=2021-05-31T11:15+00:00
 maintainer="Alex Friesenhahn <rm-dev@alexfriesenhahn.de>"
 archs=(rmall)
@@ -21,6 +21,7 @@ makedepends=(
     build:libtool
 )
 installdepends=(
+    display
     dejavu-fonts-ttf-DejaVuSans
     dejavu-fonts-ttf-DejaVuSans-Bold
     dejavu-fonts-ttf-DejaVuSans-BoldOblique
@@ -31,7 +32,8 @@ installdepends=(
     dejavu-fonts-ttf-DejaVuSansMono
     dejavu-fonts-ttf-DejaVuSansMono-Bold
 )
-image=base:v1.5
+image=base:v2.1
+flags=(patch_rm2fb)
 
 source=(
     https://github.com/alex0809/netsurf-reMarkable/archive/refs/tags/v0.4.tar.gz
@@ -43,6 +45,7 @@ sha256sums=(
 )
 
 build() {
+    ln -s /usr/bin/which /bin
     scripts/install_dependencies.sh
     TARGET_WORKSPACE=$(pwd)/build scripts/build.sh
 }
