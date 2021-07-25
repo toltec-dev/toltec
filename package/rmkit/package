@@ -13,6 +13,7 @@ image=python:v2.1
 source=(
     https://github.com/rmkit-dev/rmkit/archive/a99b2f70c72539bedc1d201e3899da6e19c197da.zip
     patch-remux-duplicate-xochitl.diff
+    patch-remux-start-xochitl.diff
     remux.service
     genie.service
 )
@@ -21,11 +22,13 @@ sha256sums=(
     SKIP
     SKIP
     SKIP
+    SKIP
 )
 
 prepare() {
     patch -p1 -d"$srcdir" < "$srcdir"/patch-remux-duplicate-xochitl.diff
-    rm "$srcdir"/patch-remux-duplicate-xochitl.diff
+    patch -p1 -d"$srcdir" < "$srcdir"/patch-remux-start-xochitl.diff
+    rm "$srcdir"/*.diff
 }
 
 build() {
@@ -141,7 +144,7 @@ nao() {
 remux() {
     pkgdesc="Launcher that supports multi-tasking applications"
     url="https://rmkit.dev/apps/remux"
-    pkgver=0.1.9-3
+    pkgver=0.1.9-4
     section="launchers"
 
     package() {

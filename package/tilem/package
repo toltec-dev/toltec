@@ -5,12 +5,13 @@
 pkgnames=(tilem)
 pkgdesc="TI-84+ calculator emulator"
 url=https://github.com/timower/rM2-stuff/tree/master/apps/tilem
-pkgver=0.0.7-1
+pkgver=0.0.7-2
 timestamp=2021-04-30T10:42Z
-maintainer="None <none@example.com>"
+maintainer="Mattéo Delabre <spam@delab.re>"
 license=GPL-3.0
 section="utils"
 image=base:v2.1
+installdepends=(display)
 
 source=(https://github.com/timower/rM2-stuff/archive/refs/tags/v0.0.7.tar.gz)
 sha256sums=(ed2db5f1aa7c9e8b0bead53bd60cb8fd9eec24c028d789fdbdc4b1655d6c78ce)
