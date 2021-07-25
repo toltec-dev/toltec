@@ -5,7 +5,7 @@
 pkgnames=(fbink fbdepth fbink-doom)
 url=https://github.com/NiLuJe/FBInk
 pkgver=1.23.2-1
-timestamp=2020-12-14T12:30Z
+timestamp=2021-03-25T23:41:13Z
 maintainer="Mattéo Delabre <spam@delab.re>"
 license=GPL-3.0
 
