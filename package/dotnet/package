@@ -18,18 +18,18 @@ maintainer="Eeems <eeems@eeems.email>"
 url=https://www.microsoft.com/net/core
 section="devel"
 license=MIT
-
-source=(
-    https://github.com/dotnet/source-build/archive/refs/tags/v3.1.117-SDK.tar.gz
-    dotnet-profile.sh
-)
-sha256sums=(
-    aa9ee9bf6dce9f7eb3c571e9efed7b17e639656a602d50720dce581f183e41f4
-    SKIP
-)
+makedepends=(build:git)
 
 image=base:v2.1
+source=(dotnet-profile.sh)
+sha256sums=(SKIP)
+
+prepare() {
+    git clone --depth=1 --recurse-submodules --branch v3.1.117-SDK https://github.com/dotnet/source-build "$srcdir"/dotnet
+}
+
 build() {
+    cd dotnet
     ./build.sh
 }
 
