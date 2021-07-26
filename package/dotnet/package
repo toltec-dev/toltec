@@ -20,25 +20,24 @@ section="devel"
 license=MIT
 
 source=(
-    https://github.com/dotnet/sdk/archive/refs/tags/v3.1.411.zip
+    https://github.com/dotnet/source-build/archive/refs/tags/v3.1.117-SDK.tar.gz
     dotnet-profile.sh
 )
 sha256sums=(
-    16befb43bcf2ac3ad005f3c6995a1204586a5bc248b7b70fe013c9030ea0b026
+    aa9ee9bf6dce9f7eb3c571e9efed7b17e639656a602d50720dce581f183e41f4
     SKIP
 )
 
 image=base:v2.1
 build() {
     ./build.sh
-    ./build.sh --test
 }
 
 dotnet-profile() {
     pkgdesc="Default profile script to ensure that the .NET Core Command Line Interface runs properly"
 
     package() {
-        install -Dm 744 -t "$pkgdir"/etc/profile.d/ "$srcdir"/artifacts/bin/redist/Debug/dotnet/dotnet-profile.sh
+        install -Dm 744 -t "$pkgdir"/etc/profile.d/ "$srcdir"/artifacts/bin/redist/Debug/dotnet-profile.sh
     }
     configure() {
         echo "Make sure to source /etc/profile.d/dotnet-profile.sh before running dotnet"
@@ -51,8 +50,8 @@ dotnet-host() {
 
     package() {
         install -dm 755 "$pkgdir"/opt/{bin,usr/{lib,share/{dotnet,licenses/dotnet-host}}}
-        cp -dr --no-preserve='ownership' "$srcdir"/artifacts/bin/redist/Debug/dotnet/{dotnet,host} "$pkgdir"/opt/usr/share/dotnet/
-        cp -dr --no-preserve='ownership' "$srcdir"/artifacts/bin/redist/Debug/dotnet/{LICENSE,ThirdPartyNotices}.txt "$pkgdir"/opt/usr/share/licenses/dotnet-host
+        cp -dr --no-preserve='ownership' "$srcdir"/artifacts/bin/redist/Debug/{dotnet,host} "$pkgdir"/opt/usr/share/dotnet/
+        cp -dr --no-preserve='ownership' "$srcdir"/artifacts/bin/redist/Debug/{LICENSE,ThirdPartyNotices}.txt "$pkgdir"/opt/usr/share/licenses/dotnet-host
         ln -sf /opt/usr/share/dotnet/dotnet "$pkgdir"/opt/bin/dotnet
         ln -sf /opt/usr/share/dotnet/host/fxr/3.1.10/libhostfxr.so "$pkgdir"/opt/usr/lib/libhostfxr.so
     }
@@ -67,7 +66,7 @@ dotnet-sdk() {
 
     package() {
         install -dm 755 "$pkgdir"/opt/usr/share/{dotnet,licenses}
-        cp -dr --no-preserve='ownership' "$srcdir"/artifacts/bin/redist/Debug/dotnet/{sdk,templates} "$pkgdir"/opt/usr/share/dotnet/
+        cp -dr --no-preserve='ownership' "$srcdir"/artifacts/bin/redist/Debug/{sdk,templates} "$pkgdir"/opt/usr/share/dotnet/
         ln -s dotnet-host-bin "$pkgdir"/opt/usr/share/licenses/dotnet-sdk-bin
     }
 }
@@ -77,7 +76,7 @@ dotnet-runtime() {
 
     package() {
         install -dm 755 "$pkgdir"/opt/usr/share/{dotnet/shared,licenses}
-        cp -dr --no-preserve='ownership' "$srcdir"/artifacts/bin/redist/Debug/dotnet/shared/Microsoft.NETCore.App "$pkgdir"/opt/usr/share/dotnet/shared/
+        cp -dr --no-preserve='ownership' "$srcdir"/artifacts/bin/redist/Debug/shared/Microsoft.NETCore.App "$pkgdir"/opt/usr/share/dotnet/shared/
         ln -s dotnet-host-bin "$pkgdir"/opt/usr/share/licenses/dotnet-runtime-bin
     }
 }
@@ -87,7 +86,7 @@ aspnet-runtime() {
 
     package() {
         install -dm 755 "$pkgdir"/opt/usr/share/{dotnet/shared,licenses}
-        cp -dr --no-preserve='ownership' "$srcdir"/artifacts/bin/redist/Debug/dotnet/shared/Microsoft.AspNetCore.App "$pkgdir"/opt/usr/share/dotnet/shared/
+        cp -dr --no-preserve='ownership' "$srcdir"/artifacts/bin/redist/Debug/shared/Microsoft.AspNetCore.App "$pkgdir"/opt/usr/share/dotnet/shared/
         ln -s dotnet-host-bin "$pkgdir"/opt/usr/share/licenses/aspnet-runtime-bin
     }
 }
@@ -97,7 +96,7 @@ dotnet-targeting-pack() {
 
     package() {
         install -dm 755 "$pkgdir"/opt/usr/share/{dotnet,dotnet/packs,licenses}
-        cp -dr --no-preserve='ownership' "$srcdir"/artifacts/bin/redist/Debug/dotnet/packs/Microsoft.NETCore.App.{Host.linux-arm,Ref} "$pkgdir"/opt/usr/share/dotnet/packs/
+        cp -dr --no-preserve='ownership' "$srcdir"/artifacts/bin/redist/Debug/packs/Microsoft.NETCore.App.{Host.linux-arm,Ref} "$pkgdir"/opt/usr/share/dotnet/packs/
         ln -s dotnet-host-bin "$pkgdir"/opt/usr/share/licenses/dotnet-targeting-pack-bin
     }
 }
@@ -108,7 +107,7 @@ aspnet-targeting-pack() {
 
     package() {
         install -dm 755 "$pkgdir"/opt/usr/share/{dotnet,dotnet/packs,licenses}
-        cp -dr --no-preserve='ownership' "$srcdir"/artifacts/bin/redist/Debug/dotnet/packs/Microsoft.AspNetCore.App.Ref "$pkgdir"/opt/usr/share/dotnet/packs/
+        cp -dr --no-preserve='ownership' "$srcdir"/artifacts/bin/redist/Debug/packs/Microsoft.AspNetCore.App.Ref "$pkgdir"/opt/usr/share/dotnet/packs/
         ln -s dotnet-host-bin "$pkgdir"/opt/usr/share/licenses/aspnet-targeting-pack-bin
     }
 }
@@ -118,7 +117,7 @@ netstandard-targeting-pack() {
 
     package() {
         install -dm 755 "$pkgdir"/opt/usr/share/{dotnet,dotnet/packs,licenses}
-        cp -dr --no-preserve='ownership' "$srcdir"/artifacts/bin/redist/Debug/dotnet/packs/NETStandard.Library.Ref "$pkgdir"/opt/usr/share/dotnet/packs/
+        cp -dr --no-preserve='ownership' "$srcdir"/artifacts/bin/redist/Debug/packs/NETStandard.Library.Ref "$pkgdir"/opt/usr/share/dotnet/packs/
         ln -s dotnet-host-bin "$pkgdir"/opt/usr/share/licenses/netstandard-targeting-pack
     }
 }
