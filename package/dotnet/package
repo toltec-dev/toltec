@@ -29,7 +29,7 @@ sha256sums=(
 )
 
 image=base:v2.1
-build(){
+build() {
     ./build.sh
     ./build.sh --test
 }
