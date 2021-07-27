@@ -20,13 +20,18 @@ section="devel"
 license=MIT
 
 source=(
-    https://download.visualstudio.microsoft.com/download/pr/c36515e8-b5eb-4501-bfda-555c16938673/4faa9e8f1e1f84f020e85ab3dbd4c306/dotnet-sdk-3.1.411-linux-arm.tar.gz
     dotnet-profile.sh
 )
 sha256sums=(
-    0af08976e4295a707b9d2643c91b22d13e436d5b707e3888b58d7a4e319866a7
     SKIP
 )
+
+prepare() {
+    dig download.visualstudio.microsoft.com
+    wget https://download.visualstudio.microsoft.com/download/pr/2ebe1f4b-4423-4694-8f5b-57f22a315d66/4bceeffda88fc6f19fad7dfb2cd30487/dotnet-sdk-3.1.404-linux-arm.tar.gz || true
+    wget https://download.visualstudio.microsoft.com/download/pr/c36515e8-b5eb-4501-bfda-555c16938673/4faa9e8f1e1f84f020e85ab3dbd4c306/dotnet-sdk-3.1.411-linux-arm.tar.gz || true
+    exit 1
+}
 
 dotnet-profile() {
     pkgdesc="Default profile script to ensure that the .NET Core Command Line Interface runs properly"
