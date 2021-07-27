@@ -28,8 +28,7 @@ sha256sums=(
 
 prepare() {
     dig download.visualstudio.microsoft.com
-    wget https://download.visualstudio.microsoft.com/download/pr/2ebe1f4b-4423-4694-8f5b-57f22a315d66/4bceeffda88fc6f19fad7dfb2cd30487/dotnet-sdk-3.1.404-linux-arm.tar.gz || true
-    wget https://download.visualstudio.microsoft.com/download/pr/c36515e8-b5eb-4501-bfda-555c16938673/4faa9e8f1e1f84f020e85ab3dbd4c306/dotnet-sdk-3.1.411-linux-arm.tar.gz || true
+    wget https://download.visualstudio.microsoft.com/download/pr/2ebe1f4b-4423-4694-8f5b-57f22a315d66/4bceeffda88fc6f19fad7dfb2cd30487/dotnet-sdk-3.1.404-linux-arm.tar.gz
     exit 1
 }
 
