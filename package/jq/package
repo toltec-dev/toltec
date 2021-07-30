@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+# Copyright (c) 2020 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgnames=(jq)
+pkgdesc="JSON Manipulation Utility"
+url=https://github.com/stedolan/jq
+pkgver=1.5.0
+timestamp=2021-07-28
+section=utils
+maintainer="Asher Mancinelli <ashermancinelli@gmail.com"
+license=MIT
+
+makedepends=(build:automake build:git build:binutils build:libtool)
+
+image=base:latest
+source=(
+    https://github.com/stedolan/jq/releases/download/jq-1.5/jq-1.5.zip
+)
+
+sha256sums=(
+    77c2e4dd9e92c58a662582a24109330a8a94562c50c52f837f59122a951b4ffd
+)
+
+build() {
+  export CC=arm-linux-gnueabihf-gcc CXX=arm-linux-gnueabihf-g++
+  ./configure --with-oniguruma=builtin --host=armv7
+  make LDFLAGS=-all-static -j `nproc`
+}
+
+package() {
+    install -D -m 755 "$srcdir"/jq "$pkgdir"/opt/bin/jq
+}
+
