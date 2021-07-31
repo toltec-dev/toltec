@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+# Copyright (c) 2021 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+echo "Loading custom environment variables from /opt/etc/xochitl.env.d"
+# shellcheck disable=SC2046
+export $(grep -vh '^#' /opt/etc/xochitl.env.d/* | /opt/bin/xargs -d '\n')
+exec /usr/bin/xochitl "$@"

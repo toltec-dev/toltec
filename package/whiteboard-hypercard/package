@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
-# Copyright (c) 2020 The Toltec Contributors
+# Copyright (c) 2021 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
+archs=(rm1)
 pkgnames=(whiteboard-hypercard)
 pkgdesc="Real-time collaboration, drawing or whiteboarding"
 url=https://github.com/fenollp/reMarkable-tools

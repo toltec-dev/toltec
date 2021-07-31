@@ -270,7 +270,7 @@ check-function() {
 #
 # $1 - Name of the package recipe
 load-recipe-header() {
-    # shellcheck disable=SC1090
+    # shellcheck disable=SC1090 disable=SC1091
     source "$1"/package
 
     # Check fields types

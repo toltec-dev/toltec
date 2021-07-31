@@ -1,24 +1,25 @@
 #!/usr/bin/env bash
-# Copyright (c) 2020 The Toltec Contributors
+# Copyright (c) 2021 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
 pkgnames=(chessmarkable)
 pkgdesc="Chess game"
 url=https://github.com/LinusCDE/chessmarkable
-pkgver=0.6.0-3
-timestamp=2021-01-03T05:26Z
+pkgver=0.8.0-1
+timestamp=2021-07-22T12:04Z
 section="games"
 maintainer="Linus K. <linus@cosmos-ink.net>"
 license=MIT
+installdepends=(display)
+flags=(patch_rm2fb)
 
-image=rust:v1.2.1
-source=(https://github.com/LinusCDE/chessmarkable/archive/0.6.0-1.zip)
-sha256sums=(3ad10a46da5a42f603947ad4dce960bdac2d646c0cd29b7bb3a60b8d308dd82a)
+image=rust:v2.1
+source=(https://github.com/LinusCDE/chessmarkable/archive/0.8.0-1.zip)
+sha256sums=(17675d30bb45050c1db5bc81d3d76b99a1b18e497c9a331177b853a5f9aa12af)
 
 build() {
     # Fall back to system-wide config
     rm .cargo/config
-
     cargo build --release --bin chessmarkable
 }
 

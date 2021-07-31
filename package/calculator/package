@@ -1,18 +1,20 @@
 #!/usr/bin/env bash
-# Copyright (c) 2020 The Toltec Contributors
+# Copyright (c) 2021 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
 pkgnames=(calculator)
 pkgdesc="Touch-based calculator"
 url=https://github.com/reHackable/Calculator
-pkgver=0.0.0-13
+pkgver=0.0.0-15
 timestamp=2020-08-20T12:28Z
 section="math"
 maintainer="Mattéo Delabre <spam@delab.re>"
 license=GPL-3.0-or-later
+installdepends=(display)
 makedepends=(build:imagemagick build:librsvg2-bin)
+flags=(patch_rm2fb)
 
-image=qt:v1.1
+image=qt:v2.1
 source=(
     https://github.com/reHackable/Calculator/archive/7b8be5de12f1536bc04b6216abbf26f998097bf4.zip
     calculator.draft
@@ -27,7 +29,6 @@ sha256sums=(
 build() {
     qmake Calculator.pro
     make
-
     convert +set date:create +set date:modify calculator.{svg,png}
 }
 

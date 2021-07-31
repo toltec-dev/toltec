@@ -1,0 +1,89 @@
+#!/usr/bin/env bash
+# Copyright (c) 2020 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+archs=(rm1 rm2)
+pkgnames=(fuse)
+pkgdesc="FUSE (Filesystem in Userspace) Kernel Module"
+url=https://github.com/libfuse/libfuse
+pkgver=1.0.0-3
+timestamp=2021-04-06T22:16Z
+section=utils
+maintainer="plan5 <30434574+plan5@users.noreply.github.com>"
+license=GPL-2.0-only
+makedepends=(build:bc build:lzop build:git)
+flags=(nostrip)
+
+image=base:v2.1
+source=(fix-multiple-yylloc-definitions.patch)
+sha256sums=(SKIP)
+
+_kernelrepo=https://github.com/remarkable/linux
+_kernelrev=1774e2a6a091fdc081324e966d3db0aa9df75c0b
+_defconfig=arch/arm/configs/zero-gravitas_defconfig
+
+prepare() {
+    cd "$srcdir"
+    mkdir pkg
+    git init linux
+    cd linux
+    git fetch --depth=1 "$_kernelrepo" "$_kernelrev"
+    git checkout -f "$_kernelrev"
+    git apply "$srcdir"/fix-multiple-yylloc-definitions.patch
+}
+
+build() {
+    (
+        cd linux
+        make mrproper
+        touch .scmversion
+        cp "$_defconfig" .config
+        echo "CONFIG_FUSE_FS=m" >> .config
+        make olddefconfig
+        make fs/fuse/fuse.ko
+        make modules_prepare
+    )
+
+    KERNELRELEASE=$(cat linux/include/config/kernel.release)
+    export MOD_INSTALL_PATH="pkg/$KERNELRELEASE"
+    install -D -m 644 linux/fs/fuse/fuse.ko \
+        "$MOD_INSTALL_PATH/kernel/fs/fuse/fuse.ko"
+}
+
+package() {
+    if [[ $arch = rm1 ]]; then
+        mkdir -p "$pkgdir/lib/modules"
+        cp -r "$srcdir/pkg"/* "$pkgdir/lib/modules"
+    fi
+}
+
+configure() {
+    if [[ $arch = rm1 ]]; then
+        # Regenerate /lib/modules/[ver]/modules.devname to request the
+        # creation of /dev/fuse used for on-demand loading of fuse
+        depmod -a
+
+        # Force creation of /dev/fuse so that the module gets autoloaded
+        # on-demand (otherwise, the device needs to be rebooted or the module
+        # needs to be manually loaded before it can work)
+        systemctl restart kmod-static-nodes
+        systemctl restart systemd-tmpfiles-setup-dev
+    fi
+}
+
+postremove() {
+    if [[ $arch = rm1 ]]; then
+        echo 'Fuse (Kernel Module) has been removed.'
+        echo 'The kernel module will remain loaded until you reboot, or you can attempt'
+        echo 'to manually remove it by running "modprobe -r fuse".'
+        depmod -a
+    fi
+}
+
+postupgrade() {
+    if [[ $arch = rm1 ]]; then
+        echo 'Fuse (Kernel Module) has been upgraded.'
+        echo 'The old kernel module will remain loaded until you reboot, or you can'
+        echo 'attempt to manually remove it by running "modprobe -r fuse".'
+    fi
+}
