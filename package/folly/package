@@ -1,0 +1,65 @@
+#!/usr/bin/env bash
+# Copyright (c) 2020 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgnames=(folly)
+## This should be a short description targeted at users of your package
+# Start directly with a noun or a verb, do not include “for the reMarkable”
+pkgdesc="Z-machine interpreter for interactive fiction"
+## URL to where the project can be found on the Internet
+url="https://github.com/bkirwi/folly"
+## Version of the package (see below)
+pkgver=0.0.1-1
+## ISO-8601 timestamp at which the source of this version was released
+timestamp=2022-01-29T15:35:52-05:00
+## Section that best matches this package
+section=games
+## This should be your contact information
+maintainer="Ben Kirwin <ben@kirw.in>"
+## A license under which the upstream source is available
+license=MIT
+installdepends=(display)
+makedepends=(build:librust-clang-sys-dev build:libclang-dev build:libc6 build:libc6-dev build:clang)
+
+## Which Docker image to use for building the package
+image=rust:v2.2.2
+
+## Whitespace-separated list of source archives that are needed to build the package
+# Archives will be automatically extracted, stripping any useless containing
+# directories, and made available during the build step below
+source=(
+    https://github.com/bkirwi/folly/archive/aa73c73805c55b147e8d1040fabc7b3150c48db3.zip
+    folly.draft
+)
+## SHA-256 checksums of the source archives above
+sha256sums=(
+    9ae08b545e526b4540d28626d783892f4529d2feff5ea766081051bc17293ca7
+    SKIP
+)
+
+build() {
+    ## Commands to compile your source
+    X_TOOLS="/opt/x-tools/arm-remarkable-linux-gnueabihf/arm-remarkable-linux-gnueabihf"
+    X_TOOLS_CPP="$X_TOOLS/include/c++/10.2.0"
+
+    # Arguments for bindgen's usage of clang
+    export BINDGEN_EXTRA_CLANG_ARGS="\
+      --sysroot=$X_TOOLS/sysroot\
+      -I$X_TOOLS_CPP      -I$X_TOOLS_CPP/arm-remarkable-linux-gnueabihf"
+
+    # Arguments for the gcc-based tensorflow build in the build.rs file of tflite-rs.
+    export TFLITE_RS_MAKE_TARGET_TOOLCHAIN_PREFIX="arm-remarkable-linux-gnueabihf-"
+    export TFLITE_RS_MAKE_EXTRA_CFLAGS="$BINDGEN_EXTRA_CLANG_ARGS -mfpu=neon -mfloat-abi=hard -mcpu=cortex-a9"
+
+    cargo build --release
+
+    # Save the build system the trouble of stripping unused binaries
+    rm -r target/release/build
+    rm -r target/armv7-unknown-linux-gnueabihf/release/build
+}
+
+package() {
+    ## Commands to copy the build artifacts into a package structure
+    install -D -m 755 "$srcdir"/target/armv7-unknown-linux-gnueabihf/release/folly "$pkgdir"/opt/bin/folly
+    install -D -m 644 "$srcdir"/folly.draft "$pkgdir"/opt/etc/draft/folly.draft
+}
