@@ -455,7 +455,7 @@ custom functions with '_'"
 
     def pkgid(self) -> str:
         """Get the unique identifier of this package."""
-        return "_".join((self.name, str(self.version), self.parent.arch))
+        return "_".join((self.name, str(self.version).replace(":", "_"), self.parent.arch))
 
     def filename(self) -> str:
         """Get the name of the archive corresponding to this package."""
