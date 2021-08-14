@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+# Copyright (c) 2021 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+archs=(rm2)
+pkgnames=(linux-5.4-imx)
+pkgdesc="reMarkable 2 Kernel based on the Freescale 5.4-2.2 i.MX kernel"
+url=https://github.com/Freescale/linux-fslc
+pkgver=5.4-2.2.94-0
+timestamp=2021-08-12T19:41:07Z
+section="devel"
+maintainer="Alistair Francis <alistair@alistair23.me>"
+makedepends=(build:flex build:bison build:libssl-dev build:bc build:lzop)
+license=GPL-2.0-only
+flags=(nostrip)
+conflicts=(linux-mainline)
+
+image=base:v2.2
+source=("https://github.com/alistair23/linux/archive/62012d72a391f35878ce67d9a3064b6fe3232a8a.tar.gz")
+sha256sums=(c8e6676c2889d993595c0ba891955a941d55163c36b883972b3e17ca90d7f6d0)
+
+build() {
+    ARCH=arm make imx_v6_v7_defconfig
+    ARCH=arm make -j4
+}
+
+package() {
+    install -d "$pkgdir"/usr/boot
+    cp --no-dereference "$srcdir"/arch/arm/boot/zImage "$pkgdir"/usr/boot/
+    cp --no-dereference "$srcdir"/arch/arm/boot/dts/imx7d-remarkable2.dtb "$pkgdir"/usr/boot/zero-sugar.dtb
+
+    ARCH=arm make -C "$srcdir" modules_install INSTALL_MOD_PATH="$pkgdir"
+}
+
+configure() {
+    echo "The new kernel files have been copied, but not installed"
+    echo "To install them run and then reboot:"
+    echo "  mkdir -p /opt/boot-backup"
+    echo "  cp -rf /boot/* /opt/boot-backup/"
+    echo "  cp -rf /usr/boot/* /boot/"
+    echo "  /bin/sync"
+}
+
+postremove() {
+    echo "To restore to the original kernel, run and then reboot"
+    echo "  rm -rf /lib/modules/5.4.94/"
+    echo "  cp -rf /opt/boot-backup/zImage /boot/"
+    echo "  cp -rf /opt/boot-backup/zero-sugar.dtb /boot/"
+    echo "  /bin/sync"
+}
