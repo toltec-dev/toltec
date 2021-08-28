@@ -4,23 +4,26 @@
 
 archs=(rm1 rm2)
 pkgnames=(display rm2fb-client)
-timestamp=2021-02-21T01:41+00:00
+timestamp=2021-08-23T09:53:41Z
 maintainer="raisjn <of.raisjn@gmail.com>"
 license=MIT
 url="https://github.com/ddvk/remarkable2-framebuffer"
-pkgver=1.0.1-7
+pkgver=1:0.0.7-1
+_release="${pkgver%-*}"
+_release="v${_release#*:}"
+_libver=1.0.1
 section="devel"
 
 image=qt:v2.1
 source=(
-    https://github.com/ddvk/remarkable2-framebuffer/archive/v0.0.5.zip
+    "https://github.com/ddvk/remarkable2-framebuffer/archive/$_release.zip"
     rm2fb.service
     rm2fb-client
     rm2fb-preload.conf
     rm2fb-preload.env
 )
 sha256sums=(
-    002a4f819077194ca497a8d23da8a83c6f6fed7882fba7a5bdba93559394c96b
+    26ee93de54da5fff5b54cef4c10fc15399cbb1f4e501284c2181e3578306421c
     SKIP
     SKIP
     SKIP
@@ -33,7 +36,7 @@ build() {
         pushd src/client
         echo | "${CROSS_COMPILE}gcc" \
             -fPIC -fvisibility=hidden -shared \
-            -o librm2fb_client.so.${pkgver%-*} \
+            -o "librm2fb_client.so.$_libver" \
             -xc -
         popd
     else
@@ -50,9 +53,10 @@ display() {
 
     package() {
         if [[ $arch = rm2 ]]; then
-            libname="librm2fb_server.so.${pkgver%-*}"
+            libname="librm2fb_server.so.$_libver"
             install -D -m 644 -t "$pkgdir"/opt/lib "$srcdir"/src/server/"$libname"
             ln -s "$libname" "$pkgdir"/opt/lib/"${libname%.*.*}"
+            ln -s "$libname" "$pkgdir"/opt/lib/"${libname%.*}"
             install -D -m 644 -t "$pkgdir"/lib/systemd/system "$srcdir"/rm2fb.service
         fi
     }
@@ -93,13 +97,14 @@ rm2fb-client() {
     replaces=(rm2fb)
 
     package() {
-        libname="librm2fb_client.so.${pkgver%-*}"
+        libname="librm2fb_client.so.$_libver"
         install -D -m 644 -t "$pkgdir"/opt/lib "$srcdir"/src/client/"$libname"
         install -d "$pkgdir"/usr/lib
         ln -s /opt/lib/"$libname" "$pkgdir"/usr/lib/"$libname"
 
         for dest in opt/lib usr/lib; do
             ln -s "$libname" "$pkgdir/$dest/${libname%.*.*}"
+            ln -s "$libname" "$pkgdir/$dest/${libname%.*}"
         done
 
         install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/rm2fb-client
