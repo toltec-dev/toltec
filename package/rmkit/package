@@ -9,10 +9,11 @@ license=MIT
 installdepends=(display)
 flags=(patch_rm2fb)
 
-image=python:v1.1
+image=python:v2.1
 source=(
     https://github.com/rmkit-dev/rmkit/archive/a99b2f70c72539bedc1d201e3899da6e19c197da.zip
     patch-remux-duplicate-xochitl.diff
+    patch-remux-start-xochitl.diff
     remux.service
     genie.service
 )
@@ -21,11 +22,13 @@ sha256sums=(
     SKIP
     SKIP
     SKIP
+    SKIP
 )
 
 prepare() {
     patch -p1 -d"$srcdir" < "$srcdir"/patch-remux-duplicate-xochitl.diff
-    rm "$srcdir"/patch-remux-duplicate-xochitl.diff
+    patch -p1 -d"$srcdir" < "$srcdir"/patch-remux-start-xochitl.diff
+    rm "$srcdir"/*.diff
 }
 
 build() {
@@ -36,7 +39,7 @@ build() {
 bufshot() {
     pkgdesc="program for saving the framebuffer as a png"
     url="https://github.com/rmkit-dev/rmkit/tree/master/src/bufshot"
-    pkgver=0.1.0-4
+    pkgver=0.1.0-5
     section="utils"
 
     package() {
@@ -47,7 +50,7 @@ bufshot() {
 genie() {
     pkgdesc="Gesture engine that connects commands to gestures"
     url="https://rmkit.dev/apps/genie"
-    pkgver=0.1.5-2
+    pkgver=0.1.5-3
     section="utils"
 
     package() {
@@ -74,7 +77,7 @@ genie() {
 harmony() {
     pkgdesc="Procedural sketching app"
     url="https://rmkit.dev/apps/harmony"
-    pkgver=0.1.3-2
+    pkgver=0.1.3-3
     section="drawing"
 
     package() {
@@ -91,7 +94,7 @@ harmony() {
 iago() {
     pkgdesc="overlay for drawing shapes via stroke injection"
     url="https://rmkit.dev/apps/iago"
-    pkgver=0.1.0-3
+    pkgver=0.1.0-4
     section="utils"
     installdepends+=("lamp")
 
@@ -103,7 +106,7 @@ iago() {
 lamp() {
     pkgdesc="config based stroke injection utility"
     url="https://rmkit.dev/apps/lamp"
-    pkgver=0.1.0-3
+    pkgver=0.1.0-4
     section="utils"
 
     package() {
@@ -114,7 +117,7 @@ lamp() {
 mines() {
     pkgdesc="Mine detection game"
     url="https://rmkit.dev/apps/minesweeper"
-    pkgver=0.1.2-3
+    pkgver=0.1.2-4
     section="games"
 
     package() {
@@ -127,7 +130,7 @@ mines() {
 nao() {
     pkgdesc="Nao Package Manager: opkg UI built with SAS"
     url="https://rmkit.dev/apps/nao"
-    pkgver=0.1.2-2
+    pkgver=0.1.2-3
     section="admin"
     installdepends+=(simple)
 
@@ -141,7 +144,7 @@ nao() {
 remux() {
     pkgdesc="Launcher that supports multi-tasking applications"
     url="https://rmkit.dev/apps/remux"
-    pkgver=0.1.9-2
+    pkgver=0.1.9-4
     section="launchers"
 
     package() {
@@ -173,7 +176,7 @@ remux() {
 simple() {
     pkgdesc="Simple app script for writing scripted applications"
     url="https://rmkit.dev/apps/sas"
-    pkgver=0.1.4-2
+    pkgver=0.1.4-3
     section="devel"
 
     package() {

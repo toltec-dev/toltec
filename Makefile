@@ -95,7 +95,7 @@ format-fix:
 
 lint:
 	@echo "==> Linting Bash scripts"
-	shellcheck $$(shfmt -f .)
+	shellcheck $$(shfmt -f .) -P SCRIPTDIR
 	@echo "==> Typechecking Python files"
 	MYPYPATH=scripts mypy --disallow-untyped-defs scripts
 	@echo "==> Linting Python files"

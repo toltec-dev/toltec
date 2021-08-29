@@ -5,14 +5,14 @@
 pkgnames=(rmservewacominput)
 pkgdesc="Serve pen input on port 33333"
 url=https://github.com/LinusCDE/rmWacomToMouse
-pkgver=0.3.0-1
+pkgver=0.3.0-2
 timestamp=2021-03-10T18:36Z
 section="utils"
 maintainer="Linus K. <linus@cosmos-ink.net>"
 license=MIT
 installdepends=(appmarkable)
 
-image=base:v1.4
+image=base:v2.1
 source=(
     https://github.com/LinusCDE/rmWacomToMouse/archive/fd1c5454b65f456f6e890b99109e50a8f576dad1.zip
     rmservewacominput.draft
