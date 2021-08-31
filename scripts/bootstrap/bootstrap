@@ -81,7 +81,7 @@ check-installed() {
 # installed on the reMarkable does not) in the PATH
 wget-bootstrap() {
     log "Fetching secure wget"
-    local wget_remote=https://toltec-dev.org/thirdparty/bin/wget-v1.21.1
+    local wget_remote=http://toltec-dev.org/thirdparty/bin/wget-v1.21.1
     local wget_checksum=8798fcdabbe560722a02f95b30385926e4452e2c98c15c2c217583eaa0db30fc
 
     if [[ ! -x $wget_path ]]; then
