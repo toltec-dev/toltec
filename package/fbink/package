@@ -20,6 +20,7 @@ prepare() {
 build() {
     pushd FBInk
     REMARKABLE=1 make remarkable
+    REMARKABLE=1 make fbdepth
     REMARKABLE=1 make utils
     popd
 }
