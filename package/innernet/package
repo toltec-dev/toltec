@@ -16,22 +16,23 @@ makedepends=(build:librust-clang-sys-dev build:libclang-dev build:libc6 build:li
 image=rust:v2.1
 _srcver="v${pkgver%-*}"
 source=(
-	"https://github.com/tonarino/innernet/archive/refs/tags/$_srcver.zip"
-	build.patch
+    "https://github.com/tonarino/innernet/archive/refs/tags/$_srcver.zip"
+    build.patch
 )
 sha256sums=(
-	3dd87538f53a7665713f88399f3388abe24b878765605dfadd25ca194cc47ac1
-	SKIP)
+    3dd87538f53a7665713f88399f3388abe24b878765605dfadd25ca194cc47ac1
+    SKIP
+)
 
 prepare() {
     # Change config folders to live under /opt
     sed -i "s/\/etc\/innernet/\/opt\/etc\/innernet/g" "$srcdir/shared/src/lib.rs"
     sed -i "s/\/var\/lib\/innernet/\/opt\/var\/lib\/innernet/g" "$srcdir/shared/src/lib.rs"
 
-    #Change binary path in service file
+    # Change binary path in service file
     sed -i "s/\/usr\/bin\/innernet/\/opt\/bin\/innernet/g" "$srcdir/client/innernet@.service"
 
-    #Insert line to look for headers under $SYSROOT instead of root filesystem
+    # Insert line to look for headers under $SYSROOT instead of root filesystem
     patch -u "$srcdir/wgctrl-sys/build.rs" -i "$srcdir/build.patch"
 
     #tbd: change wireguard config dir to /opt/etc/wireguard?
