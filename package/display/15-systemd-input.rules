@@ -1,0 +1,1 @@
+ACTION=="add", SUBSYSTEM=="input", TAG+="systemd"
