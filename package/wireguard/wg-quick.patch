@@ -1,0 +1,14 @@
+diff --git a/src/wg-quick/linux.bash b/src/wg-quick/linux.bash
+index e4d4c4f..ecdd9a9 100755
+--- a/src/wg-quick/linux.bash
++++ b/src/wg-quick/linux.bash
+@@ -210,6 +210,9 @@ remove_firewall() {
+ 
+ HAVE_SET_FIREWALL=0
+ add_default() {
++	die "This version of wg-quick does not support /0 routes.
++	Try using two /1 routes instead. (e.g. AllowedIPs = 128.0.0.0/1, 0.0.0.0/1)"
++
+ 	local table line
+ 	if ! get_fwmark table; then
+ 		table=51820

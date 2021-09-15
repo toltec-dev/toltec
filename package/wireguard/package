@@ -6,8 +6,8 @@ pkgnames=(wireguard)
 pkgdesc="Fast, modern, secure VPN tunnel"
 url=https://www.wireguard.com
 pkgver=1.0.20210606-1
-_wireguardtoolsver=1.0.20210424
-timestamp=2021-02-19T14:08Z
+_wireguardtoolsver=1.0.20210914
+timestamp=2021-09-13T22:43Z
 section=utils
 maintainer="Jonah Weissman <jonahrweissman+toltec@gmail.com>"
 license=GPL-2.0-only
@@ -30,11 +30,13 @@ source=(
     "https://git.zx2c4.com/wireguard-linux-compat/snapshot/wireguard-linux-compat-${pkgver%-*}.tar.xz"
     "https://git.zx2c4.com/wireguard-tools/snapshot/wireguard-tools-${_wireguardtoolsver}.tar.xz"
     systemd.patch
+    wg-quick.patch
 )
 noextract=("wireguard-tools-${_wireguardtoolsver}.tar.xz")
 sha256sums=(
     3f5d990006e6eabfd692d925ec314fff2c5ee7dcdb869a6510d579acfdd84ec0
-    b288b0c43871d919629d7e77846ef0b47f8eeaa9ebc9cedeee8233fc6cc376ad
+    97ff31489217bb265b7ae850d3d0f335ab07d2652ba1feec88b734bc96bd05ac
+    SKIP
     SKIP
 )
 
@@ -48,6 +50,7 @@ prepare() {
 }
 
 build() {
+    patch wireguard-tools/src/wg-quick/linux.bash < wg-quick.patch
     make -C wireguard-tools/src PLATFORM=linux "CC=${CROSS_COMPILE}cc"
     patch wireguard-tools/src/systemd/wg-quick\@.service < systemd.patch
     ./wireguard-tools/contrib/dns-hatchet/apply.sh
