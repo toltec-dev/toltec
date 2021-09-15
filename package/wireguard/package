@@ -25,17 +25,18 @@ _defconfigs=(
     arch/arm/configs/zero-sugar_defconfig
 )
 
-image=base:v1.3.2
+image=base:v2.1
 source=(
     "https://git.zx2c4.com/wireguard-linux-compat/snapshot/wireguard-linux-compat-${pkgver%-*}.tar.xz"
     "https://git.zx2c4.com/wireguard-tools/snapshot/wireguard-tools-${_wireguardtoolsver}.tar.xz"
     systemd.patch
     wg-quick.patch
+    fix-multiple-yylloc-definitions.patch
 )
-noextract=("wireguard-tools-${_wireguardtoolsver}.tar.xz")
 sha256sums=(
     3f5d990006e6eabfd692d925ec314fff2c5ee7dcdb869a6510d579acfdd84ec0
     97ff31489217bb265b7ae850d3d0f335ab07d2652ba1feec88b734bc96bd05ac
+    SKIP
     SKIP
     SKIP
 )
@@ -62,6 +63,7 @@ build() {
             cd linux
             git fetch --depth=1 "$_kernelrepo" "${_kernelrevs[$i]}"
             git checkout -f "${_kernelrevs[$i]}"
+            git apply "$srcdir"/fix-multiple-yylloc-definitions.patch || true
             make mrproper
             touch .scmversion
             cp "${_defconfigs[$i]}" .config

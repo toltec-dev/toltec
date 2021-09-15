@@ -3,24 +3,47 @@
 # SPDX-License-Identifier: MIT
 
 pkgnames=(toltec-bootstrap)
-pkgdesc="Toltec installation script"
+pkgdesc="Manage your Toltec install"
 url=https://toltec-dev.org/
-pkgver=0.0.2-2
-timestamp=2021-01-15T20:15Z
+pkgver=0.1.0-1
+timestamp=2021-06-25T21:16Z
 section="utils"
 maintainer="Eeems <eeems@eeems.email>"
 license=MIT
 
-source=(
-    ../../scripts/bootstrap/bootstrap
-    entware-reenable
-)
-sha256sums=(
-    SKIP
-    SKIP
-)
+source=(toltecctl)
+sha256sums=(SKIP)
 
 package() {
-    install -D -m 744 -t "$pkgdir"/home/root/ "$srcdir"/bootstrap
-    install -D -m 744 -t "$pkgdir"/home/root/ "$srcdir"/entware-reenable
+    install -D -m 744 -t "$pkgdir"/home/root/.local/bin "$srcdir"/toltecctl
+}
+
+configure() {
+    # shellcheck source=toltecctl
+    source /home/root/.local/bin/toltecctl
+    set-path
+
+    if [[ ! -d $opkg_conf_dir ]]; then
+        # Migrate existing config in /opt/etc/opkg.conf to be generated
+        # from split files and to use the multiarch repository layout
+        local branch
+
+        if [[ -f $opkg_conf ]]; then
+            # Get the first (...) value (aka \1) of the pattern if matching
+            branch="$(sed -E 's|^src/gz\s+toltec.*\s+https://toltec-dev.org/([[:alnum:]-]*).*$|\1|;t;d' "$opkg_conf" | head -n1)"
+        else
+            branch=stable
+        fi
+
+        create-entware-conf
+        switch-branch "$branch"
+        echo "Your Opkg configuration has been migrated"
+
+        if generate-opkg-conf; then
+            echo
+            echo "! The upgrade is not finished! Please run \`opkg update\`"
+            echo "! and \`opkg upgrade\` once more to complete it."
+            echo
+        fi
+    fi
 }

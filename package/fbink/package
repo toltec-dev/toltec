@@ -4,22 +4,23 @@
 
 pkgnames=(fbink fbdepth fbink-doom)
 url=https://github.com/NiLuJe/FBInk
-pkgver=1.23.1-3
-timestamp=2020-12-14T12:30Z
+pkgver=1.24.0-1
+timestamp=2021-03-25T23:41:13Z
 maintainer="Mattéo Delabre <spam@delab.re>"
 license=GPL-3.0
+installdepends=(display)
+flags=(patch_rm2fb)
 
-image=base:v1.2.1
-source=()
-sha256sums=()
+image=base:v2.1
 
 prepare() {
-    git clone --depth=1 --recurse-submodules --branch v1.23.1 https://github.com/NiLuJe/FBInk.git "$srcdir"/FBInk
+    git clone --depth=1 --recurse-submodules --branch v${pkgver%-*} https://github.com/NiLuJe/FBInk.git "$srcdir"/FBInk
 }
 
 build() {
     pushd FBInk
     REMARKABLE=1 make remarkable
+    REMARKABLE=1 make fbdepth
     REMARKABLE=1 make utils
     popd
 }

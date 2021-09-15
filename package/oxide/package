@@ -2,20 +2,21 @@
 # Copyright (c) 2021 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
-pkgnames=(erode fret oxide rot tarnish decay)
-pkgver=2.1.2-2
-timestamp=2021-01-07T03:28Z
+pkgnames=(erode fret oxide rot tarnish decay corrupt anxiety)
+pkgver=2.2.1-1
+timestamp=2021-07-18T16:43:24Z
 maintainer="Eeems <eeems@eeems.email>"
 license=MIT
 flags=(patch_rm2fb)
 
-image=qt:v1.4
-source=("https://github.com/Eeems/oxide/archive/30aab3456b9f8b37ffb667cbc8b5e2a686f3e98e.tar.gz")
-sha256sums=(1ddd7bcd71aa12855348bde72bd0d0e7f91f1b958b054614c02eaa4b99168644)
+image=qt:v2.1
+_srcver="v${pkgver%-*}"
+source=("https://github.com/Eeems/oxide/archive/refs/tags/$_srcver.tar.gz")
+sha256sums=(7c6ae0455e119307c9c5a661b87848d66fdc13468dc2b7e246b133178674eeb0)
 
 build() {
     find . -name "*.pro" -type f -print0 \
-        | xargs -0 sed -i 's/linux-oe-g++/linux-arm-remarkable-g++/g'
+        | xargs -r -0 sed -i 's/linux-oe-g++/linux-arm-remarkable-g++/g'
     make release
 }
 
@@ -27,6 +28,8 @@ erode() {
 
     package() {
         install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/release/opt/bin/erode
+        install -D -m 644 -t "$pkgdir"/opt/etc/draft/icons "$srcdir"/release/opt/etc/draft/icons/erode.svg
+        install -D -m 644 -t "$pkgdir"/opt/etc/draft/icons "$srcdir"/release/opt/etc/draft/icons/erode-splash.png
         install -D -m 644 -t "$pkgdir"/opt/usr/share/applications "$srcdir"/release/opt/usr/share/applications/codes.eeems.erode.oxide
     }
 }
@@ -52,6 +55,7 @@ oxide() {
     package() {
         install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/release/opt/bin/oxide
         install -D -m 644 -t "$pkgdir"/opt/etc "$srcdir"/release/opt/etc/oxide.conf
+        install -D -m 644 -t "$pkgdir"/opt/etc/draft/icons "$srcdir"/release/opt/etc/draft/icons/oxide-splash.png
         install -D -m 644 -t "$pkgdir"/opt/usr/share/applications "$srcdir"/release/opt/usr/share/applications/codes.eeems.oxide.oxide
     }
     configure() {
@@ -113,5 +117,30 @@ decay() {
     package() {
         install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/release/opt/bin/decay
         install -D -m 644 -t "$pkgdir"/opt/usr/share/applications "$srcdir"/release/opt/usr/share/applications/codes.eeems.decay.oxide
+    }
+}
+corrupt() {
+    pkgdesc="Task Switcher for Oxide"
+    url=https://github.com/Eeems/oxide/tree/master/applications/task-switcher
+    section="utils"
+    installdepends=(display "tarnish=$pkgver")
+
+    package() {
+        install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/release/opt/bin/corrupt
+        install -D -m 644 -t "$pkgdir"/opt/usr/share/applications "$srcdir"/release/opt/usr/share/applications/codes.eeems.corrupt.oxide
+    }
+}
+
+anxiety() {
+    pkgdesc="Screenshot viewer for Oxide"
+    url=https://github.com/Eeems/oxide/tree/master/applications/screenshot-viewer
+    section="utils"
+    installdepends=(display "tarnish=$pkgver")
+
+    package() {
+        install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/release/opt/bin/anxiety
+        install -D -m 644 -t "$pkgdir"/opt/usr/share/applications "$srcdir"/release/opt/usr/share/applications/codes.eeems.anxiety.oxide
+        install -D -m 644 -t "$pkgdir"/opt/etc/draft/icons "$srcdir"/release/opt/etc/draft/icons/image.svg
+        install -D -m 644 -t "$pkgdir"/opt/etc/draft/icons "$srcdir"/release/opt/etc/draft/icons/anxiety-splash.png
     }
 }

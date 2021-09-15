@@ -5,7 +5,7 @@
 pkgnames=(remarkable-splash)
 pkgdesc="Show splashscreens + remarkable-shutdown replacement that does not clear the screen"
 url=https://github.com/ddvk/remarkable-splash
-pkgver=1.0-4
+pkgver=1.0-5
 timestamp=2019-12-31T10:07Z
 section="utils"
 maintainer="Eeems <eeems@eeems.email>"
@@ -13,7 +13,7 @@ license=MIT
 installdepends=(display)
 flags=(patch_rm2fb)
 
-image=qt:v1.4
+image=qt:v2.1
 source=(https://github.com/ddvk/remarkable-splash/archive/e6e0b1e1f3604ab99fb7b476cd290b19c5644025.zip)
 sha256sums=(4aa3988707f9b66752ec9ec2f407cce2ac6e433ae7f06affea9f26957d206b4a)
 

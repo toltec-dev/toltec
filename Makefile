@@ -24,11 +24,6 @@ Building packages:
                     on the reMarkable, which can be installed with
                     `opkg install rsync`.
 
-
-Building webpages:
-
-    web             Generate the Toltec website.
-
 Checking for errors:
 
     repo-check      Compare the local repository to the remote one.
@@ -48,9 +43,6 @@ export USAGE
 
 help:
 	@echo "$$USAGE"
-
-web:
-	./scripts/web-build web build/web
 
 repo:
 	./scripts/repo_build.py $(FLAGS)
@@ -103,7 +95,7 @@ format-fix:
 
 lint:
 	@echo "==> Linting Bash scripts"
-	shellcheck $$(shfmt -f .)
+	shellcheck $$(shfmt -f .) -P SCRIPTDIR
 	@echo "==> Typechecking Python files"
 	MYPYPATH=scripts mypy --disallow-untyped-defs scripts
 	@echo "==> Linting Python files"
@@ -119,7 +111,6 @@ clean:
 
 .PHONY: \
     help \
-    web \
     repo \
     repo-local \
     repo-check \
