@@ -5,8 +5,8 @@
 pkgnames=(innernet-client)
 pkgdesc="A private network system that uses WireGuard under the hood."
 url="https://github.com/tonarino/innernet"
-pkgver=1.4.1-2
-timestamp=2021-08-31T17:57:00Z
+pkgver=1.5.0-1
+timestamp=2021-09-18T17:57:00Z
 section="utils"
 maintainer="plan5 <30434574+plan5@users.noreply.github.com>"
 license=MIT
@@ -20,7 +20,7 @@ source=(
     build.patch
 )
 sha256sums=(
-    3dd87538f53a7665713f88399f3388abe24b878765605dfadd25ca194cc47ac1
+    1f2f38a0c7cbc91391f84f86849bc57e6351fdc6605232b839df25e1009b68f9
     SKIP
 )
 
@@ -33,7 +33,7 @@ prepare() {
     sed -i "s/\/usr\/bin\/innernet/\/opt\/bin\/innernet/g" "$srcdir/client/innernet@.service"
 
     # Insert line to look for headers under $SYSROOT instead of root filesystem
-    patch -u "$srcdir/wgctrl-sys/build.rs" -i "$srcdir/build.patch"
+    patch -u "$srcdir/wireguard-control-sys/build.rs" -i "$srcdir/build.patch"
 
     #tbd: change wireguard config dir to /opt/etc/wireguard?
     #sed -i "s/\/etc\/wireguard/\/opt\/etc\/wireguard/g" "$srcdir/shared/src/lib.rs"
