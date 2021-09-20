@@ -31,9 +31,9 @@ prepare() {
 
     # Change binary path in service file
     sed -i "s/\/usr\/bin\/innernet/\/opt\/bin\/innernet/g" "$srcdir/client/innernet@.service"
-
+    
     # Insert line to look for headers under $SYSROOT instead of root filesystem
-    patch -u "$srcdir/wgctrl-sys/build.rs" -i "$srcdir/build.patch"
+    patch -u "$srcdir/wireguard-control-sys/build.rs" -i "$srcdir/build.patch"
 
     #tbd: change wireguard config dir to /opt/etc/wireguard?
     #sed -i "s/\/etc\/wireguard/\/opt\/etc\/wireguard/g" "$srcdir/shared/src/lib.rs"
