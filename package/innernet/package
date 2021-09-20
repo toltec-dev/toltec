@@ -31,7 +31,7 @@ prepare() {
 
     # Change binary path in service file
     sed -i "s/\/usr\/bin\/innernet/\/opt\/bin\/innernet/g" "$srcdir/client/innernet@.service"
-    
+
     # Insert line to look for headers under $SYSROOT instead of root filesystem
     patch -u "$srcdir/wireguard-control-sys/build.rs" -i "$srcdir/build.patch"
 
