@@ -5,7 +5,7 @@
 pkgnames=(koreader)
 pkgdesc="Ebook reader supporting PDF, DjVu, EPUB, FB2 and many more formats"
 url=https://github.com/koreader/koreader
-pkgver=2021.09-1
+pkgver=2021.09-2
 timestamp=2021-09-20T08:33:06Z
 section="readers"
 maintainer="raisjn <of.raisjn@gmail.com>"
@@ -17,10 +17,12 @@ source=(
     "https://build.koreader.rocks/download/stable/$_srcver/koreader-remarkable-$_srcver.zip"
     koreader.draft
     KOReader.oxide
+    koreader.service
     koreader
 )
 sha256sums=(
     12ebc96521a390fc10f236e4dc9097fa8bea7e8d6928d474a7966b35a045cd2a
+    SKIP
     SKIP
     SKIP
     SKIP
@@ -36,6 +38,7 @@ package() {
 
     install -D -m 644 -t "$pkgdir"/opt/etc/draft/ "$srcdir"/koreader.draft
     install -D -m 644 -t "$pkgdir"/opt/usr/share/applications/ "$srcdir"/KOReader.oxide
+    install -D -m 644 -t "$pkgdir"/lib/systemd/system "$srcdir"/koreader.service
     install -D -m 644 -t "$pkgdir"/opt/etc/draft/icons/ "$srcdir"/resources/koreader.png
     install -D -m 755 -t "$pkgdir"/opt/bin/ "$srcdir"/koreader
 }
