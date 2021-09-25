@@ -21,7 +21,6 @@ source=(
     rm2fb-client
     rm2fb-preload.conf
     rm2fb-preload.env
-    15-systemd-input.rules
 )
 sha256sums=(
     26ee93de54da5fff5b54cef4c10fc15399cbb1f4e501284c2181e3578306421c
@@ -61,12 +60,9 @@ display() {
             ln -s "$libname" "$pkgdir"/opt/lib/"${libname%.*}"
             install -D -m 644 -t "$pkgdir"/lib/systemd/system "$srcdir"/rm2fb.service
         fi
-
-        install -D -m 644 -t "$pkgdir"/lib/udev/rules.d/ "$srcdir"/15-systemd-input.rules
     }
 
     configure() {
-        udevadm control --reload-rules && udevadm trigger
         if [[ $arch = rm2 ]]; then
             systemctl daemon-reload
             systemctl enable rm2fb --now
