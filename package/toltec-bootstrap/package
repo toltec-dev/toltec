@@ -11,8 +11,14 @@ section="utils"
 maintainer="Eeems <eeems@eeems.email>"
 license=MIT
 
-source=(toltecctl)
-sha256sums=(SKIP)
+source=(
+    toltecctl
+    15-systemd-input.rules
+)
+sha256sums=(
+    SKIP
+    SKIP
+)
 
 package() {
     install -D -m 744 -t "$pkgdir"/home/root/.local/bin "$srcdir"/toltecctl
