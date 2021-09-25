@@ -17,145 +17,93 @@
 
 set -eEuo pipefail
 
-# Path for the temporary local wget used in this installer
+# Path to the temporary local wget and Opkg binaries
 wget_path="${wget_path:-/home/root/.local/bin/wget}"
+opkg_path="${opkg_path:-/home/root/.local/bin/opkg}"
 
-# Path for the systemd unit that mounts Entware to /opt
-old_systemd_mount_path="${old_systemd_mount_path:-/etc/systemd/system/opt.mount}"
-systemd_mount_path="${systemd_mount_path:-/lib/systemd/system/opt.mount}"
-
-# Path where the actual Entware distribution resides (will be mounted to /opt)
-entware_path="${entware_path:-/home/root/.entware}"
-
-# Path to the Opkg configuration file
-opkg_conf_path="${opkg_conf_path:-/opt/etc/opkg.conf}"
+# Path to the script used for managing the Toltec installation
+toltecctl_path="${toltecctl_path:-/home/root/.local/bin/toltecctl}"
 
 # Toltec branch to use for this install - you almost always want the default
 toltec_branch="${toltec_branch:-stable}"
 
+# Base URLs for bootstrapping from the Entware and Toltec repositories
+entware_remote="${entware_remote:-https://bin.entware.net/armv7sf-k3.2/installer}"
+toltec_remote="${toltec_remote:-https://toltec-dev.org/$toltec_branch/rmall}"
+
 # Remove all temporary files
 cleanup() {
-    if [[ -e $wget_path ]]; then
-        rm "$wget_path"
-    fi
+    rm -f "$wget_path" "$opkg_path"
 }
 
 # Remove unfinished installation after unexpected error
 error-cleanup() {
     read -ra trace < <(caller 0)
     log ERROR "Unexpected error on line ${trace[2]}:${trace[0]} in function ${trace[1]}"
-
-    # Get out of /opt so it can be unmounted
-    cd /home/root
-
-    if [[ -d /opt ]]; then
-        umount /opt
-        rm /opt -rf
-    fi
-
-    if [[ -d $entware_path ]]; then
-        rm -rf "$entware_path"
-    fi
-
-    if [[ -f $systemd_mount_path ]]; then
-        systemctl disable --now opt.mount 2> /dev/null
-        rm "$systemd_mount_path"
-        systemctl daemon-reload
-    fi
-
     log ERROR "This script failed to install. If you can't solve the above" \
         "issue yourself, please report it at:" \
         "" \
-        "   https://github.com/toltec-dev/toltec/issues" \
+        "    <https://github.com/toltec-dev/toltec/issues>" \
         "" \
         "(Please also include these error logs to help solving the" \
         "problem faster. Thank you!)"
+
+    # Get out of /opt so it can be unmounted and removed
+    cd /home/root
+
+    clean-path
+    remove-bind-mount "$toltec_dest"
+    rm -rf "$toltec_dest" "$toltec_src" "$toltecctl_path"
+}
+
+# Check that a directory exists and is not empty
+exists-non-empty() {
+    [[ -d $1 ]] && files="$(ls -A -- "$1")" && [[ -n $files ]]
 }
 
 # Check whether a Toltec install already exists or if conflicting files
 # remain from previous installs
 check-installed() {
-    set +e
-    [[ -d $entware_path ]] && files="$(ls -A -- "$entware_path")" && [[ -n $files ]]
-    has_entware_files=$?
-
-    [[ -d /opt ]] && files="$(ls -A -- /opt)" && [[ -n $files ]]
-    has_opt_files=$?
-
-    [[ -e /home/root/.bashrc ]] && grep -q '^\(export \)\?PATH="\?.*/opt.*"\?$' /home/root/.bashrc
-    has_bashrc_defs=$?
-
-    [[ -f $old_systemd_mount_path ]]
-    has_old_systemd_mount=$?
-
-    [[ -f $systemd_mount_path ]]
-    has_systemd_mount=$?
-    set -e
-
-    if ((has_entware_files == 0)) && ((has_opt_files == 0)) \
-        && ((has_bashrc_defs == 0)) && ((has_systemd_mount == 0)); then
-        log "Toltec is already installed"
-        log "To re-enable Toltec after a system upgrade, run 'toltecctl reenable'"
-        log "To reinstall Toltec, run 'toltecctl uninstall' first"
-        exit
-    fi
-
-    if ((has_entware_files != 0)) && ((has_opt_files != 0)) \
-        && ((has_bashrc_defs != 0)) && ((has_old_systemd_mount != 0)) \
-        && ((has_systemd_mount != 0)); then
+    if [[ ! -f $toltecctl_path ]]; then
         return
     fi
 
-    log WARN "There are conflicting files and system settings:"
-
-    if ((has_entware_files == 0)); then
-        log WARN "  - Files in the $entware_path folder"
+    if exists-non-empty /opt || exists-non-empty /home/root/.entware; then
+        log "Toltec is already installed or partially installed"
+        log "To re-enable Toltec after a system upgrade, run 'toltecctl reenable'"
+        log "To reinstall Toltec, run 'toltecctl uninstall' first"
+        exit 1
     fi
-
-    if ((has_opt_files == 0)); then
-        log WARN "  - Files in the /opt folder"
-    fi
-
-    if ((has_bashrc_defs == 0)); then
-        log WARN "  - PATH definitions pointing to /opt in /home/root/.bashrc"
-    fi
-
-    if ((has_old_systemd_mount == 0)); then
-        log WARN "  - Mount configuration in $old_systemd_mount_path"
-    fi
-
-    if ((has_systemd_mount == 0)); then
-        log WARN "  - Mount configuration in $systemd_mount_path"
-    fi
-
-    log WARN "Please clean them up and run the bootstrap script again"
-    exit 1
 }
 
 # Install a local wget binary which supports TLS (the original one
 # installed on the reMarkable does not) in the PATH
 wget-bootstrap() {
-    local wget_remote=https://toltec-dev.org/thirdparty/bin/wget-v1.21.1
+    local wget_remote=http://toltec-dev.org/thirdparty/bin/wget-v1.21.1
     local wget_checksum=8798fcdabbe560722a02f95b30385926e4452e2c98c15c2c217583eaa0db30fc
 
     if [[ ! -x $wget_path ]]; then
         if [[ -e $wget_path ]]; then
             log ERROR "'$wget_path' exists, but is not executable"
-            error-cleanup
             exit 1
         fi
+
+        log "Fetching secure wget"
 
         # Download and compare to hash
         mkdir -p "$(dirname "$wget_path")"
-        wget "$wget_remote" --output-document "$wget_path" 2> /dev/null
 
-        if ! sha256sum -c <(echo "$wget_checksum  $wget_path") > /dev/null 2>&1; then
-            log ERROR "Invalid checksum for the local wget binary"
-            error-cleanup
+        if ! wget -q "$wget_remote" --output-document "$wget_path"; then
+            log ERROR "Could not fetch wget, make sure you have a stable Wi-Fi connection"
             exit 1
         fi
 
-        chmod +x "$wget_path"
+        if ! sha256sum -c <(echo "$wget_checksum  $wget_path") > /dev/null 2>&1; then
+            log ERROR "Invalid checksum for the local wget binary"
+            exit 1
+        fi
+
+        chmod 755 "$wget_path"
     fi
 
     # Ensure the local binary is used
@@ -165,62 +113,79 @@ wget-bootstrap() {
     fi
 }
 
-# Mount Entware to /opt
-entware-mount() {
-    mkdir -p /opt
-    mkdir -p "$entware_path"
+# Install a temporary Opkg binary in PATH to be able to install
+# bootstrapping packages
+opkg-bootstrap() {
+    log "Bootstrapping Opkg"
+    mkdir -p /opt/tmp
 
-    # Create systemd mount unit to mount over /opt on reboot
-    cat > "$systemd_mount_path" << UNIT
-[Unit]
-Description=Bind mount Entware over /opt
-DefaultDependencies=no
-Conflicts=umount.target
-Before=local-fs.target umount.target
+    if [[ ! -x $opkg_path ]]; then
+        if [[ -e $opkg_path ]]; then
+            log ERROR "'$opkg_path' exists, but is not executable"
+            exit 1
+        fi
 
-[Mount]
-What=/home/root/.entware
-Where=/opt
-Type=none
-Options=bind
+        if ! wget --no-verbose "$entware_remote/opkg" --output-document "$opkg_path"; then
+            log ERROR "Could not fetch opkg, make sure you have a stable Wi-Fi connection"
+            exit 1
+        fi
 
-[Install]
-WantedBy=local-fs.target
-UNIT
+        chmod 755 "$opkg_path"
+    fi
 
-    systemctl daemon-reload
-    systemctl enable --now opt.mount 2> /dev/null
+    # Ensure the local binary is used
+    if [[ $(command -v opkg) != "$opkg_path" ]]; then
+        export PATH
+        PATH="$(dirname "$opkg_path"):$PATH)"
+    fi
 }
 
-# Install Entware to /opt
-entware-install() {
-    log "Installing Entware to /opt"
+# Install Toltec and Entware to /opt
+main() {
+    # Make sure there’s no existing Toltec install
+    # (otherwise it could get wiped out by the error-cleanup hook below)
+    check-installed
 
-    # Create basic folders, entware-opt package creates the rest
-    for folder in bin etc lib lib/opkg tmp var var/lock; do
-        mkdir "/opt/$folder"
-    done
+    # Fetch temporary wget and opkg binaries used for bootstrapping
+    wget-bootstrap
+    opkg-bootstrap
 
-    local dynamic_loader="ld-linux.so.3"
-    local entware_remote=https://bin.entware.net/armv7sf-k3.2/installer
+    # Remove those binaries in any case when the script exits
+    trap cleanup EXIT
 
-    wget --no-verbose "$entware_remote/opkg" -O /opt/bin/opkg
-    chmod 755 /opt/bin/opkg
-    wget --no-verbose "$entware_remote/opkg.conf" -O "$opkg_conf_path"
-    sed -i 's|http://|https://|g' "$opkg_conf_path"
-    wget --no-verbose "$entware_remote/ld-2.27.so" -O /opt/lib/ld-2.27.so
-    wget --no-verbose "$entware_remote/libc-2.27.so" -O /opt/lib/libc-2.27.so
-    wget --no-verbose "$entware_remote/libgcc_s.so.1" -O /opt/lib/libgcc_s.so.1
-    wget --no-verbose "$entware_remote/libpthread-2.27.so" -O /opt/lib/libpthread-2.27.so
+    # Download and install the latest toltec-bootstrap package to load toltecctl
+    local pkg_basename
+    pkg_basename="$(
+        wget --quiet "$toltec_remote/Packages" -O - \
+            | awk '/^Package: toltec-bootstrap$/,/^$/ { if ($1 == "Filename:") print $2 }'
+    )"
+    local pkg_filename="/tmp/$pkg_basename"
+    wget --no-verbose "$toltec_remote/$pkg_basename" -O "$pkg_filename"
 
-    cd /opt/lib
-    chmod 755 ld-2.27.so
-    ln -s ld-2.27.so "$dynamic_loader"
-    ln -s libc-2.27.so libc.so.6
-    ln -s libpthread-2.27.so libpthread.so.0
+    opkg install --add-arch rmall:200 --offline-root / "$pkg_filename"
+    rm "$pkg_filename"
 
-    /opt/bin/opkg update
-    /opt/bin/opkg install entware-opt
+    # shellcheck source=../../package/toltec-bootstrap/toltecctl
+    source /home/root/.local/bin/toltecctl
+
+    # Clean up the partial install if an uncaught error happens
+    trap error-cleanup ERR
+
+    log "Installing Toltec and Entware"
+
+    # Create bind mount from user directory to /opt
+    rm -rf /opt
+    add-bind-mount "$toltec_src" "$toltec_dest"
+    mkdir -p /opt/{bin,etc,lib/opkg,tmp,var/lock}
+
+    # Generate Opkg configuration
+    create-entware-conf
+    switch-branch "$toltec_branch"
+    generate-opkg-conf
+
+    # Install base Entware packages
+    opkg update
+    opkg install entware-opt
 
     # Fix for multiuser environment
     chmod 777 /opt/tmp
@@ -255,64 +220,25 @@ entware-install() {
     if [[ -f /etc/localtime ]]; then
         ln -sf /etc/localtime /opt/etc/localtime
     fi
-}
 
-# Add Toltec configuration to an existing Entware install
-#
-# Arguments: List of additional packages to install, one package per argument
-toltec-install() {
-    log "Configuring the Toltec $toltec_branch repository"
-
-    # Select architectures matching the current device
-    local device_id_path=/sys/devices/soc0/machine
-    local device_arch
-
-    echo "arch rmall 200" >> "$opkg_conf_path"
-
-    if grep -q "reMarkable 1.0" "$device_id_path" \
-        || grep -q "reMarkable Prototype 1" "$device_id_path"; then
-        device_arch=rm1
-        echo "arch rm1 250" >> "$opkg_conf_path"
-    elif grep -q "reMarkable 2.0" "$device_id_path"; then
-        device_arch=rm2
-        echo "arch rm2 250" >> "$opkg_conf_path"
-    else
-        log ERROR "Unsupported device: '$(cat "$device_id_path")'"
-        error-cleanup
-        exit 1
-    fi
-
-    # Configure Opkg to fetch the chosen Toltec branch
-    echo "src/gz toltec-rmall https://toltec-dev.org/$toltec_branch/rmall" >> "$opkg_conf_path"
-    echo "src/gz toltec-$device_arch https://toltec-dev.org/$toltec_branch/$device_arch" >> "$opkg_conf_path"
-
-    /opt/bin/opkg update
-
-    # Make sure that the packages needed for wget TLS support are installed
-    local additional_packages=()
+    # Install base Toltec packages
+    local additional_packages=(toltec-completion)
 
     [[ ! -d /opt/etc/ssl/certs ]] && additional_packages+=(ca-certificates)
     [[ ! -f /opt/bin/wget ]] && additional_packages+=(wget-ssl)
 
     if [[ ${#additional_packages[@]} -gt 0 ]]; then
-        /opt/bin/opkg install "${additional_packages[@]}"
+        opkg install "${additional_packages[@]}"
     fi
 
-    /opt/bin/opkg update
-    /opt/bin/opkg install toltec-bootstrap
-
-    # Install additional packages
     if [[ $# -gt 0 ]]; then
-        /opt/bin/opkg install "$@"
+        opkg install "$@"
     fi
 
-    # Add binaries in /opt/bin and /opt/sbin to the PATH before any others
-    cat >> /home/root/.bashrc << 'SHELL'
-# Added by Toltec bootstrap (do not modify!)
-PATH="/opt/bin:/opt/sbin:/home/root/.local/bin:$PATH"
-# End of Toltec bootstrap additions
-SHELL
-    log "Please restart your SSH session or run 'exec bash -l' to use Toltec"
+    # Reinstall toltec-bootstrap to mark toltecctl file as managed
+    # and set the user’s PATH in configure
+    opkg install toltec-bootstrap
+    log "After each system upgrade, run 'toltecctl reenable' to re-enable Toltec"
 }
 
 # Print a log message
@@ -357,25 +283,6 @@ log() {
     for line in "$@"; do
         echo -e "       $line" >&$fd
     done
-}
-
-main() {
-    check-installed
-
-    trap cleanup EXIT
-    trap error-cleanup ERR
-
-    if [[ "$(command -v wget)" == /usr/bin/wget ]]; then
-        log "Fetching secure wget"
-        wget-bootstrap
-    fi
-
-    log "Creating $entware_path and mounting to /opt"
-    entware-mount
-    entware-install
-    toltec-install "$@"
-
-    log "After each system upgrade, run 'toltecctl reenable' to re-enable Toltec"
 }
 
 main "$@"
