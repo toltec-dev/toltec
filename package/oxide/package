@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: MIT
 
 pkgnames=(erode fret oxide rot tarnish decay corrupt anxiety)
-pkgver=2.2.1-1
+pkgver=2.2.2-1
 timestamp=2021-07-18T16:43:24Z
 maintainer="Eeems <eeems@eeems.email>"
 license=MIT
@@ -12,7 +12,7 @@ flags=(patch_rm2fb)
 image=qt:v2.1
 _srcver="v${pkgver%-*}"
 source=("https://github.com/Eeems/oxide/archive/refs/tags/$_srcver.tar.gz")
-sha256sums=(7c6ae0455e119307c9c5a661b87848d66fdc13468dc2b7e246b133178674eeb0)
+sha256sums=(0d221c084f5583075052dd2369144c04cf97010d5641ebc029ae596d8ef1a40d)
 
 build() {
     find . -name "*.pro" -type f -print0 \
