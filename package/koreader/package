@@ -47,7 +47,7 @@ configure() {
     systemctl daemon-reload
 
     if ! is-enabled "$pkgname.service"; then
-        cat <<MSG
+        cat << MSG
 
 Run the following command(s) to use $pkgname as your launcher
 $(how-to-enable "$pkgname.service")
