@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+# Copyright (c) 2021 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+# shellcheck source=rmfakecloudctl
+source /opt/bin/rmfakecloudctl
+
+if ! is-enabled; then
+    echo "rmfakecloud-proxy is not enabled."
+    echo "Run 'rmfakecloudctl enable' to enable it."
+    exit
+fi
+
+if ! upstream="$(get-upstream)"; then
+    echo "rmfakecloud-proxy server is not configured."
+    echo "Use 'rmfakecloudctl set-upstream' to configure it."
+    exit
+fi
+
+exec /opt/bin/rmfakecloud-proxy \
+    -addr "$proxy_listen:443" \
+    -cert "$data_dir/rmfakecloud-proxy.bundle.crt" \
+    -key "$data_dir/rmfakecloud-proxy.key" \
+    "$upstream"

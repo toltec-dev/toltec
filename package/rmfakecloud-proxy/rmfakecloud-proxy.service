@@ -1,0 +1,12 @@
+[Unit]
+Description=rmfakecloud reverse proxy
+Documentation=https://github.com/ddvk/rmfakecloud-proxy
+After=home.mount
+
+[Service]
+Environment=HOME=/home/root
+ExecStart=/opt/bin/rmfakecloud-proxy-wrapper
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
