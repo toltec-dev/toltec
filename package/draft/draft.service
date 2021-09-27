@@ -6,7 +6,6 @@ Description=Launcher which wraps around the standard interface
 After=home.mount
 StartLimitIntervalSec=600
 StartLimitBurst=4
-Conflicts=launcher.service
 
 [Service]
 ExecStart=/opt/bin/draft
