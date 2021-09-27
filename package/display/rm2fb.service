@@ -3,7 +3,7 @@
 
 [Unit]
 Description=reMarkable 2 Framebuffer Server
-Before=xochitl.service
+Before=xochitl.service launcher.service
 After=opt.mount
 StartLimitInterval=30
 StartLimitBurst=5
