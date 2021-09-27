@@ -7,7 +7,6 @@ Requires=dev-input-event0.device dev-input-event1.device dev-input-event2.device
 After=xochitl.service opt.mount dev-input-event0.device dev-input-event1.device dev-input-event2.device
 StartLimitInterval=30
 StartLimitBurst=5
-Conflicts=launcher.service
 
 [Service]
 ExecStart=/opt/bin/remux
