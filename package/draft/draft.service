@@ -15,4 +15,5 @@ RestartSec=5
 Environment="HOME=/home/root"
 
 [Install]
+Alias=launcher.service
 WantedBy=multi-user.target
