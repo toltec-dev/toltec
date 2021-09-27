@@ -3,7 +3,7 @@
 
 [Unit]
 Description=reMarkable 2 Framebuffer Server
-Before=xochitl.service launcher.service
+Before=xochitl.service launcher.service remarkable-reboot.service remarkable-shutdown.service
 After=opt.mount
 StartLimitInterval=30
 StartLimitBurst=5
