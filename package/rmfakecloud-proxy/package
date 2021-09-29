@@ -30,7 +30,7 @@ sha256sums=(
 
 build() {
     eval "$(go env)"
-    cat > version.go <<GO
+    cat > version.go << GO
 package main
 const Version = "rmfakecloud-proxy ${_upver%-*} ($GOOS-$GOARCH) $GOVERSION\n$_url"
 GO
@@ -63,7 +63,7 @@ configure() {
     fi
 
     if ! is-enabled; then
-        cat <<MSG
+        cat << MSG
 
 Run the following commands to use rmfakecloud-proxy:
 

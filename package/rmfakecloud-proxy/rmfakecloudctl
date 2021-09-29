@@ -32,7 +32,7 @@ xochitl_data_dir=/home/root/.local/share/remarkable/xochitl
 # from believing all the files have been deleted.
 disconnect-cloud() {
     if grep -q "^devicetoken=" "$xochitl_conf_path" \
-            && grep -q "^usertoken=" "$xochitl_conf_path"; then
+        && grep -q "^usertoken=" "$xochitl_conf_path"; then
         echo "Xochitl sync is enabled. Disabling..."
     else
         return 0
@@ -126,7 +126,7 @@ install-certificates() {
     mkdir -p "$data_dir" "$local_cert_dir"
 
     if [[ ! -f $data_dir/rmfakecloud-ca.key ]] \
-            || [[ ! -f $data_dir/rmfakecloud-ca.crt ]]; then
+        || [[ ! -f $data_dir/rmfakecloud-ca.crt ]]; then
         openssl genrsa -out "$data_dir/rmfakecloud-ca.key" 2048
         openssl req -new -sha256 -x509 \
             -key "$data_dir/rmfakecloud-ca.key" \
@@ -214,7 +214,7 @@ uninstall-certificates() {
 # Add entries in the static host file to redirect cloud requests to the proxy
 install-hosts() {
     uninstall-hosts
-    cat <<EOF >> "$hosts_path"
+    cat << EOF >> "$hosts_path"
 $proxy_listen hwr-production-dot-remarkable-production.appspot.com
 $proxy_listen service-manager-production-dot-remarkable-production.appspot.com
 $proxy_listen local.appspot.com
