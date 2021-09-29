@@ -4,6 +4,7 @@ StartLimitIntervalSec=600
 StartLimitBurst=4
 After=home.mount
 OnFailure=xochitl.service
+Conflicts=xochitl.service
 
 [Service]
 ExecStart=/opt/bin/koreader
