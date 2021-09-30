@@ -98,8 +98,15 @@ mark-disabled() {
 # 1 - If no server is configured
 get-upstream() {
     local upstream
+    # shellcheck disable=SC2016
+    local awk_program='
+        /^upstream:/{
+            sep = index($0, ":");
+            print gensub(/^[ \t]+|[ \t]+$/, "", "g", substr($0, sep + 1));
+        }
+    '
 
-    if ! upstream="$(cat "$conf_dir/upstream" 2> /dev/null)"; then
+    if ! upstream="$(awk "$awk_program" "$conf_dir/config" 2> /dev/null)"; then
         return 1
     fi
 
@@ -117,7 +124,12 @@ get-upstream() {
 # $1 - Name of the server
 set-upstream() {
     mkdir -p "$conf_dir"
-    echo "$1" > "$conf_dir/upstream"
+    cat > "$conf_dir/config" << YAML
+cert: $data_dir/rmfakecloud-proxy.bundle.crt
+key: $data_dir/rmfakecloud-proxy.key
+upstream: $1
+addr: $proxy_listen:443
+YAML
 }
 
 # Generate a local certificate authority, add it to the system trust,
