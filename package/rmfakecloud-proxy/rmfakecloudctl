@@ -296,13 +296,15 @@ if [[ $0 = "${BASH_SOURCE[0]}" ]]; then
 
                 if is-enabled; then
                     systemctl restart rmfakecloud-proxy
-                else
-                    cat << MSG
+                fi
+            fi
+
+            if ! is-enabled; then
+                cat << MSG
 Run the following command to enable rmfakecloud-proxy:
 
 $ rmfakecloudctl enable
 MSG
-                fi
             fi
             ;;
 
