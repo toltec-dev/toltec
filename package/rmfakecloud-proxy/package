@@ -24,7 +24,6 @@ sha256sums=(
     eaa3fdcce250e23f368a4c9ddcfb99ff178decf31b2a7f84501dfc6fdb2e6d8f
     SKIP
     SKIP
-    SKIP
 )
 
 build() {
