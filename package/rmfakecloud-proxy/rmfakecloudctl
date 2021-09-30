@@ -39,7 +39,7 @@ disconnect-cloud() {
     fi
 
     # Make sure Xochitl is not running
-    local was_active
+    local was_active=
 
     if systemctl --quiet is-active xochitl.service 2> /dev/null; then
         systemctl stop xochitl
