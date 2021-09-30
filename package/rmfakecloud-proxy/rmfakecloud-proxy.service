@@ -1,7 +1,8 @@
 [Unit]
 Description=rmfakecloud reverse proxy
 Documentation=https://github.com/ddvk/rmfakecloud-proxy
-After=home.mount
+After=home.mount network.target
+Before=xochitl.service launcher.service
 
 [Service]
 Environment=HOME=/home/root
