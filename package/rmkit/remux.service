@@ -7,6 +7,7 @@ Requires=dev-input-event0.device dev-input-event1.device dev-input-event2.device
 After=xochitl.service opt.mount dev-input-event0.device dev-input-event1.device dev-input-event2.device
 StartLimitInterval=30
 StartLimitBurst=5
+Conflicts=draft.service tarnish.service
 
 [Service]
 ExecStart=/opt/bin/remux
@@ -15,5 +16,4 @@ RestartSec=5
 Environment="HOME=/home/root"
 
 [Install]
-Alias=launcher.service
 WantedBy=multi-user.target
