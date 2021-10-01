@@ -144,7 +144,7 @@ nao() {
 remux() {
     pkgdesc="Launcher that supports multi-tasking applications"
     url="https://rmkit.dev/apps/remux"
-    pkgver=0.1.9-6
+    pkgver=0.1.9-5
     section="launchers"
 
     package() {
