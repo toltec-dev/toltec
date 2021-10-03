@@ -5,23 +5,33 @@
 pkgnames=(toltec-bootstrap)
 pkgdesc="Manage your Toltec install"
 url=https://toltec-dev.org/
-pkgver=0.1.0-1
-timestamp=2021-06-25T21:16Z
+pkgver=0.2.0-1
+timestamp=2021-09-25T10:36Z
 section="utils"
 maintainer="Eeems <eeems@eeems.email>"
 license=MIT
 
-source=(toltecctl)
-sha256sums=(SKIP)
+source=(
+    toltecctl
+    15-systemd-input.rules
+)
+sha256sums=(
+    SKIP
+    SKIP
+)
 
 package() {
     install -D -m 744 -t "$pkgdir"/home/root/.local/bin "$srcdir"/toltecctl
+    install -D -m 644 -t "$pkgdir"/lib/udev/rules.d/ "$srcdir"/15-systemd-input.rules
 }
 
 configure() {
     # shellcheck source=toltecctl
     source /home/root/.local/bin/toltecctl
     set-path
+
+    # Apply the input udev rule
+    udevadm control --reload-rules && udevadm trigger
 
     if [[ ! -d $opkg_conf_dir ]]; then
         # Migrate existing config in /opt/etc/opkg.conf to be generated
