@@ -1,0 +1,10 @@
+--- build.rs	2021-08-31 14:35:34.226760718 +0200
++++ build-patched.rs	2021-08-31 17:16:52.195765743 +0200
+@@ -6,6 +6,7 @@
+         let bindings = bindgen::Builder::default()
+             .rust_target(bindgen::RustTarget::Stable_1_40)
+             .derive_default(true)
++            .clang_arg("--sysroot=".to_owned() + &env::var("SYSROOT").unwrap())
+             .header("c/wireguard.h")
+             .impl_debug(true)
+             .allowlist_function("wg_.*")
