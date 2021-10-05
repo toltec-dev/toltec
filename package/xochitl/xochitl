@@ -2,11 +2,9 @@
 # Copyright (c) 2021 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
-for file in /opt/etc/xochitl.env.d/*; do
-    if [[ $file != /opt/etc/xochitl.env.d/README ]]; then
-        echo "Sourcing $file"
-        # shellcheck disable=SC1090
-        source "$file"
-    fi
+for file in /opt/etc/xochitl.env.d/*.env; do
+    echo "Sourcing $file"
+    # shellcheck disable=SC1090
+    source "$file"
 done
 exec /usr/bin/xochitl "$@"
