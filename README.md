@@ -61,7 +61,7 @@ $ opkg upgrade
 To re-enable Toltec after a system update:
 
 ```sh
-toltecctl reenable
+$ toltecctl reenable
 ```
 
 To remove Toltec and all its packages:
@@ -73,8 +73,8 @@ $ toltecctl uninstall
 To switch to the testing branch:
 
 ```sh
-toltecctl switch-branch testing
-opkg upgrade
+$ toltecctl switch-branch testing
+$ opkg upgrade
 ```
 
 [Choose a release branch: _stable_ or _testing_ →](docs/branches.md)
