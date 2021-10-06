@@ -26,24 +26,6 @@ xochitl_conf_path=/home/root/.config/remarkable/xochitl.conf
 # Path to Xochitl data
 xochitl_data_dir=/home/root/.local/share/remarkable/xochitl
 
-# Find a process by its name (like pgrep)
-#
-# Arguments:
-#
-# $1 - Exact comm name to match
-#
-# Output: PID of any matching process
-# Exit code: 0 if a process was found, 1 otherwise
-get-process() {
-    for procdir in /proc/*; do
-        if [[ -f $procdir/comm ]] && [[ $1 == "$(cat "$procdir/comm")" ]]; then
-            basename "$procdir"
-            return 0
-        fi
-    done
-    return 1
-}
-
 # Disconnect Xochitl from the cloud
 #
 # This is a necessary step when switching cloud servers to prevent the client
@@ -66,7 +48,7 @@ disconnect-cloud() {
 
     local xochitl_pid=
 
-    if xochitl_pid="$(get-process xochitl)"; then
+    if xochitl_pid="$(pgrep --exact --oldest xochitl)"; then
         kill "$xochitl_pid"
         echo "Waiting for Xochitl to stop"
         local xochitl_wait_count=0
@@ -84,7 +66,7 @@ disconnect-cloud() {
 
     # Mark all files as not synced
     grep sync "$xochitl_data_dir"/*.metadata -l \
-        | /usr/bin/xargs sed -i 's/synced\": true/synced\": false/'
+        | xargs sed -i 's/synced\": true/synced\": false/'
 
     # Disconnect from cloud
     sed -i '/^devicetoken=/d' "$xochitl_conf_path"
