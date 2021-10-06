@@ -305,10 +305,46 @@ reenable() {
     set-path
 }
 
-# Remove all installed packages
+# List all installed packages such that any package comes before
+# its dependencies. Dependency cycles are broken arbitrarily
+list-installed-ordered() {
+    # shellcheck disable=SC2016
+    local awk_trim='NR>1 {print gensub(/^[ \t]+|[ \t]+$/, "", "g", $0);}'
+
+    opkg list-installed | awk -F' - ' '{print $1}' | while read -r srcpkg; do
+        # Make sure all packages are included even when they don’t have
+        # any dependencies
+        echo "$srcpkg $srcpkg"
+
+        # List all dependencies for this package
+        opkg depends "$srcpkg" | awk "$awk_trim" | while read -r dstpkg; do
+            echo "$srcpkg $dstpkg"
+        done
+    done | tsort 2> /dev/null || true
+    # tsort reports errors if there are dependency cycles, we ignore them
+}
+
+# Remove Toltec completely
 uninstall() {
-    opkg remove --force-depends --force-remove "*"
+    # Fetch standalone opkg used to uninstall packages
+    local opkg_path=/home/root/.local/bin/opkg
+    local opkg_remote=https://bin.entware.net/armv7sf-k3.2/installer/opkg
+
+    if ! wget --no-verbose "$opkg_remote" --output-document "$opkg_path"; then
+        echo "Unable to fetch standalone opkg, make sure you have a stable Wi-Fi connection"
+        return 1
+    fi
+
+    chmod u+x "$opkg_path"
+
+    # Remove installed packages in reverse dependency order
+    echo "Collecting installed packages"
+    list-installed-ordered | while read -r pkgname; do
+        "$opkg_path" remove --force-depends --force-remove "$pkgname"
+    done
+
     systemctl daemon-reload
+    rm -f "$opkg_path"
 
     # Remove mount point
     remove-bind-mount "$toltec_dest"
