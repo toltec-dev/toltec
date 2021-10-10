@@ -14,8 +14,8 @@ Toltec works on top of the [Opkg](https://code.google.com/archive/p/opkg/) packa
 To automatically install Opkg, Entware and Toltec, connect your device to Wi-Fi and run the bootstrap script in a [SSH session](https://remarkablewiki.com/tech/ssh) on your reMarkable:
 
 ```sh
-$ wget http://toltec-dev.org/bootstrap
-$ echo "2d1233271e0cc8232e86827bcb37ab2a44be2c5675cd15f32952614916ae246a  bootstrap" | sha256sum -c && bash bootstrap
+wget http://toltec-dev.org/bootstrap
+echo "2d1233271e0cc8232e86827bcb37ab2a44be2c5675cd15f32952614916ae246a  bootstrap" | sha256sum -c && bash bootstrap
 ```
 
 > **Warning:**
@@ -40,20 +40,20 @@ You now have access to all of the Toltec and Entware packages!
 To install a package:
 
 ```sh
-$ opkg install calculator
+opkg install calculator
 ```
 
 To remove a package:
 
 ```sh
-$ opkg remove calculator
+opkg remove calculator
 ```
 
 To update all packages:
 
 ```sh
-$ opkg update
-$ opkg upgrade
+opkg update
+opkg upgrade
 ```
 
 [See information about advanced Opkg commands →](https://openwrt.org/docs/guide-user/additional-software/opkg)
@@ -61,20 +61,20 @@ $ opkg upgrade
 To re-enable Toltec after a system update:
 
 ```sh
-$ toltecctl reenable
+toltecctl reenable
 ```
 
 To remove Toltec and all its packages:
 
 ```sh
-$ toltecctl uninstall
+toltecctl uninstall
 ```
 
 To switch to the testing branch:
 
 ```sh
-$ toltecctl switch-branch testing
-$ opkg upgrade
+toltecctl switch-branch testing
+opkg upgrade
 ```
 
 [Choose a release branch: _stable_ or _testing_ →](docs/branches.md)
