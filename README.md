@@ -18,21 +18,12 @@ wget http://toltec-dev.org/bootstrap
 echo "2d1233271e0cc8232e86827bcb37ab2a44be2c5675cd15f32952614916ae246a  bootstrap" | sha256sum -c && bash bootstrap
 ```
 
-> **Warning:**
-> Make sure to run the second line above, which verifies the integrity of the downloaded script before running it.
-> Since the built-in wget binary does not implement TLS, _you will expose yourself to MITM attacks if you skip this step!_
-> The bootstrap script takes care of replacing the built-in wget with a safer version.
-
 > **What does this script do?**
 > This script will create a `.entware` folder in your home directory, containing a complete Entware distribution (fetched from <https://bin.entware.net/armv7sf-k3.2/>), and permanently mount it to `/opt`.
 > It will then configure Opkg for use with Toltec and configure your system to automatically find binaries from `/opt`.
-> You are encouraged to [audit the script](scripts/bootstrap/bootstrap) yourself if you can.
-
-> **Compatibility with [remarkable_entware](https://github.com/evidlo/remarkable_entware).**
-> If you have already installed Entware through Evidlo’s remarkable\_entware, this script will detect the existing install and configure Toltec on top of it.
+> You are encouraged to [audit the script](scripts/bootstrap/bootstrap).
 
 You now have access to all of the Toltec and Entware packages!
-
 To seamlessly switch between applications, you may want to start by installing a launcher.
 
 [Browse the list of available packages →](https://toltec-dev.org/stable)
