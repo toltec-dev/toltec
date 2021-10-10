@@ -11,7 +11,7 @@ Toltec is a community-maintained repository of free software for [the reMarkable
 ### Install it
 
 Toltec works on top of the [Opkg](https://code.google.com/archive/p/opkg/) package manager and the [Entware](https://github.com/Entware/Entware) distribution, which are in widespread use in embedded devices.
-To automatically install Opkg, Entware and Toltec, connect your device to Wi-Fi and run the bootstrap script in a [SSH session](https://remarkablewiki.com/tech/ssh) on your reMarkable:
+To automatically install Opkg, Entware and Toltec, connect your device to Wi-Fi and run the bootstrap script in an [SSH session](https://remarkablewiki.com/tech/ssh) on your reMarkable:
 
 ```sh
 wget http://toltec-dev.org/bootstrap
