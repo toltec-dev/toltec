@@ -8,7 +8,7 @@ timestamp=2021-08-23T09:53:41Z
 maintainer="raisjn <of.raisjn@gmail.com>"
 license=MIT
 url="https://github.com/ddvk/remarkable2-framebuffer"
-pkgver=1:0.0.7-2
+pkgver=1:0.0.7-3
 _release="${pkgver%-*}"
 _release="v${_release#*:}"
 _libver=1.0.1
@@ -21,9 +21,11 @@ source=(
     rm2fb-client
     rm2fb-preload.conf
     rm2fb-preload.env
+    rm2fb.conf
 )
 sha256sums=(
     26ee93de54da5fff5b54cef4c10fc15399cbb1f4e501284c2181e3578306421c
+    SKIP
     SKIP
     SKIP
     SKIP
@@ -58,6 +60,7 @@ display() {
             ln -s "$libname" "$pkgdir"/opt/lib/"${libname%.*.*}"
             ln -s "$libname" "$pkgdir"/opt/lib/"${libname%.*}"
             install -D -m 644 -t "$pkgdir"/lib/systemd/system "$srcdir"/rm2fb.service
+            install -D -m 644 -t "$pkgdir"/opt/etc "$srcdir"/rm2fb.conf
         fi
     }
 
