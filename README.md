@@ -11,7 +11,7 @@ Toltec is a community-maintained repository of free software for [the reMarkable
 ### Install it
 
 Toltec works on top of the [Opkg](https://code.google.com/archive/p/opkg/) package manager and the [Entware](https://github.com/Entware/Entware) distribution, which are in widespread use in embedded devices.
-To automatically install Opkg, Entware and Toltec, run the bootstrap script in a [SSH session](https://remarkablewiki.com/tech/ssh) on your reMarkable:
+To automatically install Opkg, Entware and Toltec, connect your device to Wi-Fi and run the bootstrap script in a [SSH session](https://remarkablewiki.com/tech/ssh) on your reMarkable:
 
 ```sh
 $ wget http://toltec-dev.org/bootstrap
@@ -56,8 +56,28 @@ $ opkg update
 $ opkg upgrade
 ```
 
-[See information about advanced Opkg commands →](https://openwrt.org/docs/guide-user/additional-software/opkg)\
-[Choose between _stable_ and _testing_ →](docs/branches.md)
+[See information about advanced Opkg commands →](https://openwrt.org/docs/guide-user/additional-software/opkg)
+
+To re-enable Toltec after a system update:
+
+```sh
+$ toltecctl reenable
+```
+
+To remove Toltec and all its packages:
+
+```sh
+$ toltecctl uninstall
+```
+
+To switch to the testing branch:
+
+```sh
+$ toltecctl switch-branch testing
+$ opkg upgrade
+```
+
+[Choose a release branch: _stable_ or _testing_ →](docs/branches.md)
 
 ### Build it
 
