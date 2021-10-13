@@ -11,27 +11,24 @@ Toltec is a community-maintained repository of free software for [the reMarkable
 ### Install it
 
 Toltec works on top of the [Opkg](https://code.google.com/archive/p/opkg/) package manager and the [Entware](https://github.com/Entware/Entware) distribution, which are in widespread use in embedded devices.
-To automatically install Opkg, Entware and Toltec, connect your device to Wi-Fi and run the bootstrap script in a [SSH session](https://remarkablewiki.com/tech/ssh) on your reMarkable:
+To automatically install Opkg, Entware and Toltec, make sure your device is connected to Wi-Fi and run the bootstrap script in an [SSH session](https://remarkablewiki.com/tech/ssh):
 
 ```sh
-$ wget http://toltec-dev.org/bootstrap
-$ echo "2d1233271e0cc8232e86827bcb37ab2a44be2c5675cd15f32952614916ae246a  bootstrap" | sha256sum -c && bash bootstrap
+wget http://toltec-dev.org/bootstrap
+echo "2d1233271e0cc8232e86827bcb37ab2a44be2c5675cd15f32952614916ae246a  bootstrap" | sha256sum --check && bash bootstrap
 ```
 
 > **Warning:**
-> Make sure to run the second line above, which verifies the integrity of the downloaded script before running it.
-> Since the built-in wget binary does not implement TLS, _you will expose yourself to MITM attacks if you skip this step!_
-> The bootstrap script takes care of replacing the built-in wget with a safer version.
+> Do not run `bash bootstrap` without the preceding [SHA-256](https://en.wikipedia.org/wiki/SHA-2) check unless you know what you are doing.
+> The check is necessary to prevent [MITM](https://en.wikipedia.org/wiki/Man-in-the-middle_attack) attacks since the built-in `wget` binary does not implement [TLS](https://en.wikipedia.org/wiki/Transport_Layer_Security). The bootstrap script takes care of replacing it with `wget-ssl`.
 
 > **What does this script do?**
 > This script will create a `.entware` folder in your home directory, containing a complete Entware distribution (fetched from <https://bin.entware.net/armv7sf-k3.2/>), and permanently mount it to `/opt`.
 > It will then configure Opkg for use with Toltec and configure your system to automatically find binaries from `/opt`.
-> You are encouraged to [audit the script](scripts/bootstrap/bootstrap) yourself if you can.
-
-> **Compatibility with [remarkable_entware](https://github.com/evidlo/remarkable_entware).**
-> If you have already installed Entware through Evidlo’s remarkable\_entware, this script will detect the existing install and configure Toltec on top of it.
+> You are encouraged to [audit the script](scripts/bootstrap/bootstrap).
 
 You now have access to all of the Toltec and Entware packages!
+To seamlessly switch between applications, you may want to start by installing a [launcher](https://toltec-dev.org/stable#section-launchers).
 
 [Browse the list of available packages →](https://toltec-dev.org/stable)
 
@@ -40,20 +37,20 @@ You now have access to all of the Toltec and Entware packages!
 To install a package:
 
 ```sh
-$ opkg install calculator
+opkg install calculator
 ```
 
 To remove a package:
 
 ```sh
-$ opkg remove calculator
+opkg remove calculator
 ```
 
 To update all packages:
 
 ```sh
-$ opkg update
-$ opkg upgrade
+opkg update
+opkg upgrade
 ```
 
 [See information about advanced Opkg commands →](https://openwrt.org/docs/guide-user/additional-software/opkg)
@@ -61,20 +58,20 @@ $ opkg upgrade
 To re-enable Toltec after a system update:
 
 ```sh
-$ toltecctl reenable
+toltecctl reenable
 ```
 
 To remove Toltec and all its packages:
 
 ```sh
-$ toltecctl uninstall
+toltecctl uninstall
 ```
 
 To switch to the testing branch:
 
 ```sh
-$ toltecctl switch-branch testing
-$ opkg upgrade
+toltecctl switch-branch testing
+opkg upgrade
 ```
 
 [Choose a release branch: _stable_ or _testing_ →](docs/branches.md)
