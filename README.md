@@ -15,8 +15,12 @@ To automatically install Opkg, Entware and Toltec, make sure your device is conn
 
 ```sh
 wget http://toltec-dev.org/bootstrap
-echo "2d1233271e0cc8232e86827bcb37ab2a44be2c5675cd15f32952614916ae246a  bootstrap" | sha256sum -c && bash bootstrap
+echo "2d1233271e0cc8232e86827bcb37ab2a44be2c5675cd15f32952614916ae246a  bootstrap" | sha256sum --check && bash bootstrap
 ```
+
+> **Warning:**
+> Do not run `bash bootstrap` without the preceding [SHA-256](https://en.wikipedia.org/wiki/SHA-2) check unless you know what you are doing.
+> The check is necessary to prevent [MITM](https://en.wikipedia.org/wiki/Man-in-the-middle_attack) attacks since the built-in `wget` binary does not implement [TLS](https://en.wikipedia.org/wiki/Transport_Layer_Security). The bootstrap script takes care of replacing it with `wget-ssl`.
 
 > **What does this script do?**
 > This script will create a `.entware` folder in your home directory, containing a complete Entware distribution (fetched from <https://bin.entware.net/armv7sf-k3.2/>), and permanently mount it to `/opt`.
