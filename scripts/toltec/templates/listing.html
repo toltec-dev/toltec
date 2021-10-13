@@ -54,7 +54,7 @@
         <h1>Toltec Package Listing</h1>
 
         {% for section, packages in sections.items() %}
-            <h2>{{ section }}</h2>
+            <h2 id="{{ section }}">{{ section }}</h2>
 
             <table class="listing sortable">
                 <thead>
