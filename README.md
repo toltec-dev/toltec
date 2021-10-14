@@ -31,6 +31,7 @@ You now have access to all of the Toltec and Entware packages!
 To seamlessly switch between applications, you may want to start by installing a [launcher](https://toltec-dev.org/stable#section-launchers).
 
 [Browse the list of available Toltec packages →](https://toltec-dev.org/stable)
+
 [Browse the list of available Entware packages →](https://bin.entware.net/armv7sf-k3.2/Packages.html)
 
 ### Use it
