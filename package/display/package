@@ -21,11 +21,9 @@ source=(
     rm2fb-client
     rm2fb-preload.conf
     rm2fb-preload.env
-    rm2fb.conf
 )
 sha256sums=(
     c898ed00afcee1ed7bdd63fe95b92ad586577586fd238915a5aecbe490d639b5
-    SKIP
     SKIP
     SKIP
     SKIP
@@ -60,7 +58,6 @@ display() {
             ln -s "$libname" "$pkgdir"/opt/lib/"${libname%.*.*}"
             ln -s "$libname" "$pkgdir"/opt/lib/"${libname%.*}"
             install -D -m 644 -t "$pkgdir"/lib/systemd/system "$srcdir"/rm2fb.service
-            install -D -m 644 -t "$pkgdir"/opt/etc "$srcdir"/rm2fb.conf
         fi
     }
 
