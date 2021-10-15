@@ -5,11 +5,12 @@
 pkgnames=(toltec-bootstrap)
 pkgdesc="Manage your Toltec install"
 url=https://toltec-dev.org/
-pkgver=0.2.0-1
-timestamp=2021-09-25T10:36Z
+pkgver=0.2.1-1
+timestamp=2021-10-06T07:51Z
 section="utils"
 maintainer="Eeems <eeems@eeems.email>"
 license=MIT
+installdepends=(coreutils-tsort)
 
 source=(
     toltecctl
