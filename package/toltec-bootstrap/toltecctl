@@ -195,7 +195,7 @@ SHELL
     new_path="$(bash -l -c "echo \$PATH")"
 
     if [[ $old_path != "$new_path" ]]; then
-        echo "Please restart your SSH session or run 'exec bash -l' to use Toltec"
+        echo "Please restart your SSH session or run 'exec bash --login' to use Toltec"
     fi
 }
 
