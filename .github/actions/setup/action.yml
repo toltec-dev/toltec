@@ -3,6 +3,7 @@ runs:
     using: "composite"
     steps:
         - name: "Check for updates"
+          shell: bash
           run: |
             sudo apt-get update -yq
             echo "depVersion=$(apt-cache policy libarchive-tools | grep -oP '(?<=Candidate:\s)(.+)')" >> $GITHUB_ENV
@@ -13,7 +14,7 @@ runs:
                 /usr/bin/bsdcat
                 /usr/bin/bsdcpio
                 /usr/bin/bsdtar
-            key: {{ env.depVersion }}
+            key: ${{env.depVersion}}
         - name: Install Ubuntu packages
           shell: bash
           env:
