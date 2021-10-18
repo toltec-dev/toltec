@@ -35,6 +35,10 @@ runs:
             chmod a+x shellcheck
             sudo chown root:root shellcheck
             sudo mv shellcheck "$install_dir"
+        - uses: actions/cache@v2
+          with:
+            path: ~/.cache/pip
+            key: ${{ hashFiles('requirements.txt') }}
         - name: Install Python dependencies
           shell: bash
           run: |
