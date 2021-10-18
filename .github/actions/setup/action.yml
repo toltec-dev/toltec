@@ -10,10 +10,7 @@ runs:
         - uses: actions/cache@v2
           id: cache-deps
           with:
-            path: |
-                /usr/bin/bsdcat
-                /usr/bin/bsdcpio
-                /usr/bin/bsdtar
+            path: ~/.depcache
             key: ${{env.depVersion}}
         - name: Install Ubuntu packages
           shell: bash
@@ -22,6 +19,10 @@ runs:
           run: |
             if [[ "$CACHE_HIT" != 'true' ]]; then
                 sudo apt-get install -yq libarchive-tools
+                mkdir -p ~/.depcache
+                sudo dpkg -L libarchive-tools | while IFS= read -r f; do if test -f $f; then echo $f; fi; done | xargs cp --parents --target-directory ~/.depcache/
+            else
+                sudo cp --verbose --force --recursive ~/.depcache/* /
             fi
         - uses: actions/cache@v2
           with:
