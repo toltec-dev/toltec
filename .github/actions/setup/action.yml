@@ -2,11 +2,26 @@ name: Setup Toltec dependencies
 runs:
     using: "composite"
     steps:
-        - name: Install Ubuntu packages
-          shell: bash
+        - name: "Check for updates"
           run: |
             sudo apt-get update -yq
-            sudo apt-get install -yq libarchive-tools
+            echo "depVersion=$(apt-cache policy libarchive-tools | grep -oP '(?<=Candidate:\s)(.+)')" >> $GITHUB_ENV
+        - uses: actions/cache@v2
+          id: cache-deps
+          with:
+            path: |
+                /usr/bin/bsdcat
+                /usr/bin/bsdcpio
+                /usr/bin/bsdtar
+            key: {{ env.depVersion }}
+        - name: Install Ubuntu packages
+          shell: bash
+          env:
+            CACHE_HIT: ${{steps.cache-deps.outputs.cache-hit}}
+          run: |
+            if [[ "$CACHE_HIT" != 'true' ]]; then
+                sudo apt-get install -yq libarchive-tools
+            fi
         - uses: actions/cache@v2
           with:
             path: /usr/local/bin/shfmt
