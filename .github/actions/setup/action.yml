@@ -2,7 +2,7 @@ name: Setup Toltec dependencies
 runs:
     using: "composite"
     steps:
-        - name: "Check for updates"
+        - name: Check for updates
           shell: bash
           run: |
             sudo apt-get update -yq
