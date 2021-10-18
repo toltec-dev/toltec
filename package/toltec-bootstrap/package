@@ -5,7 +5,7 @@
 pkgnames=(toltec-bootstrap)
 pkgdesc="Manage your Toltec install"
 url=https://toltec-dev.org/
-pkgver=0.2.1-1
+pkgver=0.2.1-2
 timestamp=2021-10-06T07:51Z
 section="utils"
 maintainer="Eeems <eeems@eeems.email>"
