@@ -12,11 +12,11 @@ runs:
           id: cache-apt
           with:
             path: ~/.aptcache
-            key: ${{env.aptVersion}}
+            key: ${{ env.aptVersion }}
         - name: Install or restore Apt packages
           shell: bash
           env:
-            CACHE_HIT: ${{steps.cache-apt.outputs.cache-hit}}
+            CACHE_HIT: ${{ steps.cache-apt.outputs.cache-hit }}
           run: |
             if [[ "$CACHE_HIT" != 'true' ]]; then
                 sudo apt-get install -yq libarchive-tools
