@@ -2,76 +2,73 @@ name: Setup Toltec dependencies
 runs:
     using: "composite"
     steps:
-        - name: Check for Apt updates
+        - name: Check for updates
           shell: bash
           run: |
             sudo apt-get update -yq
-            echo "aptVersions=libarchive-tools-$(apt-cache policy libarchive-tools | grep -oP '(?<=Candidate:\s)(.+)')" >> $GITHUB_ENV
-        - name: Cache Apt packages
-          uses: actions/cache@v2
-          id: apt-cache
+            echo "depVersion=libarchive-tools-$(apt-cache policy libarchive-tools | grep -oP '(?<=Candidate:\s)(.+)')" >> $GITHUB_ENV
+        - uses: actions/cache@v2
+          id: cache-deps
           with:
-            path: ~/.aptcache
-            key: ${{env.aptVersions}}
-        - name: Install Apt packages
-          if: steps.apt-cache.outputs.cache-hit != 'true'
+            path: ~/.depcache
+            key: ${{env.depVersion}}
+        - name: Install Ubuntu packages
           shell: bash
+          env:
+            CACHE_HIT: ${{steps.cache-deps.outputs.cache-hit}}
           run: |
-            sudo apt-get install -yq libarchive-tools
-            mkdir -p ~/.aptcache
-            sudo dpkg -L libarchive-tools | while IFS= read -r f; do
-                if test -f $f; then
-                    echo $f
-                fi
-            done | xargs cp --parents --target-directory ~/.aptcache/
-        - name: Restore Apt packages
-          if: steps.apt-cache.outputs.cache-hit == 'true'
-          shell: bash
-          run: sudo cp --verbose --force --recursive ~/.aptcache/* /
-        - name: Cache shfmt
-          uses: actions/cache@v2
-          id: shfmt-cache
+            if [[ "$CACHE_HIT" != 'true' ]]; then
+                sudo apt-get install -yq libarchive-tools
+                mkdir -p ~/.depcache
+                sudo dpkg -L libarchive-tools | while IFS= read -r f; do if test -f $f; then echo $f; fi; done | xargs cp --parents --target-directory ~/.depcache/
+            else
+                sudo cp --verbose --force --recursive ~/.depcache/* /
+            fi
+        - uses: actions/cache@v2
           with:
             path: /usr/local/bin/shfmt
             key: 43439b996942b53dfafa9b6ff084f394555d049c98fb7ec37978f7668b43e1be
         - name: Install shfmt
-          if: steps.shfmt-cache.outputs.cache-hit != 'true'
           shell: bash
           run: |
             install_dir=/usr/local/bin
-            shfmt_version=v3.2.1
-            shfmt_checksum=43439b996942b53dfafa9b6ff084f394555d049c98fb7ec37978f7668b43e1be
-            sudo curl --location --silent --fail --tlsv1.2 --proto '=https' \
-                --output "$install_dir"/shfmt \
-                https://github.com/mvdan/sh/releases/download/"$shfmt_version"/shfmt_"$shfmt_version"_linux_amd64
-            sha256sum -c <(echo "$shfmt_checksum $install_dir/shfmt") > /dev/null 2>&1
-            sudo chmod a+x "$install_dir"/shfmt
-        - name: Cache shellcheck
-          uses: actions/cache@v2
-          id: shellcheck-cache
+
+            if ! [ -f "$install_dir"/shfmt ];then
+                # Install shfmt
+                shfmt_version=v3.2.1
+                shfmt_checksum=43439b996942b53dfafa9b6ff084f394555d049c98fb7ec37978f7668b43e1be
+                sudo curl --location --silent --fail --tlsv1.2 --proto '=https' \
+                    --output "$install_dir"/shfmt \
+                    https://github.com/mvdan/sh/releases/download/"$shfmt_version"/shfmt_"$shfmt_version"_linux_amd64
+                sha256sum -c <(echo "$shfmt_checksum $install_dir/shfmt") > /dev/null 2>&1
+                sudo chmod a+x "$install_dir"/shfmt
+            fi
+        - uses: actions/cache@v2
           with:
             path: /usr/local/bin/shellcheck
             key: 64f17152d96d7ec261ad3086ed42d18232fcb65148b44571b564d688269d36c8
         - name: Install Shellcheck
-          if: steps.shellcheck-cache.outputs.cache-hit != 'true'
           shell: bash
           run: |
             install_dir=/usr/local/bin
-            shellcheck_version=v0.7.1
-            shellcheck_checksum=64f17152d96d7ec261ad3086ed42d18232fcb65148b44571b564d688269d36c8
-            shellcheck_arname=shellcheck.tar.xz
-            curl --location --silent --fail --tlsv1.2 --proto '=https' \
-                --output "$shellcheck_arname" \
-                https://github.com/koalaman/shellcheck/releases/download/"$shellcheck_version"/shellcheck-"$shellcheck_version".linux.x86_64.tar.xz
-            sha256sum -c <(echo "$shellcheck_checksum $shellcheck_arname") > /dev/null 2>&1
-            tar -xf "$shellcheck_arname" --strip-components=1 \
-                shellcheck-"$shellcheck_version"/shellcheck
-            rm "$shellcheck_arname"
-            chmod a+x shellcheck
-            sudo chown root:root shellcheck
-            sudo mv shellcheck "$install_dir"
-        - name: Cache Python dependencies
-          uses: actions/cache@v2
+            
+            if ! [ -f "$install_dir"/shellcheck ];then
+                # Install Shellcheck (Ubuntu’s version is too old)
+                shellcheck_version=v0.7.1
+                shellcheck_checksum=64f17152d96d7ec261ad3086ed42d18232fcb65148b44571b564d688269d36c8
+                shellcheck_arname=shellcheck.tar.xz
+                curl --location --silent --fail --tlsv1.2 --proto '=https' \
+                    --output "$shellcheck_arname" \
+                    https://github.com/koalaman/shellcheck/releases/download/"$shellcheck_version"/shellcheck-"$shellcheck_version".linux.x86_64.tar.xz
+                sha256sum -c <(echo "$shellcheck_checksum $shellcheck_arname") > /dev/null 2>&1
+                tar -xf "$shellcheck_arname" --strip-components=1 \
+                    shellcheck-"$shellcheck_version"/shellcheck
+                rm "$shellcheck_arname"
+                chmod a+x shellcheck
+                sudo chown root:root shellcheck
+                sudo mv shellcheck "$install_dir"
+            fi
+        - uses: actions/cache@v2
           with:
             path: ~/.cache/pip
             key: ${{ hashFiles('requirements.txt') }}
