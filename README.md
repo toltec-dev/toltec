@@ -8,6 +8,9 @@
 
 Toltec is a community-maintained repository of free software for [the reMarkable tablet](https://remarkable.com/).
 
+### Pre-Installation WARNING
+Toltec does not currently support OS 2.10 or newer on the reMarkable 2. You will likely soft-brick your device if you install before support is released. See [remarkable2-recovery](https://github.com/ddvk/remarkable2-recovery) for information on how to recover your device if you have done this.
+
 ### Install it
 
 Toltec works on top of the [Opkg](https://code.google.com/archive/p/opkg/) package manager and the [Entware](https://github.com/Entware/Entware) distribution, which are in widespread use in embedded devices.
