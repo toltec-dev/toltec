@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: MIT
 
 pkgnames=(remarkable-stylus)
-pkgver=0.0.3-1
+pkgver=0.0.3-2
 pkgdesc="Generate a key press upon pressing the button of a Lamy AL-star EMR pen"
 timestamp=2020-11-19T20:07:29Z
 maintainer="Eeems <eeems@eeems.email>"
