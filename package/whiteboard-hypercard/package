@@ -25,7 +25,7 @@ sha256sums=(
 
 build() {
     cd marauder
-    rustup component add rustfmt
+    rustup component add rustfmt --toolchain armv7-unknown-linux-gnueabihf
     cargo build --release --bin whiteboard --locked
 }
 
