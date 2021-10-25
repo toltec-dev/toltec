@@ -13,7 +13,7 @@ license=Apache-2.0
 installdepends=(display)
 flags=(patch_rm2fb)
 
-image=rust:v2.1
+image=rust:v2.2
 source=(
     https://github.com/fenollp/reMarkable-tools/archive/v0.3.4.zip
     whiteboard-hypercard.draft
@@ -25,7 +25,7 @@ sha256sums=(
 
 build() {
     cd marauder
-    rustup component add rustfmt --toolchain armv7-unknown-linux-gnueabihf
+    rustup component add rustfmt
     cargo build --release --bin whiteboard --locked
 }
 
