@@ -18,7 +18,7 @@ If you’re updating an existing package, please give information on where the
 changelog can be found.
 
 A maintainer will reply to you shortly to get the package ready for testing.
-As soon as the package file looks good and it was sucessfully tested on both
+As soon as the package file looks good and it was successfully tested on both
 devices, we can add it! 🎊🎉🎊
 
 -->
