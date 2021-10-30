@@ -5,8 +5,8 @@
 pkgnames=(vnsee)
 pkgdesc="VNC client allowing you to use the device as a second screen"
 url=https://github.com/matteodelabre/vnsee
-pkgver=0.4.0-2
-timestamp=2021-04-24T20:36:31Z
+pkgver=0.4.1-1
+timestamp=2021-08-29T13:45:26Z
 section="screensharing"
 maintainer="Mattéo Delabre <spam@delab.re>"
 license=GPL-3.0-only
@@ -24,7 +24,7 @@ source=(
     VNSee.oxide
 )
 sha256sums=(
-    ae961d43c3795a2694bc11920a6b462e7f7ec899be9318617578ccf0fb7c8f7d
+    bf6fd0d6478f0dd865bb25a4a4c061f306f53c84cff06ab51e0db36f518d6af9
     3f2f07a0c0a0d7bb1392e646a40f73028069e4fe1fa18dd7fc45ef5f66641f32
     SKIP
     SKIP
