@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: MIT
 
 pkgnames=(bufshot genie harmony iago lamp mines nao remux simple)
-timestamp=2021-03-14T14:20-08:00
+timestamp=2021-09-21T14:20-08:00
 maintainer="raisjn <of.raisjn@gmail.com>"
 license=MIT
 installdepends=(display)
@@ -11,25 +11,15 @@ flags=(patch_rm2fb)
 
 image=python:v2.1
 source=(
-    https://github.com/rmkit-dev/rmkit/archive/a99b2f70c72539bedc1d201e3899da6e19c197da.zip
-    patch-remux-duplicate-xochitl.diff
-    patch-remux-start-xochitl.diff
+    https://github.com/rmkit-dev/rmkit/archive/8254893999d7334fd14c162d5a15605dcff77ec5.zip
     remux.service
     genie.service
 )
 sha256sums=(
-    db54abfa385017b7d60b1d332efa695756f61caa81644fdadeb4c1b26f8bf923
-    SKIP
-    SKIP
+    977c38d652d8088e9b25c69aff5013b85173be363b5cb341529df261773ff9be
     SKIP
     SKIP
 )
-
-prepare() {
-    patch -p1 -d"$srcdir" < "$srcdir"/patch-remux-duplicate-xochitl.diff
-    patch -p1 -d"$srcdir" < "$srcdir"/patch-remux-start-xochitl.diff
-    rm "$srcdir"/*.diff
-}
 
 build() {
     pip3 install okp
@@ -144,7 +134,7 @@ nao() {
 remux() {
     pkgdesc="Launcher that supports multi-tasking applications"
     url="https://rmkit.dev/apps/remux"
-    pkgver=0.1.9-5
+    pkgver=0.1.10-1
     section="launchers"
 
     package() {

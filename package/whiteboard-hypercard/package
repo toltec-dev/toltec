@@ -2,29 +2,30 @@
 # Copyright (c) 2021 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
-archs=(rm1)
 pkgnames=(whiteboard-hypercard)
 pkgdesc="Real-time collaboration, drawing or whiteboarding"
 url=https://github.com/fenollp/reMarkable-tools
-pkgver=0.3.0-2
-timestamp=2020-09-23T18:01Z
+pkgver=0.3.4-1
+timestamp=2021-10-25T15:45Z
 section="drawing"
 maintainer="Pierre Fenoll <pierrefenoll@gmail.com>"
 license=Apache-2.0
+installdepends=(display)
+flags=(patch_rm2fb)
 
-image=rust:v1.1
+image=rust:v2.2
 source=(
-    https://github.com/fenollp/reMarkable-tools/archive/v0.3.0.zip
+    https://github.com/fenollp/reMarkable-tools/archive/v0.3.4.zip
     whiteboard-hypercard.draft
 )
 sha256sums=(
-    3d160d77cd384ee9339c7f791b3f762bb295a670c0c728373c6a09f14a061046
+    b343e1b4af9e0bf247ff2fab8331648ddd89941fb5c0ea9a45417d3bb4b20193
     SKIP
 )
 
 build() {
     cd marauder
-    rustup component add rustfmt --toolchain nightly-x86_64-unknown-linux-gnu
+    rustup component add rustfmt
     cargo build --release --bin whiteboard --locked
 }
 
