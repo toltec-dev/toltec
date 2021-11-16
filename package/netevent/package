@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+# Copyright (c) 2020 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgnames=(netevent)
+pkgdesc="Input-Event device cloning utility"
+url="https://github.com/Blub/netevent"
+pkgver=68e648e-1
+timestamp=2021-11-13T20:59:59+01:00
+section=utils
+maintainer="Salvatore Stella <etn45p4m@gmail.com>"
+license=GPL-2.0-only
+
+image=base:v2.2
+source=(
+    https://github.com/Blub/netevent/archive/68e648e.tar.gz
+)
+sha256sums=(
+    cb223f0c168711d3ef0713041a7bc4c30a60aa7ca7664e6cddbbdd176f9b77ef
+)
+
+build() {
+    export CXX=arm-linux-gnueabihf-g++
+    make
+}
+
+package() {
+    install -D -m 755 "$srcdir"/netevent "$pkgdir"/opt/bin/netevent
+}
