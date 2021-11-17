@@ -6,15 +6,15 @@ archs=(rm1 rm2)
 pkgnames=(ddvk-hacks)
 pkgdesc="Enhance Xochitl with additional features"
 url=https://github.com/ddvk/remarkable-hacks
-pkgver=26.02-1
-timestamp=2021-10-07T19:30:24Z
+pkgver=28.01-1
+timestamp=2021-11-17T16:32:30Z
 section="readers"
 maintainer="Mattéo Delabre <spam@delab.re>"
 license=MIT
 flags=(nostrip)
 
-source=(https://github.com/ddvk/remarkable-hacks/archive/60003434cc2fe5b5cbb825eef604bbd9ee46cda4.zip)
-sha256sums=(7c8031c3942641910c8a6e55c61f3a074cf14c3787674e01183a13b2f5955976)
+source=(https://github.com/ddvk/remarkable-hacks/archive/10727fe79cb23c5c35ce7a4809cd41b52e6f9384.zip)
+sha256sums=(08de51b4c4d964a3c1b454a1c19fb78f17a86f0f677a89880af824184ff60f53)
 
 _patches_dir="/opt/share/ddvk-hacks"
 _xochitl_path="/usr/bin/xochitl"
@@ -30,7 +30,9 @@ package() {
         install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/27051_rm1/patch_21.1.04
         install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/28098_rm1/patch_23.1.02
         install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/291236_rm1/patch_24.1.02
-        install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/2100324_rm1/patch_25.1.02
+        install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/2100324_rm1/patch_25.1.03
+        install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/2102356_rm1/patch_27.1.03
+        install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/2103379_rm1/patch_28.1.01
     elif [[ $arch = rm2 ]]; then
         install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/26171_rm2/patch_19.2.02
         install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/26275_rm2/patch_20.2.03
@@ -40,6 +42,8 @@ package() {
         install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/291217_rm2/patch_24.2.04
         install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/2100324_rm2/patch_25.2.01
         install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/2101332_rm2/patch_26.2.02
+        install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/2102356_rm2/patch_27.2.05
+        install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/2103379_rm2/patch_28.2.01
     fi
 }
 
@@ -53,8 +57,18 @@ configure() {
     if [[ $arch = rm1 ]]; then
         device="reMarkable 1"
         case "$build_date" in
+            "20211102142308")
+                patch_version="28.1.01"
+                original_hash="1978c56c0bf9a53e74fb05b7212381543adb709e"
+                xochitl_version="2.10.3.379"
+                ;;
+            "20211014150444")
+                patch_version="27.1.03"
+                original_hash="a76509107656c03e866ec169ad317da9111f71be"
+                xochitl_version="2.10.2.356"
+                ;;
             "20210923152158")
-                patch_version="25.1.02"
+                patch_version="25.1.03"
                 original_hash="635917603b0d9349ddf5f6ead818701a42979945"
                 xochitl_version="2.10.0.324"
                 ;;
@@ -94,6 +108,16 @@ configure() {
     elif [[ $arch = rm2 ]]; then
         device="reMarkable 2"
         case "$build_date" in
+            "20211102143141")
+                patch_version="28.2.01"
+                original_hash="8510d6f4380b6155d630baecaccccfb0147263d0"
+                xochitl_version="2.10.3.379"
+                ;;
+            "20211014151303")
+                patch_version="27.2.05"
+                original_hash="2cc077e0bc5eca53664d4692197d54b477fa02ba"
+                xochitl_version="2.10.2.356"
+                ;;
             "20210929140057")
                 patch_version="26.2.02"
                 original_hash="44ed43a128c821988519c3ea92c4516f011edd7e"
