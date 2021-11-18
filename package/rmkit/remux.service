@@ -3,8 +3,7 @@
 
 [Unit]
 Description=App launcher that supports multi-tasking applications
-Requires=dev-input-event0.device dev-input-event1.device dev-input-event2.device
-After=xochitl.service opt.mount dev-input-event0.device dev-input-event1.device dev-input-event2.device
+After=xochitl.service opt.mount
 StartLimitInterval=30
 StartLimitBurst=5
 Conflicts=draft.service tarnish.service
