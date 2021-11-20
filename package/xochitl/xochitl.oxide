@@ -6,18 +6,17 @@
     "flags": ["nosplash", "chroot"],
     "permissions": ["power"],
     "directories": [
+        "/dev/shm",
         "/etc",
         "/home/root",
         "/opt/etc",
-        "/tmp/runtime-root",
-        "/usr/share",
-        "/run/udev",
         "/run/dbus",
         "/run/systemd/resolve",
-        "/var/lib/dbus",
+        "/run/udev",
+        "/tmp/runtime-root",
+        "/usr/share",
         "/var/cache/fontconfig",
-        "/dev/shm",
-        "/opt/etc/xochitl.env.d"
+        "/var/lib/dbus",
     ],
     "environment": {
         "QMLSCENE_DEVICE": "epaper",
