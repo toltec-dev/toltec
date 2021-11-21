@@ -19,7 +19,7 @@ To automatically install Opkg, Entware and Toltec, make sure your device is conn
 
 ```sh
 wget http://toltec-dev.org/bootstrap
-echo "2d1233271e0cc8232e86827bcb37ab2a44be2c5675cd15f32952614916ae246a  bootstrap" | sha256sum -c && bash bootstrap
+echo "aa808c87fae9a9ad8c5f264044f8d770f7cd8ac07f96d2c5df648f7a20856d3d  bootstrap" | sha256sum -c && bash bootstrap
 ```
 
 > **Warning:**
