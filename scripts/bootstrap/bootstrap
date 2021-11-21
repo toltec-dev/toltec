@@ -153,7 +153,8 @@ main() {
     # Remove those binaries in any case when the script exits
     trap cleanup EXIT
 
-    # Download and install the latest toltec-bootstrap package to load toltecctl
+    # Download and install the latest toltec-bootstrap package (without
+    # its dependencies) to use toltecctl definitions
     local pkg_basename
     pkg_basename="$(
         wget --quiet "$toltec_remote/Packages" -O - \
@@ -162,7 +163,8 @@ main() {
     local pkg_filename="/tmp/$pkg_basename"
     wget --no-verbose "$toltec_remote/$pkg_basename" -O "$pkg_filename"
 
-    opkg install --add-arch rmall:200 --offline-root / "$pkg_filename"
+    opkg install --add-arch rmall:200 --offline-root / --force-depends \
+        "$pkg_filename" > /dev/null 2>&1
     rm "$pkg_filename"
 
     # shellcheck source=../../package/toltec-bootstrap/toltecctl
@@ -235,8 +237,8 @@ main() {
         opkg install "$@"
     fi
 
-    # Reinstall toltec-bootstrap to mark toltecctl file as managed
-    # and set the user’s PATH in configure
+    # Reinstall toltec-bootstrap to mark its files as managed,
+    # to install its dependencies, and to set the user’s PATH
     opkg install toltec-bootstrap
     log "After each system upgrade, run 'toltecctl reenable' to re-enable Toltec"
 }
