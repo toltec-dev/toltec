@@ -10,6 +10,8 @@ timestamp=2021-10-06T07:51Z
 section="utils"
 maintainer="Eeems <eeems@eeems.email>"
 license=MIT
+# NOTE: The following dependencies will NOT be honored during bootstrap
+# and will only be available after the install is completed
 installdepends=(coreutils-tsort)
 
 source=(
