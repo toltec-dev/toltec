@@ -223,8 +223,10 @@ CSR
     fi
 }
 
-# Untrust the local certificate authority
+# Erase and untrust the local certificate authority
 uninstall-certificates() {
+    rm -f "$data_dir"/*
+
     if [[ -f "$local_cert_dir/rmfakecloud-ca.crt" ]]; then
         rm "$local_cert_dir/rmfakecloud-ca.crt"
         update-ca-certificates --fresh
@@ -254,6 +256,36 @@ uninstall-hosts() {
     sed -i '/ ping.remarkable.com$/d' "$hosts_path"
 }
 
+# Try to make a full install of rmfakecloud-proxy
+install() {
+    trap install-failed EXIT
+    disconnect-cloud
+    install-certificates
+    install-hosts
+    mark-enabled
+    systemctl enable rmfakecloud-proxy
+    systemctl restart rmfakecloud-proxy
+    trap EXIT
+}
+
+install-failed() {
+    echo "Install interrupted, trying to clean up"
+    uninstall
+}
+
+# Disable and cleanup rmfakecloud-proxy
+uninstall() {
+    # Temporarily disable exit-on-error so as to clean up as much as possible
+    set +e
+    disconnect-cloud
+    mark-disabled
+    systemctl disable --now rmfakecloud-proxy
+    rm -f "$conf_dir/config"
+    uninstall-hosts
+    uninstall-certificates
+    set -e
+}
+
 help() {
     echo "Usage: $(basename "$0") COMMAND
 Manage rmfakecloud-proxy. Available commands:
@@ -278,27 +310,14 @@ if [[ $0 = "${BASH_SOURCE[0]}" ]]; then
             if is-enabled; then
                 echo "rmfakecloud-proxy is already enabled."
             else
-                disconnect-cloud
-                install-certificates
-                install-hosts
-                mark-enabled
-                systemctl enable rmfakecloud-proxy
-                systemctl restart rmfakecloud-proxy
+                install
                 echo "rmfakecloud-proxy is now enabled."
             fi
             ;;
 
         disable)
-            if is-enabled; then
-                disconnect-cloud
-                mark-disabled
-                systemctl disable --now rmfakecloud-proxy
-                uninstall-hosts
-                uninstall-certificates
-                echo "rmfakecloud-proxy is now disabled."
-            else
-                echo "rmfakecloud-proxy is already disabled."
-            fi
+            uninstall
+            echo "rmfakecloud-proxy is now disabled."
             ;;
 
         set-upstream)
