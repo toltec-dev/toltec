@@ -5,8 +5,8 @@
 pkgnames=(xochitl)
 pkgdesc="Read documents and take notes"
 url=https://remarkable.com
-pkgver=0.0.0-9
-timestamp=2021-09-25T16:36Z
+pkgver=0.0.0-10
+timestamp=2021-11-20T23:31Z
 section="readers"
 maintainer="Mattéo Delabre <spam@delab.re>"
 license=MIT

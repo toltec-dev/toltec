@@ -100,8 +100,6 @@ lint:
 	MYPYPATH=scripts mypy --disallow-untyped-defs scripts
 	@echo "==> Linting Python files"
 	PYTHONPATH=: pylint scripts
-	@echo "==> Verifying that the bootstrap checksum is correct"
-	./scripts/bootstrap/checksum-check
 
 $(RECIPES_CLEAN): %:
 	rm -rf build/package/"$(@:%-clean=%)"

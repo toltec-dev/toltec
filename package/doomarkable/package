@@ -5,8 +5,8 @@
 pkgnames=(doomarkable)
 pkgdesc="DOOM game"
 url=https://github.com/LinusCDE/doomarkable
-pkgver=0.4.0-1
-timestamp=2021-10-25T23:02Z
+pkgver=0.4.1-1
+timestamp=2021-10-31T16:15Z
 section="games"
 maintainer="Linus K. <linus@cosmos-ink.net>"
 license=MIT
@@ -14,8 +14,8 @@ installdepends=(display)
 flags=(patch_rm2fb)
 
 image=rust:v2.2
-source=(https://github.com/LinusCDE/doomarkable/archive/0.4.0.zip)
-sha256sums=(39988c0a607560787789b0e71aa34059c64d11ba1b98e11145d08677ed420c5f)
+source=(https://github.com/LinusCDE/doomarkable/archive/0.4.1.tar.gz)
+sha256sums=(d1cc2a37e769039e6e7a2f3090f77657693591a2c28ac55e51f89607d06e8b02)
 
 build() {
     # Fall back to system-wide config
