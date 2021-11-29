@@ -15,6 +15,7 @@
         "/run/udev",
         "/tmp/runtime-root",
         "/usr/share",
+        "/usr/share/remarkable/templates",
         "/var/cache/fontconfig",
         "/var/lib/dbus",
     ],
