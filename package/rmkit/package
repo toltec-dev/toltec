@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: MIT
 
 pkgnames=(bufshot genie harmony iago lamp mines nao remux simple)
-timestamp=2021-11-26T22:33:10Z
+timestamp=2021-11-27T07:33:10Z
 maintainer="raisjn <of.raisjn@gmail.com>"
 license=MIT
 installdepends=(display)
@@ -11,12 +11,12 @@ flags=(patch_rm2fb)
 
 image=python:v2.1
 source=(
-    https://github.com/rmkit-dev/rmkit/archive/d8e6305dc365b2784a689dc97d0abbdfddd4ae91.zip
+    https://github.com/rmkit-dev/rmkit/archive/b810e68e18eeb33b70b6dd37c35f0d6b78e82cc4.zip
     remux.service
     genie.service
 )
 sha256sums=(
-    15489742c70de958e1a83440c8baad0267d32e9f9719104797ba6cc0ba878a9a
+    a76100542f6a08d656003e7f6b16a71fd443688e7c16bef657e424e06a46c2e2
     SKIP
     SKIP
 )
@@ -134,7 +134,7 @@ nao() {
 remux() {
     pkgdesc="Launcher that supports multi-tasking applications"
     url="https://rmkit.dev/apps/remux"
-    pkgver=0.1.12-1
+    pkgver=0.1.13-1
     section="launchers"
 
     package() {
