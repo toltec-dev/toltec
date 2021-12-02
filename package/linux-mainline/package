@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+# Copyright (c) 2021 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+archs=(rm2)
+pkgnames=(linux-mainline)
+pkgdesc="reMarkable 2 Kernel based on the mainline kernel"
+url=https://www.kernel.org
+pkgver=5.18.0-0
+timestamp=2021-10-28T19:41:07Z
+section="devel"
+maintainer="Alistair Francis <alistair@alistair23.me>"
+makedepends=(build:flex build:bison build:libssl-dev build:bc build:lzop build:libgmp-dev build:libmpc-dev)
+license=GPL-2.0-only
+flags=(nostrip)
+
+image=base:v2.2
+source=("https://github.com/alistair23/linux/archive/f9fe680995e01398f0813077711fe1b744251c5b.tar.gz")
+sha256sums=(d38c883a31f5f87483377e78b4b3a2eb1ce73ada38fc25949e692dd0b2dd7895)
+
+build() {
+    ARCH=arm make imx_v6_v7_defconfig
+    ARCH=arm make -j8
+}
+
+package() {
+    install -d "$pkgdir"/usr/boot
+    cp --no-dereference "$srcdir"/arch/arm/boot/zImage "$pkgdir"/usr/boot/
+    cp --no-dereference "$srcdir"/arch/arm/boot/dts/imx7d-remarkable2.dtb "$pkgdir"/usr/boot/zero-sugar.dtb
+
+    ARCH=arm make -C "$srcdir" modules_install INSTALL_MOD_PATH="$pkgdir"
+}
+
+configure() {
+    echo "The new kernel files have been copied, but not installed"
+    echo "To install them run and then reboot:"
+    echo "  mkdir -p /opt/boot-backup"
+    echo "  cp -rf /boot/* /opt/boot-backup/"
+    echo "  cp -rf /usr/boot/* /boot/"
+    echo "  /bin/sync"
+    echo ""
+    echo "Known issues with the mainline kernel:"
+    echo " - No support for low power mode (suspend uses more power then it should)"
+    echo " - WiFi sometimes is off on boot (can be turned on again though)"
+    echo " - GUI shutdown in Oxide doesn't work"
+    echo " - Wacom stylus doesn't work in Xochitl (works everywhere else though)"
+    echo " - No OTG control support"
+}
+
+postremove() {
+    echo "To restore to the original kernel, run and then reboot"
+    echo "  rm -rf /lib/modules/${pkgver%-*}/"
+    echo "  cp -f /opt/boot-backup/zImage /boot/"
+    echo "  cp -f /opt/boot-backup/zero-sugar.dtb /boot/"
+    echo "  /bin/sync"
+}
