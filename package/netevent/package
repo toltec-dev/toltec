@@ -13,7 +13,7 @@ license=GPL-2.0-only
 
 image=base:v2.2
 source=(
-    https://github.com/Blub/netevent/archive/refs/tags/2.2.1.tar.gz
+    "https://github.com/Blub/netevent/archive/refs/tags/${pkgver%-*}.tar.gz"
 )
 sha256sums=(
     ba1289cc04aef563baa9cc203111af3980a9311442233ffcf76760cda9f6aa69
