@@ -20,7 +20,7 @@ sha256sums=(
 )
 
 build() {
-    export CXX=arm-linux-gnueabihf-g++
+    export CXX="${CROSS_COMPILE}g++"
     make
 }
 
