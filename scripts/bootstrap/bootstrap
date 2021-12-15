@@ -85,6 +85,7 @@ wget-bootstrap() {
     if [[ ! -x $wget_path ]]; then
         if [[ -e $wget_path ]]; then
             log ERROR "'$wget_path' exists, but is not executable"
+            log ERROR "You may need to delete it and try again."
             exit 1
         fi
 
@@ -122,6 +123,7 @@ opkg-bootstrap() {
     if [[ ! -x $opkg_path ]]; then
         if [[ -e $opkg_path ]]; then
             log ERROR "'$opkg_path' exists, but is not executable"
+            log ERROR "You may need to delete it and try again."
             exit 1
         fi
 
