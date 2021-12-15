@@ -323,7 +323,6 @@ uninstall() {
     disconnect-cloud
     mark-disabled
     systemctl disable --now rmfakecloud-proxy
-    rm -f "$conf_dir/config"
     uninstall-hosts
     uninstall-certificates
     set -e
