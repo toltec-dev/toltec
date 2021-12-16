@@ -6,8 +6,8 @@ archs=(rm1 rm2)
 pkgnames=(ddvk-hacks)
 pkgdesc="Enhance Xochitl with additional features"
 url=https://github.com/ddvk/remarkable-hacks
-pkgver=28.01-1
-timestamp=2021-11-17T16:32:30Z
+pkgver=29.01-1
+timestamp=2021-12-15T19:55:50Z
 section="readers"
 maintainer="Mattéo Delabre <spam@delab.re>"
 license=MIT
@@ -32,7 +32,8 @@ package() {
         install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/291236_rm1/patch_24.1.02
         install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/2100324_rm1/patch_25.1.03
         install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/2102356_rm1/patch_27.1.03
-        install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/2103379_rm1/patch_28.1.01
+        install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/2103379_rm1/patch_28.1.02
+        install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/2110442_rm1/patch_29.1.01
     elif [[ $arch = rm2 ]]; then
         install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/26171_rm2/patch_19.2.02
         install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/26275_rm2/patch_20.2.03
@@ -44,6 +45,7 @@ package() {
         install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/2101332_rm2/patch_26.2.02
         install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/2102356_rm2/patch_27.2.05
         install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/2103379_rm2/patch_28.2.01
+        install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/2110442_rm2/patch_29.2.01
     fi
 }
 
@@ -57,6 +59,11 @@ configure() {
     if [[ $arch = rm1 ]]; then
         device="reMarkable 1"
         case "$build_date" in
+            "20211208080907")
+                patch_version="29.1.01"
+                original_hash="1f72eb42b0745d40196cb7fece6a8fee55f958c0"
+                xochitl_version="2.11.0.442"
+                ;;
             "20211102142308")
                 patch_version="28.1.01"
                 original_hash="1978c56c0bf9a53e74fb05b7212381543adb709e"
@@ -108,6 +115,11 @@ configure() {
     elif [[ $arch = rm2 ]]; then
         device="reMarkable 2"
         case "$build_date" in
+            "20211208075454")
+                patch_version="29.2.02"
+                original_hash="ad88de508a3c7da7f1ff6a9d394806c5d987026d"
+                xochitl_version="2.11.0.442"
+                ;;
             "20211102143141")
                 patch_version="28.2.01"
                 original_hash="8510d6f4380b6155d630baecaccccfb0147263d0"
