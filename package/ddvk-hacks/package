@@ -13,8 +13,8 @@ maintainer="Mattéo Delabre <spam@delab.re>"
 license=MIT
 flags=(nostrip)
 
-source=(https://github.com/ddvk/remarkable-hacks/archive/10727fe79cb23c5c35ce7a4809cd41b52e6f9384.zip)
-sha256sums=(08de51b4c4d964a3c1b454a1c19fb78f17a86f0f677a89880af824184ff60f53)
+source=(https://github.com/ddvk/remarkable-hacks/archive/9b6b8853b2abc349dfb43f301c2c26055b81033b.zip)
+sha256sums=(2347a779dca7d0d7315e850018630f8af0a37e108209fc31a94eb2566d1108b6)
 
 _patches_dir="/opt/share/ddvk-hacks"
 _xochitl_path="/usr/bin/xochitl"
