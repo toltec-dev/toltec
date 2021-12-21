@@ -65,7 +65,7 @@ configure() {
                 xochitl_version="2.11.0.442"
                 ;;
             "20211102142308")
-                patch_version="28.1.01"
+                patch_version="28.1.02"
                 original_hash="1978c56c0bf9a53e74fb05b7212381543adb709e"
                 xochitl_version="2.10.3.379"
                 ;;
