@@ -44,7 +44,7 @@ package() {
         install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/2100324_rm2/patch_25.2.01
         install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/2101332_rm2/patch_26.2.02
         install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/2102356_rm2/patch_27.2.05
-        install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/2103379_rm2/patch_28.2.01
+        install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/2103379_rm2/patch_28.2.02
         install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/2110442_rm2/patch_29.2.01
     fi
 }
@@ -116,12 +116,12 @@ configure() {
         device="reMarkable 2"
         case "$build_date" in
             "20211208075454")
-                patch_version="29.2.02"
+                patch_version="29.2.01"
                 original_hash="ad88de508a3c7da7f1ff6a9d394806c5d987026d"
                 xochitl_version="2.11.0.442"
                 ;;
             "20211102143141")
-                patch_version="28.2.01"
+                patch_version="28.2.02"
                 original_hash="8510d6f4380b6155d630baecaccccfb0147263d0"
                 xochitl_version="2.10.3.379"
                 ;;
