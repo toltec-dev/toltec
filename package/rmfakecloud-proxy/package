@@ -7,7 +7,7 @@ pkgdesc="Connect Xochitl to a rmfakecloud server"
 _url=https://github.com/ddvk/rmfakecloud-proxy
 url="$_url"
 _upver=0.0.3
-pkgver="$_upver-1"
+pkgver="$_upver-2"
 timestamp=2021-09-26T20:38:44Z
 section="utils"
 maintainer="Mattéo Delabre <spam@delab.re>"
@@ -59,18 +59,7 @@ configure() {
         uninstall-hosts
     fi
 
-    if ! is-enabled; then
-        cat << MSG
-
-Run the following commands to use rmfakecloud-proxy:
-
-$ rmfakecloudctl set-upstream https://your-server.example.org
-$ rmfakecloudctl enable
-
-Replace your-server.example.org with the address of the server you want to use.
-
-MSG
-    fi
+    rmfakecloudctl status
 }
 
 preremove() {
