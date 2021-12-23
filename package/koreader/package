@@ -6,7 +6,7 @@ pkgnames=(koreader)
 pkgdesc="Ebook reader supporting PDF, DjVu, EPUB, FB2 and many more formats"
 url=https://github.com/koreader/koreader
 pkgver=2021.12.1-1
-timestamp=2021-12-19T10:41:25Z
+timestamp=2021-12-23T19:08:49Z
 section="readers"
 maintainer="raisjn <of.raisjn@gmail.com>"
 license=AGPL-3.0-or-later
@@ -21,7 +21,7 @@ source=(
     koreader
 )
 sha256sums=(
-    f3ea74312cbd0d302484e5526a57e0a72e54bdaf626a91dd92d0cc7072e26261
+    df76e3f94d1b1d2e9cc386c8786bd414ccf47175a3f445ada06df134d1345a3e
     SKIP
     SKIP
     SKIP
