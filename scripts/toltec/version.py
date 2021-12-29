@@ -145,21 +145,13 @@ class Dependency:
     def parse(dependency: str) -> "Dependency":
         """Parse a dependency specification."""
         original = dependency
-        colon = dependency.find(":")
+        kind = DependencyKind.Host
 
-        if colon == -1:
-            kind = DependencyKind.Host
-        else:
-            for enum_kind in DependencyKind:
-                if enum_kind.value == dependency[:colon]:
-                    kind = enum_kind
-                    dependency = dependency[colon + 1 :]
-                    break
-            else:
-                raise InvalidDependencyError(
-                    f"Unknown dependency type \
-'{dependency[:colon]}'"
-                )
+        for enum_kind in DependencyKind:
+            if dependency.startswith(enum_kind.value + ":"):
+                kind = enum_kind
+                dependency = dependency[len(enum_kind.value) + 1 :]
+                break
 
         comp_char_match = _COMPARATOR_CHARS.search(dependency)
 
