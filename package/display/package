@@ -47,7 +47,7 @@ build() {
 
 display() {
     pkgdesc="Interface to the reMarkable framebuffer"
-    installdepends=(xochitl rm2fb-client)
+    installdepends=(xochitl "rm2fb-client=$pkgver")
     conflicts=(rm2fb)
     replaces=(rm2fb)
 
