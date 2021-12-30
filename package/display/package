@@ -8,7 +8,7 @@ timestamp=2021-12-15T17:10:54Z
 maintainer="raisjn <of.raisjn@gmail.com>"
 license=MIT
 url="https://github.com/ddvk/remarkable2-framebuffer"
-pkgver=1:0.0.12-1
+pkgver=1:0.0.12-2
 _release="${pkgver%-*}"
 _release="v${_release#*:}"
 _libver=1.0.1
@@ -47,7 +47,7 @@ build() {
 
 display() {
     pkgdesc="Interface to the reMarkable framebuffer"
-    installdepends=(xochitl rm2fb-client)
+    installdepends=(xochitl "rm2fb-client=$pkgver")
     conflicts=(rm2fb)
     replaces=(rm2fb)
 
@@ -92,7 +92,7 @@ display() {
 
 rm2fb-client() {
     pkgdesc="Shim to make reMarkable 1 apps work on reMarkable 2"
-    installdepends=(display)
+    installdepends=("display=$pkgver")
     conflicts=(rm2fb)
     replaces=(rm2fb)
 
