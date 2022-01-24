@@ -96,7 +96,6 @@ _opkg() {
         esac
 
         # Completion of subcommand arguments involving package names
-        # TODO: Cache package listings to speed up completion
         local available_pkgs installed_pkgs
         mapfile -t available_pkgs < <(opkg list | awk '{ print $1 }')
         mapfile -t installed_pkgs < <(opkg list-installed | awk '{ print $1 }')
