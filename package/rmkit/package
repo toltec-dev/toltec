@@ -2,8 +2,8 @@
 # Copyright (c) 2021 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
-pkgnames=(bufshot genie harmony iago lamp mines nao remux simple)
-timestamp=2021-12-27T07:33:10Z
+pkgnames=(bufshot dumbskull genie harmony iago lamp mines nao remux simple wordlet)
+timestamp=2021-01-27T07:18:10Z
 maintainer="raisjn <of.raisjn@gmail.com>"
 license=MIT
 installdepends=(display)
@@ -11,25 +11,25 @@ flags=(patch_rm2fb)
 
 image=python:v2.1
 source=(
-    https://github.com/rmkit-dev/rmkit/archive/493916d4112545b2ff6c32a67e3928a9bf7365a9.zip
+    https://github.com/rmkit-dev/rmkit/archive/8690f091b46561be84af018436a5a3de659c0315.zip
     remux.service
     genie.service
 )
 sha256sums=(
-    8d9e9d62cbd918b541d0e5f62a4fd3f9208b289e42d04738da3db146ddf281b1
+    ca266b8daa896804a879f6fa2acc31763b2b798205cf92b85ccc27df702fe2eb
     SKIP
     SKIP
 )
 
 build() {
     pip3 install okp
-    make
+    ARCH="rm" make
 }
 
 bufshot() {
     pkgdesc="program for saving the framebuffer as a png"
     url="https://github.com/rmkit-dev/rmkit/tree/master/src/bufshot"
-    pkgver=0.1.1-1
+    pkgver=0.1.2-1
     section="utils"
 
     package() {
@@ -37,10 +37,23 @@ bufshot() {
     }
 }
 
+dumbskull() {
+    pkgdesc="Dungeon Crawl themed Solitaire"
+    url="https://rmkit.dev/apps/dumbskull"
+    pkgver=0.0.1-1
+    section="games"
+
+    package() {
+        install -D -m 755 "$srcdir"/src/build/dumbskull "$pkgdir"/opt/bin/dumbskull
+        install -D -m 644 "$srcdir"/src/dumbskull/dumbskull.draft "$pkgdir"/opt/etc/draft/dumbskull.draft
+    }
+
+}
+
 genie() {
     pkgdesc="Gesture engine that connects commands to gestures"
     url="https://rmkit.dev/apps/genie"
-    pkgver=0.1.5-3
+    pkgver=0.1.6-1
     section="utils"
 
     package() {
@@ -67,7 +80,7 @@ genie() {
 harmony() {
     pkgdesc="Procedural sketching app"
     url="https://rmkit.dev/apps/harmony"
-    pkgver=0.1.4-1
+    pkgver=0.1.5-1
     section="drawing"
 
     package() {
@@ -84,7 +97,7 @@ harmony() {
 iago() {
     pkgdesc="overlay for drawing shapes via stroke injection"
     url="https://rmkit.dev/apps/iago"
-    pkgver=0.1.0-4
+    pkgver=0.1.1-1
     section="utils"
     installdepends+=("lamp")
 
@@ -96,7 +109,7 @@ iago() {
 lamp() {
     pkgdesc="config based stroke injection utility"
     url="https://rmkit.dev/apps/lamp"
-    pkgver=0.1.0-4
+    pkgver=0.1.1-1
     section="utils"
 
     package() {
@@ -107,7 +120,7 @@ lamp() {
 mines() {
     pkgdesc="Mine detection game"
     url="https://rmkit.dev/apps/minesweeper"
-    pkgver=0.1.3-1
+    pkgver=0.1.4-1
     section="games"
 
     package() {
@@ -134,7 +147,7 @@ nao() {
 remux() {
     pkgdesc="Launcher that supports multi-tasking applications"
     url="https://rmkit.dev/apps/remux"
-    pkgver=0.1.14-1
+    pkgver=0.2.1-1
     section="launchers"
 
     package() {
@@ -166,10 +179,23 @@ remux() {
 simple() {
     pkgdesc="Simple app script for writing scripted applications"
     url="https://rmkit.dev/apps/sas"
-    pkgver=0.1.4-3
+    pkgver=0.1.5-1
     section="devel"
 
     package() {
         install -D -m 755 "$srcdir"/src/build/simple "$pkgdir"/opt/bin/simple
     }
+}
+
+wordlet() {
+    pkgdesc="Wordle clone"
+    url="https://rmkit.dev/apps/wordlet"
+    pkgver=0.0.1-1
+    section="games"
+
+    package() {
+        install -D -m 755 "$srcdir"/src/build/wordlet "$pkgdir"/opt/bin/wordlet
+        install -D -m 644 "$srcdir"/src/wordlet/wordlet.draft "$pkgdir"/opt/etc/draft/wordlet.draft
+    }
+
 }
