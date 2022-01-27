@@ -29,6 +29,7 @@
 
 	rpncalc:
 
+	* add new calculator, rpncalc
 	* add better spacing and layout
 	* add push after operation behavior (next input is on new stack element)
 
