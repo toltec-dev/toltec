@@ -214,12 +214,12 @@ source file '{source.url}', got {req.status_code}"
                         local.write(chunk)
 
             # Verify checksum
-            if (
-                source.checksum != "SKIP"
-                and util.file_sha256(local_path) != source.checksum
-            ):
+            file_sha = util.file_sha256(local_path)
+            if source.checksum != "SKIP" and file_sha != source.checksum:
                 raise BuildError(
-                    f"Invalid checksum for source file {source.url}"
+                    f"Invalid checksum for source file {source.url}:\n"
+                    f"  expected {source.checksum}\n"
+                    f"  actual   {file_sha}"
                 )
 
             # Automatically extract source archives
