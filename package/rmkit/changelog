@@ -1,3 +1,10 @@
+2022-01-29 raisjn <of.raisjn@arkose>
+	rpncalc:
+
+	* add 'back' button for erasing digits
+	* modifying how 'drop' works a tiny bit
+	* align push/drop, and tan/tanh, cos/cosh, sin/sinh buttons
+
 2022-01-22 raisjn <of.raisjn@arkose>
 
 	rmkit:
@@ -51,7 +58,7 @@
 2021-12-17 raisjn <of.raisjn@arkose>
 
 	harmony:
-		
+
 	* add `launch` command to remux
 
 	mines:
