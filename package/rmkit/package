@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: MIT
 
 pkgnames=(bufshot dumbskull genie harmony iago lamp mines nao remux rpncalc simple wordlet)
-timestamp=2021-01-27T07:18:10Z
+timestamp=2021-01-29T09:18:10Z
 maintainer="raisjn <of.raisjn@gmail.com>"
 license=MIT
 installdepends=(display)
@@ -11,12 +11,12 @@ flags=(patch_rm2fb)
 
 image=python:v2.1
 source=(
-    https://github.com/rmkit-dev/rmkit/archive/9375bb9b7b66849cc4c1be578be87b563546d5a3.zip
+    https://github.com/rmkit-dev/rmkit/archive/e864182feb30e409bfd79534fd368f4d5c04c741.zip
     remux.service
     genie.service
 )
 sha256sums=(
-    d41d3b05490552de8fc7bf49d22646eebfd84df6576986f748d42914c758ea72
+    1aaaa7ea0ddc89eb95f099151e2f88d56f160f4d27a385a7a89907c50f47fbe0
     SKIP
     SKIP
 )
@@ -179,7 +179,7 @@ remux() {
 rpncalc() {
     pkgdesc="RPN Calculator"
     url="https://rmkit.dev/apps/rpncalc"
-    pkgver=0.0.1-1
+    pkgver=0.0.2-1
     section="math"
 
     package() {
