@@ -11,12 +11,12 @@ flags=(patch_rm2fb)
 
 image=python:v2.1
 source=(
-    https://github.com/rmkit-dev/rmkit/archive/8690f091b46561be84af018436a5a3de659c0315.zip
+    https://github.com/rmkit-dev/rmkit/archive/9375bb9b7b66849cc4c1be578be87b563546d5a3.zip
     remux.service
     genie.service
 )
 sha256sums=(
-    ca266b8daa896804a879f6fa2acc31763b2b798205cf92b85ccc27df702fe2eb
+    d41d3b05490552de8fc7bf49d22646eebfd84df6576986f748d42914c758ea72
     SKIP
     SKIP
 )
@@ -185,7 +185,7 @@ rpncalc() {
     package() {
         install -D -m 755 "$srcdir"/src/build/rpncalc "$pkgdir"/opt/bin/rpncalc
         install -D -m 644 "$srcdir"/src/rpncalc/rpncalc.draft "$pkgdir"/opt/etc/draft/rpncalc.draft
-        install -D -m 644 "$srcdir"/src/rpncalc/calculator.png "$pkgdir"/opt/etc/draft/icons/calculator.png
+        install -D -m 644 "$srcdir"/src/rpncalc/rpncalc.png "$pkgdir"/opt/etc/draft/icons/rpncalc.png
     }
 
 }
