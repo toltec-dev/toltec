@@ -13,7 +13,7 @@ license=MIT
 installdepends=(wireguard)
 makedepends=(build:librust-clang-sys-dev build:libclang-dev build:libc6 build:libc6-dev build:clang)
 
-image=rust:v2.2
+image=rust:v2.2.2
 _srcver="v${pkgver%-*}"
 source=(
     "https://github.com/tonarino/innernet/archive/refs/tags/$_srcver.zip"
