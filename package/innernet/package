@@ -17,11 +17,9 @@ image=rust:v2.2
 _srcver="v${pkgver%-*}"
 source=(
     "https://github.com/tonarino/innernet/archive/refs/tags/$_srcver.zip"
-    build.patch
 )
 sha256sums=(
     2f7ca1d802d898b1c4fd090cba9e0562a1e80d617b55f23ba596e81c99441a1c
-    SKIP
 )
 
 prepare() {
