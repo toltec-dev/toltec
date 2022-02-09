@@ -5,8 +5,8 @@
 pkgnames=(plato)
 pkgdesc="Document reader"
 url=https://github.com/LinusCDE/plato
-pkgver=0.9.17-2
-timestamp=2021-05-02T14:39Z
+pkgver=0.9.25-1
+timestamp=2022-02-08T23:54Z
 section="readers"
 maintainer="Linus K. <linus@cosmos-ink.net>"
 license=AGPL-3.0-or-later
@@ -14,9 +14,9 @@ installdepends=(display jq)
 makedepends=(build:jq build:unzip build:wget)
 flags=(patch_rm2fb)
 
-image=rust:v2.1
-source=("https://github.com/LinusCDE/plato/archive/${pkgver%-*}-rm-release-10.zip")
-sha256sums=(25aae17979d9e259d228617eb26a0cc89a6251968b8fc355b8cde36fd6b26773)
+image=rust:v2.2.2
+source=("https://github.com/LinusCDE/plato/archive/${pkgver%-*}-rm-release-12.zip")
+sha256sums=(42e18e882e7e6853e299234a44eea9b9e3c4170076eec0577a0644dcf7005cf9)
 
 build() {
     # Fall back to system-wide config
