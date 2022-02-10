@@ -28,12 +28,12 @@ image=rust:v2.2.2
 # Archives will be automatically extracted, stripping any useless containing
 # directories, and made available during the build step below
 source=(
-    https://github.com/bkirwi/folly/archive/580723d33196b9788b2ddf14b2d301852e7facbc.zip
+    https://github.com/bkirwi/folly/archive/9e5947dbe25a5db6d7d7579fff4106595c0585ff.zip
     folly.draft
 )
 ## SHA-256 checksums of the source archives above
 sha256sums=(
-    0f614f1af4dbe5b476eaf49d1698e6da45fbbe55db6b1985fc1f78ad26b85297
+    25bd5e024bf076435eaed0abf37d971132f2e7503a5b09ea31a4a22170c1d7f0
     SKIP
 )
 
