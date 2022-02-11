@@ -17,12 +17,12 @@ image=rust:v2.2.2
 
 # Whitespace-separated list of source archives that are needed to build the package
 source=(
-    https://github.com/bkirwi/folly/archive/9e5947dbe25a5db6d7d7579fff4106595c0585ff.zip
+    https://github.com/bkirwi/folly/archive/842bad4f0d6e0f35cd92d4693896ed353821a1fd.zip
     folly.draft
 )
 # SHA-256 checksums of the source archives above
 sha256sums=(
-    25bd5e024bf076435eaed0abf37d971132f2e7503a5b09ea31a4a22170c1d7f0
+    9283495e87c0b4c383703b7c8514b17ead77298681eed0a186f4141fa9b129a8
     SKIP
 )
 
