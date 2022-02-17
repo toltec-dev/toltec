@@ -33,7 +33,7 @@ package() {
         install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/2100324_rm1/patch_25.1.03
         install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/2102356_rm1/patch_27.1.03
         install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/2103379_rm1/patch_28.1.02
-        install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/2110442_rm1/patch_29.1.01
+        install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/2110442_rm1/patch_29.1.02
         install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/2121527_rm1/patch_30.1.06
     elif [[ $arch = rm2 ]]; then
         install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/26171_rm2/patch_19.2.02
@@ -46,7 +46,7 @@ package() {
         install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/2101332_rm2/patch_26.2.02
         install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/2102356_rm2/patch_27.2.05
         install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/2103379_rm2/patch_28.2.02
-        install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/2110442_rm2/patch_29.2.01
+        install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/2110442_rm2/patch_29.2.02
         install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/2121527_rm2/patch_30.2.05
     fi
 }
@@ -67,7 +67,7 @@ configure() {
                 xochitl_version="2.12.1.527"
                 ;;
             "20211208080907")
-                patch_version="29.1.01"
+                patch_version="29.1.02"
                 original_hash="1f72eb42b0745d40196cb7fece6a8fee55f958c0"
                 xochitl_version="2.11.0.442"
                 ;;
@@ -128,7 +128,7 @@ configure() {
                 xochitl_version="2.12.1.527"
                 ;;
             "20211208075454")
-                patch_version="29.2.01"
+                patch_version="29.2.02"
                 original_hash="ad88de508a3c7da7f1ff6a9d394806c5d987026d"
                 xochitl_version="2.11.0.442"
                 ;;
