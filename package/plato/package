@@ -5,7 +5,7 @@
 pkgnames=(plato)
 pkgdesc="Document reader"
 url=https://github.com/LinusCDE/plato
-pkgver=0.9.25-1
+pkgver=0.9.25-2
 timestamp=2022-02-08T23:54Z
 section="readers"
 maintainer="Linus K. <linus@cosmos-ink.net>"
@@ -36,6 +36,10 @@ build() {
     ./clean.sh
     ./build.sh
     ./dist.sh
+
+    # Patch wrapper script to have a process name consistent with the
+    # path of the symlink in /opt/bin
+    sed -i 's#exec ./plato#exec -a /opt/bin/plato ./plato#' dist/plato.sh
 }
 
 package() {
