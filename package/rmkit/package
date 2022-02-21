@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: MIT
 
 pkgnames=(bufshot dumbskull genie harmony iago lamp mines nao remux rpncalc simple wordlet)
-timestamp=2021-01-29T09:18:10Z
+timestamp=2022-01-29T09:18:10Z
 maintainer="raisjn <of.raisjn@gmail.com>"
 license=MIT
 installdepends=(display)
@@ -29,7 +29,7 @@ build() {
 bufshot() {
     pkgdesc="program for saving the framebuffer as a png"
     url="https://github.com/rmkit-dev/rmkit/tree/master/src/bufshot"
-    pkgver=0.1.2-1
+    pkgver=0.1.2-2
     section="utils"
 
     package() {
@@ -40,7 +40,7 @@ bufshot() {
 dumbskull() {
     pkgdesc="Dungeon Crawl themed Solitaire"
     url="https://rmkit.dev/apps/dumbskull"
-    pkgver=0.0.1-1
+    pkgver=0.0.1-2
     section="games"
 
     package() {
@@ -53,7 +53,7 @@ dumbskull() {
 genie() {
     pkgdesc="Gesture engine that connects commands to gestures"
     url="https://rmkit.dev/apps/genie"
-    pkgver=0.1.6-1
+    pkgver=0.1.6-2
     section="utils"
 
     package() {
@@ -80,7 +80,7 @@ genie() {
 harmony() {
     pkgdesc="Procedural sketching app"
     url="https://rmkit.dev/apps/harmony"
-    pkgver=0.1.5-1
+    pkgver=0.1.5-2
     section="drawing"
 
     package() {
@@ -97,7 +97,7 @@ harmony() {
 iago() {
     pkgdesc="overlay for drawing shapes via stroke injection"
     url="https://rmkit.dev/apps/iago"
-    pkgver=0.1.1-1
+    pkgver=0.1.1-2
     section="utils"
     installdepends+=("lamp")
 
@@ -109,7 +109,7 @@ iago() {
 lamp() {
     pkgdesc="config based stroke injection utility"
     url="https://rmkit.dev/apps/lamp"
-    pkgver=0.1.1-1
+    pkgver=0.1.1-2
     section="utils"
 
     package() {
@@ -120,7 +120,7 @@ lamp() {
 mines() {
     pkgdesc="Mine detection game"
     url="https://rmkit.dev/apps/minesweeper"
-    pkgver=0.1.4-1
+    pkgver=0.1.4-2
     section="games"
 
     package() {
@@ -147,7 +147,7 @@ nao() {
 remux() {
     pkgdesc="Launcher that supports multi-tasking applications"
     url="https://rmkit.dev/apps/remux"
-    pkgver=0.2.1-1
+    pkgver=0.2.1-2
     section="launchers"
 
     package() {
@@ -179,7 +179,7 @@ remux() {
 rpncalc() {
     pkgdesc="RPN Calculator"
     url="https://rmkit.dev/apps/rpncalc"
-    pkgver=0.0.2-1
+    pkgver=0.0.2-2
     section="math"
 
     package() {
@@ -193,7 +193,7 @@ rpncalc() {
 simple() {
     pkgdesc="Simple app script for writing scripted applications"
     url="https://rmkit.dev/apps/sas"
-    pkgver=0.1.5-1
+    pkgver=0.1.5-2
     section="devel"
 
     package() {
@@ -204,7 +204,7 @@ simple() {
 wordlet() {
     pkgdesc="Wordle clone"
     url="https://rmkit.dev/apps/wordlet"
-    pkgver=0.0.1-1
+    pkgver=0.0.1-2
     section="games"
 
     package() {
