@@ -1,3 +1,76 @@
+2022-01-29 raisjn <of.raisjn@arkose>
+	rpncalc:
+
+	* add 'back' button for erasing digits
+	* modifying how 'drop' works a tiny bit
+	* align push/drop, and tan/tanh, cos/cosh, sin/sinh buttons
+
+2022-01-27 raisjn <of.raisjn@arkose>
+
+	rmkit:
+
+	* rmkit went through a large refactoring, this updates all apps
+	* fix keyboard layout (swapped U and I keys originally)
+
+	dumbskull:
+
+	* add new game, "Dumbskull", which is a themed solitaire
+
+	genie:
+
+	* add palm rejection to genie
+
+	iago:
+
+	* add settings dialog (@aeneas) that allows snapping
+
+	mines:
+
+	* fix spurious crash when playing multiple games in a row
+
+	remux:
+
+	* add dialog_height/dialog_width options to remux.conf
+	* better memory analysis (of all processes)
+	* rm1: remove usb check that keeps it powered indefinitely
+
+	rpncalc:
+
+	* add new calculator, rpncalc
+	* add better spacing and layout
+	* add push after operation behavior (next input is on new stack element)
+
+	wordlet:
+
+	* add new game, "Wordlet", which is a wordle clone
+
+
+2021-12-29 raisjn <of.raisjn@arkose>
+
+	harmony:
+
+	* fix harmony not loading saved images
+
+	bufshot:
+
+	* fix bufshot to correctly recognize the tablet
+
+2021-12-17 raisjn <of.raisjn@arkose>
+
+	harmony:
+
+	* add `launch` command to remux
+
+	mines:
+
+	* fix pixmap display in minesweeper
+
+2021-11-29:
+
+	remux:
+
+	* add custom power management to remux that disables PM during xochitl
+
 2021-03-22 raisjn <of.raisjn@arkose>
 
 
