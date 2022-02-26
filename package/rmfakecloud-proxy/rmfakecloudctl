@@ -32,6 +32,9 @@ green="\033[32m"
 yellow="\033[33m"
 reset="\033[m"
 
+# ANSI escape to clear line from cursor until end
+clearline="\033[K"
+
 # Disconnect Xochitl from the cloud
 #
 # This is a necessary step when switching cloud servers to prevent the client
@@ -157,8 +160,11 @@ check-upstream() {
     local url="$upstream/service/json/1/test"
     local contents
     local wget_exit
-    contents="$(wget --output-document - --quiet "$url" 2>&1)" \
-        && wget_exit=$? || wget_exit=$?
+    contents="$(wget \
+        --output-document - \
+        --quiet "$url" \
+        --tries 1 \
+        --timeout 5 2>&1)" && wget_exit=$? || wget_exit=$?
 
     if [[ $wget_exit = 8 ]]; then
         # HTTP error, the page probably doesn't exist
@@ -359,19 +365,21 @@ if [[ $0 = "${BASH_SOURCE[0]}" ]]; then
                 service="$yellow$service"
             fi
 
+            echo -e "Status: $state$reset ($service$reset)"
+            echo -en "Upstream server: "
+
             if ! upstream="$(get-upstream)"; then
-                upstream="(${yellow}not set$reset)"
+                echo "(${yellow}not set$reset)"
             else
+                echo -en "$upstream (checking status...)"
                 if ! upstream_status="$(check-upstream "$upstream")"; then
-                    upstream="$upstream ($red$upstream_status$reset)"
+                    echo -en "\rUpstream server: $upstream "
+                    echo -e "($red$upstream_status$reset)$clearline"
                 else
-                    upstream="$upstream ($green$upstream_status$reset)"
+                    echo -en "\rUpstream server: $upstream "
+                    echo -e "($green$upstream_status$reset)$clearline"
                 fi
             fi
-
-            echo -e "Status: $state$reset ($service$reset)"
-            echo -e "Upstream server: $upstream"
-            echo
 
             if is-enabled; then
                 echo "Run \`rmfakecloudctl disable\` to disable \
