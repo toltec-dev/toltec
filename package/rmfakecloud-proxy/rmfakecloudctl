@@ -369,7 +369,7 @@ if [[ $0 = "${BASH_SOURCE[0]}" ]]; then
             echo -en "Upstream server: "
 
             if ! upstream="$(get-upstream)"; then
-                echo "(${yellow}not set$reset)"
+                echo -e "(${yellow}not set$reset)"
             else
                 echo -en "$upstream (checking status...)"
                 if ! upstream_status="$(check-upstream "$upstream")"; then
