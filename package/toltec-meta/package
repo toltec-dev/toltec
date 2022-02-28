@@ -11,7 +11,7 @@ timestamp=2022-02-28T00:12Z
 section="utils"
 maintainer="Eeems <eeems@eeems.email>"
 license=MIT
-installdepends=(toltec-boostrap toltec-completion xochitl)
+installdepends=(toltec-bootstrap toltec-completion xochitl)
 installdepends_rm1=(open-remarkable-shutdown)
 installdepends_rm2=(rm2-suspend-fix)
 
