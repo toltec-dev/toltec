@@ -226,7 +226,7 @@ main() {
     fi
 
     # Install base Toltec packages
-    local additional_packages=(toltec-completion)
+    local additional_packages=(toltec-meta)
 
     [[ ! -d /opt/etc/ssl/certs ]] && additional_packages+=(ca-certificates)
     [[ ! -f /opt/bin/wget ]] && additional_packages+=(wget-ssl)

@@ -2,26 +2,46 @@
 # Copyright (c) 2021 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
-pkgnames=(remarkable-splash)
-pkgdesc="Show splashscreens + remarkable-shutdown replacement that does not clear the screen"
+pkgnames=(remarkable-splash open-remarkable-shutdown)
 url=https://github.com/ddvk/remarkable-splash
-pkgver=1.0-5
-timestamp=2019-12-31T10:07Z
+pkgver=1.0-6
+timestamp=2022-02-28T00:12Z
 section="utils"
 maintainer="Eeems <eeems@eeems.email>"
 license=MIT
-installdepends=(display)
 flags=(patch_rm2fb)
 
 image=qt:v2.1
-source=(https://github.com/ddvk/remarkable-splash/archive/e6e0b1e1f3604ab99fb7b476cd290b19c5644025.zip)
-sha256sums=(4aa3988707f9b66752ec9ec2f407cce2ac6e433ae7f06affea9f26957d206b4a)
+source=(
+    https://github.com/ddvk/remarkable-splash/archive/e6e0b1e1f3604ab99fb7b476cd290b19c5644025.zip
+    remarkable-shutdown-override.conf
+    remarkable-reboot-override.conf
+)
+sha256sums=(
+    4aa3988707f9b66752ec9ec2f407cce2ac6e433ae7f06affea9f26957d206b4a
+    SKIP
+    SKIP
+)
 
 build() {
     qmake
     make
 }
 
-package() {
-    install -D -m 755 "$srcdir"/remarkable-splash "$pkgdir"/opt/bin/remarkable-splash
+remarkable-splash(){
+    pkgdesc="Show splashscreens + remarkable-shutdown replacement that does not clear the screen"
+    installdepends_rm2=(display)
+    package() {
+        install -D -m 755 "$srcdir"/remarkable-splash "$pkgdir"/opt/bin/remarkable-splash
+    }
+}
+
+open-remarkable-shutdown(){
+    pkgdesc="Use remarkable-splash to display shutdown and reboot images"
+    installdepends=(remarkable-splash)
+    installdepends_rm2=(display)
+    package(){
+        install -D -m 644 -t "$pkgdir"/etc/systemd/system/remarkable-shutdown.service.d "$srcdir"/remarkable-shutdown-override.conf
+        install -D -m 644 -t "$pkgdir"/etc/systemd/system/remarkable-reboot.service.d "$srcdir"/remarkable-reboot-override.conf
+    }
 }
