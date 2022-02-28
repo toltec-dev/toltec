@@ -19,5 +19,5 @@ source=()
 sha256sums=()
 
 prepare() {
-    true;
+    true
 }
