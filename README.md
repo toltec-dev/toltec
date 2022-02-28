@@ -6,11 +6,11 @@
 [![rM2: supported](https://img.shields.io/badge/rM2-supported-green)](https://remarkable.com/store/remarkable-2)
 [![Discord](https://img.shields.io/discord/385916768696139794.svg?label=reMarkable&logo=discord&logoColor=ffffff&color=7389D8&labelColor=6A7EC2)](https://discord.gg/ATqQGfu)
 
-Toltec is a community-maintained repository of free software for [the reMarkable tablet](https://remarkable.com/).
+Toltec is a community-maintained repository of free software for the [reMarkable tablet](https://remarkable.com/).
 
-### Installing and Using
+### Installation and Use
 
-Please refer to [our website](https://toltec-dev.org/) for up to date information on how to install and use Toltec.
+Please refer to [the Toltec website](https://toltec-dev.org/) for up-to-date information on how to install and use Toltec.
 
 ### Building
 
