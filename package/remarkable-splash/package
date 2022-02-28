@@ -28,7 +28,7 @@ build() {
     make
 }
 
-remarkable-splash(){
+remarkable-splash() {
     pkgdesc="Show splashscreens + remarkable-shutdown replacement that does not clear the screen"
     installdepends_rm2=(display)
     package() {
@@ -36,11 +36,11 @@ remarkable-splash(){
     }
 }
 
-open-remarkable-shutdown(){
+open-remarkable-shutdown() {
     pkgdesc="Use remarkable-splash to display shutdown and reboot images"
     installdepends=(remarkable-splash)
     installdepends_rm2=(display)
-    package(){
+    package() {
         install -D -m 644 -t "$pkgdir"/etc/systemd/system/remarkable-shutdown.service.d "$srcdir"/remarkable-shutdown-override.conf
         install -D -m 644 -t "$pkgdir"/etc/systemd/system/remarkable-reboot.service.d "$srcdir"/remarkable-reboot-override.conf
     }
