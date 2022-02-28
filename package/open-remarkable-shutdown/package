@@ -27,3 +27,7 @@ package() {
     install -D -m 644 -t "$pkgdir"/etc/systemd/system/remarkable-shutdown.service.d "$srcdir"/remarkable-shutdown-override.conf
     install -D -m 644 -t "$pkgdir"/etc/systemd/system/remarkable-reboot.service.d "$srcdir"/remarkable-reboot-override.conf
 }
+
+configure() {
+    systemctl daemon-reload
+}
