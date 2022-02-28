@@ -17,3 +17,5 @@ installdepends_rm2=(rm2-suspend-fix)
 
 source=()
 sha256sums=()
+
+prepare() {}
