@@ -2,6 +2,7 @@
 # Copyright (c) 2021 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
+archs=(rm1 rm2)
 pkgnames=(remarkable-splash open-remarkable-shutdown)
 url=https://github.com/ddvk/remarkable-splash
 pkgver=1.0-6
