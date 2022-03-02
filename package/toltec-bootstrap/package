@@ -12,7 +12,7 @@ maintainer="Eeems <eeems@eeems.email>"
 license=MIT
 # NOTE: The following dependencies will NOT be honored during bootstrap
 # and will only be available after the install is completed
-installdepends=(coreutils-tsort)
+installdepends=(coreutils-tsort toltec-base)
 
 source=(
     toltecctl

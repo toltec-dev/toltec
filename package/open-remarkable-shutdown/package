@@ -2,7 +2,6 @@
 # Copyright (c) 2021 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
-archs=(rm1 rm2)
 pkgnames=(open-remarkable-shutdown)
 pkgdesc="Use remarkable-splash to display shutdown and reboot images"
 url=https://github.com/ddvk/remarkable-splash
@@ -12,7 +11,6 @@ section="utils"
 maintainer="Eeems <eeems@eeems.email>"
 license=MIT
 installdepends=(remarkable-splash)
-installdepends_rm2=(display)
 
 source=(
     remarkable-shutdown-override.conf

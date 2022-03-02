@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: MIT
 
 archs=(rm1 rm2)
-pkgnames=(toltec-meta)
+pkgnames=(toltec-base)
 pkgdesc="Toltec meta packages to ensure that the required base packages get installed"
 url=https://toltec-dev.org/
 pkgver=1.0-1
