@@ -17,10 +17,12 @@ source=(
     xochitl.png
     xochitl.draft
     xochitl.oxide
+    toltec-after-launcher.conf
     toltec-wrapper.conf
     env-readme
 )
 sha256sums=(
+    SKIP
     SKIP
     SKIP
     SKIP
