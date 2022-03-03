@@ -10,6 +10,10 @@ timestamp=2021-11-29T22:06Z
 section="readers"
 maintainer="Mattéo Delabre <spam@delab.re>"
 license=MIT
+# TODO: toltec-base is now installed by default for new users. It is listed
+# below as a transitional dependency to ensure that it gets installed for
+# existing users (see toltec-dev/toltec#532 for context). This dependency
+# should be removed once the package has reached enough users
 installdepends=(findutils toltec-base)
 
 source=(

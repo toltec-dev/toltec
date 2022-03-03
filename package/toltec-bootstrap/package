@@ -12,6 +12,10 @@ maintainer="Eeems <eeems@eeems.email>"
 license=MIT
 # NOTE: The following dependencies will NOT be honored during bootstrap
 # and will only be available after the install is completed
+# TODO: toltec-base is now installed by default for new users. It is listed
+# below as a transitional dependency to ensure that it gets installed for
+# existing users (see toltec-dev/toltec#532 for context). This dependency
+# should be removed once the package has reached enough users
 installdepends=(coreutils-tsort toltec-base)
 
 source=(
