@@ -29,3 +29,7 @@ package() {
 configure() {
     systemctl daemon-reload
 }
+
+postremove() {
+    systemctl daemon-reload
+}
