@@ -105,7 +105,9 @@ class GenericRecipe:  # pylint:disable=too-many-instance-attributes
             if name not in variables:
                 variables[name] = value
             else:
-                if isinstance(variables[name], str):
+                base_value = variables[name]
+
+                if isinstance(base_value, str):
                     if not isinstance(value, str):
                         raise RecipeError(
                             f"Recipe '{self.name}' declares the \
@@ -114,14 +116,14 @@ class GenericRecipe:  # pylint:disable=too-many-instance-attributes
 
                     variables[name] = value
 
-                if isinstance(variables[name], list):
+                if isinstance(base_value, list):
                     if not isinstance(value, list):
                         raise RecipeError(
                             f"Recipe '{self.name}' declares the \
 '{name}' field several times with different types"
                         )
 
-                    variables[name] = variables[name].copy() + value
+                    variables[name] = base_value + value
 
         self.recipes[arch] = Recipe(
             self, f"{self.name}-{arch}", variables, functions
