@@ -1,0 +1,175 @@
+#!/usr/bin/env bash
+# Copyright (c) 2022 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+#set -euo pipefail
+
+# kernel staging dir
+kernelctl_dir=/opt/usr/share/kernelctl
+
+# current status
+kernelctl_status="$kernelctl_dir"/status
+
+# Formatting
+bf="\033[1m"        # bold
+sf="\033[0m"        # standard
+c1="\033[1;32m"     # green
+c2="\033[1;34m"     # blue
+
+# change our working directory to / to ease filesystem operations
+cd /
+
+help() {
+    echo -e "Usage: $(basename "$0") COMMAND
+Manage your booting kernel. 
+
+${c1}Available commands:${sf}
+    ${bf}help                    ${sf}Show this help message.
+    ${bf}init                    ${sf}Initialize kernelctl and backup vendor kernel.
+    ${bf}list                    ${sf}List available kernels.
+    ${bf}show                    ${sf}Show the current configured kernel.
+    ${bf}delete <kernel>         ${sf}Delete kernel from the staging dir. WARNING this is irreversible.
+    ${bf}set <kernel>            ${sf}Change booting kernel.
+    ${bf}  kernel                ${sf}  Kernel name or number (from 'list' command) or "default" to revert to the upstram kernel."
+}
+
+# initialize kernelctl and backup current kernel
+init() {
+    if [[ ! -d $kernelctl_dir ]]; then 
+        mkdir -p "$kernelctl_dir"
+    fi
+    
+    current_version="$(</etc/version)"
+    archive_name="$kernelctl_dir"/vendor-"$current_version".tar.bz2
+   
+    if [[ -e "$archive_name" ]]; then
+        echo "It looks like we already have a backup copy of the vendor kernel
+of the current installed firmware.
+
+If you really want to back it up again please run
+
+$(basename $0) delete vendor-$current_version
+$(basename $0) init"
+        exit 1
+    fi
+    
+    tar cpjf "$archive_name" lib/modules/* boot/zImage* boot/*.dtb
+    echo "vendor-$current_version" > "$kernelctl_status"
+}
+
+# get available kernels
+get_kernels() {
+    kernels=($( find "$kernelctl_dir" -path "*.tar.bz2" | xargs -I"{}" basename {} .tar.bz2 ))
+}
+
+# translate input into a kernel name
+to_kernel_name() {
+    get_kernels
+    if (( 0 < $1 && $1 <= ${#kernels[@]} )); then
+        echo ${kernels[$(($1-1))]}
+        return
+    elif [[ "$1" = "default" ]]; then
+        local ker="vendor-$(</etc/version)"
+    else
+        local ker="$1"
+    fi
+    if [[ $(echo ${kernels[@]} | grep -ow "$ker" | wc -w) -gt 0 ]]; then
+        echo $ker
+    else
+        echo "Can't find $ker in the staging area"
+        exit 1
+    fi
+}
+
+# list available kernels
+list() {
+    echo -e "${c1}Available kernels:${sf}"
+    get_kernels
+    local current_kernel="$(<$kernelctl_status)"
+    for i in ${!kernels[@]}; do
+        if [[ "$current_kernel" = ${kernels[$i]} ]]; then cur=" ${c2}*${sf}"; else cur=""; fi
+	echo -e "  ${bf}[$(($i+1))]${sf}\t${kernels[$i]}$cur"
+    done
+}
+
+# show the current configured kernel
+show() {
+    echo -e "${c1}Current kernel:${sf}"
+    echo -e "  ${bf}$(<$kernelctl_status)${sf}"
+}
+
+# change the kernel that will boot next time
+set() {
+    new_kernel="$kernelctl_dir/$(to_kernel_name $1).tar.bz2"
+    current_kernel="$kernelctl_dir/$(<$kernelctl_status).tar.bz2"
+    if [[ ! -e "$current_kernel" ]]; then
+        echo -e "${bf}There is no copy of the current running kernel in the staging
+area, you might have accidentally deleted it!${sf}
+If you are running a vendor kernel try making a backup with
+
+$(basename $0) init"
+        exit 1
+    fi
+    tar tjf "$current_kernel" | xargs rm -r
+    tar xpjf "$new_kernel"
+    echo "Reboot system to use your newly installed kernel."
+}
+
+# delete kernel from staging dir
+delete() {
+    kernel=$(to_kernel_name $1)
+    if [[ "$kernel" == "$(<$kernelctl_status)" ]]; then
+        echo -e "${bf}Attempting to delete the current running kernel from the staging area. 
+This might prevent $(basename $0) from running properly in the future.${sf}"
+    fi
+    echo "Deleting $kernel from the staging area is irreversible."
+    echo -n "Do you want to proceed? [N/y]: "
+    read ans
+    if [[ "$ans" == "y" || "$ans" == "Y" ]]; then
+        rm "$kernelctl_dir"/"$kernel".tar.bz2
+    fi
+}
+
+if [[ $0 = "${BASH_SOURCE[0]}" ]]; then
+    if [[ $# -eq 0 ]]; then
+        help
+        exit 1
+    fi
+
+    action="$1"
+    shift
+
+    case $action in
+        help | -h | --help)
+            help
+            ;;
+        list)
+            list
+            ;;
+        show)
+            show
+            ;;
+        init)
+            init
+            ;;
+        set)
+            if [[ $# -ne 1 ]]; then
+                help
+                exit 1
+            fi
+            set "$1"
+            ;;
+        delete)
+            if [[ $# -ne 1 ]]; then
+                help
+                exit 1
+            fi
+            delete "$1"
+            ;;
+        *)
+            echo -e "Error: Invalid command '$action'\n"
+            help
+            exit 1
+            ;;
+    esac
+fi
