@@ -8,7 +8,7 @@
 kernelctl_dir=/opt/usr/share/kernelctl
 
 # current status
-kernelctl_status="$kernelctl_dir"/status
+kernelctl_status=/var/opt/kernelctl_status
 
 # Formatting
 bf="\033[1m"        # bold
@@ -25,7 +25,7 @@ Manage your booting kernel.
 
 ${c1}Available commands:${sf}
     ${bf}help                    ${sf}Show this help message.
-    ${bf}init                    ${sf}Initialize kernelctl and backup vendor kernel.
+    ${bf}backup                  ${sf}Backup current kernel. This is guaranteed to work only with vendor kernels.
     ${bf}list                    ${sf}List available kernels.
     ${bf}show                    ${sf}Show the current configured kernel.
     ${bf}delete <kernel>         ${sf}Delete kernel from the staging dir. WARNING this is irreversible.
@@ -34,11 +34,7 @@ ${c1}Available commands:${sf}
 }
 
 # initialize kernelctl and backup current kernel
-init() {
-    if [[ ! -d $kernelctl_dir ]]; then 
-        mkdir -p "$kernelctl_dir"
-    fi
-    
+backup() {
     current_version="$(</etc/version)"
     archive_name="$kernelctl_dir"/vendor-"$current_version".tar.bz2
    
@@ -49,7 +45,7 @@ of the current installed firmware.
 If you really want to back it up again please run
 
 $(basename $0) delete vendor-$current_version
-$(basename $0) init"
+$(basename $0) backup"
         exit 1
     fi
     
@@ -88,7 +84,7 @@ list() {
     local current_kernel="$(<$kernelctl_status)"
     for i in ${!kernels[@]}; do
         if [[ "$current_kernel" = ${kernels[$i]} ]]; then cur=" ${c2}*${sf}"; else cur=""; fi
-	echo -e "  ${bf}[$(($i+1))]${sf}\t${kernels[$i]}$cur"
+        echo -e "  ${bf}[$(($i+1))]${sf}\t${kernels[$i]}$cur"
     done
 }
 
@@ -149,8 +145,8 @@ if [[ $0 = "${BASH_SOURCE[0]}" ]]; then
         show)
             show
             ;;
-        init)
-            init
+        backup)
+            backup
             ;;
         set)
             if [[ $# -ne 1 ]]; then
