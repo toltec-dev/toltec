@@ -19,7 +19,7 @@ cd /
 
 help() {
     echo -e "Usage: $(basename "$0") COMMAND
-Manage your booting kernel. 
+Manage your booting kernel.
 
 ${c1}Available commands:${sf}
     ${bf}backup kernel_name      ${sf}Backup current kernel and name it <kernel_name>. This is guaranteed to work only with vendor kernels.
@@ -40,13 +40,13 @@ backup() {
     fi
 
     archive_file="$kernelctl_dir"/"$archive_name".tar.bz2
-   
+
     if [[ -e "$archive_file" ]]; then
         echo "It looks like we already have a backup copy of $archive_name.
 If you really want to back it up again please run
 
 $(basename $0) delete $archive_name
-$(basename $0) backup $archive_name" 
+$(basename $0) backup $archive_name"
     else
         tar cpjf "$archive_name" lib/modules/* boot/zImage* boot/*.dtb
     fi
@@ -115,7 +115,7 @@ Try making a backup first"
 delete() {
     kernel=$(to_kernel_name $1)
     if [[ "$kernel" == "$(<$kernelctl_status)" ]]; then
-        echo -e "${bf}Attempting to delete the current running kernel from the staging area. 
+        echo -e "${bf}Attempting to delete the current running kernel from the staging area.
 This might prevent $(basename $0) from running properly in the future.${sf}"
     fi
     echo "Deleting $kernel from the staging area is irreversible."
