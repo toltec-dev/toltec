@@ -108,6 +108,7 @@ Try making a backup first"
     tar tjf "$current_kernel" | xargs rm -rf
     tar xpjf "$new_kernel"
     echo "$new_kernel_name" > "$kernelctl_status"
+    /bin/sync
     echo "Reboot system to use your newly installed kernel."
 }
 
