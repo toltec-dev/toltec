@@ -22,7 +22,7 @@ help() {
 Manage your booting kernel.
 
 ${c1}Available commands:${sf}
-    ${bf}backup kernel_name      ${sf}Backup current kernel and name it <kernel_name>. This is guaranteed to work only with vendor kernels.
+    ${bf}backup <kernel>         ${sf}Backup current kernel and name it <kernel>. This is guaranteed to work only with vendor kernels.
     ${bf}help                    ${sf}Show this help message.
     ${bf}list                    ${sf}List available kernels.
     ${bf}show                    ${sf}Show the current configured kernel.
