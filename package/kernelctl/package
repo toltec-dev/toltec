@@ -27,6 +27,6 @@ package() {
 }
 
 configure() {
-    kernelctl backup
+    kernelctl backup vendor
 }
 

@@ -2,8 +2,6 @@
 # Copyright (c) 2022 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
-#set -euo pipefail
-
 # kernel staging dir
 kernelctl_dir=/opt/usr/share/kernelctl
 
@@ -24,8 +22,8 @@ help() {
 Manage your booting kernel. 
 
 ${c1}Available commands:${sf}
+    ${bf}backup kernel_name      ${sf}Backup current kernel and name it <kernel_name>. This is guaranteed to work only with vendor kernels.
     ${bf}help                    ${sf}Show this help message.
-    ${bf}backup                  ${sf}Backup current kernel. This is guaranteed to work only with vendor kernels.
     ${bf}list                    ${sf}List available kernels.
     ${bf}show                    ${sf}Show the current configured kernel.
     ${bf}delete <kernel>         ${sf}Delete kernel from the staging dir. WARNING this is irreversible.
@@ -33,24 +31,26 @@ ${c1}Available commands:${sf}
     ${bf}  kernel                ${sf}  Kernel name or number (from 'list' command) or "default" to revert to the upstram kernel."
 }
 
-# initialize kernelctl and backup current kernel
+# backup current kernel
 backup() {
-    current_version="$(</etc/version)"
-    archive_name="$kernelctl_dir"/vendor-"$current_version".tar.bz2
-   
-    if [[ -e "$archive_name" ]]; then
-        echo "It looks like we already have a backup copy of the vendor kernel
-of the current installed firmware.
+    if [[ "$1" == "vendor" ]]; then
+        archive_name="vendor-$(</etc/version)"
+    else
+        archive_name=$1
+    fi
 
+    archive_file="$kernelctl_dir"/"$archive_name".tar.bz2
+   
+    if [[ -e "$archive_file" ]]; then
+        echo "It looks like we already have a backup copy of $archive_name.
 If you really want to back it up again please run
 
-$(basename $0) delete vendor-$current_version
-$(basename $0) backup"
-        exit 1
+$(basename $0) delete $archive_name
+$(basename $0) backup $archive_name" 
+    else
+        tar cpjf "$archive_name" lib/modules/* boot/zImage* boot/*.dtb
     fi
-    
-    tar cpjf "$archive_name" lib/modules/* boot/zImage* boot/*.dtb
-    echo "vendor-$current_version" > "$kernelctl_status"
+    echo "$archive_name" > "$kernelctl_status"
 }
 
 # get available kernels
@@ -96,18 +96,18 @@ show() {
 
 # change the kernel that will boot next time
 set() {
-    new_kernel="$kernelctl_dir/$(to_kernel_name $1).tar.bz2"
+    new_kernel_name="$(to_kernel_name $1)"
+    new_kernel="$kernelctl_dir/${new_kernel_name}.tar.bz2"
     current_kernel="$kernelctl_dir/$(<$kernelctl_status).tar.bz2"
     if [[ ! -e "$current_kernel" ]]; then
         echo -e "${bf}There is no copy of the current running kernel in the staging
 area, you might have accidentally deleted it!${sf}
-If you are running a vendor kernel try making a backup with
-
-$(basename $0) init"
+Try making a backup first"
         exit 1
     fi
-    tar tjf "$current_kernel" | xargs rm -r
+    tar tjf "$current_kernel" | xargs rm -rf
     tar xpjf "$new_kernel"
+    echo "$new_kernel_name" > "$kernelctl_status"
     echo "Reboot system to use your newly installed kernel."
 }
 
@@ -146,7 +146,11 @@ if [[ $0 = "${BASH_SOURCE[0]}" ]]; then
             show
             ;;
         backup)
-            backup
+            if [[ $# -ne 1 ]]; then
+                help
+                exit 1
+            fi
+            backup $1
             ;;
         set)
             if [[ $# -ne 1 ]]; then
