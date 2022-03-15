@@ -48,7 +48,7 @@ If you really want to back it up again please run
 $(basename $0) delete $archive_name
 $(basename $0) backup $archive_name"
     else
-        tar cpjf "$archive_name" lib/modules/* boot/zImage* boot/*.dtb
+        tar cpjf "$archive_file" lib/modules/* boot/zImage* boot/*.dtb
     fi
     echo "$archive_name" > "$kernelctl_status"
 }
