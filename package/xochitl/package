@@ -5,8 +5,8 @@
 pkgnames=(xochitl)
 pkgdesc="Read documents and take notes"
 url=https://remarkable.com
-pkgver=0.0.0-12
-timestamp=2021-11-29T22:06Z
+pkgver=0.0.0-13
+timestamp=2022-03-05T23:26Z
 section="readers"
 maintainer="Mattéo Delabre <spam@delab.re>"
 license=MIT
@@ -14,7 +14,7 @@ license=MIT
 # below as a transitional dependency to ensure that it gets installed for
 # existing users (see toltec-dev/toltec#532 for context). This dependency
 # should be removed once the package has reached enough users
-installdepends=(findutils toltec-base)
+installdepends=(toltec-base)
 
 source=(
     xochitl
@@ -60,8 +60,22 @@ package() {
 
 configure() {
     systemctl daemon-reload
+
+    if is-enabled xochitl.service && ! is-enabled launcher.service; then
+        # This package changes xochitl.service to alias it to launcher.service
+        # when enabled. If xochitl was previously enabled, force the creation
+        # of this alias by re-enabling the service
+        systemctl enable xochitl.service 2> /dev/null
+    fi
 }
 
 postremove() {
     systemctl daemon-reload
+
+    if is-enabled xochitl.service && is-enabled launcher.service; then
+        # If xochitl is currently the active launcher, make sure the
+        # launcher.service alias is removed
+        systemctl disable xochitl.service 2> /dev/null
+        systemctl enable xochitl.service 2> /dev/null
+    fi
 }
