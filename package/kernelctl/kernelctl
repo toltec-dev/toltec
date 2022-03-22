@@ -73,7 +73,7 @@ to_kernel_name() {
         echo "${kernels[$(($1 - 1))]}"
         return
     elif [[ "$1" = "default" ]]; then
-        ker ="vendor-$(< /etc/version)"
+        ker="vendor-$(< /etc/version)"
     else
         ker="$1"
     fi
