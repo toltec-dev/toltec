@@ -62,7 +62,7 @@ backup() {
 
 # get available kernels
 get_kernels() {
-    mapfile kernels < <(find "$kernelctl_dir" -path "*.tar.bz2" | xargs -I"{}" basename {} .tar.bz2)
+    mapfile kernels < <(find "$kernelctl_dir" -path "*.tar.bz2" -print0 | xargs -0 -I"{}" basename {} .tar.bz2)
 }
 
 # translate input into a kernel name
