@@ -51,6 +51,38 @@ identify-model() {
     esac
 }
 
+# Check to see if the version is supported and error if it isn't supported
+check-version() {
+    local version
+    local force
+    force=$1
+    version="$(cat /etc/version)"
+    case "$(identify-model)" in 
+        rm1)
+            if (( $version > 20220303122245 ));then
+                echo "You’re running an unsupported OS version: $version"
+                if [[ -z $force ]]; then
+                    exit 1
+                fi
+            fi
+            ;;
+        rm2)
+            if (( $version > 20220303120824 ));then
+                echo "You’re running an unsupported OS version: $version"
+                if [[ -z $force ]]; then
+                    exit 1
+                fi
+            fi
+            ;;
+        *)
+            echo "You’re running an unsupported or unrecognised device"
+            if [[ -z $force ]]; then
+                exit 1
+            fi
+            ;;
+    esac
+}
+
 # Get the password used to login to the SSH prompt
 #
 # Output: SSH password
@@ -406,6 +438,7 @@ if [[ $0 = "${BASH_SOURCE[0]}" ]]; then
                 fi
                 shift
             done
+            check-version $force
 
             if [[ -z $force ]] && ! wget --quiet --spider "$toltec_srv_root/$target_branch"; then
                 cat << MSG
@@ -456,6 +489,9 @@ MSG
             ;;
 
         reenable)
+            force=$({ (($# > 0)) && [[ $1 = "--force" || $1 = "-f" ]] && echo 1; } || true)
+
+            check-version $force
             reenable
             ;;
 
