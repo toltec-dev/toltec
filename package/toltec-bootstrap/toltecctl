@@ -491,7 +491,7 @@ MSG
         reenable)
             force=$({ (($# > 0)) && [[ $1 = "--force" || $1 = "-f" ]] && echo 1; } || true)
 
-            check-version $force
+            check-version "$force"
             reenable
             ;;
 
