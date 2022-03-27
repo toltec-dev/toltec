@@ -117,7 +117,7 @@ set() {
         echo -e "$msg"
         exit 1
     fi
-    tar tjf "$current_kernel" | xargs rm -rf
+    tar tjf "$current_kernel" | sort -r | xargs rm -d 2> /dev/null
     tar xpjf "$new_kernel"
     echo "$new_kernel_name" > "$kernelctl_status"
     /bin/sync
