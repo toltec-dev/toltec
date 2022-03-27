@@ -59,7 +59,7 @@ check-version() {
     version="$(cat /etc/version)"
     case "$(identify-model)" in
         rm1)
-            if (($version > 20220303122245));then
+            if (($version > 20220303122245)); then
                 echo "You’re running an unsupported OS version: $version"
                 if [[ -z $force ]]; then
                     exit 1
@@ -67,7 +67,7 @@ check-version() {
             fi
             ;;
         rm2)
-            if (($version > 20220303120824));then
+            if (($version > 20220303120824)); then
                 echo "You’re running an unsupported OS version: $version"
                 if [[ -z $force ]]; then
                     exit 1
