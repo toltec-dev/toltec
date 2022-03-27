@@ -60,23 +60,23 @@ check-version() {
     case "$(identify-model)" in
         rm1)
             if ((version > 20220303122245)); then
-                echo "You’re running an unsupported OS version: $version"
-                if [[ -z $force ]]; then
+                echo "You're running an unsupported OS version: $version"
+                if ((force != 1)); then
                     exit 1
                 fi
             fi
             ;;
         rm2)
             if ((version > 20220303120824)); then
-                echo "You’re running an unsupported OS version: $version"
-                if [[ -z $force ]]; then
+                echo "You're running an unsupported OS version: $version"
+                if ((force != 1)); then
                     exit 1
                 fi
             fi
             ;;
         *)
-            echo "You’re running an unsupported or unrecognised device"
-            if [[ -z $force ]]; then
+            echo "You're running an unsupported or unrecognised device"
+            if ((force != 1)); then
                 exit 1
             fi
             ;;
