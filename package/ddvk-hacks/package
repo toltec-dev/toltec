@@ -35,6 +35,7 @@ package() {
         install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/2103379_rm1/patch_28.1.02
         install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/2110442_rm1/patch_29.1.02
         install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/2121527_rm1/patch_30.1.08
+        install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/2122573_rm1/patch_31.1.01
     elif [[ $arch = rm2 ]]; then
         install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/26171_rm2/patch_19.2.02
         install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/26275_rm2/patch_20.2.03
@@ -48,6 +49,7 @@ package() {
         install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/2103379_rm2/patch_28.2.02
         install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/2110442_rm2/patch_29.2.02
         install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/2121527_rm2/patch_30.2.07
+        install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/2122573_rm2/patch_31.2.01
     fi
 }
 
@@ -61,6 +63,11 @@ configure() {
     if [[ $arch = rm1 ]]; then
         device="reMarkable 1"
         case "$build_date" in
+            "20220303122245")
+                patch_version="31.1.01"
+                original_hash="00b5095022a48e48cdbe435b8afff0e3dc736b96"
+                xochitl_version="2.12.2.573"
+                ;;
             "20220202133055")
                 patch_version="30.1.08"
                 original_hash="c542ee591b45cb18599dc852cc0d3ce82ec86b56"
@@ -122,6 +129,11 @@ configure() {
     elif [[ $arch = rm2 ]]; then
         device="reMarkable 2"
         case "$build_date" in
+            "20220303120824")
+                patch_version="31.2.01"
+                original_hash="7105e311df4df7f4ccde457ce574da63f49d3a4e"
+                xochitl_version="2.12.2.573"
+                ;;
             "20220202133838")
                 patch_version="30.2.07"
                 original_hash="8728cf8a2677a1b458f8e1ed665f8c1358568f7f"
