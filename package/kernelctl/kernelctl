@@ -117,11 +117,20 @@ set() {
         echo -e "$msg"
         exit 1
     fi
-    tar tjf "$current_kernel" | sort -r | xargs -r rm -d
+    tar tjf "$current_kernel" | sort -r | xargs -r -n 1 rm_file_or_dir
     tar xpjf "$new_kernel"
     echo "$new_kernel_name" > "$kernelctl_status"
     /bin/sync
     echo "Reboot system to use your newly installed kernel."
+}
+
+# delete file or empty directory
+rm_file_or_dir() {
+    if [[ -d "$1" ]]; then
+        rmdir "$1"
+    else
+        rm "$1"
+    fi
 }
 
 # delete kernel from staging dir
