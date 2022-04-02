@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+# Copyright (c) 2022 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+archs=(rm1 rm2)
+pkgnames=(linux-stracciatella)
+pkgdesc="RemarkableAS's vanilla kernel with few extra flakes"
+url=https://github.com/Etn40ff/linux-remarkable
+pkgver=5.4.70-1
+timestamp=2022-04-02T18:36:09+02:00
+section="devel"
+maintainer="Salvatore Stella <etn45p4m@gmail.com>"
+license=GPL-2.0-only
+flags=(nostrip)
+installdepends=(kernelctl)
+makedepends=(build:flex build:bison build:libssl-dev build:bc build:lzop build:libgmp-dev build:libmpc-dev build:kmod)
+image=base:v2.2
+
+source=(https://github.com/Etn40ff/linux-remarkable/archive/1267ccc13d144b6adacf781fefea9301544f2233.tar.gz)
+sha256sums=(3b0cac3019215f8110fa39f50bcc8867c071bab64c9e8a4b98c62a58d622684b)
+
+build() {
+    mkdir -p out/lib
+    mkdir -p out/boot
+    if [[ $arch = rm1 ]]; then
+        ARCH=arm make zero-gravitas_defconfig
+    elif [[ $arch = rm2 ]]; then
+        ARCH=arm make zero-sugar_defconfig
+    fi
+    ARCH=arm make -j8
+    ARCH=arm make modules_install INSTALL_MOD_PATH="out/"
+    cp arch/arm/boot/zImage out/boot/zImage
+    if [[ $arch = rm1 ]]; then
+        cp arch/arm/boot/dts/zero-gravitas.dtb out/boot/zero-gravitas.dtb
+    elif [[ $arch = rm2 ]]; then
+        cp arch/arm/boot/dts/zero-sugar.dtb out/boot/zero-sugar.dtb
+    fi
+    rm out/lib/modules/*/source
+    rm out/lib/modules/*/build
+}
+
+package() {
+    pushd "$srcdir"/out
+    tar cpjf ../stracciatella-"$pkgver".tar.bz2 lib/modules/* boot/*
+    popd
+    install -D -m 644 -t "$pkgdir"/opt/usr/share/kernelctl "$srcdir"/stracciatella-"$pkgver".tar.bz2
+}
+
+configure() {
+    echo -e "Please kernelctl to select the kernel to boot."
+}
