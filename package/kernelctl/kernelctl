@@ -23,7 +23,7 @@ help() {
 		Manage your booting kernel.
 
 		${c1}Available commands:${sf}
-		${bf}    backup <kernel_name>    ${sf}Backup current kernel and name it <kernel_name>. This is guaranteed to work only with vendor kernels.
+		${bf}    backup <kernel_name>    ${sf}Backup current kernel and name it <kernel_name>. This is guaranteed to work only with vanilla kernels.
 		${bf}    help                    ${sf}Show this help message.
 		${bf}    list                    ${sf}List available kernels.
 		${bf}    show                    ${sf}Show the current configured kernel.
@@ -37,8 +37,8 @@ help() {
 
 # backup current kernel
 backup() {
-    if [[ "$1" == "vendor" ]]; then
-        archive_name="vendor-$(< /etc/version)"
+    if [[ "$1" == "vanilla" ]]; then
+        archive_name="vanilla-$(< /etc/version)"
     else
         archive_name=$1
     fi
@@ -73,7 +73,7 @@ to_kernel_name() {
         echo "${kernels[$(($1 - 1))]}"
         return
     elif [[ "$1" = "default" ]]; then
-        ker="vendor-$(< /etc/version)"
+        ker="vanilla-$(< /etc/version)"
     else
         ker="$1"
     fi
