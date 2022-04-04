@@ -109,7 +109,7 @@ set() {
     new_kernel="$kernelctl_dir/${new_kernel_name}.tar.bz2"
     current_kernel="$kernelctl_dir/$(< $kernelctl_status).tar.bz2"
     if [[ ! -e "$current_kernel" ]]; then
-        rear -r -d '' msg <<- EOM
+        read -r -d '' msg <<- EOM
 			${bf}There is no copy of the current running kernel in the staging
 			area, you might have accidentally deleted it!${sf}
 			Try making a backup first
