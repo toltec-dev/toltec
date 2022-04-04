@@ -4,7 +4,7 @@
 
 archs=(rm1 rm2)
 pkgnames=(linux-stracciatella)
-pkgdesc="RemarkableAS's vanilla kernel with few extra flakes"
+pkgdesc="RemarkableAS's vanilla kernel with a few extra flakes"
 url=https://github.com/Etn40ff/linux-remarkable
 pkgver=5.4.70-1
 timestamp=2022-04-02T18:36:09+02:00
