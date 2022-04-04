@@ -47,5 +47,5 @@ package() {
 }
 
 configure() {
-    echo -e "Please kernelctl to select the kernel to boot."
+    echo -e "Please use kernelctl to select the kernel to boot."
 }
