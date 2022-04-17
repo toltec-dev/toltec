@@ -3,8 +3,10 @@
 # SPDX-License-Identifier: MIT
 
 for file in /opt/etc/xochitl.env.d/*.env; do
-    echo "Sourcing $file"
-    # shellcheck disable=SC1090
-    source "$file"
+    if [[ -r $file ]]; then
+        echo "Sourcing $file"
+        # shellcheck disable=SC1090
+        source "$file"
+    fi
 done
 exec /usr/bin/xochitl "$@"
