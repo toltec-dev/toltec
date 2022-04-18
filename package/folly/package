@@ -5,7 +5,7 @@
 pkgnames=(folly)
 pkgdesc="Z-machine interpreter for interactive fiction"
 url="https://github.com/bkirwi/folly"
-pkgver=0.0.1-2
+pkgver=0.0.1-3
 timestamp=2022-01-29T15:35:52-05:00
 section=games
 maintainer="Ben Kirwin <ben@kirw.in>"
@@ -17,12 +17,12 @@ image=rust:v2.3
 
 # Whitespace-separated list of source archives that are needed to build the package
 source=(
-    https://github.com/bkirwi/folly/archive/842bad4f0d6e0f35cd92d4693896ed353821a1fd.zip
+    https://github.com/bkirwi/folly/archive/fe47fedbc9b77207de89c34c8133fa0d66e5079b.zip
     folly.draft
 )
 # SHA-256 checksums of the source archives above
 sha256sums=(
-    9283495e87c0b4c383703b7c8514b17ead77298681eed0a186f4141fa9b129a8
+    16d572cbe78605baa7df66e148e2a5083efd5a9642e2a033bf626207a1568a87
     SKIP
 )
 
