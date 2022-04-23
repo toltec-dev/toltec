@@ -5,22 +5,28 @@
 pkgnames=(xochitl)
 pkgdesc="Read documents and take notes"
 url=https://remarkable.com
-pkgver=0.0.0-11
-timestamp=2021-11-29T22:06Z
+pkgver=0.0.0-13
+timestamp=2022-03-05T23:26Z
 section="readers"
 maintainer="Mattéo Delabre <spam@delab.re>"
 license=MIT
-installdepends=(findutils)
+# TODO: toltec-base is now installed by default for new users. It is listed
+# below as a transitional dependency to ensure that it gets installed for
+# existing users (see toltec-dev/toltec#532 for context). This dependency
+# should be removed once the package has reached enough users
+installdepends=(toltec-base)
 
 source=(
     xochitl
     xochitl.png
     xochitl.draft
     xochitl.oxide
+    toltec-after-launcher.conf
     toltec-wrapper.conf
     env-readme
 )
 sha256sums=(
+    SKIP
     SKIP
     SKIP
     SKIP
@@ -33,19 +39,43 @@ package() {
     install -d "$pkgdir"/opt/etc/draft \
         "$pkgdir"/opt/etc/draft/icons \
         "$pkgdir"/opt/etc/xochitl.env.d \
-        "$pkgdir"/etc/systemd/system/xochitl.service.d
+        "$pkgdir"/etc/systemd/system/xochitl.service.d \
+        "$pkgdir"/etc/systemd/system/remarkable-shutdown.service.d \
+        "$pkgdir"/etc/systemd/system/remarkable-reboot.service.d
+
     install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/xochitl
     install -D -m 644 "$srcdir"/env-readme "$pkgdir"/opt/etc/xochitl.env.d/README
+
     install -D -m 644 -t "$pkgdir"/opt/etc/draft "$srcdir"/xochitl.draft
     install -D -m 644 -t "$pkgdir"/opt/etc/draft/icons "$srcdir"/xochitl.png
     install -D -m 644 -t "$pkgdir"/opt/usr/share/applications "$srcdir"/xochitl.oxide
-    install -D -m 644 -t "$pkgdir"/etc/systemd/system/xochitl.service.d "$srcdir"/toltec-wrapper.conf
+
+    install -D -m 644 -t "$pkgdir"/etc/systemd/system/xochitl.service.d \
+        "$srcdir"/toltec-wrapper.conf
+    install -D -m 644 -t "$pkgdir"/etc/systemd/system/remarkable-shutdown.service.d \
+        "$srcdir"/toltec-after-launcher.conf
+    install -D -m 644 -t "$pkgdir"/etc/systemd/system/remarkable-reboot.service.d \
+        "$srcdir"/toltec-after-launcher.conf
 }
 
 configure() {
     systemctl daemon-reload
+
+    if is-enabled xochitl.service && ! is-enabled launcher.service; then
+        # This package changes xochitl.service to alias it to launcher.service
+        # when enabled. If xochitl was previously enabled, force the creation
+        # of this alias by re-enabling the service
+        systemctl enable xochitl.service 2> /dev/null
+    fi
 }
 
 postremove() {
     systemctl daemon-reload
+
+    if is-enabled xochitl.service && is-enabled launcher.service; then
+        # If xochitl is currently the active launcher, make sure the
+        # launcher.service alias is removed
+        systemctl disable xochitl.service 2> /dev/null
+        systemctl enable xochitl.service 2> /dev/null
+    fi
 }

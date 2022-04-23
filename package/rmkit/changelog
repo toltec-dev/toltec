@@ -1,3 +1,21 @@
+2022-03-16 raisjn <of.raisjn@arkose>
+	remux
+
+	* RLE snapshots use less memory
+	* save bpp when screenshotting current app
+	* filter palm events from gestures (less false positives)
+
+	harmony:
+
+	* RLE snapshots for history (less memory usage)
+	* add layer support
+	* fix segfault when when showing empty load/import dialogs
+	* exporting canvas to png supports grays instead of dithering
+
+	rmkit:
+
+	* support SYN_DROPPED in wacom events
+
 2022-01-29 raisjn <of.raisjn@arkose>
 	rpncalc:
 
