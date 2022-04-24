@@ -51,36 +51,69 @@ identify-model() {
     esac
 }
 
+# Find the current OS release timestamp
+#
+# Output: Timestamp of the current release in YYYYMMDDHHMMSS format
+get-release-timestamp() {
+    cat /etc/version
+}
+
+# Find the current OS release version
+#
+# Output: Current version in the X.Y.Z.P format
+get-release-version() {
+    awk -F= '/RELEASE_VERSION/{print $2}' /usr/share/remarkable/update.conf
+}
+
 # Check to see if the version is supported and error if it isn't supported
+#
+# Arguments:
+#
+# $1 - Branch for which to check support
+#
+# Exit code:
+#
+# 0 - if the current version is supported
+# 1 - if unsupported
+# 2 - if version compatibility information could not be retrieved
 check-version() {
-    local version
-    local force
-    force=$1
-    version="$(cat /etc/version)"
-    case "$(identify-model)" in
-        rm1)
-            if ((version > 20220303122245)); then
-                echo "You're running an unsupported OS version: $version"
-                if ((force != 1)); then
-                    exit 1
-                fi
-            fi
-            ;;
-        rm2)
-            if ((version > 20220303120824)); then
-                echo "You're running an unsupported OS version: $version"
-                if ((force != 1)); then
-                    exit 1
-                fi
-            fi
-            ;;
-        *)
-            echo "You're running an unsupported or unrecognised device"
-            if ((force != 1)); then
-                exit 1
-            fi
-            ;;
-    esac
+    local check_branch
+    local current_model
+    local current_timestamp
+    local current_version
+    check_branch="$1"
+    current_model="$(identify-model)"
+    current_timestamp="$(get-release-timestamp)"
+    current_version="$(get-release-version)"
+
+    local supported_timestamp
+    local supported_version
+    local compat
+
+    if ! compat="$(
+        wget --no-verbose --output-document \
+            "$toltec_srv_root"/"$check_branch"/Compatibility \
+            2> /dev/null
+    )"; then
+        echo "Unable to fetch version compatibility information"
+        return 2
+    fi
+
+    supported_version="$(
+        echo "$compat" | awk "/$current_model-max-os-version/{ print \$2 }"
+    )"
+    supported_timestamp="$(
+        echo "$compat" | awk "/$current_model-max-os-timestamp/{ print \$2 }"
+    )"
+
+    if ((current_version > supported_version)); then
+        echo "You’re running an unsupported OS version: $current_version"
+        echo "Toltec currently supports versions up to $supported_version"
+        echo "Please monitor Toltec releases for upcoming support"
+        return 1
+    fi
+
+    return 0
 }
 
 # Get the password used to login to the SSH prompt
@@ -299,6 +332,24 @@ src/gz entware https://bin.entware.net/armv7sf-k3.2
 CONF
 }
 
+# Get the current Toltec branch of this installation
+#
+# Output: Current branch name
+get-branch() {
+    local srv_prefix_len=${#toltec_srv_root}
+    local srv_prefix="${toltec_srv_root//\//\\/}"
+    local awk_get_branch="
+        match(\$0, /$srv_prefix\/(.+)\/rmall/) {
+            print substr( \
+                \$0, \
+                RSTART+$srv_prefix_len+1, \
+                RLENGTH-$srv_prefix_len-1-6 \
+            )
+        }
+    "
+    awk "$awk_get_branch" "$opkg_conf_dir/15-toltec.conf"
+}
+
 # Set the Toltec branch for this installation
 # (generate-opkg-conf must be run afterwards to rebuild the main config file)
 #
@@ -438,7 +489,6 @@ if [[ $0 = "${BASH_SOURCE[0]}" ]]; then
                 fi
                 shift
             done
-            check-version "$force"
 
             if [[ -z $force ]] && ! wget --quiet --spider "$toltec_srv_root/$target_branch"; then
                 cat << MSG
@@ -450,6 +500,12 @@ MSG
 
                 if [[ ! $REPLY =~ ^[Yy]$ ]]; then
                     echo "Canceled"
+                    exit 1
+                fi
+            fi
+
+            if ! check-version "$target_branch"; then
+                if [[ -z $force ]]; then
                     exit 1
                 fi
             fi
@@ -491,7 +547,12 @@ MSG
         reenable)
             force=$({ (($# > 0)) && [[ $1 = "--force" || $1 = "-f" ]] && echo 1; } || true)
 
-            check-version "$force"
+            if ! check-version "$(get-branch)"; then
+                if [[ -z $force ]]; then
+                    exit 1
+                fi
+            fi
+
             reenable
             ;;
 
