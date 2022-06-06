@@ -14,7 +14,7 @@ license=MIT
 flags=(nostrip)
 
 source=(https://github.com/ddvk/remarkable-hacks/archive/408694677aba3607aa8ee56bc0368baf91568ce7.zip)
-sha256sums=(ie821c99751f12c65137d5c5dc3387b6663123cf03e1551b5af970ef4290fad5a)
+sha256sums=(e821c99751f12c65137d5c5dc3387b6663123cf03e1551b5af970ef4290fad5a)
 
 _patches_dir="/opt/share/ddvk-hacks"
 _xochitl_path="/usr/bin/xochitl"
