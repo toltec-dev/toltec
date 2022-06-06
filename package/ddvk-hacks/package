@@ -52,7 +52,7 @@ package() {
         install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/2121527_rm2/patch_30.2.07
         install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/2122573_rm2/patch_31.2.01
         install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/2123606_rm2/patch_32.2.02
-        install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/2123606_rm2/patch_33.2.01
+        install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/2130758_rm2/patch_33.2.01
     fi
 }
 
