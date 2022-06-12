@@ -10,6 +10,10 @@ inputs:
     ssh-known-hosts:
         description: Public SSH key of the remote repository
         required: true
+    ssh-port:
+        description: SSH port to use to reach the remote repository
+        required: false
+        default: 22
     remote-path:
         description: Path to the remote directory to place the packages in
         required: true
@@ -25,7 +29,7 @@ runs:
             echo '${{ inputs.ssh-known-hosts }}' > private/known_hosts
             chmod 600 private/*
             rsync --archive --verbose --compress --delete \
-                -e "ssh -i private/id_rsa -o UserKnownHostsFile=private/known_hosts" \
+                -e "ssh -p ${{ inputs.ssh-port }} -i private/id_rsa -o UserKnownHostsFile=private/known_hosts" \
                 '${{ inputs.local-path }}' \
                 '${{ inputs.remote-path }}'
             rm -r private
