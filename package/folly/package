@@ -5,49 +5,51 @@
 pkgnames=(folly)
 pkgdesc="Z-machine interpreter for interactive fiction"
 url="https://github.com/bkirwi/folly"
-pkgver=0.0.1-1
-timestamp=2022-01-29T15:35:52-05:00
+pkgver=0.0.1-3
+timestamp=2022-04-18T17:50:16Z
 section=games
 maintainer="Ben Kirwin <ben@kirw.in>"
 license=MIT
 installdepends=(display)
 makedepends=(build:librust-clang-sys-dev build:libclang-dev build:libc6 build:libc6-dev build:clang)
 
-image=rust:v2.2.2
+image=rust:v2.3
 
 # Whitespace-separated list of source archives that are needed to build the package
 source=(
-    https://github.com/bkirwi/folly/archive/842bad4f0d6e0f35cd92d4693896ed353821a1fd.zip
+    https://github.com/bkirwi/folly/archive/fe47fedbc9b77207de89c34c8133fa0d66e5079b.zip
     folly.draft
 )
 # SHA-256 checksums of the source archives above
 sha256sums=(
-    9283495e87c0b4c383703b7c8514b17ead77298681eed0a186f4141fa9b129a8
+    16d572cbe78605baa7df66e148e2a5083efd5a9642e2a033bf626207a1568a87
     SKIP
 )
 
 build() {
-    X_TOOLS="/opt/x-tools/arm-remarkable-linux-gnueabihf/arm-remarkable-linux-gnueabihf"
-    X_TOOLS_CPP="$X_TOOLS/include/c++/10.2.0"
+    local cpp_includes
+    local gcc_version
+    gcc_version="$("$CROSS_COMPILE"gcc -dumpfullversion)"
+    cpp_includes="$(realpath "$SYSROOT"/../include/c++/"$gcc_version")"
 
     # Arguments for bindgen's usage of clang
-    export BINDGEN_EXTRA_CLANG_ARGS="\
-      --sysroot=$X_TOOLS/sysroot\
-      -I$X_TOOLS_CPP -I$X_TOOLS_CPP/arm-remarkable-linux-gnueabihf"
+    export BINDGEN_EXTRA_CLANG_ARGS="--sysroot=$SYSROOT -I$cpp_includes \
+        -I$cpp_includes/$NGCONFIG"
 
     # Arguments for the gcc-based tensorflow build in the build.rs file of tflite-rs.
-    export TFLITE_RS_MAKE_TARGET_TOOLCHAIN_PREFIX="arm-remarkable-linux-gnueabihf-"
-    export TFLITE_RS_MAKE_EXTRA_CFLAGS="$BINDGEN_EXTRA_CLANG_ARGS -mfpu=neon -mfloat-abi=hard -mcpu=cortex-a9"
+    export TFLITE_RS_MAKE_TARGET_TOOLCHAIN_PREFIX="$CROSS_COMPILE"
+    export TFLITE_RS_MAKE_EXTRA_CFLAGS="$BINDGEN_EXTRA_CLANG_ARGS \
+        -mfpu=neon -mfloat-abi=hard -mcpu=cortex-a9"
 
     cargo build --release
 
     # Save the build system the trouble of stripping unused binaries
     rm -r target/release/build
-    rm -r target/armv7-unknown-linux-gnueabihf/release/build
+    rm -r target/*/release/build
 }
 
 package() {
     # Install the app binary and the draft file
-    install -D -m 755 "$srcdir"/target/armv7-unknown-linux-gnueabihf/release/folly "$pkgdir"/opt/bin/folly
+    install -D -m 755 "$srcdir"/target/*/release/folly "$pkgdir"/opt/bin/folly
     install -D -m 644 "$srcdir"/folly.draft "$pkgdir"/opt/etc/draft/folly.draft
 }
