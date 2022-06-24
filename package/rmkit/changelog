@@ -1,3 +1,14 @@
+2022-05-06 raisjn <of.raisjn@arkose>
+	remux
+
+	* make palm filtering a config option
+
+	harmony
+
+	* more layer dialog improvements
+	* sort import dialog by file date
+	* refactor pressure / tilt events to use hardware values
+
 2022-03-16 raisjn <of.raisjn@arkose>
 	remux
 
