@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+# Copyright (c) 2022 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgnames=(perf)
+pkgdesc="Linux profiling with performance counters"
+url=https://perf.wiki.kernel.org
+pkgver=5.18.0-1
+timestamp=2022-05-22T21:50:09Z
+section=kernel
+maintainer="Mattéo Delabre <git.matteo@delab.re>"
+license=GPL-2.0-only
+makedepends=(build:bc build:lzop build:git build:flex build:bison)
+
+image=base:v2.3
+source=(https://github.com/alistair23/linux/archive/f9fe680995e01398f0813077711fe1b744251c5b.tar.gz)
+sha256sums=(d38c883a31f5f87483377e78b4b3a2eb1ce73ada38fc25949e692dd0b2dd7895)
+
+build() {
+    make imx_v6_v7_defconfig
+    ARCH=arm make tools/perf
+}
+
+package() {
+    install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/tools/perf/perf
+    ln -s /opt/bin/perf "$pkgdir"/opt/bin/trace
+}
