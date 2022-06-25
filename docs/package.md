@@ -322,6 +322,7 @@ admin           | System administration tools.
 devel           | Dependencies for other apps, like runtimes or libraries.
 drawing         | Apps for drawing and whiteboarding.
 games           | Apps for playing games.
+kernel          | Kernels and modules.
 launchers       | Apps that present to the user a list of other apps that they can launch. Usually started automatically after boot.
 math            | Apps to assist the user in performing mathematical tasks.
 readers         | Apps for reading and annotating documents (PDF, EPUB, …).
