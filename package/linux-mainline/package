@@ -14,7 +14,7 @@ makedepends=(build:flex build:bison build:libssl-dev build:bc build:lzop build:l
 license=GPL-2.0-only
 flags=(nostrip)
 
-image=base:v2.2
+image=base:v2.3
 source=("https://github.com/alistair23/linux/archive/f9fe680995e01398f0813077711fe1b744251c5b.tar.gz")
 sha256sums=(d38c883a31f5f87483377e78b4b3a2eb1ce73ada38fc25949e692dd0b2dd7895)
 
