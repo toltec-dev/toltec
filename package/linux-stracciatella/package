@@ -7,45 +7,50 @@ pkgnames=(linux-stracciatella)
 pkgdesc="RemarkableAS's vanilla kernel with a few extra flakes"
 url=https://github.com/Etn40ff/linux-remarkable
 pkgver=5.4.70-1
-timestamp=2022-04-02T18:36:09+02:00
-section="devel"
+timestamp=2022-06-26T23:50:04+02:00
+section="kernel"
 maintainer="Salvatore Stella <etn45p4m@gmail.com>"
+makedepends=(build:flex build:bison build:libssl-dev build:bc build:lzop build:libgmp-dev build:libmpc-dev build:kmod)
 license=GPL-2.0-only
 flags=(nostrip)
 installdepends=(kernelctl)
-makedepends=(build:flex build:bison build:libssl-dev build:bc build:lzop build:libgmp-dev build:libmpc-dev build:kmod)
-image=base:v2.2
-
-source=(https://github.com/Etn40ff/linux-remarkable/archive/1267ccc13d144b6adacf781fefea9301544f2233.tar.gz)
-sha256sums=(3b0cac3019215f8110fa39f50bcc8867c071bab64c9e8a4b98c62a58d622684b)
+image=base:v2.3
+source=(https://github.com/Etn40ff/linux-remarkable/archive/c6aa07709109f9b5879628396052f60a97ec9197.tar.gz)
+sha256sums=(529fe57ddc25bbaed5f0b3a9f7f79b51ab9ea3388d2acf8a933a8a4c77bd93c0)
 
 build() {
-    mkdir -p out/lib
-    mkdir -p out/boot
     if [[ $arch = rm1 ]]; then
         ARCH=arm make zero-gravitas_defconfig
     elif [[ $arch = rm2 ]]; then
         ARCH=arm make zero-sugar_defconfig
     fi
     ARCH=arm make -j8
-    ARCH=arm make modules_install INSTALL_MOD_PATH="out/"
-    cp arch/arm/boot/zImage out/boot/zImage
-    if [[ $arch = rm1 ]]; then
-        cp arch/arm/boot/dts/zero-gravitas.dtb out/boot/zero-gravitas.dtb
-    elif [[ $arch = rm2 ]]; then
-        cp arch/arm/boot/dts/zero-sugar.dtb out/boot/zero-sugar.dtb
-    fi
-    rm out/lib/modules/*/source
-    rm out/lib/modules/*/build
 }
 
 package() {
-    pushd "$srcdir"/out
-    tar cpjf ../stracciatella-"$pkgver".tar.bz2 lib/modules/* boot/*
-    popd
-    install -D -m 644 -t "$pkgdir"/opt/usr/share/kernelctl "$srcdir"/stracciatella-"$pkgver".tar.bz2
+    # Prepare files for the kernel archive
+    local staging="$srcdir"/staging
+    mkdir -p "$staging/boot"
+
+    cp --no-dereference {"$srcdir"/arch/arm,"$staging"}/boot/zImage
+    if [[ $arch = rm1 ]]; then
+        cp --no-dereference "$srcdir"/arch/arm/boot/dts/zero-gravitas.dtb "$staging"/boot/zero-gravitas.dtb
+    elif [[ $arch = rm2 ]]; then
+        cp --no-dereference "$srcdir"/arch/arm/boot/dts/zero-sugar.dtb "$staging"/boot/zero-sugar.dtb
+    fi
+
+    ARCH=arm make -C "$srcdir" modules_install INSTALL_MOD_PATH="$staging"
+    rm "$staging"/lib/modules/*/{source,build}
+
+    # Create the kernel archive
+    local archive="stracciatella-${pkgver%-*}.tar.bz2"
+    install -d "$pkgdir"/opt/usr/share/kernelctl
+    tar --owner root:0 --group root:0 --mtime=$timestamp \
+        -cjf "$pkgdir"/opt/usr/share/kernelctl/"$archive" -C "$staging" .
+
 }
 
 configure() {
-    echo -e "Please use kernelctl to select the kernel to boot."
+    echo "The new kernel files have been copied, but not installed."
+    echo "Please use kernelctl to select the kernel to boot."
 }
