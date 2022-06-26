@@ -24,21 +24,34 @@ build() {
 }
 
 package() {
-    install -d "$pkgdir"/usr/boot
-    cp --no-dereference "$srcdir"/arch/arm/boot/zImage "$pkgdir"/usr/boot/
-    cp --no-dereference "$srcdir"/arch/arm/boot/dts/imx7d-remarkable2.dtb "$pkgdir"/usr/boot/zero-sugar.dtb
+    # Prepare files for the kernel archive
+    local staging="$srcdir"/staging
+    mkdir -p "$staging/boot"
 
-    ARCH=arm make -C "$srcdir" modules_install INSTALL_MOD_PATH="$pkgdir"
+    cp --no-dereference {"$srcdir"/arch/arm,"$staging"}/boot/zImage
+    cp --no-dereference "$srcdir"/arch/arm/boot/dts/imx7d-remarkable2.dtb \
+        "$staging"/boot/zero-sugar.dtb
+
+    ARCH=arm make -C "$srcdir" modules_install INSTALL_MOD_PATH="$staging"
+    rm "$staging"/lib/modules/*/{source,build}
+
+    # Create the kernel archive
+    local archive="mainline-${pkgver%-*}.tar.bz2"
+    install -d "$pkgdir"/opt/usr/share/kernelctl
+    tar --owner root:0 --group root:0 --mtime=$timestamp \
+        -cjf "$pkgdir"/opt/usr/share/kernelctl/"$archive" -C "$staging" .
 }
 
 configure() {
-    echo "The new kernel files have been copied, but not installed"
-    echo "To install them run and then reboot:"
+    echo "The new kernel files have been copied, but not installed."
+    echo "Before installing them, make a backup of the existing kernel:"
     echo "  mkdir -p /opt/boot-backup"
     echo "  cp -rvf /boot/* /opt/boot-backup/"
-    echo "  cp -rvf /usr/boot/* /boot/"
+    echo
+    echo "Then replace it with the new kernel and reboot:"
+    echo "  tar -xvf /opt/usr/share/kernelctl/linux-mainline-${pkgver%-*}.tar.bz2 -C /"
     echo "  /bin/sync"
-    echo ""
+    echo
     echo "Known issues with the mainline kernel:"
     echo " - No support for low power mode (suspend uses more power then it should)"
     echo " - WiFi sometimes is off on boot (can be turned on again though)"
