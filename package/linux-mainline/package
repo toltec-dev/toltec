@@ -49,7 +49,7 @@ configure() {
     echo "  cp -rvf /boot/* /opt/boot-backup/"
     echo
     echo "Then replace it with the new kernel and reboot:"
-    echo "  tar -xvf /opt/usr/share/kernelctl/linux-mainline-${pkgver%-*}.tar.bz2 -C /"
+    echo "  tar -xvf /opt/usr/share/kernelctl/mainline-${pkgver%-*}.tar.bz2 -C /"
     echo "  /bin/sync"
     echo
     echo "Known issues with the mainline kernel:"
