@@ -4,7 +4,7 @@
 
 archs=(rm2)
 pkgnames=(linux-mainline)
-pkgdesc="reMarkable 2 Kernel based on the mainline kernel"
+pkgdesc="reMarkable 2 kernel based on the mainline kernel"
 url=https://www.kernel.org
 pkgver=5.18.0-1
 timestamp=2022-05-22T21:50:09Z
