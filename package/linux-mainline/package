@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+# Copyright (c) 2021 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+archs=(rm2)
+pkgnames=(linux-mainline)
+pkgdesc="reMarkable 2 kernel based on the mainline kernel"
+url=https://www.kernel.org
+pkgver=5.18.0-1
+timestamp=2022-05-22T21:50:09Z
+section=kernel
+maintainer="Alistair Francis <alistair@alistair23.me>"
+makedepends=(build:flex build:bison build:libssl-dev build:bc build:lzop build:libgmp-dev build:libmpc-dev)
+license=GPL-2.0-only
+flags=(nostrip)
+
+image=base:v2.3
+source=("https://github.com/alistair23/linux/archive/f9fe680995e01398f0813077711fe1b744251c5b.tar.gz")
+sha256sums=(d38c883a31f5f87483377e78b4b3a2eb1ce73ada38fc25949e692dd0b2dd7895)
+
+build() {
+    ARCH=arm make imx_v6_v7_defconfig
+    ARCH=arm make -j8
+}
+
+package() {
+    # Prepare files for the kernel archive
+    local staging="$srcdir"/staging
+    mkdir -p "$staging/boot"
+
+    cp --no-dereference {"$srcdir"/arch/arm,"$staging"}/boot/zImage
+    cp --no-dereference "$srcdir"/arch/arm/boot/dts/imx7d-remarkable2.dtb \
+        "$staging"/boot/zero-sugar.dtb
+
+    ARCH=arm make -C "$srcdir" modules_install INSTALL_MOD_PATH="$staging"
+    rm "$staging"/lib/modules/*/{source,build}
+
+    # Create the kernel archive
+    local archive="mainline-${pkgver%-*}.tar.bz2"
+    install -d "$pkgdir"/opt/usr/share/kernelctl
+    tar --owner root:0 --group root:0 --mtime=$timestamp \
+        -cjf "$pkgdir"/opt/usr/share/kernelctl/"$archive" -C "$staging" .
+}
+
+configure() {
+    echo "The new kernel files have been copied, but not installed."
+    echo "Before installing them, make a backup of the existing kernel:"
+    echo "  mkdir -p /opt/boot-backup"
+    echo "  cp -rvf /boot/* /opt/boot-backup/"
+    echo
+    echo "Then replace it with the new kernel and reboot:"
+    echo "  tar -xvf /opt/usr/share/kernelctl/mainline-${pkgver%-*}.tar.bz2 -C /"
+    echo "  /bin/sync"
+    echo
+    echo "Known issues with the mainline kernel:"
+    echo " - No support for low power mode (suspend uses more power then it should)"
+    echo " - WiFi sometimes is off on boot (can be turned on again though)"
+    echo " - GUI shutdown in Oxide doesn't work"
+    echo " - Wacom stylus doesn't work in Xochitl (works everywhere else though)"
+    echo " - No OTG control support"
+}
+
+postremove() {
+    echo "To restore to the original kernel, run and then reboot"
+    echo "  rm -rf /lib/modules/${pkgver%-*}/"
+    echo "  cp -f /opt/boot-backup/zImage /boot/"
+    echo "  cp -f /opt/boot-backup/zero-sugar.dtb /boot/"
+    echo "  /bin/sync"
+}
