@@ -25,6 +25,7 @@ jobs:
                 local-path: build/repo/
                 ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
                 ssh-known-hosts: ${{ secrets.SSH_KNOWN_HOSTS }}
+                ssh-port: ${{ secrets.SSH_PORT }}
                 remote-path: ${{ secrets.REMOTE_SSH }}:/srv/toltec/stable
             - name: Trigger website rebuild
               run: gh api repos/toltec-dev/web/dispatches -f event_type='update-bootstrap-from-stable'

@@ -1,3 +1,32 @@
+2022-05-06 raisjn <of.raisjn@arkose>
+	remux
+
+	* make palm filtering a config option
+
+	harmony
+
+	* more layer dialog improvements
+	* sort import dialog by file date
+	* refactor pressure / tilt events to use hardware values
+
+2022-03-16 raisjn <of.raisjn@arkose>
+	remux
+
+	* RLE snapshots use less memory
+	* save bpp when screenshotting current app
+	* filter palm events from gestures (less false positives)
+
+	harmony:
+
+	* RLE snapshots for history (less memory usage)
+	* add layer support
+	* fix segfault when when showing empty load/import dialogs
+	* exporting canvas to png supports grays instead of dithering
+
+	rmkit:
+
+	* support SYN_DROPPED in wacom events
+
 2022-01-29 raisjn <of.raisjn@arkose>
 	rpncalc:
 
