@@ -13,7 +13,7 @@ license=MIT
 
 source=(
     kernelctl
-    kernelctl_status
+    force_reinstall_on_toltecctl_reenable
 )
 sha256sums=(
     SKIP
@@ -22,8 +22,8 @@ sha256sums=(
 
 package() {
     install -D -m 744 -t "$pkgdir"/opt/bin "$srcdir"/kernelctl
-    install -D -m 744 -t "$pkgdir"/var/opt "$srcdir"/kernelctl_status
     install -d "$pkgdir"/opt/usr/share/kernelctl
+    install -D -m 666 -t "$pkgdir"/usr/share/kernelctl/ "$srcdir"/force_reinstall_on_toltecctl_reenable
 }
 
 configure() {

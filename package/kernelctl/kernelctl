@@ -5,14 +5,11 @@
 # kernel staging dir
 kernelctl_dir=/opt/usr/share/kernelctl
 
-# current status
-kernelctl_status=/var/opt/kernelctl_status
-
 # Formatting
 bf="\033[1m"    # bold
 sf="\033[0m"    # standard
-c1="\033[1;32m" # green
-c2="\033[1;34m" # blue
+gr="\033[1;32m" # green
+bl="\033[1;34m" # blue
 
 # change our working directory to / to ease filesystem operations
 cd /
@@ -22,8 +19,8 @@ help() {
 		Usage: $(basename "$0") COMMAND
 		Manage your booting kernel.
 
-		${c1}Available commands:${sf}
-		${bf}    backup <kernel_name>    ${sf}Backup current kernel and name it <kernel_name>. This is guaranteed to work only with vanilla kernels.
+		${gr}Available commands:${sf}
+		${bf}    backup <kernel_name>    ${sf}Backup current kernel and name it <kernel_name>. This is guaranteed to work only with vanilla (i.e. upstream) kernels.
 		${bf}    help                    ${sf}Show this help message.
 		${bf}    list                    ${sf}List available kernels.
 		${bf}    show                    ${sf}Show the current configured kernel.
@@ -38,107 +35,138 @@ help() {
 # backup current kernel
 backup() {
     if [[ "$1" = "vanilla" ]]; then
-        archive_name="vanilla-$(< /etc/version)"
+        kernel_name="vanilla-$(< /etc/version)"
     else
-        archive_name=$1
+        kernel_name=$1
     fi
 
-    archive_file="$kernelctl_dir"/"$archive_name".tar.bz2
+    kernel_file="$kernelctl_dir"/"$kernel_name".tar.bz2
 
-    if [[ -e "$archive_file" ]]; then
+    if [[ -e "$kernel_file" ]]; then
         read -r -d "" msg <<- EOM
-			It looks like we already have a backup copy of $archive_name.
+			It looks like there is already copy of $kernel_name in the staging area.
 			If you really want to back it up again please run
 
-			$(basename "$0") delete $archive_name
-			$(basename "$0") backup $archive_name
+			$(basename "$0") delete $kernel_name
+			$(basename "$0") backup $kernel_name
 		EOM
         echo -e "$msg"
+        exit 1
     else
-        tar cpjf "$archive_file" lib/modules/* boot/zImage* boot/*.dtb
+        tar cpjf "$kernel_file" lib/modules/* boot/zImage* boot/*.dtb
+        rm -f "$kernelctl_dir"/current.tar.bz2
+        ln "$kernel_file" "$kernelctl_dir"/current.tar.bz2
     fi
-    echo "$archive_name" > "$kernelctl_status"
 }
 
 # get available kernels
-get_kernels() {
-    mapfile -t kernels < <(find "$kernelctl_dir" -path "*.tar.bz2" -print0 | xargs -0 -I"{}" basename {} .tar.bz2)
+get_kernel_names() {
+    mapfile -t kernel_names < <(find "$kernelctl_dir" -path "*.tar.bz2" ! -name current.tar.bz2 -print0 | xargs -0 -I"{}" basename {} .tar.bz2)
+}
+
+# get current kernel
+get_current_kernel_name() {
+    current_kernel_name=$(find "$kernelctl_dir" -samefile "$kernelctl_dir"/current.tar.bz2 ! -name current.tar.bz2 -print0 | xargs -0 -I"{}" basename {} .tar.bz2)
 }
 
 # translate input into a kernel name
 to_kernel_name() {
     local ker
-    get_kernels
-    if [[ "$1" =~ ^[0-9]+$ ]] && ((0 < $1 && $1 <= ${#kernels[@]})); then
-        echo "${kernels[$(($1 - 1))]}"
+    get_kernel_names
+    if [[ "$1" =~ ^[0-9]+$ ]] && ((0 < $1 && $1 <= ${#kernel_names[@]})); then
+        echo "${kernel_names[$(($1 - 1))]}"
         return
     elif [[ "$1" = "default" ]]; then
         ker="vanilla-$(< /etc/version)"
     else
         ker="$1"
     fi
-    if [[ $(echo "${kernels[@]}" | grep -ow "$ker" | wc -w) -gt 0 ]]; then
+    if [[ $(echo "${kernel_names[@]}" | grep -ow "$ker" | wc -w) -gt 0 ]]; then
         echo "$ker"
     else
-        echo "Can't find $ker in the staging area"
+        echo "Can't find $ker in the staging area."
         exit 1
     fi
 }
 
 # list available kernels
 list() {
-    local current_kernel
-    echo -e "${c1}Available kernels:${sf}"
-    get_kernels
-    current_kernel="$(< $kernelctl_status)"
-    for i in "${!kernels[@]}"; do
-        if [[ "$current_kernel" = "${kernels[$i]}" ]]; then cur=" ${c2}*${sf}"; else cur=""; fi
-        echo -e "  ${bf}[$((i + 1))]${sf}\t${kernels[$i]}$cur"
+    get_kernel_names
+    get_current_kernel_name
+    echo -e "${gr}Available kernels:${sf}"
+    for i in "${!kernel_names[@]}"; do
+        if [[ "$current_kernel_name" = "${kernel_names[$i]}" ]]; then cur=" ${bl}*${sf}"; else cur=""; fi
+        echo -e "  ${bf}[$((i + 1))]${sf}\t${kernel_names[$i]}$cur"
     done
 }
 
 # show the current configured kernel
 show() {
-    echo -e "${c1}Current kernel:${sf}"
-    echo -e "  ${bf}$(< $kernelctl_status)${sf}"
+    get_current_kernel_name
+    echo -e "${gr}Current kernel:${sf}"
+    echo -e "  ${bf}${current_kernel_name}${sf}"
+}
+
+# actually switch kernels
+switch() {
+    tar tjf "$1" | sort -r | xargs -r -I {} bash -c 'if [[ -d "{}" ]]; then rmdir "{}"; else rm "{}"; fi'
+    tar xpjf "$2"
 }
 
 # change the kernel that will boot next time
 set() {
     new_kernel_name=$(to_kernel_name "$1")
-    new_kernel="$kernelctl_dir/${new_kernel_name}.tar.bz2"
-    current_kernel="$kernelctl_dir/$(< $kernelctl_status).tar.bz2"
-    if [[ ! -e "$current_kernel" ]]; then
+    new_kernel_file="${kernelctl_dir}/${new_kernel_name}.tar.bz2"
+    current_kernel_file="${kernelctl_dir}/current.tar.bz2"
+    if [[ ! -e "$current_kernel_file" ]]; then
         read -r -d '' msg <<- EOM
-			${bf}There is no copy of the current running kernel in the staging
+			${bf}There is no link to the current running kernel in the staging
 			area, you might have accidentally deleted it!${sf}
-			Try making a backup first
+			Try making a backup first.
 		EOM
         echo -e "$msg"
         exit 1
     fi
-    tar tjf "$current_kernel" | sort -r | xargs -r -I {} bash -c 'if [[ -d "{}" ]]; then rmdir "{}"; else rm "{}"; fi'
-    tar xpjf "$new_kernel"
-    echo "$new_kernel_name" > "$kernelctl_status"
-    /bin/sync
-    echo "Reboot system to use your newly installed kernel."
+    if switch "$current_kernel_file" "$new_kernel_file"; then
+        rm -f "$current_kernel_file"
+        ln "$new_kernel_file" "$current_kernel_file"
+        /bin/sync
+        echo "Reboot system to use your newly installed kernel."
+    else
+        read -r -d '' msg <<- EOM
+			${bf}WARNING: failed to extract the new kernel!${sf}
+			Maybe there is not enough space left on the root partition?
+			Attempting to revert to the current running kernel.
+		EOM
+        echo -e "$msg"
+        if switch "$new_kernel_file" "$current_kernel_file"; then
+            /bin/sync
+            read -r -d '' msg <<- EOM
+				Successfully reverted to the current rnning kernel.
+				Please check that everything is in order before rebooting.
+			EOM
+            echo -e "$msg"
+        else
+            read -r -d '' msg <<- EOM
+				Unable to revert to a working configuration.
+				If you do not know how to proceed please seek assistence
+				in reMarkable's server on Discord.
+			EOM
+            echo -e "$msg"
+            exit 1
+        fi
+    fi
 }
 
 # delete kernel from staging dir
 delete() {
-    kernel=$(to_kernel_name "$1")
-    if [[ "$kernel" = "$(< $kernelctl_status)" ]]; then
-        read -r -d '' msg <<- EOM
-			${bf}Attempting to delete the current running kernel from the staging area.
-			This might prevent $(basename "$0") from running properly in the future.${sf}
-		EOM
-        echo -e "$msg"
-    fi
-    echo "Deleting $kernel from the staging area is irreversible."
+    kernel_name=$(to_kernel_name "$1")
+    echo "Deleting $kernel_name from the staging area is irreversible."
+    echo "If the kernel was installed as a toltec package this may confuse the package manager"
     echo -n "Do you want to proceed? [N/y]: "
     read -r ans
     if [[ "$ans" = "y" || "$ans" = "Y" ]]; then
-        rm "$kernelctl_dir"/"$kernel".tar.bz2
+        rm "${kernelctl_dir}/${kernel_name}.tar.bz2"
     fi
 }
 
