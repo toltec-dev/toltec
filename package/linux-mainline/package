@@ -39,7 +39,7 @@ package() {
     local archive="mainline-${pkgver%-*}.tar.bz2"
     install -d "$pkgdir"/opt/usr/share/kernelctl
     (cd "$staging" && tar --owner root:0 --group root:0 --mtime=$timestamp \
-        -cjf "$pkgdir"/opt/usr/share/kernelctl/"$archive" boot/* lib/modules/* )
+        -cjf "$pkgdir"/opt/usr/share/kernelctl/"$archive" boot/* lib/modules/*)
 }
 
 configure() {
