@@ -47,7 +47,6 @@ package() {
     install -d "$pkgdir"/opt/usr/share/kernelctl
     (cd "$staging" && tar --owner root:0 --group root:0 --mtime=$timestamp \
         -cjf "$pkgdir"/opt/usr/share/kernelctl/"$archive" boot/* lib/modules/* )
-
 }
 
 configure() {
