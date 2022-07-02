@@ -2,29 +2,27 @@
 # Copyright (c) 2021 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
-pkgnames=(erode fret oxide rot tarnish decay corrupt anxiety)
-pkgver=2.3-1
-timestamp=2022-01-06T22:47:15Z
+pkgnames=(erode fret oxide rot tarnish decay corrupt anxiety liboxide libsentry)
+pkgver=2.4-1
+timestamp=2022-05-22T03:18:32Z
 maintainer="Eeems <eeems@eeems.email>"
 url=https://oxide.eeems.codes
 license=MIT
 flags=(patch_rm2fb)
-
 image=qt:v2.1
-_srcver="v${pkgver%-*}"
-source=("https://github.com/Eeems/oxide/archive/refs/tags/$_srcver.tar.gz")
-sha256sums=(abea9dea4232b36e4fdabf27b0707683a757e1bb0a928daeb191d97fb876cf33)
+source=("https://github.com/Eeems-Org/oxide/archive/e6c62a6860b52cd1cbd47e21377f8d1ecf72bb0a.tar.gz")
+sha256sums=(a29cf455d5f66fee4ee67722c6f1d20627930920286398932c3d5c813d58ebee)
 
 build() {
     find . -name "*.pro" -type f -print0 \
         | xargs -r -0 sed -i 's/linux-oe-g++/linux-arm-remarkable-g++/g'
-    make release
+    CMAKE_TOOLCHAIN_FILE="/usr/share/cmake/$CHOST.cmake" make FEATURES=sentry release
 }
 
 erode() {
     pkgdesc="Task manager"
     section="admin"
-    installdepends=(display "tarnish=$pkgver")
+    installdepends=(display "tarnish=$pkgver" "liboxide=$pkgver" "libsentry=0.4.13")
 
     package() {
         install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/release/opt/bin/erode
@@ -37,7 +35,7 @@ erode() {
 fret() {
     pkgdesc="Take screenshots"
     section="utils"
-    installdepends=("tarnish=$pkgver")
+    installdepends=("tarnish=$pkgver" "liboxide=$pkgver" "libsentry=0.4.13")
 
     package() {
         install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/release/opt/bin/fret
@@ -48,7 +46,7 @@ fret() {
 oxide() {
     pkgdesc="Launcher application"
     section="launchers"
-    installdepends=(display "erode=$pkgver" "fret=$pkgver" "tarnish=$pkgver" "rot=$pkgver" "decay=$pkgver")
+    installdepends=("erode=$pkgver" "fret=$pkgver" "tarnish=$pkgver" "rot=$pkgver" "decay=$pkgver" "liboxide=$pkgver" "libsentry=0.4.13")
 
     package() {
         install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/release/opt/bin/oxide
@@ -69,7 +67,7 @@ oxide() {
 rot() {
     pkgdesc="Manage Oxide settings through the command line"
     section="admin"
-    installdepends=("tarnish=$pkgver")
+    installdepends=("tarnish=$pkgver" "liboxide=$pkgver" "libsentry=0.4.13")
 
     package() {
         install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/release/opt/bin/rot
@@ -79,7 +77,7 @@ rot() {
 tarnish() {
     pkgdesc="Service managing power states, connectivity and buttons"
     section="devel"
-    installdepends=(display xochitl)
+    installdepends=(display xochitl "liboxide=$pkgver" "libsentry=0.4.13")
 
     package() {
         install -D -m 644 -t "$pkgdir"/etc/dbus-1/system.d "$srcdir"/release/etc/dbus-1/system.d/codes.eeems.oxide.conf
@@ -107,7 +105,7 @@ tarnish() {
 decay() {
     pkgdesc="Lockscreen application"
     section="utils"
-    installdepends=(display "tarnish=$pkgver")
+    installdepends=(display "tarnish=$pkgver" "liboxide=$pkgver" "libsentry=0.4.13")
 
     package() {
         install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/release/opt/bin/decay
@@ -117,7 +115,7 @@ decay() {
 corrupt() {
     pkgdesc="Task Switcher for Oxide"
     section="utils"
-    installdepends=(display "tarnish=$pkgver")
+    installdepends=(display "tarnish=$pkgver" "liboxide=$pkgver" "libsentry=0.4.13")
 
     package() {
         install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/release/opt/bin/corrupt
@@ -128,12 +126,33 @@ corrupt() {
 anxiety() {
     pkgdesc="Screenshot viewer for Oxide"
     section="utils"
-    installdepends=(display "tarnish=$pkgver")
+    installdepends=(display "tarnish=$pkgver" "liboxide=$pkgver" "libsentry=0.4.13")
 
     package() {
         install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/release/opt/bin/anxiety
         install -D -m 644 -t "$pkgdir"/opt/usr/share/applications "$srcdir"/release/opt/usr/share/applications/codes.eeems.anxiety.oxide
         install -D -m 644 -t "$pkgdir"/opt/etc/draft/icons "$srcdir"/release/opt/etc/draft/icons/image.svg
         install -D -m 644 -t "$pkgdir"/opt/etc/draft/icons "$srcdir"/release/opt/etc/draft/icons/anxiety-splash.png
+    }
+}
+
+liboxide() {
+    pkgdesc="Shared library for oxide applications"
+    section=devel
+
+    package() {
+        install -D -m 755 -t "$pkgdir"/opt/usr/lib "$srcdir"/release/opt/usr/lib/libliboxide.so*
+    }
+}
+
+libsentry() {
+    pkgdesc="Sentry SDK for C, C++ and native applications."
+    section=devel
+    url=https://github.com/getsentry/sentry-native
+    pkgver="0.4.17"
+    timestamp="2021-12-20T14:25:11Z"
+
+    package() {
+        install -D -m 755 -t "$pkgdir"/opt/lib "$srcdir"/release/opt/lib/libsentry.so
     }
 }
