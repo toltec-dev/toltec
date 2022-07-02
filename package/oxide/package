@@ -9,7 +9,7 @@ maintainer="Eeems <eeems@eeems.email>"
 url=https://oxide.eeems.codes
 license=MIT
 flags=(patch_rm2fb)
-image=qt:v2.1
+image=qt:v2.3
 source=("https://github.com/Eeems-Org/oxide/archive/e6c62a6860b52cd1cbd47e21377f8d1ecf72bb0a.tar.gz")
 sha256sums=(a29cf455d5f66fee4ee67722c6f1d20627930920286398932c3d5c813d58ebee)
 
