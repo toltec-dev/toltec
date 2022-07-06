@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: MIT
 
 pkgnames=(bufshot dumbskull genie harmony iago lamp mines nao remux rpncalc simple wordlet)
-timestamp=2022-03-15T09:18:10Z
+timestamp=2022-06-23T20:03:10Z
 maintainer="raisjn <of.raisjn@gmail.com>"
 license=MIT
 installdepends=(display)
@@ -11,12 +11,12 @@ flags=(patch_rm2fb)
 
 image=python:v2.1
 source=(
-    https://github.com/rmkit-dev/rmkit/archive/f014604ffc129e69938bd84635a2202a21f388b6.zip
+    https://github.com/rmkit-dev/rmkit/archive/070d5df29a71e55050a5e993f047f1590d69ec1c.zip
     remux.service
     genie.service
 )
 sha256sums=(
-    e710c3864a40cec39d6960726f49f98ab9a849769b9c7e134e6db04f283863fa
+    e7f0379d5ad9de61c32a296ab831780cfea73352fbccfe2472422165943457ef
     SKIP
     SKIP
 )
@@ -80,7 +80,7 @@ genie() {
 harmony() {
     pkgdesc="Procedural sketching app"
     url="https://rmkit.dev/apps/harmony"
-    pkgver=0.2.0-1
+    pkgver=0.2.1-1
     section="drawing"
 
     package() {
@@ -147,7 +147,7 @@ nao() {
 remux() {
     pkgdesc="Launcher that supports multi-tasking applications"
     url="https://rmkit.dev/apps/remux"
-    pkgver=0.2.2-1
+    pkgver=0.2.3-1
     section="launchers"
 
     package() {
