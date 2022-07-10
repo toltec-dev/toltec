@@ -6,15 +6,15 @@ archs=(rm1 rm2)
 pkgnames=(ddvk-hacks)
 pkgdesc="Enhance Xochitl with additional features"
 url=https://github.com/ddvk/remarkable-hacks
-pkgver=34.01-1
-timestamp=2022-06-22T19:56:39Z
+pkgver=35.01-1
+timestamp=2022-07-09T00:05:57+0200
 section="readers"
 maintainer="Mattéo Delabre <spam@delab.re>"
 license=MIT
 flags=(nostrip)
 
-source=(https://github.com/ddvk/remarkable-hacks/archive/dc53d8f94bd74cfcef55848b6608406ee5955cd7.zip)
-sha256sums=(ee90aa728b120303115eb427065db0079366882341eb5aeba6fd49b8ab48cc10)
+source=(https://github.com/ddvk/remarkable-hacks/archive/5e5aabf1dfe02b802a3ce8ce1046bd05fe29ffd2.zip)
+sha256sums=(cb47f0291f8712a8df563bb6a5793fd2b699074fe055d56c40efe987eb5f7571)
 
 _patches_dir="/opt/share/ddvk-hacks"
 _xochitl_path="/usr/bin/xochitl"
@@ -38,6 +38,7 @@ package() {
         install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/2122573_rm1/patch_31.1.01
         install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/2123606_rm1/patch_32.1.03
         install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/2140861_rm1/patch_34.1.01
+        install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/2141866_rm1/patch_35.1.01
     elif [[ $arch = rm2 ]]; then
         install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/26171_rm2/patch_19.2.02
         install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/26275_rm2/patch_20.2.03
@@ -55,6 +56,7 @@ package() {
         install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/2123606_rm2/patch_32.2.02
         install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/2130758_rm2/patch_33.2.01
         install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/2140861_rm2/patch_34.2.01
+        install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/2141866_rm2/patch_35.2.01
     fi
 }
 
@@ -68,6 +70,11 @@ configure() {
     if [[ $arch = rm1 ]]; then
         device="reMarkable 1"
         case "$build_date" in
+            "20220617142418")
+                patch_version="35.1.01"
+                original_hash="d172016ac8a97ca5df3c551648e0b3314f17f72a"
+                xochitl_version="2.14.1.866"
+                ;;
             "20220615075543")
                 patch_version="34.1.01"
                 original_hash="a3da3cc4d393917703bcdc2ed3c280ebcc192e0f"
@@ -144,6 +151,11 @@ configure() {
     elif [[ $arch = rm2 ]]; then
         device="reMarkable 2"
         case "$build_date" in
+            "20220617143306")
+                patch_version="35.2.01"
+                original_hash="1d7f6f049e5a6b192caaf07cbf67ba7c2555e5f0"
+                xochitl_version="2.14.1.866"
+                ;;
             "20220615074909")
                 patch_version="34.2.01"
                 original_hash="6376fb20bdf6952bb7b75838c0bda1c80f0e9191"
