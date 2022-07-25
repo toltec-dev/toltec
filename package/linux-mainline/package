@@ -6,7 +6,7 @@ archs=(rm2)
 pkgnames=(linux-mainline)
 pkgdesc="reMarkable 2 kernel based on the mainline kernel"
 url=https://www.kernel.org
-pkgver=5.18.0-1
+pkgver=5.19.0-1
 timestamp=2022-05-22T21:50:09Z
 section=kernel
 maintainer="Alistair Francis <alistair@alistair23.me>"
@@ -15,8 +15,8 @@ license=GPL-2.0-only
 flags=(nostrip)
 
 image=base:v2.3
-source=("https://github.com/alistair23/linux/archive/f9fe680995e01398f0813077711fe1b744251c5b.tar.gz")
-sha256sums=(d38c883a31f5f87483377e78b4b3a2eb1ce73ada38fc25949e692dd0b2dd7895)
+source=("https://github.com/alistair23/linux/archive/6df274810d20448125834115e2181de288fdc8a4.tar.gz")
+sha256sums=(a7538198dbef21868d2c52e8b379576c8791726809bd5886176ab88d1f9df49f)
 
 build() {
     ARCH=arm make imx_v6_v7_defconfig
