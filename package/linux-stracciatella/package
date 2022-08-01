@@ -50,6 +50,10 @@ package() {
 }
 
 configure() {
+    if [[ $(< /etc/version) -le 20210709090000 ]]; then
+        echo "WARNING: Your system is too old; this kernel will most likely not work unless you add the appropriate firmware blobs to /lib/firmware."
+        echo "Please consider updating your system instead."
+    fi
     echo "The new kernel files have been copied, but not installed."
     echo "Please use kernelctl to select the kernel to boot."
 }
