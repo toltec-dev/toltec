@@ -45,8 +45,8 @@ package() {
 configure() {
     echo "The new kernel files have been copied, but not installed."
     echo "Before installing them, make a backup of the existing kernel:"
-    echo "  mkdir -p /opt/boot-backup"
-    echo "  cp -rvf /boot/* /opt/boot-backup/"
+    echo "  mkdir -p /home/root/boot-backup"
+    echo "  cp -rvf /boot/* /home/root/boot-backup/"
     echo
     echo "Then replace it with the new kernel and reboot:"
     echo "  tar -xvf /opt/usr/share/kernelctl/mainline-${pkgver%-*}.tar.bz2 -C /"
@@ -63,7 +63,7 @@ configure() {
 postremove() {
     echo "To restore to the original kernel, run and then reboot"
     echo "  rm -rf /lib/modules/${pkgver%-*}/"
-    echo "  cp -f /opt/boot-backup/zImage /boot/"
-    echo "  cp -f /opt/boot-backup/zero-sugar.dtb /boot/"
+    echo "  cp -f /home/root/boot-backup/zImage /boot/"
+    echo "  cp -f /home/root/boot-backup/zero-sugar.dtb /boot/"
     echo "  /bin/sync"
 }
