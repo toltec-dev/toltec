@@ -8,7 +8,7 @@ url=https://github.com/BurntSushi/ripgrep
 pkgver=13.0.0-1
 timestamp=2021-06-12T10:54Z
 section="utils"
-maintainer="Mattéo Delabre <spam@delab.re>"
+maintainer="gbyl <gbyl@users.noreply.github.com>"
 license=MIT
 
 image=rust:v2.3
