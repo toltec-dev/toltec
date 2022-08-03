@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+# Copyright (c) 2022 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgnames=(ripgrep)
+pkgdesc="Modern grep for recursive regex pattern searching"
+url=https://github.com/BurntSushi/ripgrep
+pkgver=13.0.0-1
+timestamp=2021-06-12T10:54Z
+section="utils"
+maintainer="Mattéo Delabre <spam@delab.re>"
+license=MIT
+
+image=rust:v2.3
+source=("https://github.com/BurntSushi/ripgrep/archive/refs/tags/13.0.0.zip")
+sha256sums=(5f9d35c2db0513d9d1cbc5254aa9d48fcd74243259b7b15955e131f36f627745)
+
+build() {
+	cargo build --release
+}
+
+package() {
+	install -D -m 755 "$srcdir"/target/armv7-unknown-linux-gnueabihf/release/rg "$pkgdir"/opt/bin/rg
+}
