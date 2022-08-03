@@ -10,7 +10,7 @@ timestamp=2021-05-02T09:23Z
 maintainer="Mattéo Delabre <spam@delab.re>"
 license=GPL-3.0
 section="admin"
-image=base:v2.1
+image=base:v2.3
 installdepends=(display)
 
 source=(
