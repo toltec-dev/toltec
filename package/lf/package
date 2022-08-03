@@ -16,7 +16,7 @@ source=("https://github.com/gokcehan/lf/archive/refs/tags/r27.zip")
 sha256sums=(a4f7b3ada4aa1348b7f102374d8580b6992977f7e84053aa04ef6aadb69dc205)
 
 build() {
-    # export GOARCH=arm64
+    export GOARCH=arm
     go build
 }
 
