@@ -1,0 +1,23 @@
+--- Device.cpp  2022-08-03 20:07:16.705724406 0000
++++ Device-rM1-inputfix.cpp      2022-08-03 20:07:36.455219878 0000
+@@ -22,17 +22,17 @@
+
+ const InputPaths rm1_paths = {
+   // touch
+-  "/dev/input/event1",
++  "/dev/input/event2",
+   Transform{ { { -float(screen_width) / rm1_touch_width, 0 },
+                { 0, -float(screen_height) / rm1_touch_height } },
+              { screen_width, screen_height } },
+
+   // pen
+-  "/dev/input/event0",
++  "/dev/input/event1",
+   wacom_transform,
+
+   // keys
+-  "/dev/input/event2"
++  "/dev/input/event0"
+ };
+
+ const InputPaths rm2_paths = {
