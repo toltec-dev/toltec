@@ -142,7 +142,7 @@ set() {
         if switch "$new_kernel_file" "$current_kernel_file"; then
             /bin/sync
             read -r -d '' msg <<- EOM
-				Successfully reverted to the current rnning kernel.
+				Successfully reverted to the current running kernel.
 				Please check that everything is in order before rebooting.
 			EOM
             echo -e "$msg"
