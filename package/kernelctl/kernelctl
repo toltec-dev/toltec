@@ -149,7 +149,8 @@ set() {
         else
             read -r -d '' msg <<- EOM
 				Unable to revert to a working configuration.
-				If you do not know how to proceed, please seek assistance
+				If you do not know how to proceed, please do not reboot your device,
+                do not let the battery die, and seek assistance
 				in the reMarkable's community Discord server: https://discord.gg/ATqQGfu
 			EOM
             echo -e "$msg"
