@@ -135,7 +135,7 @@ set() {
     else
         read -r -d '' msg <<- EOM
 			${bf}WARNING: failed to extract the new kernel!${sf}
-			Maybe there is not enough space left on the root partition?
+			This may be due to a lack of space in the root partition.
 			Attempting to revert to the current running kernel.
 		EOM
         echo -e "$msg"
