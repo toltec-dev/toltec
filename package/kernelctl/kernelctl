@@ -149,7 +149,7 @@ set() {
         else
             read -r -d '' msg <<- EOM
 				Unable to revert to a working configuration.
-				If you do not know how to proceed please seek assistence
+				If you do not know how to proceed, please seek assistance
 				in reMarkable's server on Discord.
 			EOM
             echo -e "$msg"
