@@ -29,3 +29,7 @@ package() {
 configure() {
     ln -s /lib/libncursesw.so.5 /lib/libncurses.so.5
 }
+
+postremove() {
+    rm /lib/libncurses.so.5
+}
