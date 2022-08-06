@@ -18,18 +18,11 @@ sha256sums=(810745a8ed1ab3788c87d3aea4cc1a14edf6ee226f764bcc383e024ba56adbf1)
 
 build() {
     export CC=arm-linux-gnueabihf-gcc
+    export LDFLAGS="-static"
     ./configure --host=armv7
     make
 }
 
 package() {
     install -D -m 755 "$srcdir"/ncdu "$pkgdir"/opt/bin/ncdu
-}
-
-configure() {
-    ln -s /lib/libncursesw.so.5 /lib/libncurses.so.5
-}
-
-postremove() {
-    rm /lib/libncurses.so.5
 }
