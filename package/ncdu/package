@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+# Copyright (c) 2022 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgnames=(ncdu)
+pkgdesc="Disk usage analyzer with an ncurses interface"
+url=https://dev.yorhel.nl/ncdu
+pkgver=1.17-1
+timestamp=2022-04-28T09:20Z
+maintainer="gbyl <gbyl@users.noreply.github.com>"
+license=MIT
+section="utils"
+image=base:v2.3
+makedepends=(build:libncurses-dev)
+
+source=("https://dev.yorhel.nl/download/ncdu-${pkgver%-*}.tar.gz")
+sha256sums=(810745a8ed1ab3788c87d3aea4cc1a14edf6ee226f764bcc383e024ba56adbf1)
+
+build() {
+    export CC=arm-linux-gnueabihf-gcc
+    ./configure --host=armv7
+    make
+}
+
+package() {
+    install -D -m 755 "$srcdir"/ncdu "$pkgdir"/opt/bin/ncdu
+}
+
+configure() {
+    ln -s /lib/libncursesw.so.5 /lib/libncurses.so.5
+}
