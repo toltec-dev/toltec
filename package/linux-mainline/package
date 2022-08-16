@@ -38,8 +38,8 @@ package() {
     # Create the kernel archive
     local archive="mainline-${pkgver%-*}.tar.bz2"
     install -d "$pkgdir"/opt/usr/share/kernelctl
-    tar --owner root:0 --group root:0 --mtime=$timestamp \
-        -cjf "$pkgdir"/opt/usr/share/kernelctl/"$archive" -C "$staging" .
+    (cd "$staging" && tar --owner root:0 --group root:0 --mtime=$timestamp \
+        -cjf "$pkgdir"/opt/usr/share/kernelctl/"$archive" boot/* lib/modules/*)
 }
 
 configure() {
