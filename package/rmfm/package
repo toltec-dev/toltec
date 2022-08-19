@@ -5,15 +5,15 @@
 pkgnames=(rmfm)
 pkgdesc="Bare-bones file manager using Node.js and sas"
 url="https://codeberg.org/sun/rmFM"
-pkgver=1.3.0-1
-timestamp=2022-07-22T19:29:42+02:00
+pkgver=1.4.0-1
+timestamp=2022-08-19T11:20:10+02:00
 section=utils
 maintainer="Sunny <roesch.eric@protonmail.com>"
 license=MIT
 installdepends=(node simple)
 
-source=(https://codeberg.org/sun/rmFM/archive/1.3.0.zip)
-sha256sums=(6c82bb47842e17203f5104d764ec6dbde75ada63a75d527ea6d17da59b46d7ae)
+source=(https://codeberg.org/sun/rmFM/archive/1.4.0.zip)
+sha256sums=(28ce80c67fecc370d11f3fe2069742c2789b388a9426fff49d269d7900ae3dc9)
 
 package() {
     install -D -m 755 "$srcdir"/rmfm "$pkgdir"/opt/bin/rmfm
