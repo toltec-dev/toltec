@@ -1,0 +1,8 @@
+diff --git a/rmfm b/rmfm
+index 4571db9..172eedf 100755
+--- a/rmfm
++++ b/rmfm
+@@ -1 +1,2 @@
+-#!/usr/bin/env node
++#!/opt/bin/node
++process.env.PATH += ":/opt/bin"
