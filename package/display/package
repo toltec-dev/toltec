@@ -4,11 +4,11 @@
 
 archs=(rm1 rm2)
 pkgnames=(display rm2fb-client)
-timestamp=2022-06-22T13:16:48Z
+timestamp=2022-08-22T09:40:15Z
 maintainer="raisjn <of.raisjn@gmail.com>"
 license=MIT
 url="https://github.com/ddvk/remarkable2-framebuffer"
-pkgver=1:0.0.20-1
+pkgver=1:0.0.21-1
 _release="${pkgver%-*}"
 _release="v${_release#*:}"
 _libver=1.0.1
@@ -23,7 +23,7 @@ source=(
     rm2fb-preload.env
 )
 sha256sums=(
-    02acb6c77e4b9b973151ba6eb4e6093a0f7733d9aeca513ecbc36f6008acda89
+    815cf46e282257077b791a795cd8e2395fb18af5f3ba58ed911d526168002ea0
     SKIP
     SKIP
     SKIP
