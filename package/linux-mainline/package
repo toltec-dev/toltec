@@ -44,13 +44,7 @@ package() {
 
 configure() {
     echo "The new kernel files have been copied, but not installed."
-    echo "Before installing them, make a backup of the existing kernel:"
-    echo "  mkdir -p /home/root/boot-backup"
-    echo "  cp -rvf /boot/* /home/root/boot-backup/"
-    echo
-    echo "Then replace it with the new kernel and reboot:"
-    echo "  tar -xvf /opt/usr/share/kernelctl/mainline-${pkgver%-*}.tar.bz2 -C /"
-    echo "  /bin/sync"
+    echo "Please use kernelctl to select the kernel to boot."
     echo
     echo "Known issues with the mainline kernel:"
     echo " - No support for low power mode (suspend uses more power then it should)"
