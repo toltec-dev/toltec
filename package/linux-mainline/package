@@ -53,11 +53,3 @@ configure() {
     echo " - Wacom stylus doesn't work in Xochitl (works everywhere else though)"
     echo " - No OTG control support"
 }
-
-postremove() {
-    echo "To restore to the original kernel, run and then reboot"
-    echo "  rm -rf /lib/modules/${pkgver%-*}/"
-    echo "  cp -f /home/root/boot-backup/zImage /boot/"
-    echo "  cp -f /home/root/boot-backup/zero-sugar.dtb /boot/"
-    echo "  /bin/sync"
-}
