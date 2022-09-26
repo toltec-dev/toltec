@@ -1,0 +1,220 @@
+#!/usr/bin/env bash
+# Copyright (c) 2022 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+# kernel staging dir
+kernelctl_dir=/opt/usr/share/kernelctl
+
+# Formatting
+bf="\033[1m"    # bold
+sf="\033[0m"    # standard
+gr="\033[1;32m" # green
+bl="\033[1;34m" # blue
+
+# change our working directory to / to ease filesystem operations
+cd /
+
+help() {
+    read -r -d '' msg <<- EOM
+		Usage: $(basename "$0") COMMAND
+		Manage your booting kernel.
+
+		${gr}Available commands:${sf}
+		${bf}    backup <kernel_name>    ${sf}Backup current kernel and name it <kernel_name>. This is guaranteed to work only with vanilla (i.e. upstream) kernels.
+		${bf}    help                    ${sf}Show this help message.
+		${bf}    list                    ${sf}List available kernels.
+		${bf}    show                    ${sf}Show the current configured kernel.
+		${bf}    delete <kernel>         ${sf}Delete kernel from the staging dir. WARNING this is irreversible.
+		${bf}    set <kernel>            ${sf}Change booting kernel.
+
+		${bf}        <kernel>            ${sf}Kernel name or number (from 'list' command) or "default" to revert to the upstram kernel.
+	EOM
+    echo -e "$msg"
+}
+
+# backup current kernel
+backup() {
+    if [[ "$1" = "vanilla" ]]; then
+        kernel_name="vanilla-$(< /etc/version)"
+    else
+        kernel_name=$1
+    fi
+
+    kernel_file="$kernelctl_dir"/"$kernel_name".tar.bz2
+
+    if [[ -e "$kernel_file" ]]; then
+        read -r -d "" msg <<- EOM
+			It looks like there is already copy of $kernel_name in the staging area.
+			If you really want to back it up again please run
+
+			$(basename "$0") delete $kernel_name
+			$(basename "$0") backup $kernel_name
+		EOM
+        echo -e "$msg"
+        exit 1
+    else
+        tar cpjf "$kernel_file" lib/modules/* boot/zImage* boot/*.dtb
+        rm -f "$kernelctl_dir"/current.tar.bz2
+        ln "$kernel_file" "$kernelctl_dir"/current.tar.bz2
+    fi
+}
+
+# get available kernels
+get_kernel_names() {
+    mapfile -t kernel_names < <(find "$kernelctl_dir" -path "*.tar.bz2" ! -name current.tar.bz2 -print0 | xargs -0 -I"{}" basename {} .tar.bz2)
+}
+
+# get current kernel
+get_current_kernel_name() {
+    current_kernel_name=$(find "$kernelctl_dir" -samefile "$kernelctl_dir"/current.tar.bz2 ! -name current.tar.bz2 -print0 | xargs -0 -I"{}" basename {} .tar.bz2)
+}
+
+# translate input into a kernel name
+to_kernel_name() {
+    local ker
+    get_kernel_names
+    if [[ "$1" =~ ^[0-9]+$ ]] && ((0 < $1 && $1 <= ${#kernel_names[@]})); then
+        echo "${kernel_names[$(($1 - 1))]}"
+        return
+    elif [[ "$1" = "default" ]]; then
+        ker="vanilla-$(< /etc/version)"
+    else
+        ker="$1"
+    fi
+    if [[ $(echo "${kernel_names[@]}" | grep -ow "$ker" | wc -w) -gt 0 ]]; then
+        echo "$ker"
+    else
+        echo "Can't find $ker in the staging area."
+        exit 1
+    fi
+}
+
+# list available kernels
+list() {
+    get_kernel_names
+    get_current_kernel_name
+    echo -e "${gr}Available kernels:${sf}"
+    for i in "${!kernel_names[@]}"; do
+        if [[ "$current_kernel_name" = "${kernel_names[$i]}" ]]; then cur=" ${bl}*${sf}"; else cur=""; fi
+        echo -e "  ${bf}[$((i + 1))]${sf}\t${kernel_names[$i]}$cur"
+    done
+}
+
+# show the current configured kernel
+show() {
+    get_current_kernel_name
+    echo -e "${gr}Current kernel:${sf}"
+    echo -e "  ${bf}${current_kernel_name}${sf}"
+}
+
+# actually switch kernels
+switch() {
+    tar tjf "$1" | sort -r | xargs -r -I {} bash -c 'if [[ -d "{}" ]]; then rmdir "{}"; else rm "{}"; fi'
+    tar xpjf "$2"
+}
+
+# change the kernel that will boot next time
+set() {
+    new_kernel_name=$(to_kernel_name "$1")
+    new_kernel_file="${kernelctl_dir}/${new_kernel_name}.tar.bz2"
+    current_kernel_file="${kernelctl_dir}/current.tar.bz2"
+    if [[ ! -e "$current_kernel_file" ]]; then
+        read -r -d '' msg <<- EOM
+			${bf}There is no link to the current running kernel in the staging
+			area, you might have accidentally deleted it!${sf}
+			Try making a backup first.
+		EOM
+        echo -e "$msg"
+        exit 1
+    fi
+    if switch "$current_kernel_file" "$new_kernel_file"; then
+        rm -f "$current_kernel_file"
+        ln "$new_kernel_file" "$current_kernel_file"
+        /bin/sync
+        echo "Reboot system to use your newly installed kernel."
+    else
+        read -r -d '' msg <<- EOM
+			${bf}WARNING: failed to extract the new kernel!${sf}
+			This may be due to a lack of space in the root partition.
+			Attempting to revert to the current running kernel.
+		EOM
+        echo -e "$msg"
+        if switch "$new_kernel_file" "$current_kernel_file"; then
+            /bin/sync
+            read -r -d '' msg <<- EOM
+				Successfully reverted to the current running kernel.
+				Please check that everything is in order before rebooting.
+			EOM
+            echo -e "$msg"
+        else
+            read -r -d '' msg <<- EOM
+				Unable to revert to a working configuration.
+				If you do not know how to proceed, please do not reboot your device,
+                do not let the battery die, and seek assistance
+				in the reMarkable's community Discord server: https://discord.gg/ATqQGfu
+			EOM
+            echo -e "$msg"
+            exit 1
+        fi
+    fi
+}
+
+# delete kernel from staging dir
+delete() {
+    kernel_name=$(to_kernel_name "$1")
+    echo "Deleting $kernel_name from the staging area is irreversible."
+    echo "If the kernel was installed as a toltec package this may confuse the package manager"
+    echo -n "Do you want to proceed? [N/y]: "
+    read -r ans
+    if [[ "$ans" = "y" || "$ans" = "Y" ]]; then
+        rm "${kernelctl_dir}/${kernel_name}.tar.bz2"
+    fi
+}
+
+if [[ $0 = "${BASH_SOURCE[0]}" ]]; then
+    if [[ $# -eq 0 ]]; then
+        help
+        exit 1
+    fi
+
+    action="$1"
+    shift
+
+    case $action in
+        help | -h | --help)
+            help
+            ;;
+        list)
+            list
+            ;;
+        show)
+            show
+            ;;
+        backup)
+            if [[ $# -ne 1 ]]; then
+                help
+                exit 1
+            fi
+            backup "$1"
+            ;;
+        set)
+            if [[ $# -ne 1 ]]; then
+                help
+                exit 1
+            fi
+            set "$1"
+            ;;
+        delete)
+            if [[ $# -ne 1 ]]; then
+                help
+                exit 1
+            fi
+            delete "$1"
+            ;;
+        *)
+            echo -e "Error: Invalid command '$action'\n"
+            help
+            exit 1
+            ;;
+    esac
+fi
