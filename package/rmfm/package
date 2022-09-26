@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+# Copyright (c) 2020 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgnames=(rmfm)
+pkgdesc="Bare-bones file manager using Node.js and sas"
+url="https://codeberg.org/sun/rmFM"
+pkgver=1.4.0-2
+timestamp=2022-08-19T11:20:10+02:00
+section=utils
+maintainer="Sunny <roesch.eric@protonmail.com>"
+license=MIT
+installdepends=(node simple)
+
+source=(
+    https://codeberg.org/sun/rmFM/archive/1.4.0.zip
+    path_fix.patch
+)
+sha256sums=(
+    28ce80c67fecc370d11f3fe2069742c2789b388a9426fff49d269d7900ae3dc9
+    SKIP
+)
+
+prepare() {
+    # Assume node to be in /opt/bin and add that directory
+    # to the path of the app to allow finding simple
+    # This is a temporary fix for not working in remux
+    patch -d "$srcdir" < "$srcdir"/path_fix.patch
+}
+
+package() {
+    install -D -m 755 "$srcdir"/rmfm "$pkgdir"/opt/bin/rmfm
+    install -D -m 644 "$srcdir"/rmfm.draft "$pkgdir"/opt/etc/draft/rmfm.draft
+    install -D -m 644 "$srcdir"/rmfm.png "$pkgdir"/opt/etc/draft/icons/rmfm.png
+}
