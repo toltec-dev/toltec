@@ -49,17 +49,17 @@ package() {
 
 configure() {
     templatectl add -n "Noso Cube Low Density" -f "noso-cube-low.png" \
-        -c "Custom Grids"
+        -c "Custom" -c "Grids"
     templatectl add -n "Noso Cube Mid Density" -f "noso-cube-mid.png" \
-        -c "Custom Grids"
+        -c "Custom" -c "Grids"
     templatectl add -n "Noso Cube High Density" -f "noso-cube-high.png" \
-        -c "Custom Grids"
+        -c "Custom" -c "Grids"
     templatectl add -n "Noso Tall Low Density" -f "noso-tall-low.png" \
-        -c "Custom Grids"
+        -c "Custom" -c "Grids"
     templatectl add -n "Noso Tall Mid Density" -f "noso-tall-mid.png" \
-        -c "Custom Grids"
+        -c "Custom" -c "Grids"
     templatectl add -n "Noso Tall High Density" -f "noso-tall-high.png" \
-        -c "Custom Grids"
+        -c "Custom" -c "Grids"
 }
 
 preremove() {
