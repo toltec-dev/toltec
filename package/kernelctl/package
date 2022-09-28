@@ -27,5 +27,15 @@ package() {
 }
 
 configure() {
-    kernelctl backup vanilla
+    if [[ ! -e "/opt/usr/share/kernelctl/vanilla-$(< /etc/version)" ]]; then
+        read -r -d '' msg <<- EOM
+		It looks like there is no backup of the upstream kernel for the
+		installed version of codex.
+
+		Please standby while one is produced (assuming that the
+		currently running kernel is upstream).
+	EOM
+        echo -e "$msg"
+        kernelctl backup vanilla
+    fi
 }
