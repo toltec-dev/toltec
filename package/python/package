@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+# Copyright (c) 2021 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgnames=(python)
+pkgdesc="The Python programming language"
+url="https://python.org"
+pkgver=3.10.7
+_relver=0.0.3.3
+timestamp=2022-09-06T18:36Z
+section="devel"
+maintainer="Matt C. <matt@tar.black>"
+license=MIT
+
+source=(https://github.com/SomethingGeneric/remarkable-python/releases/download/v${_relver}/py.tgz)
+sha256sums=(b916ffd34242c38f0d518e2d138ccae45874544ada17e6d6d96c66ba7442e19b)
+
+package() {
+    cp -r * ${pkgdir}/.
+}
