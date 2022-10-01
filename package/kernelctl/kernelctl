@@ -25,6 +25,7 @@ help() {
 		${bf}    list                    ${sf}List available kernels.
 		${bf}    show                    ${sf}Show the current configured kernel.
 		${bf}    delete <kernel>         ${sf}Delete kernel from the staging dir. WARNING this is irreversible.
+		${bf}    prune                   ${sf}Delete all backups of vanilla kernels older than the one that shipped with the current software version. WARNING this is irreversible.
 		${bf}    set <kernel>            ${sf}Change booting kernel.
 
 		${bf}        <kernel>            ${sf}Kernel name or number (from 'list' command) or "default" to revert to the upstram kernel.
@@ -171,6 +172,18 @@ delete() {
     fi
 }
 
+prune() {
+    echo "Deleting backups of old vanilla kernel(s) from the staging area is irreversible."
+    echo -n "Do you want to proceed? [N/y]: "
+    read -r ans
+    if [[ "$ans" = "y" || "$ans" = "Y" ]]; then
+    	mapfile -t filenames < <(find "$kernelctl_dir" -path "*vanilla-*.tar.bz2" ! -name vanilla-$(< /etc/version).tar.bz2 )
+        for filename in "${filenames[@]}"; do
+            rm "$filename"
+    done
+    fi
+}
+
 if [[ $0 = "${BASH_SOURCE[0]}" ]]; then
     if [[ $# -eq 0 ]]; then
         help
@@ -210,6 +223,9 @@ if [[ $0 = "${BASH_SOURCE[0]}" ]]; then
                 exit 1
             fi
             delete "$1"
+            ;;
+        prune)
+            prune
             ;;
         *)
             echo -e "Error: Invalid command '$action'\n"
