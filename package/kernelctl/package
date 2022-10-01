@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+# Copyright (c) 2021 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgnames=(kernelctl)
+pkgdesc="Manage aftermarket kernels"
+url=https://toltec-dev.org/
+pkgver=0.1-1
+timestamp=2022-03-14T00:00Z
+section="utils"
+maintainer="Salvatore Stella <etn45p4m@gmail.com>"
+license=MIT
+
+source=(
+    kernelctl
+    force_reinstall_on_toltecctl_reenable
+)
+sha256sums=(
+    SKIP
+    SKIP
+)
+
+package() {
+    install -D -m 744 -t "$pkgdir"/opt/bin "$srcdir"/kernelctl
+    install -d "$pkgdir"/opt/usr/share/kernelctl
+    install -D -m 666 -t "$pkgdir"/usr/share/kernelctl/ "$srcdir"/force_reinstall_on_toltecctl_reenable
+}
+
+configure() {
+    kernelctl backup vanilla
+}
