@@ -6,7 +6,7 @@ archs=(rm2)
 pkgnames=(linux-mainline)
 pkgdesc="reMarkable 2 kernel based on the mainline kernel"
 url=https://www.kernel.org
-pkgver=5.18.0-1
+pkgver=5.19.0-1
 timestamp=2022-05-22T21:50:09Z
 section=kernel
 maintainer="Alistair Francis <alistair@alistair23.me>"
@@ -15,8 +15,8 @@ license=GPL-2.0-only
 flags=(nostrip)
 
 image=base:v2.3
-source=("https://github.com/alistair23/linux/archive/f9fe680995e01398f0813077711fe1b744251c5b.tar.gz")
-sha256sums=(d38c883a31f5f87483377e78b4b3a2eb1ce73ada38fc25949e692dd0b2dd7895)
+source=("https://github.com/alistair23/linux/archive/6df274810d20448125834115e2181de288fdc8a4.tar.gz")
+sha256sums=(a7538198dbef21868d2c52e8b379576c8791726809bd5886176ab88d1f9df49f)
 
 build() {
     ARCH=arm make imx_v6_v7_defconfig
@@ -38,19 +38,13 @@ package() {
     # Create the kernel archive
     local archive="mainline-${pkgver%-*}.tar.bz2"
     install -d "$pkgdir"/opt/usr/share/kernelctl
-    tar --owner root:0 --group root:0 --mtime=$timestamp \
-        -cjf "$pkgdir"/opt/usr/share/kernelctl/"$archive" -C "$staging" .
+    (cd "$staging" && tar --owner root:0 --group root:0 --mtime=$timestamp \
+        -cjf "$pkgdir"/opt/usr/share/kernelctl/"$archive" boot/* lib/modules/*)
 }
 
 configure() {
     echo "The new kernel files have been copied, but not installed."
-    echo "Before installing them, make a backup of the existing kernel:"
-    echo "  mkdir -p /opt/boot-backup"
-    echo "  cp -rvf /boot/* /opt/boot-backup/"
-    echo
-    echo "Then replace it with the new kernel and reboot:"
-    echo "  tar -xvf /opt/usr/share/kernelctl/mainline-${pkgver%-*}.tar.bz2 -C /"
-    echo "  /bin/sync"
+    echo "Please use kernelctl to select the kernel to boot."
     echo
     echo "Known issues with the mainline kernel:"
     echo " - No support for low power mode (suspend uses more power then it should)"
@@ -58,12 +52,4 @@ configure() {
     echo " - GUI shutdown in Oxide doesn't work"
     echo " - Wacom stylus doesn't work in Xochitl (works everywhere else though)"
     echo " - No OTG control support"
-}
-
-postremove() {
-    echo "To restore to the original kernel, run and then reboot"
-    echo "  rm -rf /lib/modules/${pkgver%-*}/"
-    echo "  cp -f /opt/boot-backup/zImage /boot/"
-    echo "  cp -f /opt/boot-backup/zero-sugar.dtb /boot/"
-    echo "  /bin/sync"
 }

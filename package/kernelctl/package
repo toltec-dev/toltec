@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+# Copyright (c) 2021 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgnames=(kernelctl)
+pkgdesc="Manage aftermarket kernels"
+url=https://toltec-dev.org/
+pkgver=0.1-2
+timestamp=2022-03-14T00:00Z
+section="utils"
+maintainer="Salvatore Stella <etn45p4m@gmail.com>"
+license=MIT
+
+source=(
+    kernelctl
+    force_reinstall_on_toltecctl_reenable
+)
+sha256sums=(
+    SKIP
+    SKIP
+)
+
+package() {
+    install -D -m 744 -t "$pkgdir"/opt/bin "$srcdir"/kernelctl
+    install -d "$pkgdir"/opt/usr/share/kernelctl
+    install -D -m 666 -t "$pkgdir"/usr/share/kernelctl/ "$srcdir"/force_reinstall_on_toltecctl_reenable
+}
+
+configure() {
+    if [[ "$(kernelctl list | tail -n +2 | awk '{print $2}' | grep "vanilla-$(< /etc/version)")" == "" ]]; then
+        read -r -d '' msg <<- EOM
+		It looks like there is no backup of the upstream kernel for the
+		installed version of codex.
+
+		Please standby while one is produced (assuming that the
+		currently running kernel is upstream).
+	EOM
+        echo -e "$msg"
+        kernelctl backup vanilla
+    fi
+}
