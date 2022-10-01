@@ -1,0 +1,72 @@
+#!/usr/bin/env bash
+# Copyright (c) 2022 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgnames=(template-noso-grid)
+pkgdesc="Nosometric grid template"
+url=https://github.com/RobotCaleb/noso_template
+pkgver=1.0.0
+timestamp=2022-03-20T18:34Z
+section="templates"
+maintainer="Caleb Anderson <robotrising@gmail.com>"
+license=MIT
+installdepends=(templatectl)
+
+source=("https://github.com/RobotCaleb/noso_template/archive/refs/tags/v${pkgver%-*}.zip")
+sha256sums=(cd7cfcb0c2e9b9734a5e79c00182a4d27858e2c6e2501da54f4d58569171a734)
+
+package() {
+    install -D -m 755 -t "$pkgdir"/opt/share/remarkable/templates \
+        "$srcdir"/templates/cube-high/noso-cube-high.png
+    install -D -m 755 -t "$pkgdir"/opt/share/remarkable/templates \
+        "$srcdir"/templates/cube-high/noso-cube-high.svg
+
+    install -D -m 755 -t "$pkgdir"/opt/share/remarkable/templates \
+        "$srcdir"/templates/cube-low/noso-cube-low.png
+    install -D -m 755 -t "$pkgdir"/opt/share/remarkable/templates \
+        "$srcdir"/templates/cube-low/noso-cube-low.svg
+
+    install -D -m 755 -t "$pkgdir"/opt/share/remarkable/templates \
+        "$srcdir"/templates/cube-mid/noso-cube-mid.png
+    install -D -m 755 -t "$pkgdir"/opt/share/remarkable/templates \
+        "$srcdir"/templates/cube-mid/noso-cube-mid.svg
+
+    install -D -m 755 -t "$pkgdir"/opt/share/remarkable/templates \
+        "$srcdir"/templates/tall-high/noso-tall-high.png
+    install -D -m 755 -t "$pkgdir"/opt/share/remarkable/templates \
+        "$srcdir"/templates/tall-high/noso-tall-high.svg
+
+    install -D -m 755 -t "$pkgdir"/opt/share/remarkable/templates \
+        "$srcdir"/templates/tall-low/noso-tall-low.png
+    install -D -m 755 -t "$pkgdir"/opt/share/remarkable/templates \
+        "$srcdir"/templates/tall-low/noso-tall-low.svg
+
+    install -D -m 755 -t "$pkgdir"/opt/share/remarkable/templates \
+        "$srcdir"/templates/tall-mid/noso-tall-mid.png
+    install -D -m 755 -t "$pkgdir"/opt/share/remarkable/templates \
+        "$srcdir"/templates/tall-mid/noso-tall-mid.svg
+}
+
+configure() {
+    templatectl add -n "Noso Cube Low Density" -f "noso-cube-low.png" \
+        -c "Custom" -c "Grids"
+    templatectl add -n "Noso Cube Mid Density" -f "noso-cube-mid.png" \
+        -c "Custom" -c "Grids"
+    templatectl add -n "Noso Cube High Density" -f "noso-cube-high.png" \
+        -c "Custom" -c "Grids"
+    templatectl add -n "Noso Tall Low Density" -f "noso-tall-low.png" \
+        -c "Custom" -c "Grids"
+    templatectl add -n "Noso Tall Mid Density" -f "noso-tall-mid.png" \
+        -c "Custom" -c "Grids"
+    templatectl add -n "Noso Tall High Density" -f "noso-tall-high.png" \
+        -c "Custom" -c "Grids"
+}
+
+preremove() {
+    templatectl remove --name "Noso Cube Low Density"
+    templatectl remove --name "Noso Cube Mid Density"
+    templatectl remove --name "Noso Cube High Density"
+    templatectl remove --name "Noso Tall Low Density"
+    templatectl remove --name "Noso Tall Mid Density"
+    templatectl remove --name "Noso Tall High Density"
+}
