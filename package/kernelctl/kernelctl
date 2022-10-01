@@ -177,7 +177,7 @@ prune() {
     echo -n "Do you want to proceed? [N/y]: "
     read -r ans
     if [[ "$ans" = "y" || "$ans" = "Y" ]]; then
-        mapfile -t filenames < <(find "$kernelctl_dir" -path "*vanilla-*.tar.bz2" ! -name vanilla-$(< /etc/version).tar.bz2)
+        mapfile -t filenames < <(find "$kernelctl_dir" -path "*vanilla-*.tar.bz2" ! -name vanilla-"$(< /etc/version)".tar.bz2)
         for filename in "${filenames[@]}"; do
             rm "$filename"
         done
