@@ -86,7 +86,7 @@ configure() {
                 ;;
             "20220617142418")
                 patch_version="35.1.01"
-                original_hash="d172016ac8a97ca5df3c551648e0b3314f17f72a"
+                original_hash="a052dfbe587851d17146e586e4be65819f1360e3"
                 xochitl_version="2.14.1.866"
                 ;;
             "20220615075543")
