@@ -6,8 +6,8 @@ archs=(rm1 rm2)
 pkgnames=(linux-stracciatella)
 pkgdesc="RemarkableAS's vanilla kernel with a few extra flakes"
 url=https://github.com/Etn40ff/linux-remarkable
-pkgver=5.4.70-1
-timestamp=2022-06-26T23:50:04+02:00
+pkgver=5.4.70-2
+timestamp=2022-09-26T21:23:39Z
 section="kernel"
 maintainer="Salvatore Stella <etn45p4m@gmail.com>"
 makedepends=(build:flex build:bison build:libssl-dev build:bc build:lzop build:libgmp-dev build:libmpc-dev build:kmod)
@@ -15,8 +15,8 @@ license=GPL-2.0-only
 flags=(nostrip)
 installdepends=(kernelctl)
 image=base:v2.3
-source=(https://github.com/Etn40ff/linux-remarkable/archive/c6aa07709109f9b5879628396052f60a97ec9197.tar.gz)
-sha256sums=(529fe57ddc25bbaed5f0b3a9f7f79b51ab9ea3388d2acf8a933a8a4c77bd93c0)
+source=(https://github.com/Etn40ff/linux-remarkable/archive/41121ea10ed2235c441cfe717461988859d7f5b6.tar.gz)
+sha256sums=(ade87a10bfa7069222cbf8eb1d00ca460d38aab9685223d2fa3ee4f363a75cfa)
 
 build() {
     if [[ $arch = rm1 ]]; then
