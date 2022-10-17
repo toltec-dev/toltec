@@ -8,7 +8,7 @@ timestamp=2022-09-17T16:14:01Z
 maintainer="raisjn <of.raisjn@gmail.com>"
 license=MIT
 url="https://github.com/ddvk/remarkable2-framebuffer"
-pkgver=1:0.0.25-1
+pkgver=1:0.0.26-1
 _release="${pkgver%-*}"
 _release="v${_release#*:}"
 _libver=1.0.1
@@ -23,7 +23,7 @@ source=(
     rm2fb-preload.env
 )
 sha256sums=(
-    34d2f9863c1a19429e61a520507ce5de0634c029c3a18690fcf5efa3ce37a049
+    dbed22e7e5b8e9f64d64d37301ed53e99ed8369236468bec1bdd03050f2737b2
     SKIP
     SKIP
     SKIP
