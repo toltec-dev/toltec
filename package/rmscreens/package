@@ -12,7 +12,7 @@ maintainer="pr0fsmith <evon_smith@yahoo.ca>"
 license=GPL-3.0
 
 source=(https://github.com/pr0fsmith/rMscreens/archive/47c01faf51cbb8dd6a83c5a26e646ae246ee26f6.zip)
-sha256sums=(49cb4c57556ed807d6de613c63874f1253e54989f0445439a06158abd8514bc3)
+sha256sums=(47c01faf51cbb8dd6a83c5a26e646ae246ee26f6)
 
 package() {
     install -Dm755 "$srcdir"/changescrn "$pkgdir/opt/bin/changescrn"
