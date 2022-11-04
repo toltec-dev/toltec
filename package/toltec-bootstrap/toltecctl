@@ -132,6 +132,12 @@ remove-bind-mount() {
     systemctl daemon-reload
 }
 
+# Disable automatic update
+disable-autoupdate() {
+    echo "Disabling automatic update"
+    systemctl disable --now update-engine
+}
+
 # Reinstall all Toltec packages that had files installed outside of
 # $toltec_src, e.g. systemd configuration files
 reinstall-root() {
@@ -303,6 +309,7 @@ reenable() {
     add-bind-mount "$toltec_src" "$toltec_dest"
     reinstall-root
     set-path
+    disable-autoupdate
 }
 
 # List all installed packages such that any package comes before
