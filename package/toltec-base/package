@@ -6,7 +6,7 @@ archs=(rm1 rm2)
 pkgnames=(toltec-base)
 pkgdesc="Metapackage defining the base set of packages in a Toltec install"
 url=https://toltec-dev.org/
-pkgver=1.0-1
+pkgver=1.1-1
 timestamp=2022-02-28T00:12Z
 section="utils"
 maintainer="Eeems <eeems@eeems.email>"
@@ -19,11 +19,11 @@ source=()
 sha256sums=()
 
 build() {
-    touch toltec-base
+    touch emptyfile
 }
 
 package() {
-    install -D -m 666 -t "$pkgdir"/usr/share/toltec/reenable.d/ "$srcdir"/toltec-base
+    install -D -m 666 -t "$pkgdir"/usr/share/toltec/reenable.d/toltec-base "$srcdir"/emptyfile
 }
 
 configure(){
