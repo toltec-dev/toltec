@@ -242,7 +242,6 @@ main() {
     # Reinstall toltec-bootstrap to mark its files as managed,
     # to install its dependencies, and to set the user’s PATH
     opkg install toltec-bootstrap
-
     log "After each system upgrade, run 'toltecctl reenable' to re-enable Toltec"
 }
 
