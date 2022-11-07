@@ -26,7 +26,7 @@ package() {
     install -D -m 666 -t "$pkgdir"/usr/share/toltec/reenable.d/toltec-base "$srcdir"/emptyfile
 }
 
-configure(){
+configure() {
     echo "Disabling automatic update"
     systemctl disable --now update-engine
 }
