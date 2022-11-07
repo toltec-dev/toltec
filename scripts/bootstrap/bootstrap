@@ -243,8 +243,6 @@ main() {
     # to install its dependencies, and to set the user’s PATH
     opkg install toltec-bootstrap
 
-    disable-autoupdate
-
     log "After each system upgrade, run 'toltecctl reenable' to re-enable Toltec"
 }
 
