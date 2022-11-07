@@ -303,7 +303,6 @@ reenable() {
     add-bind-mount "$toltec_src" "$toltec_dest"
     reinstall-root
     set-path
-    disable-autoupdate
 }
 
 # List all installed packages such that any package comes before
