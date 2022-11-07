@@ -18,6 +18,15 @@ installdepends_rm2=(rm2-suspend-fix)
 source=()
 sha256sums=()
 
+build() {
+    touch toltec-base
+}
+
 package() {
-    true
+    install -D -m 666 -t "$pkgdir"/usr/share/toltec/reenable.d/ "$srcdir"/toltec-base
+}
+
+configure(){
+    echo "Disabling automatic update"
+    systemctl disable --now update-engine
 }
