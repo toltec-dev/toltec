@@ -4,7 +4,7 @@
 
 archs=(rm1 rm2)
 pkgnames=(display rm2fb-client)
-timestamp=2022-09-17T16:14:01Z
+timestamp=2022-10-28T15:36:16Z
 maintainer="raisjn <of.raisjn@gmail.com>"
 license=MIT
 url="https://github.com/ddvk/remarkable2-framebuffer"
