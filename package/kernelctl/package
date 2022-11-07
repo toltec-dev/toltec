@@ -20,10 +20,14 @@ sha256sums=(
     SKIP
 )
 
+build() {
+    touch emptyfile
+}
+
 package() {
     install -D -m 744 -t "$pkgdir"/opt/bin "$srcdir"/kernelctl
     install -d "$pkgdir"/opt/usr/share/kernelctl
-    install -D -m 666 -t "$pkgdir"/usr/share/kernelctl/ "$srcdir"/force_reinstall_on_toltecctl_reenable
+    install -D -m 666 -t "$pkgdir"/usr/share/toltec/reenable.d/kernelctl "$srcdir"/emptyfile
 }
 
 configure() {
