@@ -13,10 +13,8 @@ license=MIT
 
 source=(
     kernelctl
-    force_reinstall_on_toltecctl_reenable
 )
 sha256sums=(
-    SKIP
     SKIP
 )
 
