@@ -77,7 +77,7 @@ configure() {
         device="reMarkable 1"
         case "$build_date" in
             "20221003074737")
-                patch_version="38.2.03"
+                patch_version="38.1.03"
                 original_hash="a3ce408c8a717d48746e361336532924f5ff40f2"
                 xochitl_version="2.15.0.1067"
                 ;;
