@@ -223,12 +223,11 @@ source file '{source.url}', got {req.status_code}"
                 )
 
             # Automatically extract source archives
-            if not source.noextract:
-                if not util.auto_extract(local_path, src_dir):
-                    self.adapter.debug(
-                        "Not extracting %s (unsupported archive type)",
-                        local_path,
-                    )
+            if not source.noextract and not util.auto_extract(local_path, src_dir):
+                self.adapter.debug(
+                    "Not extracting %s (unsupported archive type)",
+                    local_path,
+                )
 
     def _prepare(self, recipe: Recipe, src_dir: str) -> None:
         """Prepare source files before building."""
