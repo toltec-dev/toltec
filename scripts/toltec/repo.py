@@ -208,30 +208,29 @@ class Repo:
             index_path = os.path.join(arch_dir, "Packages")
             index_gzip_path = os.path.join(arch_dir, "Packages.gz")
 
-            with open(index_path, "w") as index_file:
-                with gzip.open(index_gzip_path, "wt") as index_gzip_file:
-                    for generic_recipe in self.generic_recipes.values():
-                        if not arch in generic_recipe.recipes:
+            with open(index_path, "w") as index_file, gzip.open(index_gzip_path, "wt") as index_gzip_file:
+                for generic_recipe in self.generic_recipes.values():
+                    if not arch in generic_recipe.recipes:
+                        continue
+
+                    recipe = generic_recipe.recipes[arch]
+
+                    for package in recipe.packages.values():
+                        filename = package.filename()
+                        local_path = os.path.join(self.repo_dir, filename)
+
+                        if not os.path.isfile(local_path):
                             continue
 
-                        recipe = generic_recipe.recipes[arch]
+                        control = package.control_fields()
+                        control += textwrap.dedent(
+                            f"""\
+                            Filename: {os.path.basename(filename)}
+                            SHA256sum: {file_sha256(local_path)}
+                            Size: {os.path.getsize(local_path)}
 
-                        for package in recipe.packages.values():
-                            filename = package.filename()
-                            local_path = os.path.join(self.repo_dir, filename)
-
-                            if not os.path.isfile(local_path):
-                                continue
-
-                            control = package.control_fields()
-                            control += textwrap.dedent(
-                                f"""\
-                                Filename: {os.path.basename(filename)}
-                                SHA256sum: {file_sha256(local_path)}
-                                Size: {os.path.getsize(local_path)}
-
-                                """
-                            )
+                            """
+                        )
 
                             index_file.write(control)
                             index_gzip_file.write(control)
