@@ -232,8 +232,8 @@ class Repo:
                             """
                         )
 
-                            index_file.write(control)
-                            index_gzip_file.write(control)
+                        index_file.write(control)
+                        index_gzip_file.write(control)
 
     def make_listing(self) -> None:
         """Generate the static web listing for packages in the repo."""
