@@ -6,8 +6,8 @@ StartLimitBurst=4
 Conflicts=sync.service
 
 [Service]
-# Do NOT make this dbus, until we review the crash handling, as disassociating
-# from this busname will result in systemd killing sync for Type=dbus (by design)
+# Do NOT make this dbus, as disassociating from this busname will result in
+# systemd killing sync for Type=dbus (by design)
 # Type=dbus
 Type=simple
 BusName=no.remarkable.sync
