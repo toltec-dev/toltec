@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: MIT
 
 pkgnames=(erode fret oxide rot tarnish decay corrupt anxiety liboxide libsentry)
-pkgver=2.4-1
+pkgver=2.4-2
 _sentryver=0.4.17
 timestamp=2022-05-22T03:18:32Z
 maintainer="Eeems <eeems@eeems.email>"
@@ -11,8 +11,14 @@ url=https://oxide.eeems.codes
 license=MIT
 flags=(patch_rm2fb)
 image=qt:v2.3
-source=("https://github.com/Eeems-Org/oxide/archive/e6c62a6860b52cd1cbd47e21377f8d1ecf72bb0a.tar.gz")
-sha256sums=(a29cf455d5f66fee4ee67722c6f1d20627930920286398932c3d5c813d58ebee)
+source=(
+    "https://github.com/Eeems-Org/oxide/archive/e6c62a6860b52cd1cbd47e21377f8d1ecf72bb0a.tar.gz"
+    toltec-provide-xochitl.conf
+)
+sha256sums=(
+    a29cf455d5f66fee4ee67722c6f1d20627930920286398932c3d5c813d58ebee
+    SKIP
+)
 
 build() {
     find . -name "*.pro" -type f -print0 \
@@ -84,6 +90,8 @@ tarnish() {
         install -D -m 644 -t "$pkgdir"/etc/dbus-1/system.d "$srcdir"/release/etc/dbus-1/system.d/codes.eeems.oxide.conf
         install -D -m 644 -t "$pkgdir"/lib/systemd/system "$srcdir"/release/etc/systemd/system/tarnish.service
         install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/release/opt/bin/tarnish
+        install -D -m 644 -t "$pkgdir"/etc/systemd/system/tarnish.service.d \
+            "$srcdir"/toltec-provide-xochitl.conf
     }
     configure() {
         systemctl daemon-reload
