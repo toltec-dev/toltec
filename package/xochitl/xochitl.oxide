@@ -1,7 +1,7 @@
 {
     "displayName": "Xochitl",
     "description": "Read documents and take notes",
-    "bin": "/opt/bin/xochitl",
+    "bin": "/opt/bin/xochitl-with-sync",
     "icon": "/opt/etc/draft/icons/xochitl.png",
     "flags": ["nosplash", "chroot"],
     "permissions": ["power"],
@@ -25,5 +25,8 @@
         "QT_QPA_EVDEV_TOUCHSCREEN_PARAMETERS": "rotate=180",
         "HOME": "/home/root",
         "XDG_RUNTIME_DIR": "/tmp/runtime-root"
+    },
+    "events": {
+        "stop": "systemctl stop sync-with-tarnish"
     }
 }
