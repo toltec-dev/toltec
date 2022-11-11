@@ -1,5 +1,5 @@
 [Unit]
-Description=reMarkable Document Sync
+Description=reMarkable Document Sync without the xochitl.service dependency
 After=dbus.socket
 StartLimitIntervalSec=60
 StartLimitBurst=4
