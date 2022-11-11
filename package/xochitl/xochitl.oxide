@@ -27,6 +27,6 @@
         "XDG_RUNTIME_DIR": "/tmp/runtime-root"
     },
     "events": {
-        "stop": "systemctl stop sync-with-tarnish"
+        "stop": "systemctl stop sync-with-tarnish.service"
     }
 }
