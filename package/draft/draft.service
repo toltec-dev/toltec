@@ -15,4 +15,5 @@ Environment="HOME=/home/root"
 
 [Install]
 Alias=launcher.service
+Alias=xochitl.service
 WantedBy=multi-user.target
