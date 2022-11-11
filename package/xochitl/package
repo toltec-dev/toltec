@@ -25,10 +25,8 @@ source=(
     toltec-wrapper.conf
     env-readme
     manual-sync.service
-    manual-sync.sh
 )
 sha256sums=(
-    SKIP
     SKIP
     SKIP
     SKIP
