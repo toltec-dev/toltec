@@ -18,11 +18,8 @@ installdepends_rm2=(rm2-suspend-fix)
 source=()
 sha256sums=()
 
-build() {
-    touch emptyfile
-}
-
 package() {
+    touch "$srcdir"/emptyfile
     install -D -m 666 -t "$pkgdir"/usr/share/toltec/reenable.d/toltec-base "$srcdir"/emptyfile
 }
 
