@@ -1,0 +1,21 @@
+[Unit]
+Description=reMarkable Document Sync
+After=dbus.socket
+StartLimitIntervalSec=60
+StartLimitBurst=4
+Conflicts=sync.service
+
+[Service]
+# Do NOT make this dbus, until we review the crash handling, as disassociating
+# from this busname will result in systemd killing sync for Type=dbus (by design)
+# Type=dbus
+Type=simple
+BusName=no.remarkable.sync
+ExecStart=/usr/bin/sync --service
+Restart=on-failure
+# No matter the signal, we want it to restart (all of these kill sync, but are
+# considered a "successful" termination (without restart) by systemd otherwise).
+RestartForceExitStatus=SIGHUP SIGINT SIGTERM SIGPIPE
+
+[Install]
+WantedBy=multi-user.target
