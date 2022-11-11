@@ -18,11 +18,8 @@ sha256sums=(
     SKIP
 )
 
-build() {
-    touch emptyfile
-}
-
 package() {
+    touch "$srcdir"/emptyfile
     install -D -m 744 -t "$pkgdir"/opt/bin "$srcdir"/kernelctl
     install -d "$pkgdir"/opt/usr/share/kernelctl
     install -D -m 666 -t "$pkgdir"/usr/share/toltec/reenable.d/kernelctl "$srcdir"/emptyfile
