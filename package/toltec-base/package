@@ -29,7 +29,7 @@ configure() {
         systemctl disable --now update-engine
     fi
     if is-enabled "sys-subsystem-net-devices-usb1.device"; then
-        echo "Disablign usb1.device to avoid long boots"
+        echo "Disabling usb1 network device to avoid long boots"
         systemctl disable --now sys-subsystem-net-devices-usb1.device
     fi
 }
