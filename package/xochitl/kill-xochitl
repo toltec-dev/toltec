@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: MIT
 
 # Only run if not in a chroot
-if [ "$(stat -c %d:%i /)" == "$(stat -c %d:%i /proc/1/root/.)" ];then
+if [ "$(stat -c %d:%i /)" == "$(stat -c %d:%i /proc/1/root/.)" ]; then
     killall xochitl
     if systemctl is-active --quiet manual-sync.service; then
         systemctl stop manual-sync.service
