@@ -2,7 +2,10 @@
 # Copyright (c) 2021 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
-killall xochitl
-if [ "$(stat -c %d:%i /)" == "$(stat -c %d:%i /proc/1/root/.)" ] && systemctl is-active --quiet manual-sync.service; then
-    systemctl stop manual-sync.service
+# Only run if not in a chroot
+if [ "$(stat -c %d:%i /)" == "$(stat -c %d:%i /proc/1/root/.)" ];then
+    killall xochitl
+    if systemctl is-active --quiet manual-sync.service; then
+        systemctl stop manual-sync.service
+    fi
 fi
