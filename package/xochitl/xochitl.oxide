@@ -11,6 +11,7 @@
         "/home/root",
         "/opt/etc",
         "/run/dbus",
+        "/run/lock",
         "/run/systemd",
         "/run/systemd/resolve",
         "/run/udev",
