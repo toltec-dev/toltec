@@ -11,8 +11,10 @@ for file in /opt/etc/xochitl.env.d/*.env; do
 done
 if [ "$(stat -c %d:%i /)" != "$(stat -c %d:%i /proc/1/root/.)" ]; then
     # We are running in a chroot so we can't use systemctl
-    # Instead run sync manually in the background
-    /usr/bin/sync --service &
+    # Instead run sync manually in the background if it isn't running
+    if [[ "x$(pidof sync)" != "x" ]]; then
+        /usr/bin/sync --service &
+    fi
 else
     # If for some reason, sync.service is no longer masked, re-mask it
     # The package install should have handled this, but something may
