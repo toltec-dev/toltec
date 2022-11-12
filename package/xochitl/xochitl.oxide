@@ -17,7 +17,7 @@
         "/usr/share",
         "/usr/share/remarkable/templates",
         "/var/cache/fontconfig",
-        "/var/lib/dbus",
+        "/var/lib/dbus"
     ],
     "environment": {
         "QMLSCENE_DEVICE": "epaper",
