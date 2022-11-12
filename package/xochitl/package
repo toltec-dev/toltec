@@ -64,6 +64,15 @@ package() {
 
 configure() {
     systemctl daemon-reload
+    
+    if [[ "x$(systemctl is-enabled sync.service)" != "xmasked" ]]; then
+        # sync.service interferes with launchers
+        # we use manual-sync.service instead
+        systemctl mask sync.service
+    fi
+    if ! is-active manual-sync.service; then
+        systemctl enable --now manual-sync.service
+    fi
 
     if is-enabled xochitl.service && ! is-enabled launcher.service; then
         # This package changes xochitl.service to alias it to launcher.service
@@ -73,8 +82,18 @@ configure() {
     fi
 }
 
+preremove() {
+    if is-active manual-sync.service; then
+        systemctl disable --now manual-sync.service
+    fi
+}
+
 postremove() {
     systemctl daemon-reload
+    
+    if [[ "x$(systemctl is-enabled sync.service)" == "xmasked" ]]; then
+        systemctl unmask sync.service 2> /dev/null
+    fi
 
     if is-enabled xochitl.service && is-enabled launcher.service; then
         # If xochitl is currently the active launcher, make sure the
