@@ -11,6 +11,7 @@
         "/home/root",
         "/opt/etc",
         "/run/dbus",
+        "/run/systemd",
         "/run/systemd/resolve",
         "/run/udev",
         "/tmp/runtime-root",
@@ -20,10 +21,11 @@
         "/var/lib/dbus"
     ],
     "environment": {
-        "QMLSCENE_DEVICE": "epaper",
-        "QT_QPA_PLATFORM": "epaper",
-        "QT_QPA_EVDEV_TOUCHSCREEN_PARAMETERS": "rotate=180",
         "HOME": "/home/root",
+        "QMLSCENE_DEVICE": "epaper",
+        "QT_QPA_EVDEV_TOUCHSCREEN_PARAMETERS": "rotate=180",
+        "QT_QPA_PLATFORM": "epaper",
+        "SYSTEMD_IGNORE_CHROOT": "true",
         "XDG_RUNTIME_DIR": "/tmp/runtime-root"
     },
     "events": {
