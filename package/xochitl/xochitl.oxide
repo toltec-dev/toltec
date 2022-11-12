@@ -18,6 +18,7 @@
         "/tmp/runtime-root",
         "/usr/share",
         "/usr/share/remarkable/templates",
+        "/usr/local/share/ca-certificates",
         "/var/cache/fontconfig",
         "/var/lib/dbus",
         "/var/volatile/tmp"
