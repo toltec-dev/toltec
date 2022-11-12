@@ -28,8 +28,6 @@ configure() {
         echo "Disabling automatic update"
         systemctl disable --now update-engine
     fi
-    if is-enabled "sys-subsystem-net-devices-usb1.device"; then
-        echo "Disabling usb1 network device to avoid long boots"
-        systemctl disable --now sys-subsystem-net-devices-usb1.device
-    fi
+    echo "Disabling usb1 network device to avoid long boots"
+    systemctl mask sys-subsystem-net-devices-usb1.device
 }
