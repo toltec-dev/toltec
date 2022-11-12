@@ -3,6 +3,8 @@
 # SPDX-License-Identifier: MIT
 
 killall xochitl
-if systemctl is-active --quiet manual-sync.service; then
+if [ "$(stat -c %d:%i /)" != "$(stat -c %d:%i /proc/1/root/.)" ]; then
+  killall sync
+elif systemctl is-active --quiet manual-sync.service; then
     systemctl stop manual-sync.service
 fi
