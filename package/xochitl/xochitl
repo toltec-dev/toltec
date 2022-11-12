@@ -9,6 +9,9 @@ for file in /opt/etc/xochitl.env.d/*.env; do
         source "$file"
     fi
 done
+# If for some reason, sync.service is no longer masked, re-mask it
+# The package install should have handled this, but something may
+# have changed it.
 if [[ "x$(systemctl is-enabled sync.service)" != "xmasked" ]]; then
     systemctl mask sync.service
 fi
