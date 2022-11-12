@@ -9,19 +9,13 @@ for file in /opt/etc/xochitl.env.d/*.env; do
         source "$file"
     fi
 done
-if [ "$(stat -c %d:%i /)" != "$(stat -c %d:%i /proc/1/root/.)" ]; then
-    # We are running in a chroot so we can't use systemctl
-    # Instead run sync manually in the background
-    /usr/bin/sync --service &
-else
-    # If for some reason, sync.service is no longer masked, re-mask it
-    # The package install should have handled this, but something may
-    # have changed it.
-    if [[ "x$(systemctl is-enabled sync.service)" != "xmasked" ]]; then
-        systemctl mask sync.service
-    fi
-    if ! systemctl is-active --quiet manual-sync.service; then
-        systemctl enable --now manual-sync.service
-    fi
+# If for some reason, sync.service is no longer masked, re-mask it
+# The package install should have handled this, but something may
+# have changed it.
+if [[ "x$(systemctl is-enabled sync.service)" != "xmasked" ]]; then
+    systemctl mask sync.service
+fi
+if ! systemctl is-active --quiet manual-sync.service; then
+    systemctl enable --now manual-sync.service
 fi
 exec /usr/bin/xochitl "$@"
