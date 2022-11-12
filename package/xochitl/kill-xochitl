@@ -8,4 +8,6 @@ if [ "$(stat -c %d:%i /)" == "$(stat -c %d:%i /proc/1/root/.)" ];then
     if systemctl is-active --quiet manual-sync.service; then
         systemctl stop manual-sync.service
     fi
+else
+    echo "Inside chroot, not doing anything"
 fi
