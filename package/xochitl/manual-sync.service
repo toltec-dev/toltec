@@ -1,3 +1,6 @@
+# Copyright (c) 2021 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
 [Unit]
 Description=reMarkable Document Sync without the xochitl.service dependency
 After=dbus.socket
@@ -6,15 +9,12 @@ StartLimitBurst=4
 Conflicts=sync.service
 
 [Service]
-# Do NOT make this dbus, as disassociating from this busname will result in
-# systemd killing sync for Type=dbus (by design)
-# Type=dbus
+# Do NOT make this dbus, systemd will kill the service when it should be
+# running otherwise.
 Type=simple
 BusName=no.remarkable.sync
 ExecStart=/usr/bin/sync --service
 Restart=on-failure
-# No matter the signal, we want it to restart (all of these kill sync, but are
-# considered a "successful" termination (without restart) by systemd otherwise).
 RestartForceExitStatus=SIGHUP SIGINT SIGTERM SIGPIPE
 
 [Install]
