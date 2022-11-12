@@ -67,10 +67,10 @@ package() {
 
 configure() {
     systemctl daemon-reload
-    
+
+    # sync.service interferes with launchers
+    # we use manual-sync.service instead
     if [[ "x$(systemctl is-enabled sync.service)" != "xmasked" ]]; then
-        # sync.service interferes with launchers
-        # we use manual-sync.service instead
         systemctl mask sync.service
     fi
     if ! is-active manual-sync.service; then
@@ -93,7 +93,7 @@ preremove() {
 
 postremove() {
     systemctl daemon-reload
-    
+
     if [[ "x$(systemctl is-enabled sync.service)" == "xmasked" ]]; then
         systemctl unmask sync.service 2> /dev/null
     fi
