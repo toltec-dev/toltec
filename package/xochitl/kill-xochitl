@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+# Copyright (c) 2021 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+killall xochitl
+if systemctl is-active --quiet manual-sync.service; then
+  systemctl stop manual-sync.service
+fi
