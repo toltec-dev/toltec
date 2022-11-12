@@ -4,5 +4,5 @@
 name=xochitl
 desc=Read documents and take notes
 call=/opt/bin/xochitl
-term=/opt/bin/kill-xochitl
+term=killall xochitl
 imgFile=xochitl
