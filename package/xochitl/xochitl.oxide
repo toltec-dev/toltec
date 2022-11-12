@@ -19,7 +19,8 @@
         "/usr/share",
         "/usr/share/remarkable/templates",
         "/var/cache/fontconfig",
-        "/var/lib/dbus"
+        "/var/lib/dbus",
+        "/var/volatile/tmp"
     ],
     "environment": {
         "HOME": "/home/root",
