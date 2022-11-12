@@ -27,8 +27,5 @@
         "QT_QPA_PLATFORM": "epaper",
         "SYSTEMD_IGNORE_CHROOT": "true",
         "XDG_RUNTIME_DIR": "/tmp/runtime-root"
-    },
-    "events": {
-        "stop": "/opt/bin/kill-xochitl"
     }
 }
