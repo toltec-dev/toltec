@@ -12,7 +12,7 @@ done
 if [ "$(stat -c %d:%i /)" != "$(stat -c %d:%i /proc/1/root/.)" ]; then
     # We are running in a chroot so we can't use systemctl
     # Instead run sync manually in the background if it isn't running
-    if [[ "x$(pidof sync)" != "x" ]]; then
+    if [[ "x$(pidof sync)" == "x" ]]; then
         /usr/bin/sync --service &
     fi
 else
