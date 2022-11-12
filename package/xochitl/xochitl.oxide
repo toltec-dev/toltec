@@ -27,6 +27,6 @@
         "XDG_RUNTIME_DIR": "/tmp/runtime-root"
     },
     "events": {
-        "stop": "systemctl stop manual-sync.service"
+        "stop": "/opt/bin/kill-xochitl"
     }
 }
