@@ -4,5 +4,5 @@
 
 killall xochitl
 if systemctl is-active --quiet manual-sync.service; then
-  systemctl stop manual-sync.service
+    systemctl stop manual-sync.service
 fi
