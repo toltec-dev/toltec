@@ -17,6 +17,7 @@ license=MIT
 installdepends=(toltec-base)
 
 source=(
+    kill-xochitl
     xochitl
     xochitl.png
     xochitl.draft
@@ -27,6 +28,7 @@ source=(
     manual-sync.service
 )
 sha256sums=(
+    SKIP
     SKIP
     SKIP
     SKIP
@@ -46,6 +48,7 @@ package() {
         "$pkgdir"/etc/systemd/system/remarkable-reboot.service.d
 
     install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/xochitl
+    install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/kill-xochitl
     install -D -m 644 "$srcdir"/env-readme "$pkgdir"/opt/etc/xochitl.env.d/README
 
     install -D -m 644 -t "$pkgdir"/opt/etc/draft "$srcdir"/xochitl.draft
