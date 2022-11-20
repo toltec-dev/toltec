@@ -5,26 +5,26 @@
 pkgnames=(wireguard)
 pkgdesc="Fast, modern, secure VPN tunnel"
 url=https://www.wireguard.com
-pkgver=1.0.20210219-3
-_wireguardtoolsver=1.0.20210223
+pkgver=1.0.20220627-1
+_wireguardtoolsver=1.0.20210914
 timestamp=2021-02-19T14:08Z
 section=kernel
 maintainer="Jonah Weissman <jonahrweissman+toltec@gmail.com>"
 license=GPL-2.0-only
-makedepends=(build:bc build:lzop build:git)
+makedepends=(build:bc build:lzop build:git build:flex build:bison build:libssl-dev)
 flags=(nostrip)
 
 _kernelrepo=https://github.com/remarkable/linux
 _kernelrevs=(
-    1774e2a6a091fdc081324e966d3db0aa9df75c0b
-    d4e7e07a390f8b2544ca09d69142d18114149004
+    bb6be69d6f71fced2fc63c61372bf96e5f7da565
+    bb6be69d6f71fced2fc63c61372bf96e5f7da565
 )
 _defconfigs=(
     arch/arm/configs/zero-gravitas_defconfig
     arch/arm/configs/zero-sugar_defconfig
 )
 
-image=base:v2.1
+image=base:v2.3
 source=(
     "https://git.zx2c4.com/wireguard-linux-compat/snapshot/wireguard-linux-compat-${pkgver%-*}.tar.xz"
     "https://git.zx2c4.com/wireguard-tools/snapshot/wireguard-tools-${_wireguardtoolsver}.tar.xz"
@@ -32,8 +32,8 @@ source=(
 )
 noextract=("wireguard-tools-${_wireguardtoolsver}.tar.xz")
 sha256sums=(
-    99d35296b8d847a0d4db97a4dda96b464311a6354e75fe0bef6e7c4578690f00
-    1f72da217044622d79e0bab57779e136a3df795e3761a3fc1dc0941a9055877c
+    362d412693c8fe82de00283435818d5c5def7f15e2433a07a9fe99d0518f63c0
+    97ff31489217bb265b7ae850d3d0f335ab07d2652ba1feec88b734bc96bd05ac
     SKIP
 )
 
