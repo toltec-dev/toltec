@@ -67,7 +67,11 @@ get_kernel_names() {
 
 # get current kernel
 get_current_kernel_name() {
-    current_kernel_name=$(find "$kernelctl_dir" -samefile "$kernelctl_dir"/current.tar.bz2 ! -name current.tar.bz2 -print0 | xargs -0 -I"{}" basename {} .tar.bz2)
+    if [[ -e "$kernelctl_dir"/current.tar.bz2 ]]; then
+        current_kernel_name=$(find "$kernelctl_dir" -samefile "$kernelctl_dir"/current.tar.bz2 ! -name current.tar.bz2 -print0 | xargs -0 -I"{}" basename {} .tar.bz2)
+    else
+        current_kernel_name=''
+    fi
 }
 
 # translate input into a kernel name
@@ -104,8 +108,12 @@ list() {
 # show the current configured kernel
 show() {
     get_current_kernel_name
-    echo -e "${gr}Current kernel:${sf}"
-    echo -e "  ${bf}${current_kernel_name}${sf}"
+    if [[ "$current_kernel_name" = "" ]]; then
+        echo -e "${bf}There is no link to the current running kernel in the staging area.${sf}"
+    else
+        echo -e "${gr}Current kernel:${sf}"
+        echo -e "  ${bf}${current_kernel_name}${sf}"
+    fi
 }
 
 # actually switch kernels
