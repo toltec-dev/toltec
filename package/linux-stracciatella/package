@@ -7,7 +7,7 @@ pkgnames=(linux-stracciatella linux-stracciatella-perf)
 pkgver=5.4.70-2
 timestamp=2022-09-26T21:23:39Z
 maintainer="Salvatore Stella <etn45p4m@gmail.com>"
-makedepends=(build:flex build:bison build:libssl-dev build:bc build:lzop build:libgmp-dev build:libmpc-dev build:kmod)
+makedepends=(build:flex build:bison build:libssl-dev build:bc build:lzop build:libgmp-dev build:libmpc-dev build:kmod build:python-is-python3)
 license=GPL-2.0-only
 flags=(nostrip)
 
@@ -21,7 +21,7 @@ build() {
     elif [[ $arch = rm2 ]]; then
         ARCH=arm make zero-sugar_defconfig
     fi
-    ARCH=arm make -j8
+    # ARCH=arm make -j8
     ARCH=arm make -j8 tools/perf
 }
 
