@@ -21,8 +21,8 @@ build() {
     elif [[ $arch = rm2 ]]; then
         ARCH=arm make zero-sugar_defconfig
     fi
-    # ARCH=arm make -j8
-    ARCH=arm make -j8 tools/perf
+    ARCH=arm make -j8
+    WERROR=0 ARCH=arm make -j8 tools/perf
 }
 
 linux-stracciatella() {
