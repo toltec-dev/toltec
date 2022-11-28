@@ -404,6 +404,21 @@ A list of packages that the current package replaces.
 Setting this field allows the current package to overwrite and take ownership of files from other packages.
 Note that the replaced packages will not be automatically uninstalled unless you also declare a conflict with them using the [`conflicts` field](#conflicts-field).
 
+#### `provides` field
+
+<table>
+    <tr>
+        <th>Required?</th>
+        <td>No, defaults to <code>()</code></th>
+    </tr>
+    <tr>
+        <th>Type</th>
+        <td>Array of strings</td>
+    </tr>
+</table>
+
+A list of virtual packages that the current package provides.
+
 #### `package()` function
 
 The `package()` function populates the `$pkgdir` directory with the files and directories that need to be installed using artifacts from the `$srcdir` directory.

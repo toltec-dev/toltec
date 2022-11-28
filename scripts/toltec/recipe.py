@@ -343,6 +343,7 @@ class Package:  # pylint:disable=too-many-instance-attributes
     installdepends: Set[Dependency]
     conflicts: Set[Dependency]
     replaces: Set[Dependency]
+    provides: Set[Dependency]
 
     functions: bash.Functions
     custom_functions: bash.Functions
@@ -390,7 +391,7 @@ class Package:  # pylint:disable=too-many-instance-attributes
         self.license = _pop_field_string(variables, "license")
         self.variables["license"] = self.license
 
-        for field in ("installdepends", "conflicts", "replaces"):
+        for field in ("installdepends", "conflicts", "replaces", "provides"):
             field_raw = _pop_field_indexed(variables, field, [])
             self.variables[field] = field_raw
             setattr(self, field, set())
@@ -482,6 +483,7 @@ custom functions with '_'"
             ("Depends", self.installdepends),
             ("Conflicts", self.conflicts),
             ("Replaces", self.replaces),
+            ("Provides", self.provides),
         ):
             if field:
                 control += (

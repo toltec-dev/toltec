@@ -67,6 +67,8 @@ linux-stracciatella-perf() {
     pkgdesc="Linux profiling with performance counters"
     url=https://perf.wiki.kernel.org
     section=devel
+    provides=(perf)
+    conflicts=(perf)
 
     package() {
         install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/tools/perf/perf
