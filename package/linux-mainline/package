@@ -6,7 +6,7 @@ archs=(rm2)
 pkgnames=(linux-mainline)
 pkgdesc="reMarkable 2 kernel based on the mainline kernel"
 url=https://www.kernel.org
-pkgver=6.0.0-1
+pkgver=6.1.0-1
 timestamp=2022-05-22T21:50:09Z
 section=kernel
 maintainer="Alistair Francis <alistair@alistair23.me>"
@@ -15,8 +15,8 @@ license=GPL-2.0-only
 flags=(nostrip)
 
 image=base:v2.3
-source=("https://github.com/alistair23/linux/archive/4c2ef4e3bba89a8d767eccb85a242b2cd8850146.tar.gz")
-sha256sums=(1583d553380a656ecaac8dab89558051e9165983381adc9c3d52fb8ac0ce19fd)
+source=("https://github.com/alistair23/linux/archive/552fbc8b3c15f92c48068c939016189dfefeb376.tar.gz")
+sha256sums=(9ca0ffc8a61cb526c363b7f5ac7aec8722c9e2a1d4a3ddb0d2d3a7eceee79e12)
 
 build() {
     ARCH=arm make imx_v6_v7_defconfig
@@ -48,8 +48,9 @@ configure() {
     echo
     echo "Known issues with the mainline kernel:"
     echo " - No support for low power mode (suspend uses more power then it should)"
+    echo " - Device doesn't always resume from suspend, a reboot is required"
     echo " - WiFi sometimes is off on boot (can be turned on again though)"
     echo " - GUI shutdown in Oxide doesn't work"
-    echo " - Wacom stylus doesn't work in Xochitl (works everywhere else though)"
+    echo " - Wacom stylus doesn't work in Xochitl (https://github.com/reMarkable/linux/issues/15)"
     echo " - No OTG control support"
 }
