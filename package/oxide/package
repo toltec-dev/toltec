@@ -2,17 +2,23 @@
 # Copyright (c) 2021 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
-pkgnames=(erode fret oxide rot tarnish decay corrupt anxiety liboxide libsentry)
-pkgver=2.4-1
-_sentryver=0.4.17
-timestamp=2022-05-22T03:18:32Z
+pkgnames=(erode fret oxide rot tarnish decay corrupt anxiety liboxide libsentry notify-send)
+pkgver=2.5-1
+_sentryver=0.5.0
+timestamp=2023-01-26T22:52:14Z
 maintainer="Eeems <eeems@eeems.email>"
 url=https://oxide.eeems.codes
 license=MIT
 flags=(patch_rm2fb)
 image=qt:v2.3
-source=("https://github.com/Eeems-Org/oxide/archive/e6c62a6860b52cd1cbd47e21377f8d1ecf72bb0a.tar.gz")
-sha256sums=(a29cf455d5f66fee4ee67722c6f1d20627930920286398932c3d5c813d58ebee)
+source=(
+    "https://github.com/Eeems-Org/oxide/archive/refs/tags/v2.5.zip"
+    toltec-override.conf
+)
+sha256sums=(
+    07bfb84e5adaebdebd2ce55b22f3764a1d4887c2b18364f5ec1053f171e3ecbe
+    SKIP
+)
 
 build() {
     find . -name "*.pro" -type f -print0 \
@@ -84,6 +90,8 @@ tarnish() {
         install -D -m 644 -t "$pkgdir"/etc/dbus-1/system.d "$srcdir"/release/etc/dbus-1/system.d/codes.eeems.oxide.conf
         install -D -m 644 -t "$pkgdir"/lib/systemd/system "$srcdir"/release/etc/systemd/system/tarnish.service
         install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/release/opt/bin/tarnish
+        install -D -m 644 -t "$pkgdir"/etc/systemd/system/tarnish.service.d \
+            "$srcdir"/toltec-override.conf
     }
     configure() {
         systemctl daemon-reload
@@ -151,9 +159,19 @@ libsentry() {
     section=devel
     url=https://github.com/getsentry/sentry-native
     pkgver="$_sentryver"
-    timestamp="2021-12-20T14:25:11Z"
+    timestamp="2022-08-02T14:40:22Z"
 
     package() {
         install -D -m 755 -t "$pkgdir"/opt/lib "$srcdir"/release/opt/lib/libsentry.so
+    }
+}
+
+notify-send() {
+    pkgdesc="A program to send desktop notifications for Oxide"
+    section=utils
+    installdepends=("tarnish=$pkgver" "liboxide=$pkgver" "libsentry=$_sentryver")
+
+    package() {
+        install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/release/opt/bin/notify-send
     }
 }
