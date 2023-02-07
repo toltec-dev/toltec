@@ -35,23 +35,20 @@ package() {
 
 configure() {
     systemctl daemon-reload
-
-    if ! is-enabled "$pkgname.service"; then
-        printf "\nRun the following command to use $pkgname\n"
-        printf "systemctl start $pkgname\n\n"
-        printf "To automatically start the application after restarting, run:\n"
-        printf "systemctl enable $pkgname\n\n"
-    fi
+    
+    echo ""
+    echo "Run the following command to use $pkgname"
+    how-to-enable "$pkgname.service"
 }
 
 preremove() {
-    if is-active $pkgname; then
+    if is-active "$pkgname"; then
         echo "Stopping $pkgname"
-        systemctl stop $pkgname
+        systemctl stop "$pkgname"
     fi
-    if is-enabled $pkgname; then
+    if is-enabled "$pkgname"; then
         echo "Disabling $pkgname"
-        systemctl disable $pkgname
+        systemctl disable "$pkgname"
     fi
 }
 
