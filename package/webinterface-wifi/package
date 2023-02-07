@@ -35,7 +35,7 @@ package() {
 
 configure() {
     systemctl daemon-reload
-    
+
     echo ""
     echo "Run the following command to use $pkgname"
     how-to-enable "$pkgname.service"
