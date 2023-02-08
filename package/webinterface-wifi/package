@@ -1,0 +1,57 @@
+#!/usr/bin/env bash
+# Copyright (c) 2020 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgnames=(webinterface-wifi)
+pkgdesc="View the web interface if running, over wifi"
+url="https://github.com/rM-self-serve/webinterface-wifi"
+pkgver=1.0.2-1
+timestamp=2023-02-06T12:23:17Z
+section="utils"
+maintainer="rM-self-serve <122753594+rM-self-serve@users.noreply.github.com>"
+license=MIT
+
+image=rust:v2.3
+
+source=(
+    https://github.com/rM-self-serve/webinterface-wifi/archive/2e29855303a0806ee51e71bc836bc4b16204fa14.zip
+    webinterface-wifi-toltec.service
+)
+
+sha256sums=(
+    629bab244a387086ce2a8f8118b8d1017cf993bf97b13da72573f52572ed526e
+    SKIP
+)
+
+build() {
+    RUSTFLAGS="-Zcrate-attr=feature(const_fn_trait_bound)" cargo build --release
+}
+
+package() {
+    install -D -m 755 -t "$pkgdir"/opt/bin \
+        "$srcdir"/target/armv7-unknown-linux-gnueabihf/release/webinterface-wifi
+    install -D -m 644 "$srcdir"/webinterface-wifi-toltec.service "$pkgdir"/lib/systemd/system/webinterface-wifi.service
+}
+
+configure() {
+    systemctl daemon-reload
+
+    echo ""
+    echo "Run the following command to use $pkgname"
+    how-to-enable "$pkgname.service"
+}
+
+preremove() {
+    if is-active "$pkgname"; then
+        echo "Stopping $pkgname"
+        systemctl stop "$pkgname"
+    fi
+    if is-enabled "$pkgname"; then
+        echo "Disabling $pkgname"
+        systemctl disable "$pkgname"
+    fi
+}
+
+postremove() {
+    systemctl daemon-reload
+}
