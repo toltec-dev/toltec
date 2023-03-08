@@ -21,7 +21,7 @@ sha256sums=(82ef5786704ecdb4fe11ce16e7e4ae10b518a592965c292977bb33962c891d48)
 build() {
     # 'cargo pkgid' seems to output something different with most
     # recent nightly builds. This adjusts the filtering.
-    sed -i "s/version=.*$/version=\'$(cargo pkgid | cut -d "#" -f 2 | cut -d ":" -f 2)\'/g" download.sh
+    sed -i "s/version=.*$/version=\'$(cargo pkgid -p plato | cut -d "#" -f 2 | cut -d ":" -f 2)\'/g" download.sh
 
     # Use our toolchain
     export AR=arm-linux-gnueabihf-ar
