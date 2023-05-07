@@ -50,7 +50,9 @@ class Version:
             )
 
         if _VERSION_CHARS.fullmatch(revision) is None:
-            raise InvalidVersionError(f"Invalid chars in revision: '{revision}'")
+            raise InvalidVersionError(
+                f"Invalid chars in revision: '{revision}'"
+            )
 
         self._original: Optional[str] = None
 
