@@ -2,3 +2,4 @@ private
 build
 __pycache__
 .venv
+venv/
