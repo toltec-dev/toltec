@@ -99,13 +99,11 @@ declare -p
         "PATH": os.environ["PATH"],
     }
 
-    declarations_subshell = (
-        subprocess.run(  # pylint:disable=subprocess-run-check
-            ["/usr/bin/env", "bash"],
-            input=src.encode(),
-            capture_output=True,
-            env=env,
-        )
+    declarations_subshell = subprocess.run(  # pylint:disable=subprocess-run-check
+        ["/usr/bin/env", "bash"],
+        input=src.encode(),
+        capture_output=True,
+        env=env,
     )
 
     if declarations_subshell.returncode == 2:
@@ -334,6 +332,7 @@ def run_script(variables: Variables, script: str) -> LogGenerator:
     :returns: generator yielding output lines from the script
     :raises ScriptError: if the script exits with a non-zero code
     """
+    # pylint: disable-next=consider-using-with
     process = subprocess.Popen(
         ["/usr/bin/env", "bash"],
         stdin=subprocess.PIPE,

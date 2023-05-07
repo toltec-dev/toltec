@@ -22,6 +22,7 @@ def _targz_open(fileobj: IO[bytes], epoch: int) -> tarfile.TarFile:
     )
 
     try:
+        # pylint: disable-next=consider-using-with
         archive = tarfile.TarFile(
             mode="w",
             fileobj=gzipobj,  # type:ignore
@@ -115,9 +116,7 @@ def make_data(file: IO[bytes], epoch: int, pkg_dir: str) -> None:
     :param pkg_dir: directory in which the package tree exists
     """
     with _targz_open(file, epoch) as archive:
-        archive.add(
-            pkg_dir, filter=lambda info: _clean_info(pkg_dir, epoch, info)
-        )
+        archive.add(pkg_dir, filter=lambda info: _clean_info(pkg_dir, epoch, info))
 
 
 def make_ipk(
@@ -136,9 +135,7 @@ def make_ipk(
     :param metadata: package metadata (main control file)
     :param scripts: optional maintainer scripts
     """
-    with BytesIO() as control, BytesIO() as data, _targz_open(
-        file, epoch
-    ) as archive:
+    with BytesIO() as control, BytesIO() as data, _targz_open(file, epoch) as archive:
         root_info = tarfile.TarInfo("./")
         root_info.type = tarfile.DIRTYPE
         archive.addfile(_clean_info(None, epoch, root_info))
