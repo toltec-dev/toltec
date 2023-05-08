@@ -31,7 +31,7 @@ is-enabled() {
 #
 # Exit code:
 #
-# 0 if the unit exists and is enabled, 1 otherwise
+# 0 if the unit exists and is masked, 1 otherwise
 is-masked() {
     [[ "$(systemctl is-enabled "$1" 2> /dev/null)" == "masked" ]]
 }
