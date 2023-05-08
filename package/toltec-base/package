@@ -28,6 +28,7 @@ configure() {
         echo "Disabling automatic update"
         systemctl disable --now update-engine
     fi
+    # shellcheck source=toltecctl
     source /home/root/.local/bin/toltecctl
     if [[ $(identify-model) == "rm1" ]]; then
         echo "Disabling usb1 network device to avoid long boots"
