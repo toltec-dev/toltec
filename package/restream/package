@@ -16,9 +16,6 @@ source=("https://github.com/rien/reStream/archive/refs/tags/${pkgver%-*}.tar.gz"
 sha256sums=(4166142b15e1e7363dac302aa92aad5b44e0514cab233abecb51414952c1d5a1)
 
 build() {
-    # Fall back to system-wide config
-    rm .cargo/config
-
     cargo build --release --bin restream
 }
 
