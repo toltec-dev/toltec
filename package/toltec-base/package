@@ -36,3 +36,12 @@ configure() {
         systemctl unmask sys-subsystem-net-devices-usb1.device
     fi
 }
+
+postremove() {
+    if is-masked sys-subsystem-net-devices-usb1.device; then
+        systemctl unmask sys-subsystem-net-devices-usb1.device
+    fi
+    if ! is-enabled "update-engine.service"; then
+        systemctl enable update-engine
+    fi
+}
