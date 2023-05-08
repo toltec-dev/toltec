@@ -28,8 +28,11 @@ configure() {
         echo "Disabling automatic update"
         systemctl disable --now update-engine
     fi
-    if [[ "$arch" == "rm1" ]]; then
+    if [[ "$arch" == "rm1" ]] && ! is-masked sys-subsystem-net-devices-usb1.device; then
         echo "Disabling usb1 network device to avoid long boots"
         systemctl mask sys-subsystem-net-devices-usb1.device
+    elif [[ "$arch" == "rm2" ]] && is-masked sys-subsystem-net-devices-usb1.device; then
+        echo "Enabling usb1 network device to ensure usb SSH works"
+        systemctl unmask sys-subsystem-net-devices-usb1.device
     fi
 }

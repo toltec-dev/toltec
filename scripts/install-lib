@@ -23,6 +23,19 @@ is-enabled() {
     systemctl --quiet is-enabled "$1" 2> /dev/null
 }
 
+# Check whether a systemd unit exists and is masked
+#
+# Arguments:
+#
+# $1 - Name of the systemd unit, e.g. "xochitl.service" or "xochitl"
+#
+# Exit code:
+#
+# 0 if the unit exists and is enabled, 1 otherwise
+is-masked() {
+    [[ "$(systemctl is-enabled "$1" 2> /dev/null)" == "masked" ]]
+}
+
 # Check whether a systemd unit is in an active state
 # ("running")
 #
