@@ -31,3 +31,10 @@ configure() {
         kernelctl backup vanilla
     fi
 }
+
+preremove() {
+    if [[ "$(kernelctl show | tail -n 1 | grep "vanilla-$(< /etc/version)")" == "" ]]; then
+        echo "Restoring default kernel"
+        kernelctl set default
+    fi
+}
