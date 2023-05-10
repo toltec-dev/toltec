@@ -5,7 +5,7 @@
 pkgnames=(kernelctl)
 pkgdesc="Manage aftermarket kernels"
 url=https://toltec-dev.org/
-pkgver=0.1-5
+pkgver=0.1-6
 timestamp=2022-11-12T00:00Z
 section="utils"
 maintainer="Salvatore Stella <etn45p4m@gmail.com>"
@@ -34,7 +34,13 @@ configure() {
 
 preremove() {
     if [[ "$(kernelctl show | tail -n 1 | grep "vanilla-$(< /etc/version)")" == "" ]]; then
-        echo "Restoring default kernel"
-        kernelctl set default
+        if [[ "$(kernelctl list | tail -n +2 | awk '{print $2}' | grep "vanilla-$(< /etc/version)")" == "" ]]; then
+            echo "Unable to restore default kernel."
+            echo "To proceed anyway use: opkg remove --force-remove kernelctl"
+            exit 1
+        else
+            echo "Restoring default kernel"
+            kernelctl set default
+        fi
     fi
 }
