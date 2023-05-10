@@ -335,7 +335,7 @@ uninstall() {
     fi
 
     chmod u+x "$opkg_path"
-    
+
     clean=true
     # Remove installed packages in reverse dependency order
     list-installed-ordered | while read -r pkgname; do
@@ -361,7 +361,7 @@ uninstall() {
 
     # Re-enable xochitl if needed
     systemctl enable xochitl
-    
+
     if ! $clean; then
         echo "Warning: There were errors removing some of the toltec packages."
         echo "  Your system may be in a broken state. Please review the logs"
