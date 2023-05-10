@@ -335,10 +335,15 @@ uninstall() {
     fi
 
     chmod u+x "$opkg_path"
-
+    
+    clean=true
     # Remove installed packages in reverse dependency order
     list-installed-ordered | while read -r pkgname; do
-        "$opkg_path" remove --force-depends --force-remove "$pkgname"
+        if ! "$opkg_path" remove --force-depends "$pkgname"; then
+            echo "Failed to remove $pkgname, forcing removal..."
+            "$opkg_path" remove --force-depends --force-remove "$pkgname"
+            clean=false
+        fi
     done
 
     systemctl daemon-reload
@@ -356,6 +361,13 @@ uninstall() {
 
     # Re-enable xochitl if needed
     systemctl enable xochitl
+    
+    if ! $clean; then
+        echo "Warning: There were errors removing some of the toltec packages."
+        echo "  Your system may be in a broken state. Please review the logs"
+        echo "  before rebooting your device. If you need assistance, you can"
+        echo "  get help on the community discord channel."
+    fi
 }
 
 help() {
