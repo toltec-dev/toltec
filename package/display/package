@@ -8,7 +8,7 @@ timestamp=2023-04-16T20:53:38Z
 maintainer="raisjn <of.raisjn@gmail.com>"
 license=MIT
 url="https://github.com/ddvk/remarkable2-framebuffer"
-pkgver=1:0.0.31-1
+pkgver=1:0.0.31-2
 _release="${pkgver%-*}"
 _release="v${_release#*:}"
 _libver=1.0.1
@@ -64,12 +64,19 @@ display() {
     configure() {
         if [[ $arch = rm2 ]]; then
             systemctl daemon-reload
-            systemctl enable rm2fb --now
-            # Restart xochitl if it's running
-            if systemctl --quiet is-active xochitl; then
-                # Reset the crash count so we don't trigger remarkable-fail
-                echo "0" > /tmp/crashnum
-                systemctl restart xochitl
+            if systemctl enable rm2fb --now; then
+                # Restart xochitl if it's running
+                if systemctl --quiet is-active xochitl; then
+                    # Reset the crash count so we don't trigger remarkable-fail
+                    echo "0" > /tmp/crashnum
+                    systemctl restart xochitl
+                fi
+            else
+                systemctl disable rm2fb --now
+                echo "Failed to start rm2fb. Keeping it disabled for now."
+                echo "Please check the logs and open an issue:"
+                echo "  https://github.com/toltec-dev/toltec/issues/new"
+                exit 1
             fi
         fi
     }
