@@ -5,20 +5,17 @@
 pkgnames=(restream)
 pkgdesc="Binary framebuffer capture tool for the reStream script"
 url=https://github.com/rien/reStream
-pkgver=1.1-2
-timestamp=2021-01-28T23:25:40Z
+pkgver=1.2.0-1
+timestamp=2021-11-04T19:09:14Z
 section="screensharing"
 maintainer="Dan Shick <dan.shick@gmail.com>"
 license=MIT
 
 image=rust:v2.1
-source=("https://github.com/rien/reStream/archive/${pkgver%-*}.tar.gz")
-sha256sums=(89fa4c8adfcdfb5266e11d1f8ed4c5d8dac12a68a7ee5622cf21f833bca1704f)
+source=("https://github.com/rien/reStream/archive/refs/tags/${pkgver%-*}.tar.gz")
+sha256sums=(4166142b15e1e7363dac302aa92aad5b44e0514cab233abecb51414952c1d5a1)
 
 build() {
-    # Fall back to system-wide config
-    rm .cargo/config
-
     cargo build --release --bin restream
 }
 
