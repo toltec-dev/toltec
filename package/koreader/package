@@ -44,6 +44,11 @@ package() {
 }
 
 configure() {
+    # This file can cause issues with startup when moving from 2022.08 to another version
+    if [ -f /opt/koreader/cache/fontlist/fontinfo.dat ]; then
+        rm /opt/koreader/cache/fontlist/fontinfo.dat
+    }
+
     systemctl daemon-reload
 
     if ! is-enabled "$pkgname.service"; then
