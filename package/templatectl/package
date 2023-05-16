@@ -41,12 +41,14 @@ configure() {
 }
 
 postremove() {
+    local bind_path
     local unit_name
     local unit_path
-    unit_name="$(systemd-escape --path "$1").mount"
+    bind_path=/usr/share/remarkable/templates
+    unit_name="$(systemd-escape --path "$bind_path").mount"
     unit_path="/lib/systemd/system/$unit_name"
     if [[ -e $unit_path ]]; then
-        remove-bind-mount /usr/share/remarkable/templates
+        remove-bind-mount "$bind_path"
     fi
 
     echo "To fully remove templatectl you'll need to run the following command:"
