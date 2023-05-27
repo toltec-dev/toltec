@@ -4,8 +4,8 @@
 
 pkgnames=(rmfm)
 pkgdesc="Bare-bones file manager using Node.js and sas"
-url="https://codeberg.org/sun/rmFM"
-pkgver=1.4.0-2
+url="https://forgejo.sny.sh/sun/rmFM"
+pkgver=1.4.0-3
 timestamp=2022-08-19T11:20:10+02:00
 section=utils
 maintainer="Sunny <roesch.eric@protonmail.com>"
@@ -13,7 +13,7 @@ license=MIT
 installdepends=(node simple)
 
 source=(
-    https://codeberg.org/sun/rmFM/archive/1.4.0.zip
+    https://forgejo.sny.sh/sun/rmFM/archive/1.4.0.zip
     path_fix.patch
 )
 sha256sums=(
