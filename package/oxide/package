@@ -3,20 +3,21 @@
 # SPDX-License-Identifier: MIT
 
 pkgnames=(erode fret oxide rot tarnish decay corrupt anxiety liboxide libsentry notify-send)
-pkgver=2.5-2
+_oxidever=2.6
+pkgver=$_oxidever-1
 _sentryver=0.5.0
-timestamp=2023-01-26T22:52:14Z
+timestamp=2023-06-05T23:27:53Z
 maintainer="Eeems <eeems@eeems.email>"
 url=https://oxide.eeems.codes
 license=MIT
 flags=(patch_rm2fb)
 image=qt:v2.3
 source=(
-    "https://github.com/Eeems-Org/oxide/archive/refs/tags/v2.5.zip"
+    "https://github.com/Eeems-Org/oxide/archive/refs/tags/v$_oxidever.zip"
     toltec-rm2-override.conf
 )
 sha256sums=(
-    07bfb84e5adaebdebd2ce55b22f3764a1d4887c2b18364f5ec1053f171e3ecbe
+    bbcf83302f530afe069974121496be6f8118eadba3c00633f834db026e41ae95
     SKIP
 )
 
@@ -42,18 +43,24 @@ erode() {
 fret() {
     pkgdesc="Take screenshots"
     section="utils"
-    installdepends=("tarnish=$pkgver" "liboxide=$pkgver" "libsentry=$_sentryver")
+    installdepends=("tarnish=$pkgver" "oxide-utils=$pkgver" "liboxide=$pkgver" "libsentry=$_sentryver")
 
     package() {
         install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/release/opt/bin/fret
         install -D -m 644 -t "$pkgdir"/opt/usr/share/applications "$srcdir"/release/opt/usr/share/applications/codes.eeems.fret.oxide
+    }
+
+    configure() {
+        if is-active "tarnish.service"; then
+            update-desktop-database
+        fi
     }
 }
 
 oxide() {
     pkgdesc="Launcher application"
     section="launchers"
-    installdepends=("erode=$pkgver" "fret=$pkgver" "tarnish=$pkgver" "rot=$pkgver" "decay=$pkgver" "liboxide=$pkgver" "libsentry=$_sentryver")
+    installdepends=("erode=$pkgver" "fret=$pkgver" "tarnish=$pkgver" "rot=$pkgver" "decay=$pkgver" "oxide-utils=$pkgver" "liboxide=$pkgver" "libsentry=$_sentryver")
 
     package() {
         install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/release/opt/bin/oxide
@@ -62,11 +69,8 @@ oxide() {
         install -D -m 644 -t "$pkgdir"/opt/usr/share/applications "$srcdir"/release/opt/usr/share/applications/codes.eeems.oxide.oxide
     }
     configure() {
-        if ! is-enabled "tarnish.service"; then
-            echo ""
-            echo "Run the following command(s) to use $pkgname as your launcher"
-            how-to-enable "tarnish.service"
-            echo ""
+        if is-active "tarnish.service"; then
+            update-desktop-database
         fi
     }
 }
@@ -97,6 +101,12 @@ tarnish() {
     }
     configure() {
         systemctl daemon-reload
+        if ! is-enabled "tarnish.service"; then
+            echo ""
+            echo "Run the following command(s) to use $pkgname as your launcher"
+            how-to-enable "tarnish.service"
+            echo ""
+        fi
     }
     preremove() {
         if is-active tarnish; then
@@ -116,34 +126,80 @@ tarnish() {
 decay() {
     pkgdesc="Lockscreen application"
     section="utils"
-    installdepends=(display "tarnish=$pkgver" "liboxide=$pkgver" "libsentry=$_sentryver")
+    installdepends=(display "tarnish=$pkgver" "oxide-utils=$pkgver" "liboxide=$pkgver" "libsentry=$_sentryver")
 
     package() {
         install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/release/opt/bin/decay
         install -D -m 644 -t "$pkgdir"/opt/usr/share/applications "$srcdir"/release/opt/usr/share/applications/codes.eeems.decay.oxide
     }
+
+    configure() {
+        if is-active "tarnish.service"; then
+            update-desktop-database
+        fi
+    }
 }
 corrupt() {
     pkgdesc="Task Switcher for Oxide"
     section="utils"
-    installdepends=(display "tarnish=$pkgver" "liboxide=$pkgver" "libsentry=$_sentryver")
+    installdepends=(display "tarnish=$pkgver" "oxide-utils=$pkgver" "liboxide=$pkgver" "libsentry=$_sentryver")
 
     package() {
         install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/release/opt/bin/corrupt
         install -D -m 644 -t "$pkgdir"/opt/usr/share/applications "$srcdir"/release/opt/usr/share/applications/codes.eeems.corrupt.oxide
+    }
+
+    configure() {
+        if is-active "tarnish.service"; then
+            update-desktop-database
+        fi
     }
 }
 
 anxiety() {
     pkgdesc="Screenshot viewer for Oxide"
     section="utils"
-    installdepends=(display "tarnish=$pkgver" "liboxide=$pkgver" "libsentry=$_sentryver")
+    installdepends=(display "tarnish=$pkgver" "oxide-utils=$pkgver" "liboxide=$pkgver" "libsentry=$_sentryver")
 
     package() {
         install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/release/opt/bin/anxiety
         install -D -m 644 -t "$pkgdir"/opt/usr/share/applications "$srcdir"/release/opt/usr/share/applications/codes.eeems.anxiety.oxide
         install -D -m 644 -t "$pkgdir"/opt/etc/draft/icons "$srcdir"/release/opt/etc/draft/icons/image.svg
         install -D -m 644 -t "$pkgdir"/opt/etc/draft/icons "$srcdir"/release/opt/etc/draft/icons/anxiety-splash.png
+    }
+
+    configure() {
+        if is-active "tarnish.service"; then
+            update-desktop-database
+        fi
+    }
+}
+
+oxide-utils() {
+    pkgdesc="Command line tools for Oxide"
+    section=admin
+    installdepends=("tarnish=$pkgver" "liboxide=$pkgver" "libsentry=$_sentryver")
+    replaces=(notify-send)
+    conflicts=(notify-send)
+
+    package() {
+        install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/release/opt/bin/notify-send
+        install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/release/opt/bin/update-desktop-database
+        install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/release/opt/bin/desktop-file-validate
+        install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/release/opt/bin/xdg-desktop-menu
+        install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/release/opt/bin/xdg-desktop-icon
+        install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/release/opt/bin/xdg-open
+        install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/release/opt/bin/gio
+    }
+}
+
+inject_evdev() {
+    pkgdesc="Inject input events"
+    section=utils
+    installdepends=("liboxide=$pkgver" "libsentry=$_sentryver")
+
+    package() {
+        install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/release/opt/bin/inject_evdev
     }
 }
 
@@ -165,15 +221,5 @@ libsentry() {
 
     package() {
         install -D -m 755 -t "$pkgdir"/opt/lib "$srcdir"/release/opt/lib/libsentry.so
-    }
-}
-
-notify-send() {
-    pkgdesc="A program to send desktop notifications for Oxide"
-    section=utils
-    installdepends=("tarnish=$pkgver" "liboxide=$pkgver" "libsentry=$_sentryver")
-
-    package() {
-        install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/release/opt/bin/notify-send
     }
 }
