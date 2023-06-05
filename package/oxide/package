@@ -2,7 +2,7 @@
 # Copyright (c) 2021 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
-pkgnames=(erode fret oxide rot tarnish decay corrupt anxiety liboxide libsentry notify-send)
+pkgnames=(erode fret oxide rot tarnish decay corrupt anxiety oxide-utils inject_evdev liboxide libsentry)
 _oxidever=2.6
 pkgver=$_oxidever-1
 _sentryver=0.5.0
