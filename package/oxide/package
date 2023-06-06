@@ -208,7 +208,7 @@ liboxide() {
     section="devel"
 
     package() {
-        install -D -m 755 -t "$pkgdir"/opt/usr/lib "$srcdir"/release/opt/usr/lib/libliboxide.so*
+        install -D -m 755 -t "$pkgdir"/opt/lib "$srcdir"/release/opt/lib/libliboxide.so*
     }
 }
 
