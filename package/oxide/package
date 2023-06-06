@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: MIT
 
 pkgnames=(erode fret oxide rot tarnish decay corrupt anxiety liboxide libsentry notify-send)
-pkgver=2.5-1
+pkgver=2.5-2
 _sentryver=0.5.0
 timestamp=2023-01-26T22:52:14Z
 maintainer="Eeems <eeems@eeems.email>"
@@ -13,7 +13,7 @@ flags=(patch_rm2fb)
 image=qt:v2.3
 source=(
     "https://github.com/Eeems-Org/oxide/archive/refs/tags/v2.5.zip"
-    toltec-override.conf
+    toltec-rm2-override.conf
 )
 sha256sums=(
     07bfb84e5adaebdebd2ce55b22f3764a1d4887c2b18364f5ec1053f171e3ecbe
@@ -90,8 +90,10 @@ tarnish() {
         install -D -m 644 -t "$pkgdir"/etc/dbus-1/system.d "$srcdir"/release/etc/dbus-1/system.d/codes.eeems.oxide.conf
         install -D -m 644 -t "$pkgdir"/lib/systemd/system "$srcdir"/release/etc/systemd/system/tarnish.service
         install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/release/opt/bin/tarnish
-        install -D -m 644 -t "$pkgdir"/etc/systemd/system/tarnish.service.d \
-            "$srcdir"/toltec-override.conf
+        if [[ $arch = rm2 ]]; then
+            install -D -m 644 -t "$pkgdir"/etc/systemd/system/tarnish.service.d \
+                "$srcdir"/toltec-rm2-override.conf
+        fi
     }
     configure() {
         systemctl daemon-reload
