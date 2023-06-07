@@ -51,9 +51,7 @@ fret() {
     }
 
     configure() {
-        if is-active "tarnish.service"; then
-            update-desktop-database
-        fi
+        update-desktop-database
     }
 }
 
@@ -69,9 +67,7 @@ oxide() {
         install -D -m 644 -t "$pkgdir"/opt/usr/share/icons/oxide/702x702/splash "$srcdir"/release/opt/usr/share/icons/oxide/702x702/splash/oxide.png
     }
     configure() {
-        if is-active "tarnish.service"; then
-            update-desktop-database
-        fi
+        update-desktop-database
     }
 }
 
@@ -134,9 +130,7 @@ decay() {
     }
 
     configure() {
-        if is-active "tarnish.service"; then
-            update-desktop-database
-        fi
+        update-desktop-database
     }
 }
 corrupt() {
@@ -150,9 +144,7 @@ corrupt() {
     }
 
     configure() {
-        if is-active "tarnish.service"; then
-            update-desktop-database
-        fi
+        update-desktop-database
     }
 }
 
@@ -169,9 +161,7 @@ anxiety() {
     }
 
     configure() {
-        if is-active "tarnish.service"; then
-            update-desktop-database
-        fi
+        update-desktop-database
     }
 }
 
