@@ -5,7 +5,7 @@
 pkgnames=(koreader)
 pkgdesc="Ebook reader supporting PDF, DjVu, EPUB, FB2 and many more formats"
 url=https://github.com/koreader/koreader
-pkgver=2023.04-1
+pkgver=2023.04-2
 timestamp=2023-04-27T20:53:54Z
 section="readers"
 maintainer="raisjn <of.raisjn@gmail.com>"
@@ -59,6 +59,7 @@ $(how-to-enable "$pkgname.service")
 
 MSG
     fi
+    type update-desktop-database &> /dev/null && update-desktop-database
 }
 
 preremove() {

@@ -5,7 +5,7 @@
 pkgnames=(fingerterm)
 pkgdesc="Terminal emulator with an on-screen touch keyboard"
 url=https://github.com/dixonary/fingerterm-reMarkable
-pkgver=1.3.5-14
+pkgver=1.3.5-15
 timestamp=2020-10-27T12:02Z
 section="admin"
 maintainer="Mattéo Delabre <spam@delab.re>"
@@ -41,4 +41,8 @@ package() {
 
     install -D -m 644 -t "$pkgdir"/opt/etc/draft "$srcdir"/fingerterm.draft
     install -D -m 644 -t "$pkgdir"/opt/etc/draft/icons "$srcdir"/fingerterm.png
+}
+
+configure() {
+    type update-desktop-database &> /dev/null && update-desktop-database
 }

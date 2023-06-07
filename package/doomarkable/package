@@ -5,7 +5,7 @@
 pkgnames=(doomarkable)
 pkgdesc="DOOM game"
 url=https://github.com/LinusCDE/doomarkable
-pkgver=0.4.1-1
+pkgver=0.4.1-2
 timestamp=2021-10-31T16:15Z
 section="games"
 maintainer="Linus K. <linus@cosmos-ink.net>"
@@ -27,4 +27,8 @@ package() {
     install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/target/armv7-unknown-linux-gnueabihf/release/doomarkable
     install -D -m 644 -t "$pkgdir"/opt/etc/draft "$srcdir"/doomarkable.draft
     install -D -m 644 -t "$pkgdir"/opt/etc/draft/icons "$srcdir"/doomarkable.png
+}
+
+configure() {
+    type update-desktop-database &> /dev/null && update-desktop-database
 }

@@ -5,7 +5,7 @@
 pkgnames=(plato)
 pkgdesc="Document reader"
 url=https://github.com/LinusCDE/plato
-pkgver=0.9.25-2
+pkgver=0.9.25-3
 timestamp=2022-02-08T23:54Z
 section="readers"
 maintainer="Linus K. <linus@cosmos-ink.net>"
@@ -109,4 +109,5 @@ configure() {
             echo ""
         fi
     fi
+    type update-desktop-database &> /dev/null && update-desktop-database
 }

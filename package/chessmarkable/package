@@ -5,7 +5,7 @@
 pkgnames=(chessmarkable)
 pkgdesc="Chess game"
 url=https://github.com/LinusCDE/chessmarkable
-pkgver=0.8.0-1
+pkgver=0.8.0-2
 timestamp=2021-07-22T12:04Z
 section="games"
 maintainer="Linus K. <linus@cosmos-ink.net>"
@@ -27,4 +27,8 @@ package() {
     install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/target/armv7-unknown-linux-gnueabihf/release/chessmarkable
     install -D -m 644 "$srcdir"/oxide "$pkgdir"/opt/etc/draft/chessmarkable
     install -D -m 644 "$srcdir"/icon.png "$pkgdir"/opt/etc/draft/icons/chessmarkable.png
+}
+
+configure() {
+    type update-desktop-database &> /dev/null && update-desktop-database
 }

@@ -5,7 +5,7 @@
 pkgnames=(yaft)
 pkgdesc="Yet another framebuffer terminal"
 url=https://github.com/timower/rM2-stuff/tree/master/apps/yaft
-pkgver=0.0.7-1
+pkgver=0.0.7-2
 timestamp=2021-05-02T09:23Z
 maintainer="Mattéo Delabre <spam@delab.re>"
 license=GPL-3.0
@@ -37,4 +37,8 @@ build() {
 
 package() {
     cp -r "$srcdir/install/." "$pkgdir"
+}
+
+configure() {
+    type update-desktop-database &> /dev/null && update-desktop-database
 }

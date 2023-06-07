@@ -5,7 +5,7 @@
 pkgnames=(xochitl)
 pkgdesc="Read documents and take notes"
 url=https://remarkable.com
-pkgver=0.0.0-14
+pkgver=0.0.0-15
 timestamp=2022-11-07T20:19:57Z
 section="readers"
 maintainer="Mattéo Delabre <spam@delab.re>"
@@ -80,6 +80,9 @@ configure() {
         # of this alias by re-enabling the service
         systemctl enable xochitl.service 2> /dev/null
     fi
+
+    # Reload the oxide application registration if it is already installed
+    type update-desktop-database &> /dev/null && update-desktop-database
 }
 
 preremove() {
