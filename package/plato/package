@@ -14,7 +14,7 @@ installdepends=(display jq)
 makedepends=(build:jq build:unzip build:wget)
 flags=(patch_rm2fb)
 
-image=rust:v2.2.2
+image=rust:v2.3
 source=("https://github.com/LinusCDE/plato/archive/${pkgver%-*}-rm-release-12.zip")
 sha256sums=(42e18e882e7e6853e299234a44eea9b9e3c4170076eec0577a0644dcf7005cf9)
 
