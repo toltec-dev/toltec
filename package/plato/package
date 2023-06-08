@@ -23,6 +23,9 @@ build() {
     # recent nightly builds. This adjusts the filtering.
     sed -i "s/version=.*$/version=\'$(cargo pkgid -p plato | cut -d "#" -f 2 | cut -d ":" -f 2)\'/g" download.sh
 
+    # Temporary fix until next release (TODO: Remove for next released version as included with commit fbfaf3d7)
+    sed -i "s/--target=arm-unknown-linux-gnueabihf/--target=armv7-unknown-linux-gnueabihf/g" build.sh
+
     # Use our toolchain
     export AR=arm-linux-gnueabihf-ar
     export CC=arm-linux-gnueabihf-gcc
