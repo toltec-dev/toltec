@@ -6,7 +6,7 @@ RECIPES=$(shell ls package/)
 RECIPES_PUSH=$(foreach app, $(RECIPES), $(app)-push)
 RECIPES_CLEAN=$(foreach app, $(RECIPES), $(app)-clean)
 
-ifeq ($(DEBUG),"1")
+ifeq ($(DEBUG), 1)
 FLAGS+= --verbose
 endif
 
@@ -61,6 +61,7 @@ repo-check:
 	./scripts/repo-check build/repo
 
 $(RECIPES): %:
+	echo $(FLAGS) && exit 1
 	./scripts/package_build.py $(FLAGS) "$(@)"
 
 push: %:
