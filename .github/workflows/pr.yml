@@ -33,6 +33,8 @@ jobs:
               uses: ./.github/actions/setup
             - name: Build packages
               run: make repo-new FLAGS='--remote-repo https://toltec-dev.org/${{ github.base_ref }}'
+              env:
+                DEBUG: ${{ runner.debug }}
             - name: Save the build output
               uses: actions/upload-artifact@v3
               with:
