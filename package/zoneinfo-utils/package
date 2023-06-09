@@ -14,7 +14,7 @@ section=utils
 maintainer="Eeems <eeems@eeems.email>"
 license="custom: public domain"
 installdepends=(zoneinfo-core)
-makedepends=(build:gawk)
+makedepends=(build:gawk build:libc6)
 
 image=base:v2.3
 source=(
