@@ -14,9 +14,9 @@ section=utils
 maintainer="Eeems <eeems@eeems.email>"
 license="custom: public domain"
 installdepends=(zoneinfo-core)
-makedepends=(build:gawk build:libc6)
+makedepends=(build:gawk)
 
-image=base:v2.3
+image=base:v2.1
 source=(
     "https://www.iana.org/time-zones/repository/releases/tzcode${_tzver}.tar.gz"
     "https://www.iana.org/time-zones/repository/releases/tzdata${_tzver}.tar.gz"
