@@ -14,7 +14,8 @@ section=utils
 maintainer="Eeems <eeems@eeems.email>"
 license="custom: public domain"
 installdepends=(zoneinfo-core)
-makedepends=(build:gawk build:libc6)
+makedepends=(build:gawk)
+flags=(nostrip)
 
 image=base:v2.3
 source=(
@@ -35,17 +36,20 @@ build() {
     pushd .x86 > /dev/null
 
     shopt -s extglob
-    cp -r ../* .
-    make VERSION="$_tzver"
+    ln -s ../* .
+    make VERSION="$_tzver" zic
+    mv zic ../zic.x86
 
     popd > /dev/null
-
+    rm -r .x86
     make VERSION="$_tzver" CC=arm-linux-gnueabihf-cc
+    "${CROSS_COMPILE}strip" --strip-all zic zdump
 }
 
 package() {
     pushd "${srcdir}" > /dev/null
-    local zic=.x86/zic
+
+    local zic=./zic.x86
     # install tzcode stuff
     make DESTDIR="${pkgdir}" zic="$zic" install
     # install license
