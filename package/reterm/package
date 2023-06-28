@@ -19,7 +19,7 @@ prepare() {
     cd "$srcdir"
     git config --global --add safe.directory /src
     git init
-    git remote add origin git@github.com:i-am-shodan/ReTerm.git
+    git remote add origin https://github.com/i-am-shodan/ReTerm.git
     git fetch --depth=1 origin "$_gitcommit"
     git checkout -f "$_gitcommit"
     git submodule update --init --force
