@@ -12,7 +12,7 @@ license=MIT
 source=(https://github.com/i-am-shodan/ReTerm/archive/refs/tags/release_20230628_1927.tar.gz)
 sha256sums=(3a6db39cfb83606c4ac5153fe2ac0319ab5c8322c73172178534c047a15c635b)
 image=dotnet6:latest
-makedepends=(build:gawk)
+makedepends=(build:gawk build:git)
 
 build() {
     git submodule init
