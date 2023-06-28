@@ -9,16 +9,22 @@ timestamp="2023-06-28T19:28:06Z"
 maintainer="Eeems <eeems@eeems.email>"
 url="https://github.com/i-am-shodan/ReTerm"
 license=MIT
+_gitcommit="5730f56cf25642b9752fb9d7987a40f6af6b5f59"
 source=(https://github.com/i-am-shodan/ReTerm/archive/refs/tags/release_20230628_1927.tar.gz)
 sha256sums=(3a6db39cfb83606c4ac5153fe2ac0319ab5c8322c73172178534c047a15c635b)
 image=dotnet6:latest
 makedepends=(build:gawk build:git)
 
-build() {
+prepare() {
     git config --global --add safe.directory /src
     git init
-    git submodule init
-    git submodule update
+    git remote add origin git@github.com:i-am-shodan/ReTerm.git
+    git fetch --depth=1 origin "$_gitcommit"
+    git checkout -f "$_gitcommit"
+    git submodule update --init --force
+}
+
+build() {
     dotnet publish \
         -r linux-arm \
         --self-contained true \
