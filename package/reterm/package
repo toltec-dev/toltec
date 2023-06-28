@@ -15,6 +15,7 @@ image=dotnet6:latest
 makedepends=(build:gawk build:git)
 
 build() {
+    git init
     git submodule init
     git submodule update
     dotnet publish \
