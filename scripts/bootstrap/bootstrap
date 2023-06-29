@@ -63,7 +63,6 @@ exists-non-empty() {
 
 already-installed-message() {
     log "Toltec is already installed or partially installed"
-    log "Toltec is already installed or partially installed"
     log "To re-enable Toltec after a system upgrade, run 'toltecctl reenable'"
     log "To reinstall Toltec, run 'toltecctl uninstall' first"
 }
