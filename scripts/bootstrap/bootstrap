@@ -71,6 +71,7 @@ already-installed-message() {
 # remain from previous installs
 check-installed() {
     local unit_path
+    local unit
     unit_path="/lib/systemd/system/$(systemd-escape --path /opt).mount"
     unit="$(basename "$unit_path")"
     if [[ -f $unit_path ]] && systemctl --quiet is-active "$unit" 2> /dev/null; then
