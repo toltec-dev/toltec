@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# Copyright (c) 2020 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgnames=(tailscale-systemd)
+pkgdesc="SystemD configuration for tailscale"
+url=https://tailscale.com
+pkgver=0.0.1
+section="devel"
+timestamp=2023-07-12T00:00Z
+maintainer="Kai <z@kwi.li>"
+license=MIT
+installdepends=(tailscale)
+
+package() {
+    install -D -m 644 -t "$srcdir"/tailscaled.service /lib/systemd/system/tailscaled.service
+}
