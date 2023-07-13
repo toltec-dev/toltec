@@ -5,13 +5,17 @@
 pkgnames=(tailscale-systemd)
 pkgdesc="SystemD configuration for tailscale"
 url=https://tailscale.com
-pkgver=0.0.1
-section="devel"
+pkgver=0.0.0-1
+section="utils"
 timestamp=2023-07-12T00:00Z
 maintainer="Kai <z@kwi.li>"
-license=MIT
+license=BSD-3-Clause
 installdepends=(tailscale)
 
+source=(
+    tailscaled.service
+)
+
 package() {
-    install -D -m 644 -t "$srcdir"/tailscaled.service /lib/systemd/system/tailscaled.service
+    install -D -m 644 -t "$srcdir"/tailscaled.service /etc/systemd/system/tailscaled.service
 }
