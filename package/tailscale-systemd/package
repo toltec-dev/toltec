@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Copyright (c) 2020 The Toltec Contributors
-# SPDX-License-Identifier: BSD-3-Clause
+# SPDX-License-Identifier: MIT
 
 pkgnames=(tailscale-systemd)
 pkgdesc="SystemD configuration for tailscale"
