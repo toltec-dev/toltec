@@ -22,3 +22,25 @@ sha256sums=(
 package() {
     install -D -m 644 -t "$pkgdir"/etc/systemd/system "$srcdir"/tailscaled.service
 }
+
+configure() {
+    systemctl daemon-reload
+    systemctl enable tailscaled
+    systemctl start tailscaled
+}
+
+preremove() {
+    if is-active tailscaled; then
+        echo "Stopping tailscaled"
+        systemctl stop tailscaled
+    fi
+
+    if is-enabled tailscaled; then
+        echo "Disabling tailscaled"
+        systemctl disable tailscaled
+    fi
+}
+
+postremove() {
+    systemctl daemon-reload
+}
