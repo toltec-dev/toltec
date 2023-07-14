@@ -20,5 +20,5 @@ sha256sums=(
 )
 
 package() {
-    install -D -m 644 -t "$srcdir"/tailscaled.service /etc/systemd/system/tailscaled.service
+    install -D -m 644 -t "$pkgdir"/etc/systemd/system "$srcdir"/tailscaled.service
 }
