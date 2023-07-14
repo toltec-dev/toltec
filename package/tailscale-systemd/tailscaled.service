@@ -7,7 +7,7 @@ After=network-pre.target
 [Service]
 Environment="HOME=/home/root"
 ExecStartPre=/opt/bin/tailscaled --cleanup
-ExecStart=/opt/bin/tailscaled --state=/opt/var/lib/tailscale/tailscaled.state --socket=/run/tailscale/tailscaled.sock --tun=userspace-networking --socks5-server=localhost:1055 --outbound-http-proxy-listen=localhost:1055
+ExecStart=/opt/bin/tailscaled --state=/opt/var/lib/tailscale/tailscaled.state --socket=/opt/var/run/tailscale/tailscaled.sock --tun=userspace-networking --socks5-server=localhost:1055 --outbound-http-proxy-listen=localhost:1055
 ExecStopPost=/opt/bin/tailscaled --cleanup
 
 Restart=on-failure
