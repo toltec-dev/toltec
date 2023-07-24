@@ -1,7 +1,7 @@
 pkgnames=(valgrind)
 pkgdesc="Instrumentation framework for building dynamic analysis tools"
 section="devel"
-pkgver="3.21-1"
+pkgver="3.21.0-1"
 timestamp="2023-04-28T02:49:00Z"
 maintainer="Eeems <eeems@eeems.email>"
 url=https://valgrind.org
