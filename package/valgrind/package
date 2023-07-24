@@ -1,0 +1,25 @@
+pkgnames=(valgrind)
+pkgdesc="Instrumentation framework for building dynamic analysis tools"
+section="devel"
+pkgver="3.21-1"
+timestamp="2023-04-28T02:49:00Z"
+maintainer="Eeems <eeems@eeems.email>"
+url=https://valgrind.org
+license=MIT
+source=(https://sourceware.org/pub/valgrind/valgrind-3.21.0.tar.bz2)
+sha256sums=(10ce1618bb3e33fad16eb79552b0a3e1211762448a0d7fce11c8a6243b9ac971)
+image=base:v2.3
+makedepends=(build:automake)
+
+build() {
+    ./autogen.sh
+    ./configure --prefix=/opt
+    make
+}
+
+package() {
+    cd "$srcdir"
+    # Work around the make install not creating this directory
+    mkdir -p "$pkgdir"/opt/libexec/valgrind
+    make DESTDIR="$pkgdir" install
+}
