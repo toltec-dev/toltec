@@ -14,6 +14,7 @@ makedepends=(build:gawk build:automake)
 build() {
     ./autogen.sh
     ./configure --prefix=/opt --host=arm-linux-gnueabihf
+    sed -i -e "s#armv7#arm#g" configure
     make
 }
 
