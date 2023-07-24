@@ -13,7 +13,7 @@ makedepends=(build:gawk build:automake)
 
 build() {
     ./autogen.sh
-    ./configure --prefix=/opt
+    ./configure --prefix=/opt --host=arm-linux-gnueabihf
     make
 }
 
