@@ -12,15 +12,14 @@ image=base:v2.3
 makedepends=(build:gawk build:automake)
 
 build() {
-    ./autogen.sh
-    ./configure --prefix=/opt --host=arm-linux-gnueabihf
-    sed -i -e "s#armv7#arm#g" configure
+    export CC=arm-linux-gnueabihf-gcc
+    ./autogen.sh --host armv7-linux-gnueabihf
+    ./configure --prefix=/opt --host=armv7-linux-gnueabihf --target=armv7-linux-gnueabihf
     make
+    mkdir -p out
+    make DESTDIR=$(pwd)/out install
 }
 
 package() {
-    cd "$srcdir"
-    # Work around make install not creating this directory
-    mkdir -p "$pkgdir"/opt/libexec/valgrind
-    make DESTDIR="$pkgdir" install
+    mv "$srcdir"/out/opt "$pkgdir"/
 }
