@@ -17,7 +17,7 @@ installdepends=(zoneinfo-core)
 makedepends=(build:gawk)
 flags=(nostrip)
 
-image=base:v2.3
+image=base:v3.0
 source=(
     "https://www.iana.org/time-zones/repository/releases/tzcode${_tzver}.tar.gz"
     "https://www.iana.org/time-zones/repository/releases/tzdata${_tzver}.tar.gz"
