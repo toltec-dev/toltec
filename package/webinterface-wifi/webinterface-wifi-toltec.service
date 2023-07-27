@@ -1,0 +1,14 @@
+[Unit]
+Description=View the web interface if running, over wifi
+StartLimitIntervalSec=600
+StartLimitBurst=4
+After=home.mount
+
+[Service]
+Environment=HOME=/home/root
+Type=simple
+ExecStart=/opt/bin/webinterface-wifi --run 80
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

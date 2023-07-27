@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: MIT
 
 pkgnames=(bufshot dumbskull genie harmony iago lamp mines nao remux rpncalc simple wordlet)
-timestamp=2022-06-23T20:03:10Z
+timestamp=2023-03-12T20:03:10Z
 maintainer="raisjn <of.raisjn@gmail.com>"
 license=MIT
 installdepends=(display)
@@ -11,12 +11,12 @@ flags=(patch_rm2fb)
 
 image=python:v2.1
 source=(
-    https://github.com/rmkit-dev/rmkit/archive/070d5df29a71e55050a5e993f047f1590d69ec1c.zip
+    https://github.com/rmkit-dev/rmkit/archive/2bf3488010eccf0d9e7f6c64e681517739420c58.zip
     remux.service
     genie.service
 )
 sha256sums=(
-    e7f0379d5ad9de61c32a296ab831780cfea73352fbccfe2472422165943457ef
+    a0d1a8b16adeca688d7df6a18e4c7404d9d4a405b33615dfb4e374f24ff3dded
     SKIP
     SKIP
 )
@@ -80,7 +80,7 @@ genie() {
 harmony() {
     pkgdesc="Procedural sketching app"
     url="https://rmkit.dev/apps/harmony"
-    pkgver=0.2.1-1
+    pkgver=0.2.2-1
     section="drawing"
 
     package() {
@@ -147,7 +147,7 @@ nao() {
 remux() {
     pkgdesc="Launcher that supports multi-tasking applications"
     url="https://rmkit.dev/apps/remux"
-    pkgver=0.2.3-1
+    pkgver=0.2.4-1
     section="launchers"
 
     package() {
@@ -179,7 +179,7 @@ remux() {
 rpncalc() {
     pkgdesc="RPN Calculator"
     url="https://rmkit.dev/apps/rpncalc"
-    pkgver=0.0.2-2
+    pkgver=0.0.3-2
     section="math"
 
     package() {
@@ -193,7 +193,7 @@ rpncalc() {
 simple() {
     pkgdesc="Simple app script for writing scripted applications"
     url="https://rmkit.dev/apps/sas"
-    pkgver=0.1.5-2
+    pkgver=0.2.0-2
     section="devel"
 
     package() {
@@ -204,7 +204,7 @@ simple() {
 wordlet() {
     pkgdesc="Wordle clone"
     url="https://rmkit.dev/apps/wordlet"
-    pkgver=0.0.1-2
+    pkgver=0.0.2-2
     section="games"
 
     package() {
