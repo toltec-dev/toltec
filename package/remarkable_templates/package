@@ -22,7 +22,7 @@ source=("https://github.com/msencer/remarkable_templates/archive/03282d34b905e7e
 sha256sums=(7a39d53767963f59c8d5b8a7ebda411b60d1256fe1077a3864cc43cd59281e03)
 
 
-template-daily-planner(){
+template-daily-planner() {
     pkgdesc="Daily Planner template"
     package() {
         install -D -m 755 \
@@ -42,7 +42,7 @@ template-daily-planner(){
     }
 }
 
-template-weekly-planner(){
+template-weekly-planner() {
     pkgdesc="Weekly Planner template"
     package() {
         install -D -m 755 \
@@ -62,7 +62,7 @@ template-weekly-planner(){
     }
 }
 
-template-journal(){
+template-journal() {
     pkgdesc="Journal template"
     package() {
         install -D -m 755 \
@@ -82,7 +82,7 @@ template-journal(){
     }
 }
 
-template-meeting-notes(){
+template-meeting-notes() {
     pkgdesc="Meeting Notes template"
     package() {
         install -D -m 755 \
@@ -102,7 +102,7 @@ template-meeting-notes(){
     }
 }
 
-template-smart-goals(){
+template-smart-goals() {
     pkgdesc="Smart Goals template"
     package() {
         install -D -m 755 \
@@ -122,7 +122,7 @@ template-smart-goals(){
     }
 }
 
-template-good-time-journal(){
+template-good-time-journal() {
     pkgdesc="Smart Goals template"
     package() {
         install -D -m 755 \
