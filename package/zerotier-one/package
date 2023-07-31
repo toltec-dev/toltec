@@ -45,6 +45,8 @@ build() {
 zerotier() {
     pkgdesc="A Smart Ethernet Switch for Earth"
     installdepends=(zerotier-one)
+    # Using 1: to make sure our version always overrides the entware version
+    pkgver="1:${pkgver}"
     package() {
         # This is just a wrapper package
         true
