@@ -1,0 +1,78 @@
+#!/usr/bin/env bash
+# Copyright (c) 2023 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgnames=(zerotier-one zerotier-one-doc zerotier-selftest)
+url=https://github.com/zerotier/ZeroTierOne
+_upver=1.10.6
+pkgver=${_upver}-1
+timestamp=2023-03-23T17:39:31Z
+maintainer="Eeems <eeems@eeems.email>"
+license=BUSL-1.1
+section="utils"
+image=base:v3.0
+
+source=(https://github.com/zerotier/ZeroTierOne/archive/refs/tags/${_upver}.zip)
+sha256sums=(4b77acfd47060f5c8e3aabd36aa67965f949a7184ccb1321192e01837eedf753)
+
+build() {
+    sed -i \
+        -e 's|/usr/sbin|/opt/bin|' \
+        -e 's|/usr/share|/opt/share|' \
+        -e 's|/var/lib|/opt/var/lib|' \
+        make-linux.mk \
+        debian/zerotier-one.service
+    # Disable SSO as the rust build is broken in rust:v3.0 due to issues with dependencies
+    export ZT_SSO_SUPPORTED=0
+    export ZT_EMBEDDED=1
+    export CC=arm-linux-gnueabihf-gcc
+    export CXX=arm-linux-gnueabihf-g++
+    export AR=arm-linux-gnueabihf-ar
+    export STRIP=arm-linux-gnueabihf-strip
+    make
+    make selftest
+}
+
+zerotier-one() {
+    pkgdesc="A Smart Ethernet Switch for Earth"
+    package() {
+        cd "$srcdir"
+        DESTDIR="$pkgdir" make install
+        rm -r "$pkgdir"/opt/share
+        install -D -m0644 debian/zerotier-one.service "$pkgdir"/etc/systemd/system/zerotier-one.service
+    }
+    configure() {
+        if ! is-enabled zerotier-one.service; then
+            how-to-enable zerotier-one.service
+        fi
+        if is-active zerotier-one.service; then
+            systemctl restart zerotier-one.service
+        fi
+    }
+    preremove() {
+        if is-active zerotier-one.service; then
+            systemctl stop zerotier-one.service
+        fi
+        if is-enabled zerotier-one.service; then
+            systemctl disable zerotier-one.service
+        fi
+    }
+}
+
+zerotier-one-doc() {
+    installdepends=(man-db)
+    pkgdesc="Man files for zerotier-one"
+    package() {
+        cd "$srcdir"
+        DESTDIR="$pkgdir" make install
+        rm -r "$pkgdir"/opt/bin
+        rm -r "$pkgdir"/opt/var
+    }
+}
+
+zerotier-selftest() {
+    pkgdesc="Unit test zerotier to ensure that it works as expected on the system"
+    package() {
+        install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/zerotier-selftest
+    }
+}
