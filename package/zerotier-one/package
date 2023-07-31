@@ -2,7 +2,7 @@
 # Copyright (c) 2023 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
-pkgnames=(zerotier-one zerotier-one-doc zerotier-selftest)
+pkgnames=(zerotier zerotier-one zerotier-one-doc zerotier-selftest)
 url=https://github.com/zerotier/ZeroTierOne
 _upver=1.10.6
 pkgver=${_upver}-1
@@ -22,6 +22,9 @@ build() {
         -e 's|/var/lib|/opt/var/lib|' \
         make-linux.mk \
         debian/zerotier-one.service
+    sed -i \
+        -e 's|/var/lib/zerotier-one|/opt/var/lib/zerotier-one|' \
+        osdep/OSUtils.cpp
     # Disable SSO as the rust build is broken in rust:v3.0 due to issues with dependencies
     export ZT_SSO_SUPPORTED=0
     export ZT_EMBEDDED=1
@@ -31,6 +34,15 @@ build() {
     export STRIP=arm-linux-gnueabihf-strip
     make
     make selftest
+}
+
+zerotier() {
+    pkgdesc="A Smart Ethernet Switch for Earth"
+    installdepends=(zerotier-one)
+    package() {
+        # This is just a wrapper package
+        true
+    }
 }
 
 zerotier-one() {
