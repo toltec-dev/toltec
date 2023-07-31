@@ -28,9 +28,9 @@ build() {
     sed -i \
         -e 's|/var/lib/zerotier|/opt/var/lib/zerotier|' \
         doc/zerotier-cli.1 \
-        doc/zerotier-one.spec \
-        doc/zerotier-one.8.md \
-        doc/zerotier-one.8
+        doc/zerotier-cli.1.md \
+        doc/zerotier-one.8 \
+        doc/zerotier-one.8.md
     # Disable SSO as the rust build is broken in rust:v3.0 due to issues with dependencies
     export ZT_SSO_SUPPORTED=0
     export ZT_EMBEDDED=1
