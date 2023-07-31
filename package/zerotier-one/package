@@ -12,7 +12,7 @@ license=BUSL-1.1
 section="utils"
 image=base:v3.0
 
-source=(https://github.com/zerotier/ZeroTierOne/archive/refs/tags/${_upver}.zip)
+source=("https://github.com/zerotier/ZeroTierOne/archive/refs/tags/${_upver}.zip")
 sha256sums=(4b77acfd47060f5c8e3aabd36aa67965f949a7184ccb1321192e01837eedf753)
 
 build() {
