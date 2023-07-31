@@ -5,13 +5,13 @@
 pkgnames=(yaft)
 pkgdesc="Yet another framebuffer terminal"
 url=https://github.com/timower/rM2-stuff/tree/master/apps/yaft
-pkgver=0.0.7-1
+pkgver=0.0.7-2
 timestamp=2021-05-02T09:23Z
 maintainer="Mattéo Delabre <spam@delab.re>"
 license=GPL-3.0
 section="admin"
 image=base:v2.3
-installdepends=(display)
+installdepends=(display terminfo)
 
 source=(
     https://github.com/timower/rM2-stuff/archive/refs/tags/v0.0.7.zip
