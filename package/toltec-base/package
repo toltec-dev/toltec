@@ -25,6 +25,9 @@ package() {
 
 configure() {
     ln -sf /opt/etc/profile /etc/profile.d/toltec
+    sed -i \
+        -e 's|^export TERM=xterm|if \[ -z "$TERM" \];then export TERM=xterm;fi|' \
+        /opt/etc/profile
     if is-enabled "update-engine.service"; then
         echo "Disabling automatic update"
         systemctl disable --now update-engine
