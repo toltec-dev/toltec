@@ -24,7 +24,7 @@ package() {
 }
 
 configure() {
-    ln -sf /opt/etc/profile /etc/profile.d/toltec
+    ln -sf /opt/etc/profile /etc/profile.d/toltec.sh
     if is-enabled "update-engine.service"; then
         echo "Disabling automatic update"
         systemctl disable --now update-engine
