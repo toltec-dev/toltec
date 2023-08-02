@@ -15,7 +15,7 @@ image=base:v2.3
 installdepends=(display)
 
 source=(
-    https://github.com/timower/rM2-stuff/archive/refs/tags/v${_tag}.zip
+    "https://github.com/timower/rM2-stuff/archive/refs/tags/v${_tag}.zip"
     input.patch
 )
 
