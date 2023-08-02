@@ -1,3 +1,32 @@
+2023-03-12 raisjn <of.raisjn@arkose>
+
+	harmony
+
+	* fix exporting individual layers
+
+	rmkit
+
+	* swap M and N on keyboard
+	* fix image thumbnail code
+
+	simple:
+
+	* add "range" input widget
+	* add "canvas" widget
+	* less debug output
+	* make images clickable
+	* move 'timeout' to its own thread instead of jamming task queue
+	* ignore empty lines
+
+	remux
+
+	* add "suspend" to remux FIFO api
+
+	rpncalc
+
+	* make it more hp48 like (@cesss)
+
+
 2022-05-06 raisjn <of.raisjn@arkose>
 	remux
 
