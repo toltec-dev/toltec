@@ -334,6 +334,7 @@ def run_script(variables: Variables, script: str) -> LogGenerator:
     :returns: generator yielding output lines from the script
     :raises ScriptError: if the script exits with a non-zero code
     """
+    # pylint: disable-next=consider-using-with
     process = subprocess.Popen(
         ["/usr/bin/env", "bash"],
         stdin=subprocess.PIPE,
