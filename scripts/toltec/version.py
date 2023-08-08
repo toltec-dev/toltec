@@ -16,11 +16,15 @@ _COMPARATOR_CHARS = re.compile("[<>=]")
 class VersionComparator(Enum):
     """Operators used to compare two version numbers."""
 
+    # pylint: disable=invalid-name
+
     LowerThan = "<<"
     LowerThanOrEqual = "<="
     Equal = "="
     GreaterThanOrEqual = ">="
     GreaterThan = ">>"
+
+    # pylint: enable=invalid-name
 
 
 class InvalidVersionError(Exception):
@@ -100,12 +104,16 @@ revision={repr(self.revision)}, epoch={repr(self.epoch)})"
 class DependencyKind(Enum):
     """Kinds of dependencies that may be requested by a package."""
 
+    # pylint: disable=invalid-name
+
     # Dependency installed in the system used to build a package
     # (e.g., a Debian package)
     Build = "build"
     # Dependency installed alongside a package
     # (e.g., another Entware or Toltec package)
     Host = "host"
+
+    # pylint: enable=invalid-name
 
 
 class InvalidDependencyError(Exception):
@@ -145,21 +153,13 @@ class Dependency:
     def parse(dependency: str) -> "Dependency":
         """Parse a dependency specification."""
         original = dependency
-        colon = dependency.find(":")
+        kind = DependencyKind.Host
 
-        if colon == -1:
-            kind = DependencyKind.Host
-        else:
-            for enum_kind in DependencyKind:
-                if enum_kind.value == dependency[:colon]:
-                    kind = enum_kind
-                    dependency = dependency[colon + 1 :]
-                    break
-            else:
-                raise InvalidDependencyError(
-                    f"Unknown dependency type \
-'{dependency[:colon]}'"
-                )
+        for enum_kind in DependencyKind:
+            if dependency.startswith(enum_kind.value + ":"):
+                kind = enum_kind
+                dependency = dependency[len(enum_kind.value) + 1 :]
+                break
 
         comp_char_match = _COMPARATOR_CHARS.search(dependency)
 

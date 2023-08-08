@@ -1,0 +1,505 @@
+#!/usr/bin/env bash
+# Copyright (c) 2021 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+set -euo pipefail
+
+# Path where Toltec resides (will be mounted to $toltec_dest)
+toltec_src=/home/root/.entware
+
+# Path where Toltec is mounted
+toltec_dest=/opt
+
+# Path to Opkg configuration
+opkg_conf="$toltec_dest"/etc/opkg.conf
+opkg_conf_dir="$toltec_dest"/etc/opkg.conf.d
+
+# Path to the Xochitl configuration
+xochitl_conf=/home/root/.config/remarkable/xochitl.conf
+ssh_key_file=/home/root/.ssh/authorized_keys
+
+# Root of the remote Toltec server
+toltec_srv_root=https://toltec-dev.org
+
+# Start and end markers of Toltec-managed section in bashrc
+bashrc_path=/home/root/.bashrc
+bashrc_start_marker="# Added by Toltec bootstrap (do not modify!)"
+bashrc_old_start_marker="# Path added by Toltec bootstrap"
+bashrc_end_marker="# End of Toltec bootstrap additions"
+
+# Identify which reMarkable model we’re currently running on
+#
+# Output: One of the following strings
+#
+# rm1 - for reMarkable 1
+# rm2 - for reMarkable 2
+# unknown
+identify-model() {
+    local device_id
+    device_id="$(cat /sys/devices/soc0/machine)"
+
+    case $device_id in
+        "reMarkable 1.0" | "reMarkable Prototype 1")
+            echo "rm1"
+            ;;
+        "reMarkable 2.0")
+            echo "rm2"
+            ;;
+        *)
+            echo "unknown"
+            ;;
+    esac
+}
+
+# Get the password used to login to the SSH prompt
+#
+# Output: SSH password
+get-ssh-password() {
+    awk -F= '/DeveloperPassword=/{ printf "%s" $2 }' "$xochitl_conf"
+}
+
+# Get the path for a systemd bind mount unit
+#
+# Arguments:
+#
+# $1 - Mount point
+#
+# Output:
+#
+# Path at which the definition of a bind mount on $1 should reside
+get-bind-mount-path() {
+    echo "/lib/systemd/system/$(systemd-escape --path "$1").mount"
+}
+
+# Create or update a bind mount systemd unit and enable it
+#
+# Arguments:
+#
+# $1 - Source directory
+# $2 - Mount point
+add-bind-mount() {
+    local unit_path
+    local unit_name
+    unit_path="$(get-bind-mount-path "$2")"
+    unit_name="$(basename "$unit_path")"
+
+    if [[ -e $unit_path ]]; then
+        echo "Bind mount configuration for '$2' already exists, updating"
+    else
+        echo "Mounting '$1' over '$2'"
+    fi
+
+    cat > "$unit_path" << UNIT
+[Unit]
+Description=Bind mount $1 over $2
+DefaultDependencies=no
+Conflicts=umount.target
+Before=local-fs.target umount.target
+[Mount]
+What=$1
+Where=$2
+Type=none
+Options=bind
+[Install]
+WantedBy=local-fs.target
+UNIT
+
+    systemctl daemon-reload
+    systemctl enable "$unit_name"
+    systemctl start "$unit_name"
+}
+
+# Disable and remove a bind mount systemd unit
+#
+# Arguments:
+#
+# $1 - Mount point
+remove-bind-mount() {
+    local unit_path
+    local unit_name
+    unit_path="$(get-bind-mount-path "$1")"
+    unit_name="$(basename "$unit_path")"
+
+    if [[ ! -e $unit_path ]]; then
+        echo "No existing bind mount for '$1'"
+        return 1
+    fi
+
+    echo "Removing mount over '$1'"
+    systemctl disable "$unit_name"
+    umount -l "$1"
+    rm "$unit_path"
+    systemctl daemon-reload
+}
+
+# Reinstall all Toltec packages that had files installed outside of
+# $toltec_src, e.g. systemd configuration files
+reinstall-root() {
+    opkg update
+
+    # Get the list of installed packages with files on root
+    local pkgname
+    declare -A on_root_packages
+    while read -r inst_line; do
+        pkgname="$(echo "$inst_line" | awk '{ print $1 }')"
+        if opkg files "$pkgname" | grep -v -e "/home/root" -e "$toltec_dest" \
+            -e "is installed on root" -q; then
+            on_root_packages[$pkgname]=1
+        fi
+    done < <(opkg list-installed)
+
+    # Filter the list to keep only packages that can be installed
+    declare -A reinstall_packages
+    while read -r pkgname; do
+        if [[ -v "on_root_packages[$pkgname]" ]]; then
+            reinstall_packages[$pkgname]=1
+        fi
+    done < <(gunzip -c /opt/var/opkg-lists/* | grep "^Package:" | awk '{print $2}')
+
+    # Workaround: Checking the size of an empty array when the nounset option
+    # is active may throw an error on some Bash versions, so we disable it
+    # temporarily
+    set +u
+    if [[ ${#reinstall_packages[@]} -ne 0 ]]; then
+        opkg install --force-reinstall --force-remove "${!reinstall_packages[@]}"
+    else
+        echo "No package needs to be reinstalled"
+    fi
+    set -u
+}
+
+# Remove all PATH definitions for /opt in bashrc
+clean-path() {
+    if [[ -f $bashrc_path ]]; then
+        sed -i "/^$bashrc_start_marker\$/,/^$bashrc_end_marker\$/d" "$bashrc_path"
+        sed -i "/^$bashrc_old_start_marker\$/!b;n;d" "$bashrc_path"
+        sed -i "/^$bashrc_old_start_marker\$/d" "$bashrc_path"
+        sed -i '/^\(export \)\?PATH="\?\.*\/opt\/bin:\/opt\/sbin.*"\?$/d' "$bashrc_path"
+    fi
+}
+
+# Add/update PATH declarations in bashrc to include Toltec binaries
+set-path() {
+    local old_path
+    old_path="$(bash -l -c "echo \$PATH")"
+
+    clean-path
+    cat >> "$bashrc_path" << SHELL
+$bashrc_start_marker
+PATH="/opt/bin:/opt/sbin:/home/root/.local/bin:\$PATH"
+$bashrc_end_marker
+SHELL
+
+    # Warn user if PATH contents have changed
+    local new_path
+    new_path="$(bash -l -c "echo \$PATH")"
+
+    if [[ $old_path != "$new_path" ]]; then
+        echo "Please restart your SSH session or run 'exec bash --login' to use Toltec"
+    fi
+}
+
+# Print a file with its comments and blank lines removed
+#
+# Arguments:
+#
+# $1 - Path to the file
+#
+# Output: Cleaned file contents
+clean-file-comments() {
+    sed -e '/^#/d' -e '/^$/d' "$1"
+}
+
+# Rebuild the Opkg configuration file from split config files
+#
+# Exit code:
+#
+# 0 - If the configuration file has changed (in which case
+#     `opkg update` needs to be run)
+# 1 - If there were no changes
+generate-opkg-conf() {
+    local old_opkg_conf
+    old_opkg_conf="$(mktemp)"
+
+    if [[ -f $opkg_conf ]]; then
+        mv "$opkg_conf" "$old_opkg_conf"
+    else
+        touch "$old_opkg_conf"
+    fi
+
+    cat > "$opkg_conf" << CONF
+# Opkg configuration
+# Generated by toltecctl (do not modify!)
+
+# Define custom configuration in files under the '$opkg_conf_dir' directory
+# then run \`toltecctl generate-opkg-conf\` to regenerate this file
+
+dest root /
+dest ram /opt/tmp
+lists_dir ext /opt/var/opkg-lists
+option tmp_dir /opt/tmp
+
+CONF
+
+    for conf in "$opkg_conf_dir"/*; do
+        echo "# $conf"
+        clean-file-comments "$conf"
+        echo
+    done >> "$opkg_conf"
+
+    ! diff <(clean-file-comments "$old_opkg_conf" | sort) \
+        <(clean-file-comments "$opkg_conf" | sort) > /dev/null
+}
+
+# Create the Opkg configuration file for fetching Entware packages
+create-entware-conf() {
+    mkdir -p "$opkg_conf_dir"
+    cat > "$opkg_conf_dir"/10-entware.conf << CONF
+# Entware repository configuration
+# Managed by Toltec (do not modify!)
+
+# Define custom configuration in other files in this directory
+# then run \`toltecctl generate-opkg-conf\` to regenerate '$opkg_conf'
+
+arch all 100
+arch armv7-3.2 160
+src/gz entware https://bin.entware.net/armv7sf-k3.2
+CONF
+}
+
+# Set the Toltec branch for this installation
+# (generate-opkg-conf must be run afterwards to rebuild the main config file)
+#
+# Arguments:
+#
+# $1 - Name of the branch to use (either stable or testing)
+switch-branch() {
+    local branch="${1:-stable}"
+    local model
+    model="$(identify-model)"
+
+    if [[ $model = "unknown" ]]; then
+        echo "You’re running an unsupported or unrecognised device"
+        exit 1
+    fi
+
+    mkdir -p "$opkg_conf_dir"
+    cat >| "$opkg_conf_dir"/15-toltec.conf << CONF
+# Toltec repository configuration
+# Generated by toltecctl (do not modify!)
+
+# Use \`toltecctl switch-branch [stable|testing]\` to
+# switch to a different Toltec branch
+
+arch rmall 200
+src/gz toltec-rmall $toltec_srv_root/$branch/rmall
+arch $model 250
+src/gz toltec-$model $toltec_srv_root/$branch/$model
+CONF
+}
+
+# Re-enable Toltec install after system update
+reenable() {
+    add-bind-mount "$toltec_src" "$toltec_dest"
+    reinstall-root
+    set-path
+}
+
+# List all installed packages such that any package comes before
+# its dependencies. Dependency cycles are broken arbitrarily
+list-installed-ordered() {
+    # shellcheck disable=SC2016
+    local awk_list_to_graph='
+        /^.* depends on:$/{
+            from=$1;
+            print from " " from;
+        }
+
+        /^\t/{
+            print from " " $1;
+        }
+    '
+    opkg depends '*' | awk "$awk_list_to_graph" | tsort 2> /dev/null || true
+    # tsort reports errors if there are dependency cycles, we ignore them
+}
+
+# Remove Toltec completely
+uninstall() {
+    # Fetch standalone opkg used to uninstall packages
+    local opkg_path=/home/root/.local/bin/opkg
+    local opkg_remote=https://bin.entware.net/armv7sf-k3.2/installer/opkg
+
+    if ! wget --no-verbose "$opkg_remote" --output-document "$opkg_path"; then
+        echo "Unable to fetch standalone opkg, make sure you have a stable Wi-Fi connection"
+        return 1
+    fi
+
+    chmod u+x "$opkg_path"
+
+    # Remove installed packages in reverse dependency order
+    list-installed-ordered | while read -r pkgname; do
+        "$opkg_path" remove --force-depends --force-remove "$pkgname"
+    done
+
+    systemctl daemon-reload
+    rm -f "$opkg_path"
+
+    # Remove mount point
+    remove-bind-mount "$toltec_dest"
+    rmdir "$toltec_dest"
+
+    # Unset PATH
+    clean-path
+
+    # Remove Toltec data
+    rm -r "$toltec_src"
+
+    # Re-enable xochitl if needed
+    systemctl enable xochitl
+}
+
+help() {
+    echo "Usage: $(basename "$0") COMMAND
+Manage your Toltec install. Available commands:
+
+    help                    Show this help message.
+    generate-opkg-conf      Rebuild the Opkg configuration file.
+    switch-branch [BRANCH]  Change the current branch to BRANCH.
+    reenable                Re-enable Toltec after a system update.
+    uninstall               Permanently remove Toltec."
+}
+
+if [[ $0 = "${BASH_SOURCE[0]}" ]]; then
+    if [[ $# -eq 0 ]]; then
+        help
+        exit 1
+    fi
+
+    action="$1"
+    shift
+
+    case $action in
+        generate-opkg-conf)
+            no_update=$({ (($# > 0)) && [[ $1 = "--no-update" || $1 = "-n" ]] && echo 1; } || true)
+
+            if generate-opkg-conf && [[ -z $no_update ]]; then
+                read -p "Your Opkg configuration changed. Reload it? [Y/n] " -n 1 -r
+                echo
+
+                if [[ $REPLY =~ ^[Nn]$ ]]; then
+                    echo "Not reloading. Use 'opkg update' to do it manually."
+                else
+                    opkg update
+                fi
+            fi
+            ;;
+
+        switch-branch)
+            target_branch=stable
+            force=
+
+            while (($#)); do
+                if [[ $1 = "--force" || $1 = "-f" ]]; then
+                    force=1
+                else
+                    target_branch="$1"
+                fi
+                shift
+            done
+
+            if [[ -z $force ]] && ! wget --quiet --spider "$toltec_srv_root/$target_branch"; then
+                cat << MSG
+The '$target_branch' branch does not seem to exist. This may happen if you made
+a typo in the branch name or if you have no Internet access.
+MSG
+                read -p "Continue anyway? [y/N] " -n 1 -r
+                echo
+
+                if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+                    echo "Canceled"
+                    exit 1
+                fi
+            fi
+
+            if [[ -z $force ]] && [[ $target_branch = "testing" ]]; then
+                cat << MSG
+Using packages from the testing branch may cause breakage or data loss.
+Please make sure you read the following before switching to testing:
+
+    <https://github.com/toltec-dev/toltec/blob/stable/docs/branches.md>
+
+MSG
+                read -p "Continue? [y/N] " -n 1 -r
+                echo
+
+                if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+                    echo "Canceled"
+                    exit 1
+                fi
+            fi
+
+            switch-branch "$target_branch"
+
+            if generate-opkg-conf; then
+                if ((force == 0)); then
+                    read -p "Your Opkg configuration changed. Reload it? [Y/n] " -n 1 -r
+                    echo
+
+                    if [[ $REPLY =~ ^[Nn]$ ]]; then
+                        echo "Not reloading. Use 'opkg update' to do it manually."
+                        exit
+                    fi
+                fi
+
+                opkg update
+            fi
+            ;;
+
+        reenable)
+            reenable
+            ;;
+
+        uninstall)
+            force=$({ (($# > 0)) && [[ $1 = "--force" || $1 = "-f" ]] && echo 1; } || true)
+
+            if [[ -z $force ]]; then
+                read -p "This will wipe out all files in '$toltec_dest'. Continue? [y/N] " -n 1 -r
+                echo
+
+                if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+                    echo "Canceled"
+                    exit 1
+                fi
+            fi
+
+            uninstall
+
+            if [[ -z $force ]]; then
+                read -p "To complete the uninstall process, the device needs to be rebooted. Reboot now? [Y/n] " -n 1 -r
+                echo
+
+                if [[ $REPLY =~ ^[Nn]$ ]]; then
+                    echo "Please reboot your device manually to complete the uninstall process"
+                    exit
+                fi
+            fi
+
+            if [[ ! -f $ssh_key_file ]]; then
+                echo "In case something goes wrong, your SSH password is: $(get-ssh-password)"
+            fi
+
+            echo "Rebooting"
+            reboot
+            ;;
+
+        help | -h | --help)
+            help
+            ;;
+
+        *)
+            echo -e "Error: Invalid command '$action'\n"
+            help
+            exit 1
+            ;;
+    esac
+fi

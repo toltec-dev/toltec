@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: MIT
 """Bridge Bash with Python."""
 
+import os
 import shlex
 import subprocess
 from typing import Dict, Generator, List, Optional, Tuple, Union
@@ -94,7 +95,9 @@ def get_declarations(src: str) -> Tuple[Variables, Functions]:
 declare -f
 declare -p
 """
-    env: Dict[str, str] = {}
+    env: Dict[str, str] = {
+        "PATH": os.environ["PATH"],
+    }
 
     declarations_subshell = (
         subprocess.run(  # pylint:disable=subprocess-run-check
@@ -331,6 +334,7 @@ def run_script(variables: Variables, script: str) -> LogGenerator:
     :returns: generator yielding output lines from the script
     :raises ScriptError: if the script exits with a non-zero code
     """
+    # pylint: disable-next=consider-using-with
     process = subprocess.Popen(
         ["/usr/bin/env", "bash"],
         stdin=subprocess.PIPE,
@@ -399,6 +403,7 @@ def run_script_in_container(
                 )
             ),
         ],
+        security_opt=["label=disable"],
         detach=True,
     )
 

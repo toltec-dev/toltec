@@ -5,8 +5,8 @@
 pkgnames=(koreader)
 pkgdesc="Ebook reader supporting PDF, DjVu, EPUB, FB2 and many more formats"
 url=https://github.com/koreader/koreader
-pkgver=2021.02-2
-timestamp=2021-02-19T19:49:35Z
+pkgver=2023.06.1-1
+timestamp=2023-07-09T08:17:26Z
 section="readers"
 maintainer="raisjn <of.raisjn@gmail.com>"
 license=AGPL-3.0-or-later
@@ -17,10 +17,12 @@ source=(
     "https://build.koreader.rocks/download/stable/$_srcver/koreader-remarkable-$_srcver.zip"
     koreader.draft
     KOReader.oxide
+    koreader-toltec.service
     koreader
 )
 sha256sums=(
-    0fecf246d79561cab079dfa07efb653b5a957635c29298ad4f8c6822f6d7b3c1
+    a24f334983060b5cfee7b87484529b77fe4adffd646e8fd55447750e73309ef0
+    SKIP
     SKIP
     SKIP
     SKIP
@@ -36,6 +38,41 @@ package() {
 
     install -D -m 644 -t "$pkgdir"/opt/etc/draft/ "$srcdir"/koreader.draft
     install -D -m 644 -t "$pkgdir"/opt/usr/share/applications/ "$srcdir"/KOReader.oxide
+    install -D -m 644 "$srcdir"/koreader-toltec.service "$pkgdir"/lib/systemd/system/koreader.service
     install -D -m 644 -t "$pkgdir"/opt/etc/draft/icons/ "$srcdir"/resources/koreader.png
     install -D -m 755 -t "$pkgdir"/opt/bin/ "$srcdir"/koreader
+}
+
+configure() {
+    # This file can cause issues with startup when moving from 2022.08 to another version
+    if [ -f /opt/koreader/cache/fontlist/fontinfo.dat ]; then
+        rm /opt/koreader/cache/fontlist/fontinfo.dat
+    fi
+
+    systemctl daemon-reload
+
+    if ! is-enabled "$pkgname.service"; then
+        cat << MSG
+
+Run the following command(s) to use $pkgname as your launcher
+$(how-to-enable "$pkgname.service")
+
+MSG
+    fi
+}
+
+preremove() {
+    if is-active "$pkgname"; then
+        echo "Stopping $pkgname"
+        systemctl stop "$pkgname"
+    fi
+
+    if is-enabled "$pkgname"; then
+        echo "Disabling $pkgname"
+        systemctl disable "$pkgname"
+    fi
+}
+
+postremove() {
+    systemctl daemon-reload
 }

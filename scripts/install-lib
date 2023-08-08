@@ -23,6 +23,19 @@ is-enabled() {
     systemctl --quiet is-enabled "$1" 2> /dev/null
 }
 
+# Check whether a systemd unit exists and is masked
+#
+# Arguments:
+#
+# $1 - Name of the systemd unit, e.g. "xochitl.service" or "xochitl"
+#
+# Exit code:
+#
+# 0 if the unit exists and is masked, 1 otherwise
+is-masked() {
+    [[ "$(systemctl is-enabled "$1" 2> /dev/null)" == "masked" ]]
+}
+
 # Check whether a systemd unit is in an active state
 # ("running")
 #
@@ -47,8 +60,17 @@ is-active() {
 #
 # List of conflicting units
 get-conflicts() {
-    # systemd automatically adds a conflict with "shutdown.target" to all
-    # service units (see systemd.service(5), section "Automatic Dependencies")
+    # Find enabled units that have a conflicting name
+    for name in $(systemctl cat "$1" | awk -F'=' '/^Alias=/{print $2}'); do
+        local realname
+        if realname="$(basename "$(readlink "/etc/systemd/system/$name")")"; then
+            echo "$realname"
+        fi
+    done
+
+    # Find units that are declared as conflicting
+    # (systemd automatically adds a conflict with "shutdown.target" to all
+    # service units see systemd.service(5), section "Automatic Dependencies")
     systemctl show "$1" | awk -F'=' '/^Conflicts=/{print $2}' \
         | sed 's|\bshutdown.target\b||'
 }
@@ -88,4 +110,67 @@ reload-oxide-apps() {
     else
         echo "Done!"
     fi
+}
+
+# Create or update a bind mount systemd unit and enable it
+#
+# Arguments:
+#
+# $1 - Source directory
+# $2 - Mount point
+add-bind-mount() {
+    local unit_name
+    local unit_path
+    unit_name="$(systemd-escape --path "$2").mount"
+    unit_path="/lib/systemd/system/$unit_name"
+
+    if [[ -e $unit_path ]]; then
+        echo "Bind mount configuration for '$2' already exists, updating"
+    else
+        echo "Mounting '$1' over '$2'"
+    fi
+
+    cat > "$unit_path" << UNIT
+[Unit]
+Description=Bind mount $1 over $2
+DefaultDependencies=no
+Conflicts=umount.target
+Before=local-fs.target umount.target
+
+[Mount]
+What=$1
+Where=$2
+Type=none
+Options=bind
+
+[Install]
+WantedBy=local-fs.target
+UNIT
+
+    systemctl daemon-reload
+    systemctl enable "$unit_name"
+    systemctl restart "$unit_name"
+}
+
+# Disable and remove a bind mount systemd unit
+#
+# Arguments:
+#
+# $1 - Mount point
+remove-bind-mount() {
+    local unit_name
+    local unit_path
+    unit_name="$(systemd-escape --path "$1").mount"
+    unit_path="/lib/systemd/system/$unit_name"
+
+    if [[ ! -e $unit_path ]]; then
+        echo "No existing bind mount for '$1'"
+        return 1
+    fi
+
+    echo "Removing mount over '$1'"
+    systemctl disable "$unit_name"
+    systemctl stop "$unit_name"
+    rm "$unit_path"
+    systemctl daemon-reload
 }

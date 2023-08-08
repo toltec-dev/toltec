@@ -1,0 +1,12 @@
+diff --git a/vnsee-gui b/vnsee-gui
+index f0c4171..5aab6c9 100755
+--- a/vnsee-gui
++++ b/vnsee-gui
+@@ -6,6 +6,7 @@
+ # and starts VNSee with the right arguments
+ 
+ set -euo pipefail
++export PATH="/opt/bin:$PATH"
+ 
+ if ! command -v simple > /dev/null; then
+     echo "Error: $0 needs the 'simple' program to work"

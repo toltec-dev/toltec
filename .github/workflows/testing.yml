@@ -9,11 +9,7 @@ jobs:
         runs-on: ubuntu-20.04
         steps:
             - name: Checkout the Git repository
-              uses: actions/checkout@v2
-            - name: Setup Python
-              uses: actions/setup-python@v2
-              with:
-                python-version: '3.8'
+              uses: actions/checkout@v3
             - name: Setup Toltec dependencies
               uses: ./.github/actions/setup
             - name: Build packages
@@ -25,6 +21,7 @@ jobs:
                 local-path: build/repo/
                 ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
                 ssh-known-hosts: ${{ secrets.SSH_KNOWN_HOSTS }}
+                ssh-port: ${{ secrets.SSH_PORT }}
                 remote-path: ${{ secrets.REMOTE_SSH }}:/srv/toltec/testing
             - name: Send notification to Discord
               continue-on-error: true
@@ -35,4 +32,4 @@ jobs:
                 title: New Toltec testing update available
                 link: https://toltec-dev.org/testing
                 color: 0xe3b341
-                message: ${{ github.event.head_commit.message }}
+                message: ${{ github.event.commits[0].message }}

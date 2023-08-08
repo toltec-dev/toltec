@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+# Copyright (c) 2021 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgnames=(innernet-client)
+pkgdesc="A private network system that uses WireGuard under the hood."
+url="https://github.com/tonarino/innernet"
+pkgver=1.5.3-2
+timestamp=2022-01-31T20:08:43Z
+section="utils"
+maintainer="plan5 <30434574+plan5@users.noreply.github.com>"
+license=MIT
+installdepends=(wireguard)
+makedepends=(build:librust-clang-sys-dev build:libclang-dev build:libc6 build:libc6-dev build:clang)
+
+image=rust:v2.2.2
+_srcver="v${pkgver%-*}"
+source=(
+    "https://github.com/tonarino/innernet/archive/refs/tags/$_srcver.zip"
+)
+sha256sums=(
+    2f7ca1d802d898b1c4fd090cba9e0562a1e80d617b55f23ba596e81c99441a1c
+)
+
+prepare() {
+    # Change config folders to live under /opt
+    sed -i "s/\/etc\/innernet/\/opt\/etc\/innernet/g" "$srcdir/shared/src/lib.rs"
+    sed -i "s/\/var\/lib\/innernet/\/opt\/var\/lib\/innernet/g" "$srcdir/shared/src/lib.rs"
+
+    # Change binary path in service file
+    sed -i "s/\/usr\/bin\/innernet/\/opt\/bin\/innernet/g" "$srcdir/client/innernet@.service"
+
+    #tbd: change wireguard config dir to /opt/etc/wireguard?
+    #sed -i "s/\/etc\/wireguard/\/opt\/etc\/wireguard/g" "$srcdir/shared/src/lib.rs"
+}
+
+build() {
+    cargo build --release --bin innernet
+}
+
+package() {
+    install -D -m 700 -t "$pkgdir"/opt/bin "$srcdir"/target/armv7-unknown-linux-gnueabihf/release/innernet
+    install -D -m 644 -t "$pkgdir"/lib/systemd/system "$srcdir/client/innernet@.service"
+    install -D -m 644 -t "$pkgdir"/lib/systemd/system "$srcdir/client/innernet.target"
+
+    # Link /opt/bin/innernet to /opt/bin/inn
+    ln -s /opt/bin/innernet "$pkgdir"/opt/bin/inn
+}
+
+configure() {
+    if ! [ -d /opt/var/lib/innernet ]; then
+        mkdir -p /opt/var/lib/innernet
+    fi
+}

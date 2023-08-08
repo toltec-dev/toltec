@@ -1,0 +1,14 @@
+[Unit]
+Description=Ebook reader supporting PDF, DjVu, EPUB, FB2 and many more formats
+StartLimitIntervalSec=600
+StartLimitBurst=4
+After=home.mount
+OnFailure=xochitl.service
+
+[Service]
+ExecStart=/opt/bin/koreader
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+Alias=launcher.service

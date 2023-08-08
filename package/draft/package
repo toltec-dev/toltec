@@ -5,7 +5,7 @@
 pkgnames=(draft)
 pkgdesc="Launcher which wraps around the standard interface"
 url=https://github.com/dixonary/draft-reMarkable
-pkgver=0.2.0-19
+pkgver=0.2.0-21
 timestamp=2020-07-20T10:23Z
 section="launchers"
 maintainer="Mattéo Delabre <spam@delab.re>"
@@ -13,7 +13,7 @@ license=Apache-2.0
 installdepends=(xochitl display)
 flags=(patch_rm2fb)
 
-image=qt:v1.4
+image=qt:v2.1
 source=(
     https://github.com/dixonary/draft-reMarkable/archive/5bd660a2fd07eba166c6110d2b48cfc58ee67e58.zip
     draft.service

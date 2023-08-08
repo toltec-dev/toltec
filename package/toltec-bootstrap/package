@@ -3,17 +3,24 @@
 # SPDX-License-Identifier: MIT
 
 pkgnames=(toltec-bootstrap)
-pkgdesc="Toltec installation script"
+pkgdesc="Manage your Toltec install"
 url=https://toltec-dev.org/
-pkgver=0.0.2-2
-timestamp=2021-01-15T20:15Z
+pkgver=0.2.2-1
+timestamp=2022-02-28T00:12Z
 section="utils"
 maintainer="Eeems <eeems@eeems.email>"
 license=MIT
+# NOTE: The following dependencies will NOT be honored during bootstrap
+# and will only be available after the install is completed
+# TODO: toltec-base is now installed by default for new users. It is listed
+# below as a transitional dependency to ensure that it gets installed for
+# existing users (see toltec-dev/toltec#532 for context). This dependency
+# should be removed once the package has reached enough users
+installdepends=(coreutils-tsort toltec-base)
 
 source=(
-    ../../scripts/bootstrap/bootstrap
-    entware-reenable
+    toltecctl
+    15-systemd-input.rules
 )
 sha256sums=(
     SKIP
@@ -21,6 +28,39 @@ sha256sums=(
 )
 
 package() {
-    install -D -m 744 -t "$pkgdir"/home/root/ "$srcdir"/bootstrap
-    install -D -m 744 -t "$pkgdir"/home/root/ "$srcdir"/entware-reenable
+    install -D -m 744 -t "$pkgdir"/home/root/.local/bin "$srcdir"/toltecctl
+    install -D -m 644 -t "$pkgdir"/lib/udev/rules.d/ "$srcdir"/15-systemd-input.rules
+}
+
+configure() {
+    # shellcheck source=toltecctl
+    source /home/root/.local/bin/toltecctl
+    set-path
+
+    # Apply the input udev rule
+    udevadm control --reload-rules && udevadm trigger
+
+    if [[ ! -d $opkg_conf_dir ]]; then
+        # Migrate existing config in /opt/etc/opkg.conf to be generated
+        # from split files and to use the multiarch repository layout
+        local branch
+
+        if [[ -f $opkg_conf ]]; then
+            # Get the first (...) value (aka \1) of the pattern if matching
+            branch="$(sed -E 's|^src/gz\s+toltec.*\s+https://toltec-dev.org/([[:alnum:]-]*).*$|\1|;t;d' "$opkg_conf" | head -n1)"
+        else
+            branch=stable
+        fi
+
+        create-entware-conf
+        switch-branch "$branch"
+        echo "Your Opkg configuration has been migrated"
+
+        if generate-opkg-conf; then
+            echo
+            echo "! The upgrade is not finished! Please run \`opkg update\`"
+            echo "! and \`opkg upgrade\` once more to complete it."
+            echo
+        fi
+    fi
 }

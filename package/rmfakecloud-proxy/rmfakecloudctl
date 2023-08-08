@@ -1,0 +1,439 @@
+#!/usr/bin/env bash
+# Copyright (c) 2021 ddvk
+# Copyright (c) 2021 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+set -euo pipefail
+
+# Path where the certificate authority key and proxy TLS certificate are stored
+data_dir=/opt/var/rmfakecloud-proxy
+
+# Path where system CA certificates are stored
+local_cert_dir=/usr/local/share/ca-certificates
+
+# Path to the static hosts definition
+hosts_path=/etc/hosts
+
+# Path to the configuration directory
+conf_dir=/opt/etc/rmfakecloud-proxy
+
+# Proxy listen address
+proxy_listen=127.0.42.10
+
+# Path to the Xochitl configuration file
+xochitl_conf_path=/home/root/.config/remarkable/xochitl.conf
+
+# Path to Xochitl data
+xochitl_data_dir=/home/root/.local/share/remarkable/xochitl
+
+# ANSI escapes for colors
+red="\033[31m"
+green="\033[32m"
+yellow="\033[33m"
+reset="\033[m"
+
+# ANSI escape to clear line from cursor until end
+clearline="\033[K"
+
+# Disconnect Xochitl from the cloud
+#
+# This is a necessary step when switching cloud servers to prevent the client
+# from believing all the files have been deleted.
+disconnect-cloud() {
+    if grep -q "^devicetoken=" "$xochitl_conf_path" \
+        && grep -q "^usertoken=" "$xochitl_conf_path"; then
+        echo "Xochitl sync is enabled. Disabling..."
+    else
+        return 0
+    fi
+
+    # Make sure Xochitl is not running
+    local was_active=
+
+    if systemctl --quiet is-active xochitl.service 2> /dev/null; then
+        systemctl stop xochitl
+        was_active=1
+    fi
+
+    local xochitl_pid=
+
+    if xochitl_pid="$(pgrep --exact --oldest xochitl)"; then
+        kill "$xochitl_pid"
+        echo "Waiting for Xochitl to stop"
+        local xochitl_wait_count=0
+
+        while kill -0 "$xochitl_pid" 2> /dev/null; do
+            sleep 1
+            xochitl_wait_count=$((xochitl_wait_count++))
+
+            if ((xochitl_wait_count > 5)); then
+                echo "Force killing Xochitl"
+                kill -9 "$xochitl_pid"
+            fi
+        done
+    fi
+
+    # Mark all files as not synced
+    grep sync "$xochitl_data_dir"/*.metadata -l \
+        | xargs sed -i 's/synced\": true/synced\": false/'
+
+    # Disconnect from cloud
+    sed -i '/^devicetoken=/d' "$xochitl_conf_path"
+    sed -i '/^usertoken=/d' "$xochitl_conf_path"
+
+    # Re-enable Xochitl service if it was running
+    if [[ -n $was_active ]]; then
+        systemctl start xochitl
+    fi
+}
+
+# Check if the proxy has been enabled
+#
+# Exit code:
+#
+# 0 - If the proxy is enabled
+# Other - If the proxy is disabled
+is-enabled() {
+    [[ -f $conf_dir/enabled ]]
+}
+
+mark-enabled() {
+    mkdir -p "$conf_dir"
+    touch "$conf_dir/enabled"
+}
+
+mark-disabled() {
+    rm -f "$conf_dir/enabled"
+}
+
+# Read the currently configured upstream server
+#
+# Output: Name of the configured server
+# Exit code:
+#
+# 0 - If a server is configured
+# 1 - If no server is configured
+get-upstream() {
+    local upstream
+    # shellcheck disable=SC2016
+    local awk_program='
+        /^upstream:/{
+            sep = index($0, ":");
+            print gensub(/^[ \t]+|[ \t]+$/, "", "g", substr($0, sep + 1));
+        }
+    '
+
+    if ! upstream="$(awk "$awk_program" "$conf_dir/config" 2> /dev/null)"; then
+        return 1
+    fi
+
+    if [[ -z $upstream ]]; then
+        return 1
+    fi
+
+    echo "$upstream"
+}
+
+# Define the upstream server, overwriting any previously configured value
+#
+# Arguments:
+#
+# $1 - Name of the server
+set-upstream() {
+    mkdir -p "$conf_dir"
+    cat > "$conf_dir/config" << YAML
+cert: $data_dir/rmfakecloud-proxy.bundle.crt
+key: $data_dir/rmfakecloud-proxy.key
+upstream: $1
+addr: $proxy_listen:443
+YAML
+}
+
+# Check if a given server is an rmfakecloud host
+#
+# Output: Details on the given host status
+# Exit code:
+#
+# 0 - If the server seems to be a valid rmfakecloud host
+# 1 - If it’s definitely not
+check-upstream() {
+    local url="$upstream/service/json/1/test"
+    local contents
+    local wget_exit
+    contents="$(wget \
+        --output-document - \
+        --quiet "$url" \
+        --tries 1 \
+        --timeout 5 2>&1)" && wget_exit=$? || wget_exit=$?
+
+    if [[ $wget_exit = 8 ]]; then
+        # HTTP error, the page probably doesn't exist
+        echo "invalid"
+        return 1
+    elif [[ $wget_exit = 4 ]]; then
+        # Network error, the server probably doesn't exist or is offline
+        echo "unreachable"
+        return 1
+    elif [[ $wget_exit != 0 ]]; then
+        # Other error
+        echo "error"
+        return 1
+    fi
+
+    if [[ $contents != '{"Host":"local.appspot.com","Status":"OK"}' ]]; then
+        echo "invalid"
+        return 1
+    fi
+
+    echo "working"
+    return 0
+}
+
+# Generate a local certificate authority, add it to the system trust,
+# and create a self-signed proxy certificate
+install-certificates() {
+    mkdir -p "$data_dir" "$local_cert_dir"
+
+    if [[ ! -f $data_dir/rmfakecloud-ca.key ]] \
+        || [[ ! -f $data_dir/rmfakecloud-ca.crt ]]; then
+        openssl genrsa -out "$data_dir/rmfakecloud-ca.key" 2048
+        openssl req -new -sha256 -x509 \
+            -key "$data_dir/rmfakecloud-ca.key" \
+            -out "$data_dir/rmfakecloud-ca.crt" \
+            -days 3650 -subj /CN=rmfakecloud-ca
+        rm -f "$data_dir/rmfakecloud-proxy.key"
+    fi
+
+    if ! cmp -s {"$data_dir","$local_cert_dir"}/rmfakecloud-ca.crt; then
+        cp -f "$data_dir/rmfakecloud-ca.crt" "$local_cert_dir"
+        update-ca-certificates --fresh
+    fi
+
+    if [[ ! -f $data_dir/rmfakecloud-proxy.key ]]; then
+        openssl genrsa -out "$data_dir/rmfakecloud-proxy.key" 2048
+        rm -f "$data_dir/rmfakecloud-proxy.pubkey"
+    fi
+
+    if [[ ! -f $data_dir/rmfakecloud-proxy.pubkey ]]; then
+        openssl rsa -in "$data_dir/rmfakecloud-proxy.key" -pubout \
+            -out "$data_dir/rmfakecloud-proxy.pubkey"
+        rm -f "$data_dir/rmfakecloud-proxy.crt"
+    fi
+
+    if [[ ! -f $data_dir/rmfakecloud-proxy.crt ]]; then
+        local csr
+        csr="$(mktemp)"
+
+        cat >> "$csr" << CSR
+[ req ]
+default_bits = 2048
+default_keyfile = proxy.key
+encrypt_key = no
+default_md = sha256
+prompt = no
+utf8 = yes
+distinguished_name = dn
+req_extensions = ext
+x509_extensions = caext
+[ dn ]
+C = AA
+ST = QQ
+L = JJ
+O  = the culture
+CN = *.appspot.com
+[ ext ]
+subjectAltName=@san
+basicConstraints=CA:FALSE
+subjectKeyIdentifier = hash
+[ caext ]
+subjectAltName=@san
+[ san ]
+DNS.1 = *.appspot.com
+DNS.2 = my.remarkable.com
+DNS.3 = internal.cloud.remarkable.com
+DNS.4 = ping.remarkable.com
+DNS.5 = *.remarkable.com
+CSR
+
+        openssl req -new -config "$csr" \
+            -key "$data_dir/rmfakecloud-proxy.key" \
+            -out "$data_dir/rmfakecloud-proxy.csr"
+        openssl x509 -req -in "$data_dir/rmfakecloud-proxy.csr" \
+            -out "$data_dir/rmfakecloud-proxy.crt" \
+            -CA "$data_dir/rmfakecloud-ca.crt" \
+            -CAkey "$data_dir/rmfakecloud-ca.key" -CAcreateserial \
+            -days 3650 -extfile "$csr" -extensions caext
+        rm -f "$data_dir/rmfakecloud-proxy.csr"
+    fi
+
+    if [[ ! -f $data_dir/rmfakecloud-proxy.bundle.crt ]]; then
+        cat "$data_dir/rmfakecloud-proxy.crt" "$data_dir/rmfakecloud-ca.crt" \
+            > "$data_dir/rmfakecloud-proxy.bundle.crt"
+    fi
+}
+
+# Erase and untrust the local certificate authority
+uninstall-certificates() {
+    rm -f "$data_dir"/*
+
+    if [[ -f "$local_cert_dir/rmfakecloud-ca.crt" ]]; then
+        rm "$local_cert_dir/rmfakecloud-ca.crt"
+        update-ca-certificates --fresh
+    fi
+}
+
+# Add entries in the static host file to redirect cloud requests to the proxy
+install-hosts() {
+    uninstall-hosts
+    cat << EOF >> "$hosts_path"
+$proxy_listen hwr-production-dot-remarkable-production.appspot.com
+$proxy_listen service-manager-production-dot-remarkable-production.appspot.com
+$proxy_listen local.appspot.com
+$proxy_listen my.remarkable.com
+$proxy_listen internal.cloud.remarkable.com
+$proxy_listen ping.remarkable.com
+EOF
+}
+
+# Remove all static host entries redirecting the cloud to the proxy
+uninstall-hosts() {
+    sed -i '/ hwr-production-dot-remarkable-production.appspot.com$/d' "$hosts_path"
+    sed -i '/ service-manager-production-dot-remarkable-production.appspot.com$/d' "$hosts_path"
+    sed -i '/ local.appspot.com$/d' "$hosts_path"
+    sed -i '/ my.remarkable.com$/d' "$hosts_path"
+    sed -i '/ internal.cloud.remarkable.com$/d' "$hosts_path"
+    sed -i '/ ping.remarkable.com$/d' "$hosts_path"
+}
+
+# Try to make a full install of rmfakecloud-proxy
+install() {
+    trap install-failed EXIT
+    disconnect-cloud
+    install-certificates
+    install-hosts
+    mark-enabled
+    systemctl enable rmfakecloud-proxy
+    systemctl restart rmfakecloud-proxy
+    trap EXIT
+}
+
+install-failed() {
+    echo "Install interrupted, trying to clean up"
+    uninstall
+}
+
+# Disable and cleanup rmfakecloud-proxy
+uninstall() {
+    # Temporarily disable exit-on-error so as to clean up as much as possible
+    set +e
+    disconnect-cloud
+    mark-disabled
+    systemctl disable --now rmfakecloud-proxy
+    uninstall-hosts
+    uninstall-certificates
+    set -e
+}
+
+help() {
+    echo "Usage: $(basename "$0") COMMAND
+Manage rmfakecloud-proxy. Available commands:
+
+    help                    Show this help message.
+    status                  Check the current status of rmfakecloud-proxy.
+    enable                  Enable rmfakecloud-proxy.
+    set-upstream            Set the upstream rmfakecloud server.
+    disable                 Disable rmfakecloud-proxy."
+}
+
+if [[ $0 = "${BASH_SOURCE[0]}" ]]; then
+    if [[ $# -eq 0 ]]; then
+        help
+        exit 1
+    fi
+
+    action="$1"
+    shift
+
+    case $action in
+        status)
+            is-enabled && state="${green}enabled" || state="${red}disabled"
+            service="$(systemctl is-active rmfakecloud-proxy.service)" || true
+
+            if [[ $service = active ]]; then
+                service="$green$service"
+            else
+                service="$yellow$service"
+            fi
+
+            echo -e "Status: $state$reset ($service$reset)"
+            echo -en "Upstream server: "
+
+            if ! upstream="$(get-upstream)"; then
+                echo -e "(${yellow}not set$reset)"
+            else
+                echo -en "$upstream (checking status...)"
+                if ! upstream_status="$(check-upstream "$upstream")"; then
+                    echo -en "\rUpstream server: $upstream "
+                    echo -e "($red$upstream_status$reset)$clearline"
+                else
+                    echo -en "\rUpstream server: $upstream "
+                    echo -e "($green$upstream_status$reset)$clearline"
+                fi
+            fi
+
+            if is-enabled; then
+                echo "Run \`rmfakecloudctl disable\` to disable \
+rmfakecloud-proxy."
+            else
+                echo "Run \`rmfakecloudctl enable\` to enable \
+rmfakecloud-proxy."
+            fi
+
+            echo "Run \`rmfakecloudctl set-upstream https://<server>\` to \
+set the upstream server."
+            ;;
+
+        enable)
+            if is-enabled; then
+                echo "rmfakecloud-proxy is already enabled."
+            else
+                install
+                echo "rmfakecloud-proxy is now enabled."
+            fi
+            ;;
+
+        disable)
+            uninstall
+            echo "rmfakecloud-proxy is now disabled."
+            ;;
+
+        set-upstream)
+            if (($# < 1)); then
+                echo "Missing server name argument"
+                exit 1
+            fi
+
+            if [[ $(get-upstream) == "$1" ]]; then
+                echo "Server already set to '$1'."
+            else
+                disconnect-cloud
+                set-upstream "$1"
+                echo "Upstream server configuration changed successfully."
+
+                if is-enabled; then
+                    systemctl restart rmfakecloud-proxy
+                fi
+            fi
+            ;;
+
+        help | -h | --help)
+            help
+            ;;
+
+        *)
+            echo -e "Error: Invalid command '$action'\n"
+            help
+            exit 1
+            ;;
+    esac
+fi

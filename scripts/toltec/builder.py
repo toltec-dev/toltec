@@ -96,6 +96,7 @@ class Builder:  # pylint: disable=too-few-public-methods
         self.context: Dict[str, str] = {}
         self.adapter = BuildContextAdapter(logger, self.context)
 
+        # pylint: disable-next=unspecified-encoding
         with open(install_lib_path, "r") as file:
             for line in file:
                 if not line.strip().startswith("#"):
@@ -201,7 +202,7 @@ that directory, or [k]eep it (not recommended)?",
                 )
             else:
                 # Fetch source file from the network
-                req = requests.get(source.url)
+                req = requests.get(source.url, timeout=5)
 
                 if req.status_code != 200:
                     raise BuildError(
@@ -214,12 +215,12 @@ source file '{source.url}', got {req.status_code}"
                         local.write(chunk)
 
             # Verify checksum
-            if (
-                source.checksum != "SKIP"
-                and util.file_sha256(local_path) != source.checksum
-            ):
+            file_sha = util.file_sha256(local_path)
+            if source.checksum not in ("SKIP", source.checksum):
                 raise BuildError(
-                    f"Invalid checksum for source file {source.url}"
+                    f"Invalid checksum for source file {source.url}:\n"
+                    f"  expected {source.checksum}\n"
+                    f"  actual   {file_sha}"
                 )
 
             # Automatically extract source archives
@@ -381,6 +382,7 @@ source file '{source.url}', got {req.status_code}"
         script = []
         mount_src = "/src"
 
+        # pylint: disable-next=unnecessary-lambda-assignment
         docker_file_path = lambda file_path: shlex.quote(
             os.path.join(mount_src, os.path.relpath(file_path, src_dir))
         )
