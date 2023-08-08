@@ -16,11 +16,15 @@ _COMPARATOR_CHARS = re.compile("[<>=]")
 class VersionComparator(Enum):
     """Operators used to compare two version numbers."""
 
+    # pylint: disable=invalid-name
+
     LowerThan = "<<"
     LowerThanOrEqual = "<="
     Equal = "="
     GreaterThanOrEqual = ">="
     GreaterThan = ">>"
+
+    # pylint: enable=invalid-name
 
 
 class InvalidVersionError(Exception):
@@ -100,12 +104,16 @@ revision={repr(self.revision)}, epoch={repr(self.epoch)})"
 class DependencyKind(Enum):
     """Kinds of dependencies that may be requested by a package."""
 
+    # pylint: disable=invalid-name
+
     # Dependency installed in the system used to build a package
     # (e.g., a Debian package)
     Build = "build"
     # Dependency installed alongside a package
     # (e.g., another Entware or Toltec package)
     Host = "host"
+
+    # pylint: enable=invalid-name
 
 
 class InvalidDependencyError(Exception):
