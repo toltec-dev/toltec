@@ -67,6 +67,10 @@ runs:
                 sudo chown root:root shellcheck
                 sudo mv shellcheck "$install_dir"
             fi
+        - name: Setup Python
+          uses: actions/setup-python@v4
+          with:
+            python-version: '3.10'
         - name: Cache Python environment
           uses: actions/cache@v3
           id: cache-python
@@ -80,5 +84,6 @@ runs:
           run: |
             if [[ "$CACHE_HIT" != 'true' ]]; then
                 python -m pip install --upgrade pip
+                pip install wheel
                 pip install -r requirements.txt
             fi

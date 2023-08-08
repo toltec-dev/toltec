@@ -41,6 +41,7 @@ class GenericRecipe:  # pylint:disable=too-many-instance-attributes
         :returns: loaded recipe
         """
         name = os.path.basename(path)
+        # pylint: disable-next=unspecified-encoding
         with open(os.path.join(path, "package"), "r") as recipe:
             return GenericRecipe(name, path, recipe.read())
 
