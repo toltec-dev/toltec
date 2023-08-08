@@ -5,7 +5,8 @@
 pkgnames=(yaft)
 pkgdesc="Yet another framebuffer terminal"
 url=https://github.com/timower/rM2-stuff/tree/master/apps/yaft
-pkgver=0.0.7-1
+_tag=0.0.8
+pkgver=${_tag}-1
 timestamp=2021-05-02T09:23Z
 maintainer="Mattéo Delabre <spam@delab.re>"
 license=GPL-3.0
@@ -14,13 +15,13 @@ image=base:v2.3
 installdepends=(display)
 
 source=(
-    https://github.com/timower/rM2-stuff/archive/refs/tags/v0.0.7.zip
+    "https://github.com/timower/rM2-stuff/archive/refs/tags/v${_tag}.zip"
     input.patch
 )
 
 sha256sums=(
-    df3c74e08c6f047be8cea3d50f9b84bf20a9191d9ee1850e9957146134dfef1c
-    5f3c6be207dda291950eece920fca853977fef772c6eddd7fb37c4dbf44c2b3b
+    718a9fc7a8e26d587bac790fd83ad8242978b59745269b2ff213e04820bf45b8
+    SKIP
 )
 
 build() {
