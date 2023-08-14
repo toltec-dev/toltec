@@ -106,7 +106,7 @@ reload-oxide-apps() {
     fi
     echo -n "Reloading Oxide applications: "
     local ret
-    if type update-desktop-database &> /dev/null;then
+    if type update-desktop-database &> /dev/null; then
         update-desktop-database --quiet
         ret=$?
     else
