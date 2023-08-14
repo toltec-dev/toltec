@@ -105,10 +105,18 @@ reload-oxide-apps() {
         return
     fi
     echo -n "Reloading Oxide applications: "
-    if ! /opt/bin/rot apps call reload 2> /dev/null; then
-        echo "Failed!"
+    local ret
+    if type update-desktop-database &> /dev/null;then
+        update-desktop-database --quiet
+        ret=$?
     else
+        /opt/bin/rot apps call reload 2> /dev/null
+        ret=$?
+    fi
+    if [ $ret -eq 0 ]; then
         echo "Done!"
+    else
+        echo "Failed!"
     fi
 }
 

@@ -51,7 +51,5 @@ package() {
 }
 
 configure() {
-    if is-active "tarnish.service"; then
-        type update-desktop-database &> /dev/null && update-desktop-database
-    fi
+    reload-oxide-apps
 }

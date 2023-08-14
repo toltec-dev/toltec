@@ -80,9 +80,7 @@ configure() {
         # of this alias by re-enabling the service
         systemctl enable xochitl.service 2> /dev/null
     fi
-
-    # Reload the oxide application registration if it is already installed
-    type update-desktop-database &> /dev/null && update-desktop-database
+    reload-oxide-apps
 }
 
 preremove() {

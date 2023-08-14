@@ -49,7 +49,7 @@ dumbskull() {
     }
 
     configure() {
-        type update-desktop-database &> /dev/null && update-desktop-database
+        reload-oxide-apps
     }
 }
 
@@ -94,7 +94,7 @@ harmony() {
 
     configure() {
         mkdir -p /home/root/harmony/saved_images
-        type update-desktop-database &> /dev/null && update-desktop-database
+        reload-oxide-apps
     }
 }
 
@@ -134,7 +134,7 @@ mines() {
     }
 
     configure() {
-        type update-desktop-database &> /dev/null && update-desktop-database
+        reload-oxide-apps
     }
 }
 
@@ -152,7 +152,7 @@ nao() {
     }
 
     configure() {
-        type update-desktop-database &> /dev/null && update-desktop-database
+        reload-oxide-apps
     }
 }
 
@@ -201,7 +201,7 @@ rpncalc() {
     }
 
     configure() {
-        type update-desktop-database &> /dev/null && update-desktop-database
+        reload-oxide-apps
     }
 }
 
@@ -228,6 +228,6 @@ wordlet() {
     }
 
     configure() {
-        type update-desktop-database &> /dev/null && update-desktop-database
+        reload-oxide-apps
     }
 }

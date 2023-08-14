@@ -59,7 +59,7 @@ $(how-to-enable "$pkgname.service")
 
 MSG
     fi
-    type update-desktop-database &> /dev/null && update-desktop-database
+    reload-oxide-apps
 }
 
 preremove() {

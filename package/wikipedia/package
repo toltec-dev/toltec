@@ -38,5 +38,5 @@ package() {
 }
 
 configure() {
-    type update-desktop-database &> /dev/null && update-desktop-database
+    reload-oxide-apps
 }
