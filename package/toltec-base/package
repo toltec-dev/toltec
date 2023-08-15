@@ -6,7 +6,7 @@ archs=(rm1 rm2)
 pkgnames=(toltec-base)
 pkgdesc="Metapackage defining the base set of packages in a Toltec install"
 url=https://toltec-dev.org/
-pkgver=1.2-1
+pkgver=1.2-2
 timestamp=2023-05-08T19:31Z
 section="utils"
 maintainer="Eeems <eeems@eeems.email>"
@@ -24,6 +24,11 @@ package() {
 }
 
 configure() {
+    ln -sf /opt/etc/profile /etc/profile.d/toltec.sh
+    # shellcheck disable=SC2016
+    sed -i \
+        -e 's|^export TERM=xterm|if \[ -z "$TERM" \];then export TERM=xterm;fi|' \
+        /opt/etc/profile
     if is-enabled "update-engine.service"; then
         echo "Disabling automatic update"
         systemctl disable --now update-engine
