@@ -225,6 +225,7 @@ class TopologicalSorter(Generic[_T]):
         seen = set()
         node2stacki: MutableMapping[_T, int] = {}
 
+        # pylint: disable-next=consider-using-dict-items
         for node in n2i:
             if node in seen:
                 continue

@@ -1,0 +1,7 @@
+# Copyright (c) 2021 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+name=Sill
+desc= Gesture-based text editor (and shell) for the reMarkable tablet 
+call=/opt/bin/sill
+term=:
