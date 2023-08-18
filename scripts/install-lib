@@ -181,7 +181,7 @@ remove-bind-mount() {
 #
 # $1 - Full name of the systemd unit, e.g. "draft.service"
 unit-exists() {
-    [ $(systemctl --quiet list-unit-files "${1}" | grep "${1}" | wc -l) -eq 1 ]
+    [ $(systemctl --quiet list-unit-files "${1}" | grep -c "${1}") -eq 1 ]
 }
 
 # Stops and disabled a unit
@@ -190,15 +190,15 @@ unit-exists() {
 #
 # $1 - Full name of the systemd unit, e.g. "draft.service"
 disable-unit() {
-    if ! unit-exists "$1"; then
+    if ! unit-exists "${1}"; then
         return
     fi
     if is-active "$1"; then
-        echo "Stopping $1"
-        systemctl stop "$1"
+        echo "Stopping ${1}"
+        systemctl stop "${1}"
     fi
-    if is-enabled "$1"; then
-        echo "Disabling $1"
-        systemctl disable "$1"
+    if is-enabled "${1}"; then
+        echo "Disabling ${1}"
+        systemctl disable "${1}"
     fi
 }
