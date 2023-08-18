@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: MIT
 
 pkgnames=(erode fret oxide rot tarnish decay corrupt anxiety liboxide libsentry notify-send)
-pkgver=2.5-2
+pkgver=2.5-3
 _sentryver=0.5.0
 timestamp=2023-01-26T22:52:14Z
 maintainer="Eeems <eeems@eeems.email>"
@@ -99,14 +99,7 @@ tarnish() {
         systemctl daemon-reload
     }
     preremove() {
-        if is-active tarnish; then
-            echo "Stopping tarnish"
-            systemctl stop tarnish
-        fi
-        if is-enabled tarnish; then
-            echo "Disabling tarnish"
-            systemctl disable tarnish
-        fi
+        disable-unit tarnish.service
     }
     postremove() {
         systemctl daemon-reload

@@ -5,7 +5,7 @@
 pkgnames=(webinterface-wifi)
 pkgdesc="View the web interface if running, over wifi"
 url="https://github.com/rM-self-serve/webinterface-wifi"
-pkgver=1.0.2-1
+pkgver=1.0.2-2
 timestamp=2023-02-06T12:23:17Z
 section="utils"
 maintainer="rM-self-serve <122753594+rM-self-serve@users.noreply.github.com>"
@@ -42,14 +42,7 @@ configure() {
 }
 
 preremove() {
-    if is-active "$pkgname"; then
-        echo "Stopping $pkgname"
-        systemctl stop "$pkgname"
-    fi
-    if is-enabled "$pkgname"; then
-        echo "Disabling $pkgname"
-        systemctl disable "$pkgname"
-    fi
+    disable-unit "$pkgname.service"
 }
 
 postremove() {

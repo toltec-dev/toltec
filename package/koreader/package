@@ -5,7 +5,7 @@
 pkgnames=(koreader)
 pkgdesc="Ebook reader supporting PDF, DjVu, EPUB, FB2 and many more formats"
 url=https://github.com/koreader/koreader
-pkgver=2023.06.1-1
+pkgver=2023.06.1-2
 timestamp=2023-07-09T08:17:26Z
 section="readers"
 maintainer="raisjn <of.raisjn@gmail.com>"
@@ -62,15 +62,7 @@ MSG
 }
 
 preremove() {
-    if is-active "$pkgname"; then
-        echo "Stopping $pkgname"
-        systemctl stop "$pkgname"
-    fi
-
-    if is-enabled "$pkgname"; then
-        echo "Disabling $pkgname"
-        systemctl disable "$pkgname"
-    fi
+    disable-unit "$pkgname.service"
 }
 
 postremove() {

@@ -6,7 +6,7 @@ archs=(rm1 rm2)
 pkgnames=(toltec-base)
 pkgdesc="Metapackage defining the base set of packages in a Toltec install"
 url=https://toltec-dev.org/
-pkgver=1.2-2
+pkgver=1.2-3
 timestamp=2023-05-08T19:31Z
 section="utils"
 maintainer="Eeems <eeems@eeems.email>"
@@ -31,7 +31,7 @@ configure() {
         /opt/etc/profile
     if is-enabled "update-engine.service"; then
         echo "Disabling automatic update"
-        systemctl disable --now update-engine
+        disable-unit update-engine.service
     fi
     if [[ "$arch" == "rm1" ]] && ! is-masked sys-subsystem-net-devices-usb1.device; then
         echo "Disabling usb1 network device to avoid long boots"
