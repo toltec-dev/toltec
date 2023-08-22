@@ -19,7 +19,9 @@ package() {
 }
 
 configure() {
-    changescrn -b
+    if [ ! -d /opt/usr/share/backupscrns ] || [ -z "$(ls -A /opt/usr/share/backupscrns)" ]; then
+        changescrn -b
+    fi
 }
 
 preremove() {
