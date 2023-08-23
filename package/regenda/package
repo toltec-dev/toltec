@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+# Copyright (c) 2023 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgnames=(regenda)
+pkgdesc="Caldav agenda app"
+url=https://github.com/tenJirka/reGenda
+pkgver=0.0.1-1
+timestamp=2023-08-23T19:40Z
+section="utils"
+maintainer="tenJirka <jirka.steh@gmail.com>"
+license=GPL3
+installdepends=(display python3 python3-pip python3-lxml)
+
+source=(https://github.com/tenJirka/reGenda/archive/refs/tags/0.0.1.zip)
+sha256sums=(00d6a1e2f6b59f86ba47ea5c3444f24e112d24eb62082802653fe4649153da01)
+
+postremove() {
+    rm /opt/bin/reGenda
+}
+
+package() {
+    mkdir "$pkgdir"/opt/
+    mkdir "$pkgdir"/opt/bin/
+    mkdir "$pkgdir"/opt/etc/
+    mkdir "$pkgdir"/opt/etc/draft
+    mkdir "$pkgdir"/opt/etc/draft/icons
+    mkdir "$pkgdir"/opt/etc/reGenda
+    mkdir "$pkgdir"/opt/reGenda
+    install -D -m 644 "$srcdir"/regenda.draft "$pkgdir"/opt/etc/draft/regenda.draft
+    install -D -m 644 "$srcdir"/config.yml.example "$pkgdir"/opt/etc/reGenda/config.yml.example
+    install -D -m 644 "$srcdir"/icon.png "$pkgdir"/opt/etc/draft/icons/reGenda.png
+    install -D -m 755 "$srcdir"/run.py "$pkgdir"/opt/reGenda/
+    install -D -m 644 "$srcdir"/languages.py "$pkgdir"/opt/reGenda/
+    install -D -m 644 "$srcdir"/calendar_caldav.py "$pkgdir"/opt/reGenda/
+}
+
+configure() {
+    ln -sf /opt/reGenda/run.py /opt/bin/reGenda
+    pip install --upgrade pip caldav pyyaml pytz rm_pysas
+    echo "You have to config server in /opt/etc/reGenda/config.yml, if you have any trouble, see https://github.com/tenJirka/reGenda for help"
+}
