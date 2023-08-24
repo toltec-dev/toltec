@@ -28,37 +28,27 @@ package() {
     install -D -m 644 -t "$pkgdir"/opt/etc/draft/ "$srcdir"/regenda.draft
     install -D -m 644 -t "$pkgdir"/opt/etc/reGenda/ "$srcdir"/config.yml.example
     install -D -m 644 "$srcdir"/icon.png "$pkgdir"/opt/etc/draft/icons/reGenda.png
-    install -D -m 755 -t "$pkgdir"/opt/reGenda/ "$srcdir"/run.py
-    install -D -m 644 -t "$pkgdir"/opt/reGenda/ "$srcdir"/languages.py
-    install -D -m 644 -t "$pkgdir"/opt/reGenda/ "$srcdir"/calendar_caldav.py
+    install -D -m 755 -t "$pkgdir"/opt/usr/lib/reGenda/ "$srcdir"/run.py
+    install -D -m 644 -t "$pkgdir"/opt/usr/lib/reGenda/ "$srcdir"/languages.py
+    install -D -m 644 -t "$pkgdir"/opt/usr/lib/reGenda/ "$srcdir"/calendar_caldav.py
     mkdir "$pkgdir"/opt/bin/
-    ln -s /opt/reGenda/run.py "$pkgdir"/opt/bin/reGenda
-    cp -r "$srcdir"/python_modules/caldav* "$pkgdir"/opt/reGenda/
-    cp -r "$srcdir"/python_modules/icalendar* "$pkgdir"/opt/reGenda/
-    cp -r "$srcdir"/python_modules/rm_pySAS* "$pkgdir"/opt/reGenda/
-    cp -r "$srcdir"/python_modules/recurring_ical_events* "$pkgdir"/opt/reGenda/
-    cp -r "$srcdir"/python_modules/tzlocal* "$pkgdir"/opt/reGenda/
-    cp -r "$srcdir"/python_modules/vobject* "$pkgdir"/opt/reGenda/
-    cp -r "$srcdir"/python_modules/x_wr_timezone* "$pkgdir"/opt/reGenda/
+    ln -s /opt/usr/lib/reGenda/run.py "$pkgdir"/opt/bin/reGenda
+    cp -r "$srcdir"/python_modules/caldav* "$pkgdir"/opt/usr/lib/reGenda/
+    cp -r "$srcdir"/python_modules/icalendar* "$pkgdir"/opt/usr/lib/reGenda/
+    cp -r "$srcdir"/python_modules/rm_pySAS* "$pkgdir"/opt/usr/lib/reGenda/
+    cp -r "$srcdir"/python_modules/recurring_ical_events* "$pkgdir"/opt/usr/lib/reGenda/
+    cp -r "$srcdir"/python_modules/tzlocal* "$pkgdir"/opt/usr/lib/reGenda/
+    cp -r "$srcdir"/python_modules/vobject* "$pkgdir"/opt/usr/lib/reGenda/
+    cp -r "$srcdir"/python_modules/x_wr_timezone* "$pkgdir"/opt/usr/lib/reGenda/
 }
 
 configure() {
     if [ ! -f /opt/etc/reGenda/config.yml ]; then
-        while true; do
-            echo -e "\033[33mYou have to config server in /opt/etc/reGenda/config.yml, see https://github.com/tenJirka/reGenda for help.\033[0;39m"
-            read -r -p "Do you want to do it now? [y/n]: " yn
-            case $yn in
-                [Yy]*)
-                    cp /opt/etc/reGenda/config.yml.example /opt/etc/reGenda/config.yml
-                    nano /opt/etc/reGenda/config.yml
-                    break
-                    ;;
-                [Nn]*)
-                    echo -e "\033[31mDon't forget about it! \033[0;39m"
-                    break
-                    ;;
-            esac
-        done
+        cp /opt/etc/reGenda/config.yml.example /opt/etc/reGenda/config.yml
+        echo -e "\033[33mYou have to config server in /opt/etc/reGenda/config.yml, see https://github.com/tenJirka/reGenda for help.\033[0;39m"
     fi
+}
 
+postremove() {
+    rm -r /opt/usr/lib/reGenda
 }
