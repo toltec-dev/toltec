@@ -19,6 +19,7 @@ image=python
 
 build() {
     python3 -m venv venv
+    # shellcheck disable=SC1091
     source venv/bin/activate
     mkdir "$srcdir"/python_modules
     pip install caldav rm_pysas -t "$srcdir"/python_modules
