@@ -10,11 +10,19 @@ timestamp=2023-08-23T19:40Z
 section="utils"
 maintainer="tenJirka <jirka.steh@gmail.com>"
 license=GPL3
-installdepends=(python3 python3-pip python3-lxml)
+makedepends=(build:python3-venv)
+installdepends=(python3 python3-lxml python3-pytz python3-yaml python3-requests python3-dateutil python3-six python3-urllib3 python3-idna)
 flags=(patch_rm2fb)
-
 source=(https://github.com/tenJirka/reGenda/archive/refs/tags/0.0.1.zip)
 sha256sums=(00d6a1e2f6b59f86ba47ea5c3444f24e112d24eb62082802653fe4649153da01)
+image=python
+
+build() {
+    python3 -m venv venv
+    source venv/bin/activate
+    mkdir "$srcdir"/python_modules
+    pip install caldav rm_pysas -t "$srcdir"/python_modules
+}
 
 package() {
     install -D -m 644 -t "$pkgdir"/opt/etc/draft/ "$srcdir"/regenda.draft
@@ -23,10 +31,34 @@ package() {
     install -D -m 755 -t "$pkgdir"/opt/reGenda/ "$srcdir"/run.py
     install -D -m 644 -t "$pkgdir"/opt/reGenda/ "$srcdir"/languages.py
     install -D -m 644 -t "$pkgdir"/opt/reGenda/ "$srcdir"/calendar_caldav.py
+    mkdir "$pkgdir"/opt/bin/
     ln -s /opt/reGenda/run.py "$pkgdir"/opt/bin/reGenda
+    cp -r "$srcdir"/python_modules/caldav* "$pkgdir"/opt/reGenda/
+    cp -r "$srcdir"/python_modules/icalendar* "$pkgdir"/opt/reGenda/
+    cp -r "$srcdir"/python_modules/rm_pySAS* "$pkgdir"/opt/reGenda/
+    cp -r "$srcdir"/python_modules/recurring_ical_events* "$pkgdir"/opt/reGenda/
+    cp -r "$srcdir"/python_modules/tzlocal* "$pkgdir"/opt/reGenda/
+    cp -r "$srcdir"/python_modules/vobject* "$pkgdir"/opt/reGenda/
+    cp -r "$srcdir"/python_modules/x_wr_timezone* "$pkgdir"/opt/reGenda/
 }
 
 configure() {
-    pip install --upgrade pip caldav pyyaml pytz rm_pysas
-    echo "You have to config server in /opt/etc/reGenda/config.yml, if you have any trouble, see https://github.com/tenJirka/reGenda for help"
+    if [ ! -f /opt/etc/reGenda/config.yml ]; then
+        while true; do
+            echo -e "\033[33mYou have to config server in /opt/etc/reGenda/config.yml, see https://github.com/tenJirka/reGenda for help.\033[0;39m"
+            read -r -p "Do you want to do it now? [y/n]: " yn
+            case $yn in
+                [Yy]*)
+                    cp /opt/etc/reGenda/config.yml.example /opt/etc/reGenda/config.yml
+                    nano /opt/etc/reGenda/config.yml
+                    break
+                    ;;
+                [Nn]*)
+                    echo -e "\033[31mDon't forget about it! \033[0;39m"
+                    break
+                    ;;
+            esac
+        done
+    fi
+
 }
