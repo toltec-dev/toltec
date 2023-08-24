@@ -50,5 +50,5 @@ configure() {
 }
 
 postremove() {
-    rm -r /opt/usr/lib/reGenda
+    rm -f /opt/usr/lib/reGenda/**/*.cpython-*.pyc
 }
