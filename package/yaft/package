@@ -12,20 +12,23 @@ maintainer="Mattéo Delabre <spam@delab.re>"
 license=GPL-3.0
 section="admin"
 image=base:v2.3
-installdepends=(display)
+installdepends=(display terminfo)
 
 source=(
     "https://github.com/timower/rM2-stuff/archive/refs/tags/v${_tag}.zip"
     input.patch
+    bash-l.patch
 )
 
 sha256sums=(
     718a9fc7a8e26d587bac790fd83ad8242978b59745269b2ff213e04820bf45b8
     SKIP
+    SKIP
 )
 
 build() {
     patch -u libs/rMlib/Device.cpp -i input.patch
+    patch -u apps/yaft/main.cpp -i bash-l.patch
     mkdir build
     mkdir install
     cd build
