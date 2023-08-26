@@ -62,7 +62,3 @@ configure() {
     echo "Config file locates at:" /opt/etc/zshelf/config.json
     echo ""
 }
-
-configure() {
-    reload-oxide-apps
-}

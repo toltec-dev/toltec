@@ -38,7 +38,3 @@ package() {
     install -D -m 644 "$srcdir"/help/* -t "$pkgdir"/opt/etc/puzzles/help/
     install -D -m 644 "$srcdir"/icons/* -t "$pkgdir"/opt/etc/puzzles/icons/
 }
-
-configure() {
-    reload-oxide-apps
-}

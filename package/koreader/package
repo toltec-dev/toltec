@@ -59,7 +59,6 @@ $(how-to-enable "$pkgname.service")
 
 MSG
     fi
-    reload-oxide-apps
 }
 
 preremove() {

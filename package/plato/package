@@ -108,5 +108,4 @@ configure() {
             echo ""
         fi
     fi
-    reload-oxide-apps
 }

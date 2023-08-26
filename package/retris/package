@@ -28,7 +28,3 @@ package() {
     install -D -m 644 "$srcdir"/oxide "$pkgdir"/opt/etc/draft/retris
     install -D -m 644 "$srcdir"/icon.png "$pkgdir"/opt/etc/draft/icons/retris.png
 }
-
-configure() {
-    reload-oxide-apps
-}

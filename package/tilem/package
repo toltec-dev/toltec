@@ -30,7 +30,3 @@ build() {
 package() {
     cp -r "$srcdir/install/." "$pkgdir"
 }
-
-configure() {
-    reload-oxide-apps
-}

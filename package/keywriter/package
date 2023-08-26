@@ -48,5 +48,4 @@ package() {
 configure() {
     mkdir -p /home/root/edit
     echo "Created /home/root/edit for storing your Markdown files"
-    reload-oxide-apps
 }

@@ -33,7 +33,3 @@ package() {
     install -D -m 644 "$srcdir"/rmfm.draft "$pkgdir"/opt/etc/draft/rmfm.draft
     install -D -m 644 "$srcdir"/rmfm.png "$pkgdir"/opt/etc/draft/icons/rmfm.png
 }
-
-configure() {
-    reload-oxide-apps
-}

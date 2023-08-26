@@ -80,7 +80,6 @@ configure() {
         # of this alias by re-enabling the service
         systemctl enable xochitl.service 2> /dev/null
     fi
-    reload-oxide-apps
 }
 
 preremove() {
