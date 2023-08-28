@@ -6,21 +6,22 @@ archs=(rm2os2)
 pkgnames=(linux-mainline)
 pkgdesc="reMarkable 2 kernel based on the mainline kernel"
 url=https://www.kernel.org
-pkgver=6.2.0-3
-timestamp=2022-05-22T21:50:09Z
+pkgver=6.3.0-1
+timestamp=2023-08-23T21:50:09Z
 section=kernel
 maintainer="Alistair Francis <alistair@alistair23.me>"
 makedepends=(build:flex build:bison build:libssl-dev build:bc build:lzop build:libgmp-dev build:libmpc-dev)
+installdepends=(kernelctl)
 license=GPL-2.0-only
 flags=(nostrip)
 
 image=base:v2.3
 source=(
-    https://github.com/alistair23/linux/archive/8241218883331bfdc0800f30eb337ff97b7c648c.tar.gz
+    https://github.com/alistair23/linux/archive/1698a3bdd8d66e58873c5bb3ce370b7d48b004cf.tar.gz
     remarkable_defconfig
 )
 sha256sums=(
-    de69fc74f1d25f447da170967eeea13b24354e9b8aa1927addcaa88c2ea9cd7c
+    647f6a60adad8c4e37eeaf9114c037888cb33923e364bbf5dc0830b2661c21b7
     f4d8cbb2c0e7bff5b151729b45064eb9e95005cb91899f0a9df038343d95ebf2
 )
 
@@ -55,9 +56,8 @@ configure() {
     echo
     echo "Known issues with the mainline kernel:"
     echo " - No support for low power mode (suspend uses more power then it should)"
-    echo " - Device doesn't always resume from suspend, a reboot is required"
-    echo " - GUI shutdown in Oxide doesn't work"
+    echo " - Shutdown doesn't work (https://github.com/alistair23/linux/issues/4)"
+    echo " - Device doesn't always resume correctly from suspend, a reboot is required"
     echo " - Wacom stylus doesn't work in Xochitl (https://github.com/reMarkable/linux/issues/15)"
-    echo " - Finger input doesn't work in Koreader (https://github.com/koreader/koreader/issues/10012)"
-    echo " - No OTG control support"
+    echo " - No OTG control support (Folio probably doesn't work)"
 }
