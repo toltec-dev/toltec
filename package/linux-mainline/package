@@ -4,19 +4,29 @@
 
 archs=(rm2)
 pkgnames=(linux-mainline linux-mainline-perf)
-pkgver=6.0.0-1
-timestamp=2022-10-02T21:43:31Z
+pkgdesc="reMarkable 2 kernel based on the mainline kernel"
+url=https://www.kernel.org
+pkgver=6.2.0-2
+timestamp=2022-05-22T21:50:09Z
+section=kernel
 maintainer="Alistair Francis <alistair@alistair23.me>"
 makedepends=(build:flex build:bison build:libssl-dev build:bc build:lzop build:libgmp-dev build:libmpc-dev build:python-is-python3)
 license=GPL-2.0-only
 flags=(nostrip)
 
 image=base:v2.3
-source=("https://github.com/alistair23/linux/archive/4c2ef4e3bba89a8d767eccb85a242b2cd8850146.tar.gz")
-sha256sums=(1583d553380a656ecaac8dab89558051e9165983381adc9c3d52fb8ac0ce19fd)
+source=(
+    https://github.com/alistair23/linux/archive/8241218883331bfdc0800f30eb337ff97b7c648c.tar.gz
+    remarkable_defconfig
+)
+sha256sums=(
+    de69fc74f1d25f447da170967eeea13b24354e9b8aa1927addcaa88c2ea9cd7c
+    f4d8cbb2c0e7bff5b151729b45064eb9e95005cb91899f0a9df038343d95ebf2
+)
 
 build() {
-    ARCH=arm make imx_v6_v7_defconfig
+    cp remarkable_defconfig arch/arm/configs/
+    ARCH=arm make remarkable_defconfig
     ARCH=arm make -j8
     ARCH=arm make -j8 tools/perf
 }
@@ -52,9 +62,10 @@ linux-mainline() {
         echo
         echo "Known issues with the mainline kernel:"
         echo " - No support for low power mode (suspend uses more power then it should)"
-        echo " - WiFi sometimes is off on boot (can be turned on again though)"
+        echo " - Device doesn't always resume from suspend, a reboot is required"
         echo " - GUI shutdown in Oxide doesn't work"
-        echo " - Wacom stylus doesn't work in Xochitl (works everywhere else though)"
+        echo " - Wacom stylus doesn't work in Xochitl (https://github.com/reMarkable/linux/issues/15)"
+        echo " - Finger input doesn't work in Koreader (https://github.com/koreader/koreader/issues/10012)"
         echo " - No OTG control support"
     }
 }
