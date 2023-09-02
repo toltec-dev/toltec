@@ -5,8 +5,8 @@
 pkgnames=(koreader)
 pkgdesc="Ebook reader supporting PDF, DjVu, EPUB, FB2 and many more formats"
 url=https://github.com/koreader/koreader
-pkgver=2023.03-1
-timestamp=2023-03-20T11:38:17Z
+pkgver=2023.08-1
+timestamp=2023-08-29T16:21:01Z
 section="readers"
 maintainer="raisjn <of.raisjn@gmail.com>"
 license=AGPL-3.0-or-later
@@ -21,7 +21,7 @@ source=(
     koreader
 )
 sha256sums=(
-    7f667e7ba72d9e7d832a95d55316f5010f0eca19461d7a591a5e8e10b7aadc45
+    8cc9fad1cbcda5519c20afe6e33c4f80a51587daed7b959ef7284ce8b0c41ec0
     SKIP
     SKIP
     SKIP
@@ -44,6 +44,11 @@ package() {
 }
 
 configure() {
+    # This file can cause issues with startup when moving from 2022.08 to another version
+    if [ -f /opt/koreader/cache/fontlist/fontinfo.dat ]; then
+        rm /opt/koreader/cache/fontlist/fontinfo.dat
+    fi
+
     systemctl daemon-reload
 
     if ! is-enabled "$pkgname.service"; then

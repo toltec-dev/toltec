@@ -25,6 +25,8 @@ logger = logging.getLogger(__name__)
 class PackageStatus(Enum):
     """Possible existence statuses of a built package."""
 
+    # pylint: disable=invalid-name
+
     # The package already existed in the local filesystem before the build
     AlreadyExists = auto()
 
@@ -33,6 +35,8 @@ class PackageStatus(Enum):
 
     # The package is missing both from the local filesystem and the remote repo
     Missing = auto()
+
+    # pylint: enable=invalid-name
 
 
 GroupedPackages = Dict[PackageStatus, Dict[str, Dict[str, List[Package]]]]
@@ -133,7 +137,7 @@ class Repo:
 
         remote_path = os.path.join(remote, filename)
 
-        req = requests.get(remote_path)
+        req = requests.get(remote_path, timeout=5)
 
         if req.status_code != 200:
             return PackageStatus.Missing
@@ -209,6 +213,7 @@ class Repo:
             index_path = os.path.join(arch_dir, "Packages")
             index_gzip_path = os.path.join(arch_dir, "Packages.gz")
 
+            # pylint: disable-next=unspecified-encoding
             with open(index_path, "w") as index_file:
                 with gzip.open(index_gzip_path, "wt") as index_gzip_file:
                     for generic_recipe in self.generic_recipes.values():
@@ -259,6 +264,7 @@ class Repo:
         listing_path = os.path.join(self.repo_dir, "index.html")
         template = templating.env.get_template("listing.html")
 
+        # pylint: disable-next=unspecified-encoding
         with open(listing_path, "w") as listing_file:
             listing_file.write(template.render(sections=sections))
 
