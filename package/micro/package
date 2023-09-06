@@ -6,13 +6,12 @@ pkgnames=(micro)
 pkgdesc="Modern and intuitive terminal-based text editor"
 url=https://micro-editor.github.io/
 pkgver=2.0.12-1
-_srcver="${pkgver%-*}"
 timestamp=2023-09-06T20:16:56Z
 section="utils"
 maintainer="Eeems <eeems@eeems.email>"
 license=MIT
 
-source=("https://github.com/zyedidia/micro/releases/download/v$(_srcver)/micro-$(_srcver)-linux-arm.tar.gz")
+source=("https://github.com/zyedidia/micro/releases/download/v2.0.12/micro-2.0.12-linux-arm.tar.gz")
 sha256sums=(9811d0b3385ff8cf3fa6671f1b2df38d6c30699731302910380cd076eff4c984)
 
 package() {
