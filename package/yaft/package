@@ -17,18 +17,15 @@ installdepends=(display terminfo)
 source=(
     "https://github.com/timower/rM2-stuff/archive/refs/tags/v${_tag}.zip"
     input.patch
-    bash-l.patch
 )
 
 sha256sums=(
     1cd4741a93cde6bd545215eb303e51219fc9901cba1c28b6206b1b5e0871a7b5
     SKIP
-    SKIP
 )
 
 build() {
     patch -u libs/rMlib/Device.cpp -i input.patch
-    patch -u apps/yaft/main.cpp -i bash-l.patch
     mkdir build
     mkdir install
     cd build
