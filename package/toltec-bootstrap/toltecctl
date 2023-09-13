@@ -338,7 +338,7 @@ uninstall() {
 
     # Remove installed packages in reverse dependency order
     list-installed-ordered | while read -r pkgname; do
-        "$opkg_path" remove --force-depends --force-remove "$pkgname"
+        "$opkg_path" remove --force-removal-of-essential-packages --force-depends --force-remove "$pkgname"
     done
 
     systemctl daemon-reload
