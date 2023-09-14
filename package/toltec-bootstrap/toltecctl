@@ -153,7 +153,7 @@ reinstall-root() {
     while read -r pkgname; do
         if [[ -v "on_root_packages[$pkgname]" ]]; then
             reinstall_packages[$pkgname]=1
-        fipython -m nuitka hello.py --include-module=encodings --standalone
+        fi
     done < <(gunzip -c /opt/var/opkg-lists/* | grep "^Package:" | awk '{print $2}')
 
     # Workaround: Checking the size of an empty array when the nounset option
