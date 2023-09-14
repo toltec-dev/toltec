@@ -153,7 +153,7 @@ reinstall-root() {
     while read -r pkgname; do
         if [[ -v "on_root_packages[$pkgname]" ]]; then
             reinstall_packages[$pkgname]=1
-        fi
+        fipython -m nuitka hello.py --include-module=encodings --standalone
     done < <(gunzip -c /opt/var/opkg-lists/* | grep "^Package:" | awk '{print $2}')
 
     # Workaround: Checking the size of an empty array when the nounset option
@@ -161,7 +161,7 @@ reinstall-root() {
     # temporarily
     set +u
     if [[ ${#reinstall_packages[@]} -ne 0 ]]; then
-        opkg install --force-reinstall --force-remove "${!reinstall_packages[@]}"
+        opkg install --force-reinstall --force-removal-of-essential-packages --force-remove "${!reinstall_packages[@]}"
     else
         echo "No package needs to be reinstalled"
     fi
