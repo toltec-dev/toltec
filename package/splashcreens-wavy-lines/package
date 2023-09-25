@@ -22,8 +22,8 @@ splashscreen-starting-wavey-lines() {
     replaces=("splashscreen-starting")
     conflicts=("splashscreen-starting")
     package() {
-        install -D -m 755 -t "$pkgdir"/opt/share/remarkable/splashscreens \
-            "$srcdir"/splash/splash.png
+        install -D -m 755 -T "$srcdir"/splash/splash.png \
+            "$pkgdir"/opt/share/remarkable/splashscreens/starting.png 
     }
     configure() {
         changescrn -c starting /opt/share/remarkable/splashscreens/starting.png
