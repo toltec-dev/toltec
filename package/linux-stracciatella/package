@@ -6,7 +6,7 @@ archs=(rm1 rm2)
 pkgnames=(linux-stracciatella)
 pkgdesc="RemarkableAS's vanilla kernel with a few extra flakes"
 url=https://github.com/Etn40ff/linux-remarkable
-pkgver=5.4.70-3
+pkgver=5.4.70-4
 timestamp=2023-09-23T00:12:00Z
 section="kernel"
 maintainer="Salvatore Stella <etn45p4m@gmail.com>"
@@ -15,8 +15,25 @@ license=GPL-2.0-only
 flags=(nostrip)
 installdepends=(kernelctl)
 image=base:v3.1
-source=(https://github.com/Etn40ff/linux-remarkable/archive/43e6ecde21e2392514c85e06f53b923ec8b7a298.tar.gz)
-sha256sums=(222504797152251f875ca30085a49a89ea621cb89881e1fad1640e312030bdf9)
+_wireguard_version=1.0.20220627
+source=(
+	https://github.com/Etn40ff/linux-remarkable/archive/1b466a1023d16c6d54f096a51106cf1258ef1c86.tar.gz
+	"https://git.zx2c4.com/wireguard-linux-compat/snapshot/wireguard-linux-compat-$_wireguard_version.tar.xz"
+)
+sha256sums=(
+	8afd907cdfab7d786c812a85e1f954327910594074bdfe285fa95ded07c114f5
+	362d412693c8fe82de00283435818d5c5def7f15e2433a07a9fe99d0518f63c0
+)
+noextract=("wireguard-linux-compat-$_wireguard_version.tar.xz")
+
+prepare() {
+	mkdir "$srcdir/net/wireguard"
+	bsdtar --strip-components 2 -xJ -C "$srcdir/net/wireguard" \
+		-f "$srcdir/wireguard-linux-compat-$_wireguard_version.tar.xz" \
+		"wireguard-linux-compat-$_wireguard_version/src"
+	sed -i "/^obj-\\\$(CONFIG_NETFILTER).*+=/a obj-\$(CONFIG_WIREGUARD) += wireguard/" "$srcdir/net/Makefile"
+	sed -i "/^if INET\$/a source \"net/wireguard/Kconfig\"" "$srcdir/net/Kconfig"
+}
 
 build() {
     if [[ $arch = rm1 ]]; then
