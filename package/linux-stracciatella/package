@@ -17,22 +17,22 @@ installdepends=(kernelctl)
 image=base:v3.1
 _wireguard_version=1.0.20220627
 source=(
-	https://github.com/Etn40ff/linux-remarkable/archive/1b466a1023d16c6d54f096a51106cf1258ef1c86.tar.gz
-	"https://git.zx2c4.com/wireguard-linux-compat/snapshot/wireguard-linux-compat-$_wireguard_version.tar.xz"
+    https://github.com/Etn40ff/linux-remarkable/archive/1b466a1023d16c6d54f096a51106cf1258ef1c86.tar.gz
+    "https://git.zx2c4.com/wireguard-linux-compat/snapshot/wireguard-linux-compat-$_wireguard_version.tar.xz"
 )
 sha256sums=(
-	8afd907cdfab7d786c812a85e1f954327910594074bdfe285fa95ded07c114f5
-	362d412693c8fe82de00283435818d5c5def7f15e2433a07a9fe99d0518f63c0
+    8afd907cdfab7d786c812a85e1f954327910594074bdfe285fa95ded07c114f5
+    362d412693c8fe82de00283435818d5c5def7f15e2433a07a9fe99d0518f63c0
 )
 noextract=("wireguard-linux-compat-$_wireguard_version.tar.xz")
 
 prepare() {
-	mkdir "$srcdir/net/wireguard"
-	bsdtar --strip-components 2 -xJ -C "$srcdir/net/wireguard" \
-		-f "$srcdir/wireguard-linux-compat-$_wireguard_version.tar.xz" \
-		"wireguard-linux-compat-$_wireguard_version/src"
-	sed -i "/^obj-\\\$(CONFIG_NETFILTER).*+=/a obj-\$(CONFIG_WIREGUARD) += wireguard/" "$srcdir/net/Makefile"
-	sed -i "/^if INET\$/a source \"net/wireguard/Kconfig\"" "$srcdir/net/Kconfig"
+    mkdir "$srcdir/net/wireguard"
+    bsdtar --strip-components 2 -xJ -C "$srcdir/net/wireguard" \
+        -f "$srcdir/wireguard-linux-compat-$_wireguard_version.tar.xz" \
+        "wireguard-linux-compat-$_wireguard_version/src"
+    sed -i "/^obj-\\\$(CONFIG_NETFILTER).*+=/a obj-\$(CONFIG_WIREGUARD) += wireguard/" "$srcdir/net/Makefile"
+    sed -i "/^if INET\$/a source \"net/wireguard/Kconfig\"" "$srcdir/net/Kconfig"
 }
 
 build() {
