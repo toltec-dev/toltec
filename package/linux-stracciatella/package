@@ -14,7 +14,7 @@ makedepends=(build:flex build:bison build:libssl-dev build:bc build:lzop build:l
 license=GPL-2.0-only
 flags=(nostrip)
 installdepends=(kernelctl)
-image=base:v2.3
+image=base:v3.1
 source=(https://github.com/Etn40ff/linux-remarkable/archive/43e6ecde21e2392514c85e06f53b923ec8b7a298.tar.gz)
 sha256sums=(222504797152251f875ca30085a49a89ea621cb89881e1fad1640e312030bdf9)
 
