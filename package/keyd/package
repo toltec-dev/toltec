@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+# Copyright (c) 2020 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgnames=(keyd)
+pkgdesc=" A key remapping daemon for linux"
+url="https://github.com/rvaiya/keyd"
+pkgver=2.4.3-1
+timestamp=2023-05-16T10:11Z
+section=utils
+maintainer="Kai <z@kwi.li>"
+license=MIT
+
+image=base:v3.1
+source=(
+    https://github.com/rvaiya/keyd/archive/refs/tags/v2.4.3.zip
+    default.conf
+    keyd.service
+)
+sha256sums=(
+    cdfcc2cf0518b9a2d292ebac17b18f78548b92803e2a9deeb9f18c9641bf80e5
+    SKIP
+    SKIP
+)
+
+build() {
+    make DESTDIR=/opt CONFIG_DIR=/opt/etc/keyd "CC=${CROSS_COMPILE}cc"
+}
+
+package() {
+    install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/bin/keyd
+    install -D -m 644 -t "$pkgdir"/etc/systemd/system "$srcdir"/keyd.service
+    install -D -m 644 -t "$pkgdir"/opt/etc/keyd "$srcdir"/default.conf
+}
+
+configure() {
+    systemctl daemon-reload
+    systemctl enable keyd
+    systemctl start keyd
+}
+
+preremove() {
+    if is-active keyd; then
+        echo "Stopping keyd"
+        systemctl stop keyd
+    fi
+}
+
+postremove() {
+    systemctl daemon-reload
+}
