@@ -35,8 +35,15 @@ package() {
 
 configure() {
     systemctl daemon-reload
-    systemctl enable keyd
-    systemctl start keyd
+    if is-active keyd; then
+        systemctl restart keyd
+    elif ! is-enabled "$pkgname.service"; then
+        echo ""
+        echo "Run the following command(s) to enable the keyd service"
+        how-to-enable "$pkgname.service"
+        echo ""
+        echo "You will need to modify /opt/etc/keyd/default.conf before starting the service"
+    fi
 }
 
 preremove() {
