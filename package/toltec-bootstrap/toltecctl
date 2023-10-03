@@ -341,7 +341,7 @@ uninstall() {
     while read -r pkgname; do
         if ! "$opkg_path" remove --force-depends "$pkgname"; then
             echo "Failed to remove $pkgname, forcing removal..."
-            "$opkg_path" remove --force-depends --force-remove "$pkgname"
+            "$opkg_path" remove --force-removal-of-essential-packages --force-depends --force-remove "$pkgname"
             clean=false
         fi
     done << EOF
