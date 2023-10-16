@@ -5,7 +5,7 @@
 pkgnames=(whiteboard-hypercard)
 pkgdesc="Real-time collaboration, drawing or whiteboarding"
 url=https://github.com/fenollp/reMarkable-tools
-pkgver=0.3.6-1
+pkgver=0.3.7-1
 timestamp=2023-10-11T12:57Z
 section="drawing"
 maintainer="Pierre Fenoll <pierrefenoll@gmail.com>"
@@ -15,11 +15,11 @@ flags=(patch_rm2fb)
 
 image=rust:v3.1
 source=(
-    https://github.com/fenollp/reMarkable-tools/archive/v0.3.6.zip
+    https://github.com/fenollp/reMarkable-tools/archive/v0.3.7.zip
     whiteboard-hypercard.draft
 )
 sha256sums=(
-    943cf81b36de11e42f33176551650be9bdc87679647f279667f7ddf52cc0b245
+    642fd954ec4f9a1d132b10cc7f7dfbee3467e9c08b1253cc32d1e372178d168b
     SKIP
 )
 
