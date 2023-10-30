@@ -51,6 +51,10 @@ preremove() {
         echo "Stopping keyd"
         systemctl stop keyd
     fi
+    if is-enabled keyd; then
+        echo "Disabling keyd"
+        systemctl disable keyd
+    fi
 }
 
 postremove() {
