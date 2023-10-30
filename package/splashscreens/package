@@ -5,61 +5,51 @@
 pkgnames=(
     splashscreen-batteryempty-barnsley_fern
     splashscreen-poweroff-barnsley_fern
-    splashscreen-sleeping-barnsley_fern
     splashscreen-starting-barnsley_fern
     splashscreen-suspended-barnsley_fern
 
     splashscreen-batteryempty-chaotic_ribbon
     splashscreen-poweroff-chaotic_ribbon
-    splashscreen-sleeping-chaotic_ribbon
     splashscreen-starting-chaotic_ribbon
     splashscreen-suspended-chaotic_ribbon
 
     splashscreen-batteryempty-collatz_sea_weed
     splashscreen-poweroff-collatz_sea_weed
-    splashscreen-sleeping-collatz_sea_weed
     splashscreen-starting-collatz_sea_weed
     splashscreen-suspended-collatz_sea_weed
 
     splashscreen-batteryempty-dragon_curve
     splashscreen-poweroff-dragon_curve
-    splashscreen-sleeping-dragon_curve
     splashscreen-starting-dragon_curve
     splashscreen-suspended-dragon_curve
 
     splashscreen-batteryempty-fire
     splashscreen-poweroff-fire
-    splashscreen-sleeping-fire
     splashscreen-starting-fire
     splashscreen-suspended-fire
 
     splashscreen-batteryempty-fractal_tree
     splashscreen-poweroff-fractal_tree
-    splashscreen-sleeping-fractal_tree
     splashscreen-starting-fractal_tree
     splashscreen-suspended-fractal_tree
 
     splashscreen-batteryempty-sacks_spiral
     splashscreen-poweroff-sacks_spiral
-    splashscreen-sleeping-sacks_spiral
     splashscreen-starting-sacks_spiral
     splashscreen-suspended-sacks_spiral
 
     splashscreen-batteryempty-sierpinski_triangle
     splashscreen-poweroff-sierpinski_triangle
-    splashscreen-sleeping-sierpinski_triangle
     splashscreen-starting-sierpinski_triangle
     splashscreen-suspended-sierpinski_triangle
 
     splashscreen-batteryempty-snowy_hills
     splashscreen-poweroff-snowy_hills
-    splashscreen-sleeping-snowy_hills
     splashscreen-starting-snowy_hills
     splashscreen-suspended-snowy_hills
 
     splashscreen-batteryempty-starr
     splashscreen-poweroff-starr
-    splashscreen-sleeping-starr
     splashscreen-starting-starr
     splashscreen-suspended-starr
 )
@@ -103,22 +93,6 @@ splashscreen-poweroff-barnsley_fern() {
     }
     postremove() {
         changescrn -r poweroff
-    }
-}
-
-splashscreen-sleeping-barnsley_fern() {
-    pkgdesc="Barnsley Fern sleeping splashscreen"
-    replaces=("splashscreen-sleeping")
-    conflicts=("splashscreen-sleeping")
-    package() {
-        install -D -m 755 -t "$pkgdir"/opt/share/remarkable/splashscreens \
-            "$srcdir"/splashscreens/barnsley_fern/sleeping.png
-    }
-    configure() {
-        changescrn -c sleeping /opt/share/remarkable/splashscreens/sleeping.png
-    }
-    postremove() {
-        changescrn -r sleeping
     }
 }
 
@@ -186,22 +160,6 @@ splashscreen-poweroff-chaotic_ribbon() {
     }
 }
 
-splashscreen-sleeping-chaotic_ribbon() {
-    pkgdesc="Chaotic ribbon sleeping splashscreen"
-    replaces=("splashscreen-sleeping")
-    conflicts=("splashscreen-sleeping")
-    package() {
-        install -D -m 755 -t "$pkgdir"/opt/share/remarkable/splashscreens \
-            "$srcdir"/splashscreens/chaotic_ribbon/sleeping.png
-    }
-    configure() {
-        changescrn -c sleeping /opt/share/remarkable/splashscreens/sleeping.png
-    }
-    postremove() {
-        changescrn -r sleeping
-    }
-}
-
 splashscreen-starting-chaotic_ribbon() {
     pkgdesc="Chaotic ribbon starting splashscreen"
     replaces=("splashscreen-starting")
@@ -263,22 +221,6 @@ splashscreen-poweroff-collatz_sea_weed() {
     }
     postremove() {
         changescrn -r poweroff
-    }
-}
-
-splashscreen-sleeping-collatz_sea_weed() {
-    pkgdesc="Collatz sea weed sleeping splashscreen"
-    replaces=("splashscreen-sleeping")
-    conflicts=("splashscreen-sleeping")
-    package() {
-        install -D -m 755 -t "$pkgdir"/opt/share/remarkable/splashscreens \
-            "$srcdir"/splashscreens/collatz_sea_weed/sleeping.png
-    }
-    configure() {
-        changescrn -c sleeping /opt/share/remarkable/splashscreens/sleeping.png
-    }
-    postremove() {
-        changescrn -r sleeping
     }
 }
 
@@ -346,22 +288,6 @@ splashscreen-poweroff-dragon_curve() {
     }
 }
 
-splashscreen-sleeping-dragon_curve() {
-    pkgdesc="Dragon curve sleeping splashscreen"
-    replaces=("splashscreen-sleeping")
-    conflicts=("splashscreen-sleeping")
-    package() {
-        install -D -m 755 -t "$pkgdir"/opt/share/remarkable/splashscreens \
-            "$srcdir"/splashscreens/dragon_curve/sleeping.png
-    }
-    configure() {
-        changescrn -c sleeping /opt/share/remarkable/splashscreens/sleeping.png
-    }
-    postremove() {
-        changescrn -r sleeping
-    }
-}
-
 splashscreen-starting-dragon_curve() {
     pkgdesc="Dragon curve starting splashscreen"
     replaces=("splashscreen-starting")
@@ -423,22 +349,6 @@ splashscreen-poweroff-fire() {
     }
     postremove() {
         changescrn -r poweroff
-    }
-}
-
-splashscreen-sleeping-fire() {
-    pkgdesc="Fire sleeping splashscreen"
-    replaces=("splashscreen-sleeping")
-    conflicts=("splashscreen-sleeping")
-    package() {
-        install -D -m 755 -t "$pkgdir"/opt/share/remarkable/splashscreens \
-            "$srcdir"/splashscreens/fire/sleeping.png
-    }
-    configure() {
-        changescrn -c sleeping /opt/share/remarkable/splashscreens/sleeping.png
-    }
-    postremove() {
-        changescrn -r sleeping
     }
 }
 
@@ -506,22 +416,6 @@ splashscreen-poweroff-fractal_tree() {
     }
 }
 
-splashscreen-sleeping-fractal_tree() {
-    pkgdesc="Fractal tree sleeping splashscreen"
-    replaces=("splashscreen-sleeping")
-    conflicts=("splashscreen-sleeping")
-    package() {
-        install -D -m 755 -t "$pkgdir"/opt/share/remarkable/splashscreens \
-            "$srcdir"/splashscreens/fractal_tree/sleeping.png
-    }
-    configure() {
-        changescrn -c sleeping /opt/share/remarkable/splashscreens/sleeping.png
-    }
-    postremove() {
-        changescrn -r sleeping
-    }
-}
-
 splashscreen-starting-fractal_tree() {
     pkgdesc="Fractal tree starting splashscreen"
     replaces=("splashscreen-starting")
@@ -583,22 +477,6 @@ splashscreen-poweroff-sacks_spiral() {
     }
     postremove() {
         changescrn -r poweroff
-    }
-}
-
-splashscreen-sleeping-sacks_spiral() {
-    pkgdesc="Sacks spiral sleeping splashscreen"
-    replaces=("splashscreen-sleeping")
-    conflicts=("splashscreen-sleeping")
-    package() {
-        install -D -m 755 -t "$pkgdir"/opt/share/remarkable/splashscreens \
-            "$srcdir"/splashscreens/sacks_spiral/sleeping.png
-    }
-    configure() {
-        changescrn -c sleeping /opt/share/remarkable/splashscreens/sleeping.png
-    }
-    postremove() {
-        changescrn -r sleeping
     }
 }
 
@@ -666,22 +544,6 @@ splashscreen-poweroff-sierpinski_triangle() {
     }
 }
 
-splashscreen-sleeping-sierpinski_triangle() {
-    pkgdesc="Sierpinski triangle sleeping splashscreen"
-    replaces=("splashscreen-sleeping")
-    conflicts=("splashscreen-sleeping")
-    package() {
-        install -D -m 755 -t "$pkgdir"/opt/share/remarkable/splashscreens \
-            "$srcdir"/splashscreens/sierpinski_triangle/sleeping.png
-    }
-    configure() {
-        changescrn -c sleeping /opt/share/remarkable/splashscreens/sleeping.png
-    }
-    postremove() {
-        changescrn -r sleeping
-    }
-}
-
 splashscreen-starting-sierpinski_triangle() {
     pkgdesc="Sierpinski triangle starting splashscreen"
     replaces=("splashscreen-starting")
@@ -746,22 +608,6 @@ splashscreen-poweroff-snowy_hills() {
     }
 }
 
-splashscreen-sleeping-snowy_hills() {
-    pkgdesc="Snowy hills sleeping splashscreen"
-    replaces=("splashscreen-sleeping")
-    conflicts=("splashscreen-sleeping")
-    package() {
-        install -D -m 755 -t "$pkgdir"/opt/share/remarkable/splashscreens \
-            "$srcdir"/splashscreens/snowy_hills/sleeping.png
-    }
-    configure() {
-        changescrn -c sleeping /opt/share/remarkable/splashscreens/sleeping.png
-    }
-    postremove() {
-        changescrn -r sleeping
-    }
-}
-
 splashscreen-starting-snowy_hills() {
     pkgdesc="Snowy hills starting splashscreen"
     replaces=("splashscreen-starting")
@@ -823,22 +669,6 @@ splashscreen-poweroff-starr() {
     }
     postremove() {
         changescrn -r poweroff
-    }
-}
-
-splashscreen-sleeping-starr() {
-    pkgdesc="Starr sleeping splashscreen"
-    replaces=("splashscreen-sleeping")
-    conflicts=("splashscreen-sleeping")
-    package() {
-        install -D -m 755 -t "$pkgdir"/opt/share/remarkable/splashscreens \
-            "$srcdir"/splashscreens/starr/sleeping.png
-    }
-    configure() {
-        changescrn -c sleeping /opt/share/remarkable/splashscreens/sleeping.png
-    }
-    postremove() {
-        changescrn -r sleeping
     }
 }
 
