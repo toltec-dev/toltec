@@ -42,7 +42,7 @@ splashscreen-suspended-gallifreyan() {
     replaces=("splashscreen-suspended")
     conflicts=("splashscreen-suspended")
     package() {
-        install -D -m 755 -T "$srcdir"/splash-screens/gallifreyan/sleeping-v1.png
+        install -D -m 755 -T "$srcdir"/splash-screens/gallifreyan/sleeping-v1.png \
             "$pkgdir"/opt/share/remarkable/splashscreens/suspended.png
     }
     configure() {
@@ -58,7 +58,7 @@ splashscreen-suspended-gallifreyan-dark() {
     replaces=("splashscreen-suspended")
     conflicts=("splashscreen-suspended")
     package() {
-        install -D -m 755 -T "$srcdir"/splash-screens/gallifreyan/sleeping-v3.png
+        install -D -m 755 -T "$srcdir"/splash-screens/gallifreyan/sleeping-v3.png \
             "$pkgdir"/opt/share/remarkable/splashscreens/suspended.png
     }
     configure() {
@@ -106,7 +106,7 @@ splashscreen-suspended-flower-pause() {
     replaces=("splashscreen-suspended")
     conflicts=("splashscreen-suspended")
     package() {
-        install -D -m 755 -T "$srcdir"/splash-screens/misc/flower-pause.png
+        install -D -m 755 -T "$srcdir"/splash-screens/misc/flower-pause.png \
             "$pkgdir"/opt/share/remarkable/splashscreens/suspended.png
     }
     configure() {
