@@ -4,10 +4,10 @@
 
 pkgnames=(
     splashscreen-poweroff-gallifreyan
-    splashscreen-sleeping-gallifreyan
-    splashscreen-sleeping-gallifreyan-dark
-    splashscreen-starting-gallifreyan
     splashscreen-suspended-gallifreyan
+    splashscreen-suspended-gallifreyan-dark
+    splashscreen-starting-gallifreyan
+    splashscreen-suspended-gallifreyan-2
     splashscreen-suspended-flower-pause
 )
 url=https://github.com/1094/rM-customizations
@@ -37,35 +37,35 @@ splashscreen-poweroff-gallifreyan() {
     }
 }
 
-splashscreen-sleeping-gallifreyan() {
-    pkgdesc="Gallifreyan sleeping splashscreen"
-    replaces=("splashscreen-sleeping")
-    conflicts=("splashscreen-sleeping")
+splashscreen-suspended-gallifreyan() {
+    pkgdesc="Gallifreyan suspended splashscreen"
+    replaces=("splashscreen-suspended")
+    conflicts=("splashscreen-suspended")
     package() {
-        install -D -m 755 -t "$pkgdir"/opt/share/remarkable/splashscreens \
-            "$srcdir"/splash-screens/gallifreyan/sleeping-v1.png
+        install -D -m 755 -T "$srcdir"/splash-screens/gallifreyan/sleeping-v1.png
+            "$pkgdir"/opt/share/remarkable/splashscreens/suspended.png
     }
     configure() {
-        changescrn -c sleeping /opt/share/remarkable/splashscreens/sleeping.png
+        changescrn -c suspended /opt/share/remarkable/splashscreens/suspended.png
     }
     postremove() {
-        changescrn -r sleeping
+        changescrn -r suspended
     }
 }
 
-splashscreen-sleeping-gallifreyan-dark() {
-    pkgdesc="Gallifreyan dark sleeping splashscreen"
-    replaces=("splashscreen-sleeping")
-    conflicts=("splashscreen-sleeping")
+splashscreen-suspended-gallifreyan-dark() {
+    pkgdesc="Gallifreyan dark suspended splashscreen"
+    replaces=("splashscreen-suspended")
+    conflicts=("splashscreen-suspended")
     package() {
-        install -D -m 755 -t "$pkgdir"/opt/share/remarkable/splashscreens \
-            "$srcdir"/splash-screens/gallifreyan/sleeping-v3.png
+        install -D -m 755 -T "$srcdir"/splash-screens/gallifreyan/sleeping-v3.png
+            "$pkgdir"/opt/share/remarkable/splashscreens/suspended.png
     }
     configure() {
-        changescrn -c sleeping /opt/share/remarkable/splashscreens/sleeping.png
+        changescrn -c suspended /opt/share/remarkable/splashscreens/suspended.png
     }
     postremove() {
-        changescrn -r sleeping
+        changescrn -r suspended
     }
 }
 
@@ -85,7 +85,7 @@ splashscreen-starting-gallifreyan() {
     }
 }
 
-splashscreen-suspended-gallifreyan() {
+splashscreen-suspended-gallifreyan-2() {
     pkgdesc="Gallifreyan suspended splashscreen"
     replaces=("splashscreen-suspended")
     conflicts=("splashscreen-suspended")
@@ -106,8 +106,8 @@ splashscreen-suspended-flower-pause() {
     replaces=("splashscreen-suspended")
     conflicts=("splashscreen-suspended")
     package() {
-        install -D -m 755 -t "$pkgdir"/opt/share/remarkable/splashscreens \
-            "$srcdir"/splash-screens/misc/flower-pause.png
+        install -D -m 755 -T "$srcdir"/splash-screens/misc/flower-pause.png
+            "$pkgdir"/opt/share/remarkable/splashscreens/suspended.png
     }
     configure() {
         changescrn -c suspended /opt/share/remarkable/splashscreens/suspended.png
