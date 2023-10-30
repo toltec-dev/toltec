@@ -34,6 +34,7 @@ package() {
 }
 
 configure() {
+    addgroup keyd
     systemctl daemon-reload
     if is-active keyd; then
         systemctl restart keyd
@@ -47,6 +48,7 @@ configure() {
 }
 
 preremove() {
+    delgroup keyd
     if is-active keyd; then
         echo "Stopping keyd"
         systemctl stop keyd
