@@ -34,6 +34,8 @@ build() {
     cd apps/yaft
     make
     make install
+    cd libs/libYaft
+    make install
 }
 
 package() {
