@@ -34,7 +34,7 @@ build() {
     cd apps/yaft
     make
     make install
-    cd libs/libYaft
+    cd ../../libs/libYaft
     make install
 }
 
