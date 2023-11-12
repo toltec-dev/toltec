@@ -5,9 +5,9 @@
 pkgnames=(yaft)
 pkgdesc="Yet another framebuffer terminal"
 url=https://github.com/timower/rM2-stuff/tree/master/apps/yaft
-_tag=0.0.8
-pkgver=${_tag}-3
-timestamp=2021-05-02T09:23Z
+_tag=0.0.10
+pkgver=${_tag}-2
+timestamp=2023-08-12T14:31Z
 maintainer="Mattéo Delabre <spam@delab.re>"
 license=GPL-3.0
 section="admin"
@@ -17,18 +17,15 @@ installdepends=(display terminfo)
 source=(
     "https://github.com/timower/rM2-stuff/archive/refs/tags/v${_tag}.zip"
     input.patch
-    bash-l.patch
 )
 
 sha256sums=(
-    718a9fc7a8e26d587bac790fd83ad8242978b59745269b2ff213e04820bf45b8
-    SKIP
+    1cd4741a93cde6bd545215eb303e51219fc9901cba1c28b6206b1b5e0871a7b5
     SKIP
 )
 
 build() {
     patch -u libs/rMlib/Device.cpp -i input.patch
-    patch -u apps/yaft/main.cpp -i bash-l.patch
     mkdir build
     mkdir install
     cd build
@@ -36,6 +33,8 @@ build() {
         -DCMAKE_INSTALL_PREFIX="../install" -DCMAKE_BUILD_TYPE=Release ..
     cd apps/yaft
     make
+    make install
+    cd ../../libs/libYaft
     make install
 }
 

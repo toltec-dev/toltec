@@ -1,0 +1,142 @@
+#!/usr/bin/env bash
+# Copyright (c) 2023 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgnames=(
+    template-daily-planner
+    template-weekly-planner
+    template-journal
+    template-meeting-notes
+    template-smart-goals
+    template-good-time-journal
+)
+url=https://github.com/msencer/remarkable_templates
+pkgver=0.0.0-1
+timestamp=2023-07-27T12:28:59Z
+section="templates"
+maintainer="Eeems <eeems@eeems.email>"
+license=MIT
+installdepends=(templatectl)
+
+source=("https://github.com/msencer/remarkable_templates/archive/03282d34b905e7e6431132b022b5a9cb3af116a2.zip")
+sha256sums=(7a39d53767963f59c8d5b8a7ebda411b60d1256fe1077a3864cc43cd59281e03)
+
+template-daily-planner() {
+    pkgdesc="Daily Planner template"
+    package() {
+        install -D -m 755 \
+            -t "$pkgdir"/opt/share/remarkable/templates \
+            "$srcdir"/templates/pngs/daily_planner.png
+    }
+    configure() {
+        templatectl add \
+            --name "Daily Planner" \
+            --filename "daily_planner" \
+            --category "Custom" \
+            --category "Life/organize" \
+            --icon_code "e9da"
+    }
+    preremove() {
+        templatectl remove --name "Daily Planner"
+    }
+}
+
+template-weekly-planner() {
+    pkgdesc="Weekly Planner template"
+    package() {
+        install -D -m 755 \
+            -t "$pkgdir"/opt/share/remarkable/templates \
+            "$srcdir"/templates/pngs/weekly_planner.png
+    }
+    configure() {
+        templatectl add \
+            --name "Weekly Planner" \
+            --filename "weekly_planner" \
+            --category "Custom" \
+            --category "Life/organize" \
+            --icon_code "e997"
+    }
+    preremove() {
+        templatectl remove --name "Weekly Planner"
+    }
+}
+
+template-journal() {
+    pkgdesc="Journal template"
+    package() {
+        install -D -m 755 \
+            -t "$pkgdir"/opt/share/remarkable/templates \
+            "$srcdir"/templates/pngs/journal.png
+    }
+    configure() {
+        templatectl add \
+            --name "Journal" \
+            --filename "journal" \
+            --category "Custom" \
+            --category "Life/organize" \
+            --icon_code "e991"
+    }
+    preremove() {
+        templatectl remove --name "Journal"
+    }
+}
+
+template-meeting-notes() {
+    pkgdesc="Meeting Notes template"
+    package() {
+        install -D -m 755 \
+            -t "$pkgdir"/opt/share/remarkable/templates \
+            "$srcdir"/templates/pngs/meeting_notes.png
+    }
+    configure() {
+        templatectl add \
+            --name "1:1 / Meeting Notes" \
+            --filename "meeting_notes" \
+            --category "Custom" \
+            --category "Life/organize" \
+            --icon_code "e9d8"
+    }
+    preremove() {
+        templatectl remove --name "1:1 / Meeting Notes"
+    }
+}
+
+template-smart-goals() {
+    pkgdesc="Smart Goals template"
+    package() {
+        install -D -m 755 \
+            -t "$pkgdir"/opt/share/remarkable/templates \
+            "$srcdir"/templates/pngs/goals.png
+    }
+    configure() {
+        templatectl add \
+            --name "Smart Goals" \
+            --filename "goals" \
+            --category "Custom" \
+            --category "Life/organize" \
+            --icon_code "e98f"
+    }
+    preremove() {
+        templatectl remove --name "Smart Goals"
+    }
+}
+
+template-good-time-journal() {
+    pkgdesc="Smart Goals template"
+    package() {
+        install -D -m 755 \
+            -t "$pkgdir"/opt/share/remarkable/templates \
+            "$srcdir"/templates/pngs/gt_journal.png
+    }
+    configure() {
+        templatectl add \
+            --name "Good Time Journal" \
+            --filename "gt_journal" \
+            --category "Custom" \
+            --category "Life/organize" \
+            --icon_code "e9b2"
+    }
+    preremove() {
+        templatectl remove --name "Good Time Journal"
+    }
+}
