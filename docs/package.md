@@ -440,3 +440,12 @@ When upgrading a package from version A to B, the following happens:
 * `postupgrade B`, if it exists, is called from version A
 * New package files are unpacked and installed
 * `configure`, if it exists, is called from version B
+
+
+### reload-oxide-apps hook
+
+If a package contains one or more files in `/opt/etc/draft` or `/opt/usr/share/applications` the `reload-oxide-apps` method in `install-lib` will be appended to the following:
+
+* `configure`
+* `postupgrade`
+* `postremove`

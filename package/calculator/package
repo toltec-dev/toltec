@@ -5,7 +5,7 @@
 pkgnames=(calculator)
 pkgdesc="Touch-based calculator"
 url=https://github.com/reHackable/Calculator
-pkgver=0.0.0-15
+pkgver=0.0.0-16
 timestamp=2020-08-20T12:28Z
 section="math"
 maintainer="Mattéo Delabre <spam@delab.re>"

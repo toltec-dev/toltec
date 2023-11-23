@@ -4,7 +4,7 @@
 pkgnames=(reterm)
 pkgdesc="Landscape terminal support for the Remarkable 2 + type cover"
 section="admin"
-pkgver="20230628.1927-1"
+pkgver="20230628.1927-2"
 timestamp="2023-06-28T19:28:06Z"
 maintainer="Eeems <eeems@eeems.email>"
 url="https://github.com/i-am-shodan/ReTerm"
@@ -48,10 +48,4 @@ package() {
     sed -i 's|killall -9 dotnet|killall ReTerm|' "$pkgdir"/opt/etc/draft/reterm.draft
     install -D -m 644 -t "$pkgdir"/opt/etc/draft/icons "$srcdir"/draft/reterm.png
     install -D -m 644 -t "$pkgdir"/opt/usr/share/applications "$srcdir"/oxide/reterm.oxide
-}
-
-configure() {
-    if is-active "tarnish.service"; then
-        type update-desktop-database &> /dev/null && update-desktop-database
-    fi
 }
