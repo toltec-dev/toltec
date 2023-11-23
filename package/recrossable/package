@@ -5,7 +5,7 @@
 pkgnames=(recrossable)
 pkgdesc="Solve crossword puzzles"
 url=https://github.com/sandsmark/recrossable
-pkgver=0.0.0-7
+pkgver=0.0.0-8
 timestamp=2021-01-15T12:58:22Z
 section="games"
 maintainer="Mattéo Delabre <spam@delab.re>"
