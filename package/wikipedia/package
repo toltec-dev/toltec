@@ -5,7 +5,7 @@
 pkgnames=(wikipedia)
 pkgdesc="The free encyclopedia"
 url=https://github.com/dps/remarkable-wikipedia
-pkgver=0.1.0-3
+pkgver=0.1.0-4
 timestamp=2021-03-11T04:50Z
 section="readers"
 maintainer="David Singleton <david@singleton.io>"
