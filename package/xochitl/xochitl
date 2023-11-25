@@ -27,4 +27,4 @@ elif [ -f /usr/bin/sync ] && ! is-active manual-sync@sync.service; then
     systemctl enable --now manual-sync@sync.service
 fi
 
-exec /usr/bin/xochitl "$@"
+exec -a /usr/bin/xochitl /usr/bin/xochitl "$@"
