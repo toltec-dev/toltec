@@ -5,7 +5,7 @@
 pkgnames=(rmfm)
 pkgdesc="Bare-bones file manager using Node.js and sas"
 url="https://forgejo.sny.sh/sun/rmFM"
-pkgver=1.5.0-1
+pkgver=1.5.0-2
 timestamp=2023-08-08T22:19:23+02:00
 section=utils
 maintainer="Sunny <sunny@sny.sh>"

@@ -1,0 +1,705 @@
+#!/usr/bin/env bash
+# Copyright (c) 2023 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgnames=(
+    splashscreen-batteryempty-barnsley_fern
+    splashscreen-poweroff-barnsley_fern
+    splashscreen-starting-barnsley_fern
+    splashscreen-suspended-barnsley_fern
+
+    splashscreen-batteryempty-chaotic_ribbon
+    splashscreen-poweroff-chaotic_ribbon
+    splashscreen-starting-chaotic_ribbon
+    splashscreen-suspended-chaotic_ribbon
+
+    splashscreen-batteryempty-collatz_sea_weed
+    splashscreen-poweroff-collatz_sea_weed
+    splashscreen-starting-collatz_sea_weed
+    splashscreen-suspended-collatz_sea_weed
+
+    splashscreen-batteryempty-dragon_curve
+    splashscreen-poweroff-dragon_curve
+    splashscreen-starting-dragon_curve
+    splashscreen-suspended-dragon_curve
+
+    splashscreen-batteryempty-fire
+    splashscreen-poweroff-fire
+    splashscreen-starting-fire
+    splashscreen-suspended-fire
+
+    splashscreen-batteryempty-fractal_tree
+    splashscreen-poweroff-fractal_tree
+    splashscreen-starting-fractal_tree
+    splashscreen-suspended-fractal_tree
+
+    splashscreen-batteryempty-sacks_spiral
+    splashscreen-poweroff-sacks_spiral
+    splashscreen-starting-sacks_spiral
+    splashscreen-suspended-sacks_spiral
+
+    splashscreen-batteryempty-sierpinski_triangle
+    splashscreen-poweroff-sierpinski_triangle
+    splashscreen-starting-sierpinski_triangle
+    splashscreen-suspended-sierpinski_triangle
+
+    splashscreen-batteryempty-snowy_hills
+    splashscreen-poweroff-snowy_hills
+    splashscreen-starting-snowy_hills
+    splashscreen-suspended-snowy_hills
+
+    splashscreen-batteryempty-starr
+    splashscreen-poweroff-starr
+    splashscreen-starting-starr
+    splashscreen-suspended-starr
+)
+url=https://github.com/engeir/remarkable-splashscreens
+pkgver=0.0.0-1
+timestamp=2023-05-19T06:37:08Z
+section="splashscreens"
+maintainer="Eeems <eeems@eeems.email>"
+license=MIT
+installdepends=(changescrn)
+
+source=("https://github.com/engeir/remarkable-splashscreens/archive/18e2c2a4d1d278240079ff4eb848d5e5255cc3f2.zip")
+sha256sums=(ac49db5539d3901e02b8b94b381bed6a98002371378bf2d4ffa804c80eae0efb)
+
+splashscreen-batteryempty-barnsley_fern() {
+    pkgdesc="Barnsley Fern battery empty splashscreen"
+    replaces=("splashscreen-batteryempty")
+    conflicts=("splashscreen-batteryempty")
+    package() {
+        install -D -m 755 -t "$pkgdir"/opt/share/remarkable/splashscreens \
+            "$srcdir"/splashscreens/barnsley_fern/batteryempty.png
+    }
+    configure() {
+        changescrn -c batteryempty /opt/share/remarkable/splashscreens/batteryempty.png
+    }
+    postremove() {
+        changescrn -r batteryempty
+    }
+}
+
+splashscreen-poweroff-barnsley_fern() {
+    pkgdesc="Barnsley Fern power off splashscreen"
+    replaces=("splashscreen-poweroff")
+    conflicts=("splashscreen-poweroff")
+    package() {
+        install -D -m 755 -t "$pkgdir"/opt/share/remarkable/splashscreens \
+            "$srcdir"/splashscreens/barnsley_fern/poweroff.png
+    }
+    configure() {
+        changescrn -c poweroff /opt/share/remarkable/splashscreens/poweroff.png
+    }
+    postremove() {
+        changescrn -r poweroff
+    }
+}
+
+splashscreen-starting-barnsley_fern() {
+    pkgdesc="Barnsley Fern starting splashscreen"
+    replaces=("splashscreen-starting")
+    conflicts=("splashscreen-starting")
+    package() {
+        install -D -m 755 -t "$pkgdir"/opt/share/remarkable/splashscreens \
+            "$srcdir"/splashscreens/barnsley_fern/starting.png
+    }
+    configure() {
+        changescrn -c starting /opt/share/remarkable/splashscreens/starting.png
+    }
+    postremove() {
+        changescrn -r starting
+    }
+}
+
+splashscreen-suspended-barnsley_fern() {
+    pkgdesc="Barnsley Fern suspended splashscreen"
+    replaces=("splashscreen-suspended")
+    conflicts=("splashscreen-suspended")
+    package() {
+        install -D -m 755 -t "$pkgdir"/opt/share/remarkable/splashscreens \
+            "$srcdir"/splashscreens/barnsley_fern/suspended.png
+    }
+    configure() {
+        changescrn -c suspended /opt/share/remarkable/splashscreens/suspended.png
+    }
+    postremove() {
+        changescrn -r suspended
+    }
+}
+
+splashscreen-batteryempty-chaotic_ribbon() {
+    pkgdesc="Chaotic ribbon battery empty splashscreen"
+    replaces=("splashscreen-batteryempty")
+    conflicts=("splashscreen-batteryempty")
+    package() {
+        install -D -m 755 -t "$pkgdir"/opt/share/remarkable/splashscreens \
+            "$srcdir"/splashscreens/chaotic_ribbon/batteryempty.png
+    }
+    configure() {
+        changescrn -c batteryempty /opt/share/remarkable/splashscreens/batteryempty.png
+    }
+    postremove() {
+        changescrn -r batteryempty
+    }
+}
+
+splashscreen-poweroff-chaotic_ribbon() {
+    pkgdesc="Chaotic ribbon power off splashscreen"
+    replaces=("splashscreen-poweroff")
+    conflicts=("splashscreen-poweroff")
+    package() {
+        install -D -m 755 -t "$pkgdir"/opt/share/remarkable/splashscreens \
+            "$srcdir"/splashscreens/chaotic_ribbon/poweroff.png
+    }
+    configure() {
+        changescrn -c poweroff /opt/share/remarkable/splashscreens/poweroff.png
+    }
+    postremove() {
+        changescrn -r poweroff
+    }
+}
+
+splashscreen-starting-chaotic_ribbon() {
+    pkgdesc="Chaotic ribbon starting splashscreen"
+    replaces=("splashscreen-starting")
+    conflicts=("splashscreen-starting")
+    package() {
+        install -D -m 755 -t "$pkgdir"/opt/share/remarkable/splashscreens \
+            "$srcdir"/splashscreens/chaotic_ribbon/starting.png
+    }
+    configure() {
+        changescrn -c starting /opt/share/remarkable/splashscreens/starting.png
+    }
+    postremove() {
+        changescrn -r starting
+    }
+}
+
+splashscreen-suspended-chaotic_ribbon() {
+    pkgdesc="Chaotic ribbon suspended splashscreen"
+    replaces=("splashscreen-suspended")
+    conflicts=("splashscreen-suspended")
+    package() {
+        install -D -m 755 -t "$pkgdir"/opt/share/remarkable/splashscreens \
+            "$srcdir"/splashscreens/chaotic_ribbon/suspended.png
+    }
+    configure() {
+        changescrn -c suspended /opt/share/remarkable/splashscreens/suspended.png
+    }
+    postremove() {
+        changescrn -r suspended
+    }
+}
+
+splashscreen-batteryempty-collatz_sea_weed() {
+    pkgdesc="Collatz sea weed battery empty splashscreen"
+    replaces=("splashscreen-batteryempty")
+    conflicts=("splashscreen-batteryempty")
+    package() {
+        install -D -m 755 -t "$pkgdir"/opt/share/remarkable/splashscreens \
+            "$srcdir"/splashscreens/collatz_sea_weed/batteryempty.png
+    }
+    configure() {
+        changescrn -c batteryempty /opt/share/remarkable/splashscreens/batteryempty.png
+    }
+    postremove() {
+        changescrn -r batteryempty
+    }
+}
+
+splashscreen-poweroff-collatz_sea_weed() {
+    pkgdesc="Collatz sea weed power off splashscreen"
+    replaces=("splashscreen-poweroff")
+    conflicts=("splashscreen-poweroff")
+    package() {
+        install -D -m 755 -t "$pkgdir"/opt/share/remarkable/splashscreens \
+            "$srcdir"/splashscreens/collatz_sea_weed/poweroff.png
+    }
+    configure() {
+        changescrn -c poweroff /opt/share/remarkable/splashscreens/poweroff.png
+    }
+    postremove() {
+        changescrn -r poweroff
+    }
+}
+
+splashscreen-starting-collatz_sea_weed() {
+    pkgdesc="Collatz sea weed starting splashscreen"
+    replaces=("splashscreen-starting")
+    conflicts=("splashscreen-starting")
+    package() {
+        install -D -m 755 -t "$pkgdir"/opt/share/remarkable/splashscreens \
+            "$srcdir"/splashscreens/collatz_sea_weed/starting.png
+    }
+    configure() {
+        changescrn -c starting /opt/share/remarkable/splashscreens/starting.png
+    }
+    postremove() {
+        changescrn -r starting
+    }
+}
+
+splashscreen-suspended-collatz_sea_weed() {
+    pkgdesc="Collatz sea weed suspended splashscreen"
+    replaces=("splashscreen-suspended")
+    conflicts=("splashscreen-suspended")
+    package() {
+        install -D -m 755 -t "$pkgdir"/opt/share/remarkable/splashscreens \
+            "$srcdir"/splashscreens/collatz_sea_weed/suspended.png
+    }
+    configure() {
+        changescrn -c suspended /opt/share/remarkable/splashscreens/suspended.png
+    }
+    postremove() {
+        changescrn -r suspended
+    }
+}
+
+splashscreen-batteryempty-dragon_curve() {
+    pkgdesc="Dragon curve battery empty splashscreen"
+    replaces=("splashscreen-batteryempty")
+    conflicts=("splashscreen-batteryempty")
+    package() {
+        install -D -m 755 -t "$pkgdir"/opt/share/remarkable/splashscreens \
+            "$srcdir"/splashscreens/dragon_curve/batteryempty.png
+    }
+    configure() {
+        changescrn -c batteryempty /opt/share/remarkable/splashscreens/batteryempty.png
+    }
+    postremove() {
+        changescrn -r batteryempty
+    }
+}
+
+splashscreen-poweroff-dragon_curve() {
+    pkgdesc="Dragon curve power off splashscreen"
+    replaces=("splashscreen-poweroff")
+    conflicts=("splashscreen-poweroff")
+    package() {
+        install -D -m 755 -t "$pkgdir"/opt/share/remarkable/splashscreens \
+            "$srcdir"/splashscreens/dragon_curve/poweroff.png
+    }
+    configure() {
+        changescrn -c poweroff /opt/share/remarkable/splashscreens/poweroff.png
+    }
+    postremove() {
+        changescrn -r poweroff
+    }
+}
+
+splashscreen-starting-dragon_curve() {
+    pkgdesc="Dragon curve starting splashscreen"
+    replaces=("splashscreen-starting")
+    conflicts=("splashscreen-starting")
+    package() {
+        install -D -m 755 -t "$pkgdir"/opt/share/remarkable/splashscreens \
+            "$srcdir"/splashscreens/dragon_curve/starting.png
+    }
+    configure() {
+        changescrn -c starting /opt/share/remarkable/splashscreens/starting.png
+    }
+    postremove() {
+        changescrn -r starting
+    }
+}
+
+splashscreen-suspended-dragon_curve() {
+    pkgdesc="Dragon curve suspended splashscreen"
+    replaces=("splashscreen-suspended")
+    conflicts=("splashscreen-suspended")
+    package() {
+        install -D -m 755 -t "$pkgdir"/opt/share/remarkable/splashscreens \
+            "$srcdir"/splashscreens/dragon_curve/suspended.png
+    }
+    configure() {
+        changescrn -c suspended /opt/share/remarkable/splashscreens/suspended.png
+    }
+    postremove() {
+        changescrn -r suspended
+    }
+}
+
+splashscreen-batteryempty-fire() {
+    pkgdesc="Fire battery empty splashscreen"
+    replaces=("splashscreen-batteryempty")
+    conflicts=("splashscreen-batteryempty")
+    package() {
+        install -D -m 755 -t "$pkgdir"/opt/share/remarkable/splashscreens \
+            "$srcdir"/splashscreens/fire/batteryempty.png
+    }
+    configure() {
+        changescrn -c batteryempty /opt/share/remarkable/splashscreens/batteryempty.png
+    }
+    postremove() {
+        changescrn -r batteryempty
+    }
+}
+
+splashscreen-poweroff-fire() {
+    pkgdesc="Fire power off splashscreen"
+    replaces=("splashscreen-poweroff")
+    conflicts=("splashscreen-poweroff")
+    package() {
+        install -D -m 755 -t "$pkgdir"/opt/share/remarkable/splashscreens \
+            "$srcdir"/splashscreens/fire/poweroff.png
+    }
+    configure() {
+        changescrn -c poweroff /opt/share/remarkable/splashscreens/poweroff.png
+    }
+    postremove() {
+        changescrn -r poweroff
+    }
+}
+
+splashscreen-starting-fire() {
+    pkgdesc="Fire starting splashscreen"
+    replaces=("splashscreen-starting")
+    conflicts=("splashscreen-starting")
+    package() {
+        install -D -m 755 -t "$pkgdir"/opt/share/remarkable/splashscreens \
+            "$srcdir"/splashscreens/fire/starting.png
+    }
+    configure() {
+        changescrn -c starting /opt/share/remarkable/splashscreens/starting.png
+    }
+    postremove() {
+        changescrn -r starting
+    }
+}
+
+splashscreen-suspended-fire() {
+    pkgdesc="Fire suspended splashscreen"
+    replaces=("splashscreen-suspended")
+    conflicts=("splashscreen-suspended")
+    package() {
+        install -D -m 755 -t "$pkgdir"/opt/share/remarkable/splashscreens \
+            "$srcdir"/splashscreens/fire/suspended.png
+    }
+    configure() {
+        changescrn -c suspended /opt/share/remarkable/splashscreens/suspended.png
+    }
+    postremove() {
+        changescrn -r suspended
+    }
+}
+
+splashscreen-batteryempty-fractal_tree() {
+    pkgdesc="Fractal tree battery empty splashscreen"
+    replaces=("splashscreen-batteryempty")
+    conflicts=("splashscreen-batteryempty")
+    package() {
+        install -D -m 755 -t "$pkgdir"/opt/share/remarkable/splashscreens \
+            "$srcdir"/splashscreens/fractal_tree/batteryempty.png
+    }
+    configure() {
+        changescrn -c batteryempty /opt/share/remarkable/splashscreens/batteryempty.png
+    }
+    postremove() {
+        changescrn -r batteryempty
+    }
+}
+
+splashscreen-poweroff-fractal_tree() {
+    pkgdesc="Fractal tree power off splashscreen"
+    replaces=("splashscreen-poweroff")
+    conflicts=("splashscreen-poweroff")
+    package() {
+        install -D -m 755 -t "$pkgdir"/opt/share/remarkable/splashscreens \
+            "$srcdir"/splashscreens/fractal_tree/poweroff.png
+    }
+    configure() {
+        changescrn -c poweroff /opt/share/remarkable/splashscreens/poweroff.png
+    }
+    postremove() {
+        changescrn -r poweroff
+    }
+}
+
+splashscreen-starting-fractal_tree() {
+    pkgdesc="Fractal tree starting splashscreen"
+    replaces=("splashscreen-starting")
+    conflicts=("splashscreen-starting")
+    package() {
+        install -D -m 755 -t "$pkgdir"/opt/share/remarkable/splashscreens \
+            "$srcdir"/splashscreens/fractal_tree/starting.png
+    }
+    configure() {
+        changescrn -c starting /opt/share/remarkable/splashscreens/starting.png
+    }
+    postremove() {
+        changescrn -r starting
+    }
+}
+
+splashscreen-suspended-fractal_tree() {
+    pkgdesc="Fractal tree suspended splashscreen"
+    replaces=("splashscreen-suspended")
+    conflicts=("splashscreen-suspended")
+    package() {
+        install -D -m 755 -t "$pkgdir"/opt/share/remarkable/splashscreens \
+            "$srcdir"/splashscreens/fractal_tree/suspended.png
+    }
+    configure() {
+        changescrn -c suspended /opt/share/remarkable/splashscreens/suspended.png
+    }
+    postremove() {
+        changescrn -r suspended
+    }
+}
+
+splashscreen-batteryempty-sacks_spiral() {
+    pkgdesc="Sacks spiral battery empty splashscreen"
+    replaces=("splashscreen-batteryempty")
+    conflicts=("splashscreen-batteryempty")
+    package() {
+        install -D -m 755 -t "$pkgdir"/opt/share/remarkable/splashscreens \
+            "$srcdir"/splashscreens/sacks_spiral/batteryempty.png
+    }
+    configure() {
+        changescrn -c batteryempty /opt/share/remarkable/splashscreens/batteryempty.png
+    }
+    postremove() {
+        changescrn -r batteryempty
+    }
+}
+
+splashscreen-poweroff-sacks_spiral() {
+    pkgdesc="Sacks spiral power off splashscreen"
+    replaces=("splashscreen-poweroff")
+    conflicts=("splashscreen-poweroff")
+    package() {
+        install -D -m 755 -t "$pkgdir"/opt/share/remarkable/splashscreens \
+            "$srcdir"/splashscreens/sacks_spiral/poweroff.png
+    }
+    configure() {
+        changescrn -c poweroff /opt/share/remarkable/splashscreens/poweroff.png
+    }
+    postremove() {
+        changescrn -r poweroff
+    }
+}
+
+splashscreen-starting-sacks_spiral() {
+    pkgdesc="Sacks spiral starting splashscreen"
+    replaces=("splashscreen-starting")
+    conflicts=("splashscreen-starting")
+    package() {
+        install -D -m 755 -t "$pkgdir"/opt/share/remarkable/splashscreens \
+            "$srcdir"/splashscreens/sacks_spiral/starting.png
+    }
+    configure() {
+        changescrn -c starting /opt/share/remarkable/splashscreens/starting.png
+    }
+    postremove() {
+        changescrn -r starting
+    }
+}
+
+splashscreen-suspended-sacks_spiral() {
+    pkgdesc="Sacks spiral suspended splashscreen"
+    replaces=("splashscreen-suspended")
+    conflicts=("splashscreen-suspended")
+    package() {
+        install -D -m 755 -t "$pkgdir"/opt/share/remarkable/splashscreens \
+            "$srcdir"/splashscreens/sacks_spiral/suspended.png
+    }
+    configure() {
+        changescrn -c suspended /opt/share/remarkable/splashscreens/suspended.png
+    }
+    postremove() {
+        changescrn -r suspended
+    }
+}
+
+splashscreen-batteryempty-sierpinski_triangle() {
+    pkgdesc="Sierpinski triangle battery empty splashscreen"
+    replaces=("splashscreen-batteryempty")
+    conflicts=("splashscreen-batteryempty")
+    package() {
+        install -D -m 755 -t "$pkgdir"/opt/share/remarkable/splashscreens \
+            "$srcdir"/splashscreens/sierpinski_triangle/batteryempty.png
+    }
+    configure() {
+        changescrn -c batteryempty /opt/share/remarkable/splashscreens/batteryempty.png
+    }
+    postremove() {
+        changescrn -r batteryempty
+    }
+}
+
+splashscreen-poweroff-sierpinski_triangle() {
+    pkgdesc="Sierpinski triangle power off splashscreen"
+    replaces=("splashscreen-poweroff")
+    conflicts=("splashscreen-poweroff")
+    package() {
+        install -D -m 755 -t "$pkgdir"/opt/share/remarkable/splashscreens \
+            "$srcdir"/splashscreens/sierpinski_triangle/poweroff.png
+    }
+    configure() {
+        changescrn -c poweroff /opt/share/remarkable/splashscreens/poweroff.png
+    }
+    postremove() {
+        changescrn -r poweroff
+    }
+}
+
+splashscreen-starting-sierpinski_triangle() {
+    pkgdesc="Sierpinski triangle starting splashscreen"
+    replaces=("splashscreen-starting")
+    conflicts=("splashscreen-starting")
+    package() {
+        install -D -m 755 -t "$pkgdir"/opt/share/remarkable/splashscreens \
+            "$srcdir"/splashscreens/sierpinski_triangle/starting.png
+    }
+    configure() {
+        changescrn -c starting /opt/share/remarkable/splashscreens/starting.png
+    }
+    postremove() {
+        changescrn -r starting
+    }
+}
+
+splashscreen-suspended-sierpinski_triangle() {
+    pkgdesc="Sierpinski triangle suspended splashscreen"
+    replaces=("splashscreen-suspended")
+    conflicts=("splashscreen-suspended")
+    package() {
+        install -D -m 755 -t "$pkgdir"/opt/share/remarkable/splashscreens \
+            "$srcdir"/splashscreens/sierpinski_triangle/suspended.png
+    }
+    configure() {
+        changescrn -c suspended /opt/share/remarkable/splashscreens/suspended.png
+    }
+    postremove() {
+        changescrn -r suspended
+    }
+}
+
+splashscreen-batteryempty-snowy_hills() {
+    pkgdesc="Snowy hills battery empty splashscreen"
+    replaces=("splashscreen-batteryempty")
+    conflicts=("splashscreen-batteryempty")
+    package() {
+        install -D -m 755 -t "$pkgdir"/opt/share/remarkable/splashscreens \
+            "$srcdir"/splashscreens/snowy_hills/batteryempty.png
+    }
+    configure() {
+        changescrn -c batteryempty /opt/share/remarkable/splashscreens/batteryempty.png
+    }
+    postremove() {
+        changescrn -r batteryempty
+    }
+}
+
+splashscreen-poweroff-snowy_hills() {
+    pkgdesc="Snowy hills power off splashscreen"
+    replaces=("splashscreen-poweroff")
+    conflicts=("splashscreen-poweroff")
+    package() {
+        install -D -m 755 -t "$pkgdir"/opt/share/remarkable/splashscreens \
+            "$srcdir"/splashscreens/snowy_hills/poweroff.png
+    }
+    configure() {
+        changescrn -c poweroff /opt/share/remarkable/splashscreens/poweroff.png
+    }
+    postremove() {
+        changescrn -r poweroff
+    }
+}
+
+splashscreen-starting-snowy_hills() {
+    pkgdesc="Snowy hills starting splashscreen"
+    replaces=("splashscreen-starting")
+    conflicts=("splashscreen-starting")
+    package() {
+        install -D -m 755 -t "$pkgdir"/opt/share/remarkable/splashscreens \
+            "$srcdir"/splashscreens/snowy_hills/starting.png
+    }
+    configure() {
+        changescrn -c starting /opt/share/remarkable/splashscreens/starting.png
+    }
+    postremove() {
+        changescrn -r starting
+    }
+}
+
+splashscreen-suspended-snowy_hills() {
+    pkgdesc="Snowy hills suspended splashscreen"
+    replaces=("splashscreen-suspended")
+    conflicts=("splashscreen-suspended")
+    package() {
+        install -D -m 755 -t "$pkgdir"/opt/share/remarkable/splashscreens \
+            "$srcdir"/splashscreens/snowy_hills/suspended.png
+    }
+    configure() {
+        changescrn -c suspended /opt/share/remarkable/splashscreens/suspended.png
+    }
+    postremove() {
+        changescrn -r suspended
+    }
+}
+
+splashscreen-batteryempty-starr() {
+    pkgdesc="Starr battery empty splashscreen"
+    replaces=("splashscreen-batteryempty")
+    conflicts=("splashscreen-batteryempty")
+    package() {
+        install -D -m 755 -t "$pkgdir"/opt/share/remarkable/splashscreens \
+            "$srcdir"/splashscreens/starr/batteryempty.png
+    }
+    configure() {
+        changescrn -c batteryempty /opt/share/remarkable/splashscreens/batteryempty.png
+    }
+    postremove() {
+        changescrn -r batteryempty
+    }
+}
+
+splashscreen-poweroff-starr() {
+    pkgdesc="Starr power off splashscreen"
+    replaces=("splashscreen-poweroff")
+    conflicts=("splashscreen-poweroff")
+    package() {
+        install -D -m 755 -t "$pkgdir"/opt/share/remarkable/splashscreens \
+            "$srcdir"/splashscreens/starr/poweroff.png
+    }
+    configure() {
+        changescrn -c poweroff /opt/share/remarkable/splashscreens/poweroff.png
+    }
+    postremove() {
+        changescrn -r poweroff
+    }
+}
+
+splashscreen-starting-starr() {
+    pkgdesc="Starr starting splashscreen"
+    replaces=("splashscreen-starting")
+    conflicts=("splashscreen-starting")
+    package() {
+        install -D -m 755 -t "$pkgdir"/opt/share/remarkable/splashscreens \
+            "$srcdir"/splashscreens/starr/starting.png
+    }
+    configure() {
+        changescrn -c starting /opt/share/remarkable/splashscreens/starting.png
+    }
+    postremove() {
+        changescrn -r starting
+    }
+}
+
+splashscreen-suspended-starr() {
+    pkgdesc="Starr suspended splashscreen"
+    replaces=("splashscreen-suspended")
+    conflicts=("splashscreen-suspended")
+    package() {
+        install -D -m 755 -t "$pkgdir"/opt/share/remarkable/splashscreens \
+            "$srcdir"/splashscreens/starr/suspended.png
+    }
+    configure() {
+        changescrn -c suspended /opt/share/remarkable/splashscreens/suspended.png
+    }
+    postremove() {
+        changescrn -r suspended
+    }
+}
