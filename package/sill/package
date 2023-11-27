@@ -5,7 +5,7 @@
 pkgnames=(sill)
 pkgdesc="Gesture-based text editor (and shell) for the reMarkable tablet"
 url=https://github.com/bkirwi/sill
-pkgver=0.1.1-alpha
+pkgver=0.1.1-1
 section="writing"
 timestamp=2023-08-12T00:00Z
 maintainer="Kai <z@kwi.li>"

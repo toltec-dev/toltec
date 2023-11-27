@@ -14,7 +14,7 @@ installdepends=(fbink fbdepth display rm2fb-client)
 
 _srcver="v${pkgver%-*}"
 source=(
-    "https://build.koreader.rocks/download/stable/$_srcver/koreader-remarkable-$_srcver.zip"
+    "https://github.com/koreader/koreader/releases/download/$_srcver/koreader-remarkable-$_srcver.zip"
     koreader.draft
     KOReader.oxide
     koreader-toltec.service
