@@ -51,13 +51,6 @@ identify-model() {
     esac
 }
 
-# Find the current OS release timestamp
-#
-# Output: Timestamp of the current release in YYYYMMDDHHMMSS format
-get-release-timestamp() {
-    cat /etc/version
-}
-
 # Find the current OS release version
 #
 # Output: Current version in the X.Y.Z.P format
@@ -79,14 +72,11 @@ get-release-version() {
 check-version() {
     local check_branch
     local current_model
-    local current_timestamp
     local current_version
     check_branch="$1"
     current_model="$(identify-model)"
-    current_timestamp="$(get-release-timestamp)"
     current_version="$(get-release-version)"
 
-    local supported_timestamp
     local supported_version
     local compat
 
@@ -101,9 +91,6 @@ check-version() {
 
     supported_version="$(
         echo "$compat" | awk "/$current_model-max-os-version/{ print \$2 }"
-    )"
-    supported_timestamp="$(
-        echo "$compat" | awk "/$current_model-max-os-timestamp/{ print \$2 }"
     )"
 
     if ((current_version > supported_version)); then
