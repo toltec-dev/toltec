@@ -18,4 +18,4 @@ fi
 if ! systemctl is-active --quiet manual-sync.service; then
     systemctl enable --now manual-sync.service
 fi
-exec /usr/bin/xochitl "$@"
+exec -a /usr/bin/xochitl /usr/bin/xochitl "$@"
