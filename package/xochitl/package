@@ -67,12 +67,12 @@ configure() {
 
     # sync.service interferes with launchers
     # we use manual-sync.service instead
-    if ! is-masked sync.service; then
-        systemctl mask sync.service 2> /dev/null
+    if [ -f /usr/bin/sync ] && ! is-masked sync.service; then
+        systemctl mask sync.service
     fi
 
-    if ! is-masked rm-sync.service; then
-        systemctl mask rm-sync.service 2> /dev/null
+    if [ -f /usr/bin/rm-sync ] && ! is-masked rm-sync.service; then
+        systemctl mask rm-sync.service
     fi
 
     if [ -f /usr/bin/rm-sync ] && ! is-active manual-sync@rm-sync.service; then
@@ -102,11 +102,11 @@ preremove() {
 postremove() {
     systemctl daemon-reload
 
-    if is-masked sync.service; then
-        systemctl unmask sync.service 2> /dev/null
+    if [ -f /usr/bin/sync ] && is-masked sync.service; then
+        systemctl unmask sync.service
     fi
-    if is-masked rm-sync.service; then
-        systemctl unmask rm-sync.service 2> /dev/null
+    if [ -f /usr/bin/rm-sync ] && is-masked rm-sync.service; then
+        systemctl unmask rm-sync.service
     fi
 
     if is-enabled xochitl.service && is-enabled launcher.service; then
