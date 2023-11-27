@@ -5,7 +5,7 @@
 pkgnames=(whiteboard-hypercard)
 pkgdesc="Real-time collaboration, drawing or whiteboarding"
 url=https://github.com/fenollp/reMarkable-tools
-pkgver=0.3.7-1
+pkgver=0.3.7-2
 timestamp=2023-10-11T12:57Z
 section="drawing"
 maintainer="Pierre Fenoll <pierrefenoll@gmail.com>"
