@@ -1,0 +1,118 @@
+#!/usr/bin/env bash
+# Copyright (c) 2023 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgnames=(
+    splashscreen-poweroff-gallifreyan
+    splashscreen-suspended-gallifreyan
+    splashscreen-suspended-gallifreyan-dark
+    splashscreen-starting-gallifreyan
+    splashscreen-suspended-gallifreyan-2
+    splashscreen-suspended-flower-pause
+)
+url=https://github.com/1094/rM-customizations
+pkgver=0.0.0-1
+timestamp=2023-05-15T11:27:58Z
+section="splashscreens"
+maintainer="Eeems <eeems@eeems.email>"
+license=CC-BY-NC-3.0
+installdepends=(changescrn)
+
+source=("https://github.com/1094/rM-customizations/archive/623171a1268e9ff45a8669fa36637e3eabd4ca40.zip")
+sha256sums=(8cc8d02fe04c12bacfc798c1f6737cb55f581f191e2bf54147256df265318a31)
+
+splashscreen-poweroff-gallifreyan() {
+    pkgdesc="Gallifreyan poweroff splashscreen"
+    replaces=("splashscreen-poweroff")
+    conflicts=("splashscreen-poweroff")
+    package() {
+        install -D -m 755 -t "$pkgdir"/opt/share/remarkable/splashscreens \
+            "$srcdir"/splash-screens/gallifreyan/poweroff.png
+    }
+    configure() {
+        changescrn -c poweroff /opt/share/remarkable/splashscreens/poweroff.png
+    }
+    postremove() {
+        changescrn -r poweroff
+    }
+}
+
+splashscreen-suspended-gallifreyan() {
+    pkgdesc="Gallifreyan suspended splashscreen"
+    replaces=("splashscreen-suspended")
+    conflicts=("splashscreen-suspended")
+    package() {
+        install -D -m 755 -T "$srcdir"/splash-screens/gallifreyan/sleeping-v1.png \
+            "$pkgdir"/opt/share/remarkable/splashscreens/suspended.png
+    }
+    configure() {
+        changescrn -c suspended /opt/share/remarkable/splashscreens/suspended.png
+    }
+    postremove() {
+        changescrn -r suspended
+    }
+}
+
+splashscreen-suspended-gallifreyan-dark() {
+    pkgdesc="Gallifreyan dark suspended splashscreen"
+    replaces=("splashscreen-suspended")
+    conflicts=("splashscreen-suspended")
+    package() {
+        install -D -m 755 -T "$srcdir"/splash-screens/gallifreyan/sleeping-v3.png \
+            "$pkgdir"/opt/share/remarkable/splashscreens/suspended.png
+    }
+    configure() {
+        changescrn -c suspended /opt/share/remarkable/splashscreens/suspended.png
+    }
+    postremove() {
+        changescrn -r suspended
+    }
+}
+
+splashscreen-starting-gallifreyan() {
+    pkgdesc="Gallifreyan starting splashscreen"
+    replaces=("splashscreen-starting")
+    conflicts=("splashscreen-starting")
+    package() {
+        install -D -m 755 -t "$pkgdir"/opt/share/remarkable/splashscreens \
+            "$srcdir"/splash-screens/gallifreyan/starting.png
+    }
+    configure() {
+        changescrn -c starting /opt/share/remarkable/splashscreens/starting.png
+    }
+    postremove() {
+        changescrn -r starting
+    }
+}
+
+splashscreen-suspended-gallifreyan-2() {
+    pkgdesc="Gallifreyan suspended splashscreen"
+    replaces=("splashscreen-suspended")
+    conflicts=("splashscreen-suspended")
+    package() {
+        install -D -m 755 -t "$pkgdir"/opt/share/remarkable/splashscreens \
+            "$srcdir"/splash-screens/gallifreyan/suspended.png
+    }
+    configure() {
+        changescrn -c suspended /opt/share/remarkable/splashscreens/suspended.png
+    }
+    postremove() {
+        changescrn -r suspended
+    }
+}
+
+splashscreen-suspended-flower-pause() {
+    pkgdesc="Flower suspended splashscreen"
+    replaces=("splashscreen-suspended")
+    conflicts=("splashscreen-suspended")
+    package() {
+        install -D -m 755 -T "$srcdir"/splash-screens/misc/flower-pause.png \
+            "$pkgdir"/opt/share/remarkable/splashscreens/suspended.png
+    }
+    configure() {
+        changescrn -c suspended /opt/share/remarkable/splashscreens/suspended.png
+    }
+    postremove() {
+        changescrn -r suspended
+    }
+}
