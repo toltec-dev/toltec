@@ -1,0 +1,55 @@
+#!/usr/bin/env bash
+# Copyright (c) 2023 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgnames=(regenda)
+pkgdesc="Caldav agenda app"
+url=https://github.com/tenJirka/reGenda
+pkgver=0.0.2-2
+timestamp=2023-09-06T06:45Z
+section="utils"
+maintainer="tenJirka <jirka.steh@gmail.com>"
+license=GPL3
+makedepends=(build:python3-venv)
+installdepends=(python3 python3-lxml python3-pytz python3-yaml python3-requests python3-dateutil python3-six python3-urllib3 python3-idna simple)
+flags=(patch_rm2fb)
+source=(https://github.com/tenJirka/reGenda/archive/refs/tags/0.0.2.zip)
+sha256sums=(4f51de514945f9cfc6a1852181baab4bb0f4daadb222e8ddb05929f17e2044d9)
+image=python
+
+build() {
+    python3 -m venv venv
+    # shellcheck disable=SC1091
+    source venv/bin/activate
+    mkdir "$srcdir"/python_modules
+    pip install caldav rm_pysas -t "$srcdir"/python_modules
+}
+
+package() {
+    install -D -m 644 -t "$pkgdir"/opt/etc/draft/ "$srcdir"/regenda.draft
+    install -D -m 644 -t "$pkgdir"/opt/etc/reGenda/ "$srcdir"/config.yml.example
+    install -D -m 644 "$srcdir"/icon.png "$pkgdir"/opt/etc/draft/icons/reGenda.png
+    install -D -m 755 -t "$pkgdir"/opt/usr/lib/reGenda/ "$srcdir"/run.py
+    install -D -m 644 -t "$pkgdir"/opt/usr/lib/reGenda/ "$srcdir"/languages.py
+    install -D -m 644 -t "$pkgdir"/opt/usr/lib/reGenda/ "$srcdir"/calendar_caldav.py
+    mkdir "$pkgdir"/opt/bin/
+    ln -s /opt/usr/lib/reGenda/run.py "$pkgdir"/opt/bin/reGenda
+    cp -r "$srcdir"/python_modules/caldav* "$pkgdir"/opt/usr/lib/reGenda/
+    cp -r "$srcdir"/python_modules/icalendar* "$pkgdir"/opt/usr/lib/reGenda/
+    cp -r "$srcdir"/python_modules/rm_pySAS* "$pkgdir"/opt/usr/lib/reGenda/
+    cp -r "$srcdir"/python_modules/recurring_ical_events* "$pkgdir"/opt/usr/lib/reGenda/
+    cp -r "$srcdir"/python_modules/tzlocal* "$pkgdir"/opt/usr/lib/reGenda/
+    cp -r "$srcdir"/python_modules/vobject* "$pkgdir"/opt/usr/lib/reGenda/
+    cp -r "$srcdir"/python_modules/x_wr_timezone* "$pkgdir"/opt/usr/lib/reGenda/
+}
+
+configure() {
+    if [ ! -f /opt/etc/reGenda/config.yml ]; then
+        cp /opt/etc/reGenda/config.yml.example /opt/etc/reGenda/config.yml
+        echo -e "\033[33mYou have to config server in /opt/etc/reGenda/config.yml, see https://github.com/tenJirka/reGenda for help.\033[0;39m"
+    fi
+}
+
+postremove() {
+    rm -f /opt/usr/lib/reGenda/**/*.cpython-*.pyc
+}

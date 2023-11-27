@@ -13,6 +13,7 @@ maintainer="Jonah Weissman <jonahrweissman+toltec@gmail.com>"
 license=GPL-2.0-only
 makedepends=(build:bc build:lzop build:git build:flex build:bison build:libssl-dev)
 flags=(nostrip)
+provides=(wireguard-tools)
 
 _kernelrepo=https://github.com/remarkable/linux
 _kernelrevs=(
