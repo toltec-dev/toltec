@@ -77,7 +77,8 @@ check-version() {
     current_model="$(identify-model)"
     current_version="$(get-release-version)"
 
-    local supported_version
+    local supported_version_min
+    local supported_version_max
     local compat
 
     if ! compat="$(
@@ -89,29 +90,28 @@ check-version() {
         return 2
     fi
 
-    supported_version="$(
+    supported_version_min="$(
+        echo "$compat" | awk "/$current_model-min-os-version/{ print \$2 }"
+    )"
+    supported_version_max="$(
         echo "$compat" | awk "/$current_model-max-os-version/{ print \$2 }"
     )"
     local opkg_path=/home/root/.local/bin/opkg
-    if ! type -P opkg > /dev/null; then
-        # Fetch standalone opkg used to uninstall packages
-        if ! install-standalone-opkg "$opkg_path"; then
-            return 1
-        fi
-        if "$opkg_path" compare-versions $current_version '>>' "$supported_version" > /dev/null; then
-            echo "You’re running an unsupported OS version: $current_version"
-            echo "Toltec currently supports versions up to $supported_version"
-            echo "Please monitor Toltec releases for upcoming support"
-            return 1
-        fi
-        rm -f "$opkg_path"
-    else
-        if opkg compare-versions $current_version '>>' "$supported_version" > /dev/null; then
-            echo "You’re running an unsupported OS version: $current_version"
-            echo "Toltec currently supports versions up to $supported_version"
-            echo "Please monitor Toltec releases for upcoming support"
-            return 1
-        fi
+    local failed=false
+    if ! type -P opkg > /dev/null && ! install-standalone-opkg "$opkg_path"; then
+        return 1
+    fi
+    if opkg compare-versions $current_version '>>' "$supported_version_max" > /dev/null; then
+        failed=true
+    elif opkg compare-versions $current_version '<<' "$supported_version_min" > /dev/null; then
+        failed=true
+    fi
+    rm -f "$opkg_path"
+    if $failed; then
+        echo "You’re running an unsupported OS version: $current_version"
+        echo "Toltec currently supports versions between $supported_version_min and $supported_version_max"
+        echo "Please monitor Toltec releases for upcoming support"
+        return 1
     fi
 
     return 0
@@ -418,6 +418,10 @@ install-standalone-opkg() {
     fi
 
     chmod u+x "$opkg_path"
+    if [[ $(command -v opkg) != "$opkg_path" ]]; then
+        export PATH
+        PATH="$(dirname "$opkg_path"):$PATH)"
+    fi
 }
 
 # Remove Toltec completely
