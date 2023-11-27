@@ -98,7 +98,7 @@ check-version() {
         if ! install-standalone-opkg "$opkg_path"; then
             return 1
         fi
-        if "$opkg_path" compare-versions $current_version '>>' $supported_version > /dev/null; then
+        if "$opkg_path" compare-versions $current_version '>>' "$supported_version" > /dev/null; then
             echo "You’re running an unsupported OS version: $current_version"
             echo "Toltec currently supports versions up to $supported_version"
             echo "Please monitor Toltec releases for upcoming support"
@@ -106,7 +106,7 @@ check-version() {
         fi
         rm -f "$opkg_path"
     else
-        if opkg compare-versions $current_version '>>' $supported_version > /dev/null; then
+        if opkg compare-versions $current_version '>>' "$supported_version" > /dev/null; then
             echo "You’re running an unsupported OS version: $current_version"
             echo "Toltec currently supports versions up to $supported_version"
             echo "Please monitor Toltec releases for upcoming support"
