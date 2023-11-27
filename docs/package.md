@@ -328,6 +328,7 @@ math            | Apps to assist the user in performing mathematical tasks.
 readers         | Apps for reading and annotating documents (PDF, EPUB, …).
 screensharing   | Apps for streaming the display between the PC and tablet.
 templates       | Templates for xochitl notebooks.
+splashscreens   | Splashscreens for device startup, poweroff, suspend, etc.
 utils           | System tools and various apps.
 
 If the package does not fit into one of the existing sections, you are free to create a new one and document it here.
@@ -454,3 +455,12 @@ When upgrading a package from version A to B, the following happens:
 * `postupgrade B`, if it exists, is called from version A
 * New package files are unpacked and installed
 * `configure`, if it exists, is called from version B
+
+
+### reload-oxide-apps hook
+
+If a package contains one or more files in `/opt/etc/draft` or `/opt/usr/share/applications` the `reload-oxide-apps` method in `install-lib` will be appended to the following:
+
+* `configure`
+* `postupgrade`
+* `postremove`
