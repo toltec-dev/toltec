@@ -408,7 +408,7 @@ list-installed-ordered() {
 }
 
 # Install standalone opkg binary
-install-standalone-opkg(){
+install-standalone-opkg() {
     local opkg_path="{$1-/home/root/.local/bin/opkg}"
     local opkg_remote=https://bin.entware.net/armv7sf-k3.2/installer/opkg
 
