@@ -175,6 +175,12 @@ main() {
     # Clean up the partial install if an uncaught error happens
     trap error-cleanup ERR
 
+    if ! check-version "$toltec_branch"; then
+        if [[ "$1" != "--force" ]]; then
+            exit 1
+        fi
+    fi
+
     log "Installing Toltec and Entware"
 
     # Create bind mount from user directory to /opt
