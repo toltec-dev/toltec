@@ -328,6 +328,7 @@ math            | Apps to assist the user in performing mathematical tasks.
 readers         | Apps for reading and annotating documents (PDF, EPUB, …).
 screensharing   | Apps for streaming the display between the PC and tablet.
 templates       | Templates for xochitl notebooks.
+splashscreens   | Splashscreens for device startup, poweroff, suspend, etc.
 utils           | System tools and various apps.
 
 If the package does not fit into one of the existing sections, you are free to create a new one and document it here.
@@ -404,6 +405,21 @@ A list of packages that the current package replaces.
 Setting this field allows the current package to overwrite and take ownership of files from other packages.
 Note that the replaced packages will not be automatically uninstalled unless you also declare a conflict with them using the [`conflicts` field](#conflicts-field).
 
+#### `provides` field
+
+<table>
+    <tr>
+        <th>Required?</th>
+        <td>No, defaults to <code>()</code></th>
+    </tr>
+    <tr>
+        <th>Type</th>
+        <td>Array of strings</td>
+    </tr>
+</table>
+
+A list of virtual packages that the current package provides.
+
 #### `package()` function
 
 The `package()` function populates the `$pkgdir` directory with the files and directories that need to be installed using artifacts from the `$srcdir` directory.
@@ -439,3 +455,12 @@ When upgrading a package from version A to B, the following happens:
 * `postupgrade B`, if it exists, is called from version A
 * New package files are unpacked and installed
 * `configure`, if it exists, is called from version B
+
+
+### reload-oxide-apps hook
+
+If a package contains one or more files in `/opt/etc/draft` or `/opt/usr/share/applications` the `reload-oxide-apps` method in `install-lib` will be appended to the following:
+
+* `configure`
+* `postupgrade`
+* `postremove`
