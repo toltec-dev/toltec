@@ -5,7 +5,7 @@
 pkgnames=(puzzles)
 timestamp=2021-03-04T14:03-08:00
 maintainer="Mattéo Delabre <spam@delab.re>"
-pkgver=0.2.2-3
+pkgver=0.2.2-4
 license=MIT
 pkgdesc="Simon Tatham's Puzzle Package"
 url="https://github.com/mrichards42/remarkable_puzzles"
