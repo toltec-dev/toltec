@@ -101,9 +101,9 @@ check-version() {
     if ! type -P opkg > /dev/null && ! install-standalone-opkg "$opkg_path"; then
         return 1
     fi
-    if opkg compare-versions $current_version '>>' "$supported_version_max" > /dev/null; then
+    if opkg compare-versions "$current_version" '>>' "$supported_version_max" > /dev/null; then
         failed=true
-    elif opkg compare-versions $current_version '<<' "$supported_version_min" > /dev/null; then
+    elif opkg compare-versions "$current_version" '<<' "$supported_version_min" > /dev/null; then
         failed=true
     fi
     rm -f "$opkg_path"
