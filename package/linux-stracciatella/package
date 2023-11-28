@@ -17,11 +17,11 @@ installdepends=(kernelctl)
 image=base:v3.1
 _wireguard_version=1.0.20220627
 source=(
-    https://github.com/Etn40ff/linux-remarkable/archive/43e6ecde21e2392514c85e06f53b923ec8b7a298.tar.gz
+    https://github.com/Etn40ff/linux-remarkable/archive/c908b16d6b848964ecc9b116a024f247c290a1bf.tar.gz
     "https://git.zx2c4.com/wireguard-linux-compat/snapshot/wireguard-linux-compat-$_wireguard_version.tar.xz"
 )
 sha256sums=(
-    222504797152251f875ca30085a49a89ea621cb89881e1fad1640e312030bdf9
+    2075b9eb69172751b3e8e0d3a40d63c0c05982e79a2724ed7c3bdfc4f7988eea
     362d412693c8fe82de00283435818d5c5def7f15e2433a07a9fe99d0518f63c0
 )
 noextract=("wireguard-linux-compat-$_wireguard_version.tar.xz")
