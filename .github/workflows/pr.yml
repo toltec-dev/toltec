@@ -4,7 +4,7 @@ on:
 jobs:
     lint:
         name: Check that it conforms to the style guide
-        runs-on: ubuntu-20.04
+        runs-on: ubuntu-22.04
         steps:
             - name: Checkout the Git repository
               uses: actions/checkout@v3
@@ -16,7 +16,7 @@ jobs:
               run: make lint
     pr:
         name: Check that it builds without error
-        runs-on: ubuntu-20.04
+        runs-on: ubuntu-22.04
         needs: lint
         steps:
             - name: Checkout the Git repository
