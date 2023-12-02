@@ -5,7 +5,7 @@
 pkgnames=(doomarkable)
 pkgdesc="DOOM game"
 url=https://github.com/LinusCDE/doomarkable
-pkgver=0.4.1-1
+pkgver=0.4.1-2
 timestamp=2021-10-31T16:15Z
 section="games"
 maintainer="Linus K. <linus@cosmos-ink.net>"
