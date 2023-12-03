@@ -100,13 +100,11 @@ declare -p
         "PATH": os.environ["PATH"],
     }
 
-    declarations_subshell = (
-        subprocess.run(  # pylint:disable=subprocess-run-check
-            ["/usr/bin/env", "bash"],
-            input=src.encode(),
-            capture_output=True,
-            env=env,
-        )
+    declarations_subshell = subprocess.run(  # pylint:disable=subprocess-run-check
+        ["/usr/bin/env", "bash"],
+        input=src.encode(),
+        capture_output=True,
+        env=env,
     )
 
     if declarations_subshell.returncode == 2:
@@ -131,12 +129,12 @@ declare -p
     functions = {}
 
     while True:
-        token = lexer.get_token()
+        token = lexer.get_token() or ""
 
         if token == lexer.eof:
             break
 
-        next_token = lexer.get_token()
+        next_token = lexer.get_token() or ""
 
         if token == "declare" and next_token[0] == "-":
             lexer.push_token(next_token)
@@ -226,7 +224,7 @@ def _parse_indexed(lexer: shlex.shlex) -> IndexedArray:
             break
 
         assert token == "["
-        index = int(lexer.get_token())
+        index = int(lexer.get_token() or "")
         assert lexer.get_token() == "]"
         assert lexer.get_token() == "="
         string_token = lexer.get_token() or ""
@@ -259,7 +257,7 @@ def _generate_indexed(array: IndexedArray) -> str:
 def _parse_assoc(lexer: shlex.shlex) -> AssociativeArray:
     """Parse an associative Bash array."""
     assert lexer.get_token() == "("
-    result = {}
+    result: AssociativeArray = {}
 
     while True:
         token = lexer.get_token()
@@ -270,6 +268,7 @@ def _parse_assoc(lexer: shlex.shlex) -> AssociativeArray:
 
         assert token == "["
         key = lexer.get_token()
+        assert key is not None
         assert lexer.get_token() == "]"
         assert lexer.get_token() == "="
         string_token = lexer.get_token() or ""
@@ -298,14 +297,14 @@ def _parse_var(lexer: shlex.shlex) -> Tuple[str, Optional[Any]]:
     """Parse a variable declaration."""
     flags_token = lexer.get_token()
 
-    if flags_token != "--":
+    if flags_token != "--" and flags_token is not None:
         var_flags = set(flags_token[1:])
     else:
         var_flags = set()
 
-    var_name = lexer.get_token()
+    var_name: str = lexer.get_token() or ""
     var_value: Optional[Any] = None
-    lookahead = lexer.get_token()
+    lookahead = lexer.get_token() or ""
 
     if lookahead == "=":
         if "a" in var_flags:
