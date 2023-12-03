@@ -362,7 +362,7 @@ identify-support-version() {
     local opkg_path=/home/root/.local/bin/opkg
     if ! type -P opkg > /dev/null && ! install-standalone-opkg "$opkg_path"; then
         echo "unknown"
-        return;
+        return
     fi
     local current_version
     current_version="$(get-release-version)"
