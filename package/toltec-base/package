@@ -2,20 +2,20 @@
 # Copyright (c) 2021 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
-archs=(rmall rmallos1 rmallos2 rm1 rm1os2 rm1os3 rm2 rm2os2 rm2os3)
+archs=(rmall rmallos2 rmallos3 rm1 rm1os2 rm1os3 rm2 rm2os2 rm2os3)
 pkgnames=(toltec-base)
 pkgdesc="Metapackage defining the base set of packages in a Toltec install"
 url=https://toltec-dev.org/
 pkgver=1.3-2
-timestamp=2023-05-08T19:31Z
+timestamp=2023-12-03T04:51:58Z
 section="utils"
 maintainer="Eeems <eeems@eeems.email>"
 license=MIT
 installdepends=(toltec-bootstrap toltec-completion)
 installdepends_rm1os2=(open-remarkable-shutdown)
-installdepends_rm1os3=(open-remarkable-shutdown)
+installdepends_rm1os3=(open-remarkable-shutdown toltec-deletions)
 installdepends_rm2os2=(rm2-suspend-fix)
-installdepends_rm2os3=(rm2-suspend-fix)
+installdepends_rm2os3=(rm2-suspend-fix toltec-deletions)
 
 source=()
 sha256sums=()
