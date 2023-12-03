@@ -2,7 +2,7 @@
 # Copyright (c) 2021 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
-archs=(rm1os2 rm2os2 rm1os3 rm2os3)
+archs=(rmall rmallos1 rmallos2 rm1 rm1os2 rm1os3 rm2 rm2os2 rm2os3)
 pkgnames=(toltec-base)
 pkgdesc="Metapackage defining the base set of packages in a Toltec install"
 url=https://toltec-dev.org/
@@ -35,10 +35,10 @@ configure() {
         echo "Disabling automatic update"
         systemctl disable --now update-engine
     fi
-    if [[ "$arch" == "rm1os2" ]] || [[ "$arch" == "rm1os3" ]] && ! is-masked sys-subsystem-net-devices-usb1.device; then
+    if [[ "$arch" == "rm1" ]] || [[ "$arch" == "rm1os2" ]] || [[ "$arch" == "rm1os3" ]] && ! is-masked sys-subsystem-net-devices-usb1.device; then
         echo "Disabling usb1 network device to avoid long boots"
         systemctl mask sys-subsystem-net-devices-usb1.device
-    elif [[ "$arch" == "rm2os2" ]] || [[ "$arch" == "rm2os3" ]] && is-masked sys-subsystem-net-devices-usb1.device; then
+    elif [[ "$arch" == "rm2" ]] || [[ "$arch" == "rm2os2" ]] || [[ "$arch" == "rm2os3" ]] && is-masked sys-subsystem-net-devices-usb1.device; then
         echo "Enabling usb1 network device to ensure usb SSH works"
         systemctl unmask sys-subsystem-net-devices-usb1.device
     fi
