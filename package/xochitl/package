@@ -121,4 +121,7 @@ preupgrade() {
     if is-enabled manual-sync.service; then
         systemctl disable manual-sync.service
     fi
+    if is-active manual-sync.service; then
+        systemctl stop manual-sync.service
+    fi
 }
