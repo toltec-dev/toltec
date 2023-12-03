@@ -351,6 +351,28 @@ get-branch() {
     awk "$awk_get_branch" "$opkg_conf_dir/15-toltec.conf"
 }
 
+# Identify which toltec version this should be limited to
+#
+# Output: One of the following strings
+#
+# 2.x - 2.x version
+# 3.x - 3.x version
+# unknown
+identify-support-version() {
+    local opkg_path=/home/root/.local/bin/opkg
+    if ! type -P opkg > /dev/null && ! install-standalone-opkg "$opkg_path"; then
+        exit 1
+    fi
+    local current_version
+    current_version="$(get-release-version)"
+    if opkg compare-versions "$current_version" '<<' "3.0" > /dev/null; then
+        echo "2.x"
+    elif opkg compare-versions "$current_version" '<<' "4.0" > /dev/null; then
+        echo "3.x"
+    fi
+    rm -f "$opkg_path"
+}
+
 # Set the Toltec branch for this installation
 # (generate-opkg-conf must be run afterwards to rebuild the main config file)
 #
@@ -360,10 +382,16 @@ get-branch() {
 switch-branch() {
     local branch="${1:-stable}"
     local model
+    local version
     model="$(identify-model)"
+    version="$(identify-support-version)"
 
     if [[ $model = "unknown" ]]; then
         echo "You’re running an unsupported or unrecognised device"
+        exit 1
+    fi
+    if [[ $version = "unknown" ]]; then
+        echo "You're running an unsupported or unrecognised OS version"
         exit 1
     fi
 
@@ -379,6 +407,10 @@ arch rmall 200
 src/gz toltec-rmall $toltec_srv_root/$branch/rmall
 arch $model 250
 src/gz toltec-$model $toltec_srv_root/$branch/$model
+arch rmall-$version 260
+src/gz toltec-$model $toltec_srv_root/$branch/rmall-$version
+arch $model-$version 270
+src/gz toltec-$model $toltec_srv_root/$branch/$model-$version
 CONF
 }
 
