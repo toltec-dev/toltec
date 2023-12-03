@@ -2,11 +2,11 @@
 # Copyright (c) 2021 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
-archs=(rm1 rm2)
+archs=(rm1-2.x rm2-2.x)
 pkgnames=(ddvk-hacks)
 pkgdesc="Enhance Xochitl with additional features"
 url=https://github.com/ddvk/remarkable-hacks
-pkgver=39.01-1
+pkgver=39.01-2
 timestamp=2022-11-09T18:31:51Z
 section="readers"
 maintainer="Mattéo Delabre <spam@delab.re>"
@@ -24,7 +24,7 @@ _old_backup_path="$_backup_path.old"
 _patched_path="$_work_dir/xochitl.patched"
 
 package() {
-    if [[ $arch = rm1 ]]; then
+    if [[ $arch = rm1-2.x ]]; then
         install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/26171_rm1/patch_19.1.02
         install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/26275_rm1/patch_20.1.03
         install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/27051_rm1/patch_21.1.04
@@ -43,7 +43,7 @@ package() {
         install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/21431047_rm1/patch_37.1.01
         install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/21501067_rm1/patch_38.1.03
         install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/21511189_rm1/patch_39.1.01
-    elif [[ $arch = rm2 ]]; then
+    elif [[ $arch = rm2-2.x ]]; then
         install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/26171_rm2/patch_19.2.02
         install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/26275_rm2/patch_20.2.03
         install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/27051_rm2/patch_21.2.05
@@ -75,7 +75,7 @@ configure() {
     local device
     local original_hash
     local xochitl_version
-    if [[ $arch = rm1 ]]; then
+    if [[ $arch = rm1-2.x ]]; then
         device="reMarkable 1"
         case "$build_date" in
             "20221026103859")
@@ -176,7 +176,7 @@ configure() {
                 exit 1
                 ;;
         esac
-    elif [[ $arch = rm2 ]]; then
+    elif [[ $arch = rm2-2.x ]]; then
         device="reMarkable 2"
         case "$build_date" in
             "20221026104022")

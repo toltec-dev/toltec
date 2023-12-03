@@ -38,11 +38,17 @@ You can also declare custom variables to reduce repetition but make sure to pref
 The list of devices that are compatible with this package.
 The following values are accepted:
 
-Name    | Meaning
---------|-------------------------------------------------------------------------
-`rmall` | Packages which work on all reMarkable devices without modification.
-`rm1`   | Packages requiring reMarkable 1-specific resources or compilation flags.
-`rm2`   | Packages requiring reMarkable 2-specific resources or compilation flags.
+Name        | Meaning
+------------|-------------------------------------------------------------------------
+`rmall`     | Packages which work on all reMarkable devices without modification.
+`rm1`       | Packages requiring reMarkable 1-specific resources or compilation flags.
+`rm2`       | Packages requiring reMarkable 2-specific resources or compilation flags.
+`rmall-2.x` | Packages which work on all reMarkable devices without modification, but only on the 2.x series of operating system.
+`rm1-2.x`   | Packages requiring reMarkable 1-specific resources or compilation flags, but only on the 2.x series of operating system.
+`rm2-2.x`   | Packages requiring reMarkable 2-specific resources or compilation flags, but only on the 2.x series of operating system.
+`rmall-3.x` | Packages which work on all reMarkable devices without modification, but only on the 3.x series of operating system.
+`rm1-3.x`   | Packages requiring reMarkable 1-specific resources or compilation flags, but only on the 3.x series of operating system.
+`rm2-3.x`   | Packages requiring reMarkable 2-specific resources or compilation flags, but only on the 3.x series of operating system.
 
 For example, use `archs=(rm1)` for a package that only works on reMarkable 1, or `archs=(rm1 rm2)` for a package that works both on reMarkable 1 and reMarkable 2 but needs different dependencies or compilation flags for each of those.
 

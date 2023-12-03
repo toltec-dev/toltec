@@ -308,16 +308,7 @@ source file '{source.url}', got {req.status_code}"
                 )
             )
 
-            if recipe.arch in ("rm1", "rm2"):
-                pre_script.extend(
-                    (
-                        f'echo -n "arch {recipe.arch} 250',
-                        f"src/gz toltec-{recipe.arch} file:///repo/{recipe.arch}",
-                        f'" >> "{opkg_conf_path}"',
-                    )
-                )
-
-            if recipe.arch in ("2.x", "3.x"):
+            if recipe.arch != "rmall":
                 pre_script.extend(
                     (
                         f'echo -n "arch {recipe.arch} 250',

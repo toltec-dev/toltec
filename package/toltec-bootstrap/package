@@ -5,7 +5,7 @@
 pkgnames=(toltec-bootstrap)
 pkgdesc="Manage your Toltec install"
 url=https://toltec-dev.org/
-pkgver=0.3.0-1
+pkgver=0.4.0-1
 timestamp=2023-11-27T00:34Z
 section="utils"
 maintainer="Eeems <eeems@eeems.email>"
@@ -62,5 +62,19 @@ configure() {
             echo "! and \`opkg upgrade\` once more to complete it."
             echo
         fi
+    fi
+}
+
+postupgrade() {
+    # shellcheck source=toltecctl
+    source /home/root/.local/bin/toltecctl
+    set-path
+    switch-branch "$(get-branch)"
+    echo "Your Opkg configuration has been upgraded"
+    if generate-opkg-conf; then
+        echo
+        echo "! The upgrade is not finished! Please run \`opkg update\`"
+        echo "! and \`opkg upgrade\` once more to complete it."
+        echo
     fi
 }

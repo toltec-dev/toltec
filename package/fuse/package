@@ -2,7 +2,7 @@
 # Copyright (c) 2020 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
-archs=(rm1 rm2)
+archs=(rm1-2.x rm2-2.x)
 pkgnames=(fuse)
 pkgdesc="FUSE (Filesystem in Userspace) Kernel Module"
 url=https://github.com/libfuse/libfuse
@@ -51,14 +51,14 @@ build() {
 }
 
 package() {
-    if [[ $arch = rm1 ]]; then
+    if [[ $arch = rm1-2.x ]]; then
         mkdir -p "$pkgdir/lib/modules"
         cp -r "$srcdir/pkg"/* "$pkgdir/lib/modules"
     fi
 }
 
 configure() {
-    if [[ $arch = rm1 ]]; then
+    if [[ $arch = rm1-2.x ]]; then
         # Regenerate /lib/modules/[ver]/modules.devname to request the
         # creation of /dev/fuse used for on-demand loading of fuse
         depmod -a
@@ -72,7 +72,7 @@ configure() {
 }
 
 postremove() {
-    if [[ $arch = rm1 ]]; then
+    if [[ $arch = rm1-2.x ]]; then
         echo 'Fuse (Kernel Module) has been removed.'
         echo 'The kernel module will remain loaded until you reboot, or you can attempt'
         echo 'to manually remove it by running "modprobe -r fuse".'
@@ -81,7 +81,7 @@ postremove() {
 }
 
 postupgrade() {
-    if [[ $arch = rm1 ]]; then
+    if [[ $arch = rm1-2.x ]]; then
         echo 'Fuse (Kernel Module) has been upgraded.'
         echo 'The old kernel module will remain loaded until you reboot, or you can'
         echo 'attempt to manually remove it by running "modprobe -r fuse".'
