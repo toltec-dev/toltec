@@ -100,13 +100,11 @@ declare -p
         "PATH": os.environ["PATH"],
     }
 
-    declarations_subshell = (
-        subprocess.run(  # pylint:disable=subprocess-run-check
-            ["/usr/bin/env", "bash"],
-            input=src.encode(),
-            capture_output=True,
-            env=env,
-        )
+    declarations_subshell = subprocess.run(  # pylint:disable=subprocess-run-check
+        ["/usr/bin/env", "bash"],
+        input=src.encode(),
+        capture_output=True,
+        env=env,
     )
 
     if declarations_subshell.returncode == 2:
@@ -131,9 +129,9 @@ declare -p
     functions = {}
 
     while True:
-        token = lexer.get_token() or ""
+        token = lexer.get_token()
 
-        if token == lexer.eof:
+        if token == lexer.eof or token is None:
             break
 
         next_token = lexer.get_token() or ""
