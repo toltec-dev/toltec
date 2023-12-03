@@ -169,7 +169,9 @@ that directory, or [k]eep it (not recommended)?",
         self._build(recipe, src_dir)
         self._postprocessing(recipe, src_dir)
 
-        for package in packages if packages is not None else recipe.packages.values():
+        for package in (
+            packages if packages is not None else recipe.packages.values()
+        ):
             self.context["package"] = package.name
             pkg_dir = os.path.join(base_pkg_dir, package.name)
             os.makedirs(pkg_dir, exist_ok=True)
@@ -195,7 +197,9 @@ that directory, or [k]eep it (not recommended)?",
 
             if self.URL_REGEX.match(source.url) is None:
                 # Get source file from the recipe’s directory
-                shutil.copy2(os.path.join(recipe.parent.path, source.url), local_path)
+                shutil.copy2(
+                    os.path.join(recipe.parent.path, source.url), local_path
+                )
             else:
                 # Fetch source file from the network
                 req = requests.get(source.url, timeout=5)
@@ -398,7 +402,8 @@ source file '{source.url}', got {req.status_code}"
                 script.append(
                     "strip --strip-all -- "
                     + " ".join(
-                        docker_file_path(file_path) for file_path in cand.strip_x86
+                        docker_file_path(file_path)
+                        for file_path in cand.strip_x86
                     )
                 )
 
@@ -414,7 +419,8 @@ source file '{source.url}', got {req.status_code}"
                 script.append(
                     '"${CROSS_COMPILE}strip" --strip-all -- '
                     + " ".join(
-                        docker_file_path(file_path) for file_path in cand.strip_arm
+                        docker_file_path(file_path)
+                        for file_path in cand.strip_arm
                     )
                 )
 
@@ -438,7 +444,8 @@ source file '{source.url}', got {req.status_code}"
                 + [
                     "patchelf --add-needed librm2fb_client.so.1 "
                     + " ".join(
-                        docker_file_path(file_path) for file_path in cand.patch_rm2fb
+                        docker_file_path(file_path)
+                        for file_path in cand.patch_rm2fb
                     )
                 ]
             )
@@ -501,7 +508,9 @@ source file '{source.url}', got {req.status_code}"
                                 and rodata.data().find(b"/dev/fb0") != -1
                             ):
                                 patch_rm2fb.append(file_path)
-                        elif info.get_machine_arch() in ("x86", "x64") and symtab:
+                        elif (
+                            info.get_machine_arch() in ("x86", "x64") and symtab
+                        ):
                             strip_x86.append(file_path)
                 except ELFError:
                     # Ignore non-ELF files
@@ -535,7 +544,9 @@ source file '{source.url}', got {req.status_code}"
         for filename in util.list_tree(pkg_dir):
             self.adapter.debug(
                 " - %s",
-                os.path.normpath(os.path.join("/", os.path.relpath(filename, pkg_dir))),
+                os.path.normpath(
+                    os.path.join("/", os.path.relpath(filename, pkg_dir))
+                ),
             )
 
     def _archive(self, package: Package, pkg_dir: str) -> None:
