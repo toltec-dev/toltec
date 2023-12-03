@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Copyright (c) 2021 The Toltec Contributors
 # SPDX-License-Identifier: MIT
-archs=(rm1-2.x rm2-2.x)
+archs=(rm1os2 rm2os2)
 pkgnames=(wireguard)
 pkgdesc="Fast, modern, secure VPN tunnel"
 url=https://www.wireguard.com

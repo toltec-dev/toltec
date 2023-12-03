@@ -355,20 +355,25 @@ get-branch() {
 #
 # Output: One of the following strings
 #
-# 2.x - 2.x version
-# 3.x - 3.x version
+# os2 - 2.x OS version
+# os3 - 3.x OS version
 # unknown
 identify-support-version() {
     local opkg_path=/home/root/.local/bin/opkg
     if ! type -P opkg > /dev/null && ! install-standalone-opkg "$opkg_path"; then
-        exit 1
+        echo "unknown"
+        return;
     fi
     local current_version
     current_version="$(get-release-version)"
-    if opkg compare-versions "$current_version" '<<' "3.0" > /dev/null; then
-        echo "2.x"
+    if opkg compare-versions "$current_version" '<<' "2.0" > /dev/null; then
+        echo "unknown"
+    elif opkg compare-versions "$current_version" '<<' "3.0" > /dev/null; then
+        echo "os2"
     elif opkg compare-versions "$current_version" '<<' "4.0" > /dev/null; then
-        echo "3.x"
+        echo "os3"
+    else
+        echo "unknown"
     fi
     rm -f "$opkg_path"
 }
