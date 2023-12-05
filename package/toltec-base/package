@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+# Copyright (c) 2021 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+archs=(rm1 rm2)
+pkgnames=(toltec-base)
+pkgdesc="Metapackage defining the base set of packages in a Toltec install"
+url=https://toltec-dev.org/
+pkgver=1.2-2
+timestamp=2023-05-08T19:31Z
+section="utils"
+maintainer="Eeems <eeems@eeems.email>"
+license=MIT
+installdepends=(toltec-bootstrap toltec-completion)
+installdepends_rm1=(open-remarkable-shutdown)
+installdepends_rm2=(rm2-suspend-fix)
+
+source=()
+sha256sums=()
+
+package() {
+    touch "$srcdir"/emptyfile
+    install -D -m 666 -t "$pkgdir"/usr/share/toltec/reenable.d/toltec-base "$srcdir"/emptyfile
+}
+
+configure() {
+    ln -sf /opt/etc/profile /etc/profile.d/toltec.sh
+    # shellcheck disable=SC2016
+    sed -i \
+        -e 's|^export TERM=xterm|if \[ -z "$TERM" \];then export TERM=xterm;fi|' \
+        /opt/etc/profile
+    if is-enabled "update-engine.service"; then
+        echo "Disabling automatic update"
+        systemctl disable --now update-engine
+    fi
+    if [[ "$arch" == "rm1" ]] && ! is-masked sys-subsystem-net-devices-usb1.device; then
+        echo "Disabling usb1 network device to avoid long boots"
+        systemctl mask sys-subsystem-net-devices-usb1.device
+    elif [[ "$arch" == "rm2" ]] && is-masked sys-subsystem-net-devices-usb1.device; then
+        echo "Enabling usb1 network device to ensure usb SSH works"
+        systemctl unmask sys-subsystem-net-devices-usb1.device
+    fi
+}
+
+postremove() {
+    if is-masked sys-subsystem-net-devices-usb1.device; then
+        systemctl unmask sys-subsystem-net-devices-usb1.device
+    fi
+    if ! is-enabled "update-engine.service"; then
+        systemctl enable update-engine
+    fi
+}

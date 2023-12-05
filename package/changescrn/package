@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+# Copyright (c) 2020 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgnames=(changescrn)
+pkgdesc="Change sleep/suspend/poweroff/reboot screens"
+url=https://github.com/pr0fsmith/rMscreens/
+pkgver=1.0.0-2
+timestamp=2022-03-15T01:28:33Z
+section="utils"
+maintainer="pr0fsmith <evon_smith@yahoo.ca>"
+license=GPL-3.0
+
+source=(https://github.com/pr0fsmith/rMscreens/archive/6d04e97b3997873f0f8b1bd50283ae7ed9be7abd.zip)
+sha256sums=(3c2e8b0952d848d7326c0a4ce45da625dd7fd0fbc6b564a2d40c3b97015138e3)
+
+package() {
+    install -Dm755 "$srcdir"/changescrn "$pkgdir/opt/bin/changescrn"
+}
+
+configure() {
+    if [ ! -d /opt/usr/share/backupscrns ] || [ -z "$(ls -A /opt/usr/share/backupscrns)" ]; then
+        changescrn -b
+    fi
+}
+
+preremove() {
+    changescrn -r all
+}

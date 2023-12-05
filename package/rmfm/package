@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+# Copyright (c) 2020 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgnames=(rmfm)
+pkgdesc="Bare-bones file manager using Node.js and sas"
+url="https://forgejo.sny.sh/sun/rmFM"
+pkgver=1.5.0-2
+timestamp=2023-08-08T22:19:23+02:00
+section=utils
+maintainer="Sunny <sunny@sny.sh>"
+license=Unlicense
+installdepends=(node simple)
+
+source=(
+    https://forgejo.sny.sh/sun/rmFM/archive/1.5.0.zip
+    path_fix.patch
+)
+sha256sums=(
+    515cc1843bf61f628c3a0b2b2dcb3256a0182352c6b491585fd52cf96a554b26
+    SKIP
+)
+
+prepare() {
+    # Assume node to be in /opt/bin
+    # This is a temporary fix for not working in remux
+    patch -d "$srcdir" < "$srcdir"/path_fix.patch
+}
+
+package() {
+    install -D -m 755 "$srcdir"/rmfm "$pkgdir"/opt/bin/rmfm
+    install -D -m 644 "$srcdir"/rmfm.draft "$pkgdir"/opt/etc/draft/rmfm.draft
+    install -D -m 644 "$srcdir"/rmfm.png "$pkgdir"/opt/etc/draft/icons/rmfm.png
+}

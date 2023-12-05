@@ -1,0 +1,79 @@
+#!/usr/bin/env bash
+# Copyright (c) 2022 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+archs=(rm1 rm2)
+pkgnames=(linux-stracciatella)
+pkgdesc="RemarkableAS's vanilla kernel with a few extra flakes"
+url=https://github.com/Etn40ff/linux-remarkable
+pkgver=5.4.70-3
+timestamp=2023-09-23T00:12:00Z
+section="kernel"
+maintainer="Salvatore Stella <etn45p4m@gmail.com>"
+makedepends=(build:flex build:bison build:libssl-dev build:bc build:lzop build:libgmp-dev build:libmpc-dev build:kmod)
+license=GPL-2.0-only
+flags=(nostrip)
+installdepends=(kernelctl)
+image=base:v3.1
+_wireguard_version=1.0.20220627
+source=(
+    https://github.com/Etn40ff/linux-remarkable/archive/c908b16d6b848964ecc9b116a024f247c290a1bf.tar.gz
+    "https://git.zx2c4.com/wireguard-linux-compat/snapshot/wireguard-linux-compat-$_wireguard_version.tar.xz"
+)
+sha256sums=(
+    2075b9eb69172751b3e8e0d3a40d63c0c05982e79a2724ed7c3bdfc4f7988eea
+    362d412693c8fe82de00283435818d5c5def7f15e2433a07a9fe99d0518f63c0
+)
+noextract=("wireguard-linux-compat-$_wireguard_version.tar.xz")
+
+prepare() {
+    # Jury-rig the wireguard module into sources and enable it
+    mkdir "$srcdir/net/wireguard"
+    bsdtar --strip-components 2 -xJ -C "$srcdir/net/wireguard" \
+        -f "$srcdir/wireguard-linux-compat-$_wireguard_version.tar.xz" \
+        "wireguard-linux-compat-$_wireguard_version/src"
+    sed -i "/^obj-\\\$(CONFIG_NETFILTER).*+=/a obj-\$(CONFIG_WIREGUARD) += wireguard/" "$srcdir/net/Makefile"
+    sed -i "/^if INET\$/a source \"net/wireguard/Kconfig\"" "$srcdir/net/Kconfig"
+    echo "CONFIG_WIREGUARD=m" >> "$srcdir/arch/arm/configs/zero-gravitas_defconfig"
+    echo "CONFIG_WIREGUARD=m" >> "$srcdir/arch/arm/configs/zero-sugar_defconfig"
+}
+
+build() {
+    if [[ $arch = rm1 ]]; then
+        ARCH=arm make zero-gravitas_defconfig
+    elif [[ $arch = rm2 ]]; then
+        ARCH=arm make zero-sugar_defconfig
+    fi
+    ARCH=arm make -j8
+}
+
+package() {
+    # Prepare files for the kernel archive
+    local staging="$srcdir"/staging
+    mkdir -p "$staging/boot"
+
+    cp --no-dereference {"$srcdir"/arch/arm,"$staging"}/boot/zImage
+    if [[ $arch = rm1 ]]; then
+        cp --no-dereference "$srcdir"/arch/arm/boot/dts/zero-gravitas.dtb "$staging"/boot/zero-gravitas.dtb
+    elif [[ $arch = rm2 ]]; then
+        cp --no-dereference "$srcdir"/arch/arm/boot/dts/zero-sugar.dtb "$staging"/boot/zero-sugar.dtb
+    fi
+
+    ARCH=arm make -C "$srcdir" modules_install INSTALL_MOD_PATH="$staging"
+    rm "$staging"/lib/modules/*/{source,build}
+
+    # Create the kernel archive
+    local archive="stracciatella-${pkgver%-*}.tar.bz2"
+    install -d "$pkgdir"/opt/usr/share/kernelctl
+    (cd "$staging" && tar --owner root:0 --group root:0 --mtime=$timestamp \
+        -cjf "$pkgdir"/opt/usr/share/kernelctl/"$archive" boot/* lib/modules/*)
+}
+
+configure() {
+    if [[ $(< /etc/version) -le 20210709090000 ]]; then
+        echo "WARNING: Your system is too old; this kernel will most likely not work unless you add the appropriate firmware blobs to /lib/firmware."
+        echo "Please consider updating your system instead."
+    fi
+    echo "The new kernel files have been copied, but not installed."
+    echo "Please use kernelctl to select the kernel to boot."
+}

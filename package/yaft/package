@@ -1,22 +1,31 @@
 #!/usr/bin/env bash
-# Copyright (c) 2020 The Toltec Contributors
+# Copyright (c) 2022 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
 pkgnames=(yaft)
 pkgdesc="Yet another framebuffer terminal"
 url=https://github.com/timower/rM2-stuff/tree/master/apps/yaft
-pkgver=0.0.4-4
-timestamp=2021-04-30T10:42Z
+_tag=0.0.10
+pkgver=${_tag}-2
+timestamp=2023-08-12T14:31Z
 maintainer="Mattéo Delabre <spam@delab.re>"
 license=GPL-3.0
 section="admin"
-image=base:v2.1
-installdepends=(display)
+image=base:v2.3
+installdepends=(display terminfo)
 
-source=(https://github.com/timower/rM2-stuff/archive/refs/tags/v0.0.4.tar.gz)
-sha256sums=(dee471ac19ea43ba741f826c9a0a17d7a01bda6472043d400fbcab6fad1931fe)
+source=(
+    "https://github.com/timower/rM2-stuff/archive/refs/tags/v${_tag}.zip"
+    input.patch
+)
+
+sha256sums=(
+    1cd4741a93cde6bd545215eb303e51219fc9901cba1c28b6206b1b5e0871a7b5
+    SKIP
+)
 
 build() {
+    patch -u libs/rMlib/Device.cpp -i input.patch
     mkdir build
     mkdir install
     cd build
@@ -24,6 +33,8 @@ build() {
         -DCMAKE_INSTALL_PREFIX="../install" -DCMAKE_BUILD_TYPE=Release ..
     cd apps/yaft
     make
+    make install
+    cd ../../libs/libYaft
     make install
 }
 

@@ -33,13 +33,7 @@ toltec_remote="${toltec_remote:-https://toltec-dev.org/$toltec_branch/rmall}"
 
 # Remove all temporary files
 cleanup() {
-    if [[ -e $wget_path ]]; then
-        rm "$wget_path"
-    fi
-
-    if [[ -e $opkg_path ]]; then
-        rm "$opkg_path"
-    fi
+    rm -f "$wget_path" "$opkg_path"
 }
 
 # Remove unfinished installation after unexpected error
@@ -62,6 +56,11 @@ error-cleanup() {
     rm -rf "$toltec_dest" "$toltec_src" "$toltecctl_path"
 }
 
+# Check that a directory exists and is not empty
+exists-non-empty() {
+    [[ -d $1 ]] && files="$(ls -A -- "$1")" && [[ -n $files ]]
+}
+
 # Check whether a Toltec install already exists or if conflicting files
 # remain from previous installs
 check-installed() {
@@ -69,7 +68,7 @@ check-installed() {
         return
     fi
 
-    if [[ -d /opt ]] && files="$(ls -A -- "/opt")" && [[ -n $files ]]; then
+    if exists-non-empty /opt || exists-non-empty /home/root/.entware; then
         log "Toltec is already installed or partially installed"
         log "To re-enable Toltec after a system upgrade, run 'toltecctl reenable'"
         log "To reinstall Toltec, run 'toltecctl uninstall' first"
@@ -80,24 +79,28 @@ check-installed() {
 # Install a local wget binary which supports TLS (the original one
 # installed on the reMarkable does not) in the PATH
 wget-bootstrap() {
-    log "Fetching secure wget"
-    local wget_remote=https://toltec-dev.org/thirdparty/bin/wget-v1.21.1
+    local wget_remote=http://toltec-dev.org/thirdparty/bin/wget-v1.21.1
     local wget_checksum=8798fcdabbe560722a02f95b30385926e4452e2c98c15c2c217583eaa0db30fc
 
     if [[ ! -x $wget_path ]]; then
         if [[ -e $wget_path ]]; then
             log ERROR "'$wget_path' exists, but is not executable"
-            error-cleanup
+            log ERROR "You may need to delete it and try again."
             exit 1
         fi
 
+        log "Fetching secure wget"
+
         # Download and compare to hash
         mkdir -p "$(dirname "$wget_path")"
-        wget "$wget_remote" --output-document "$wget_path" 2> /dev/null
+
+        if ! wget -q "$wget_remote" --output-document "$wget_path"; then
+            log ERROR "Could not fetch wget, make sure you have a stable Wi-Fi connection"
+            exit 1
+        fi
 
         if ! sha256sum -c <(echo "$wget_checksum  $wget_path") > /dev/null 2>&1; then
             log ERROR "Invalid checksum for the local wget binary"
-            error-cleanup
             exit 1
         fi
 
@@ -120,12 +123,15 @@ opkg-bootstrap() {
     if [[ ! -x $opkg_path ]]; then
         if [[ -e $opkg_path ]]; then
             log ERROR "'$opkg_path' exists, but is not executable"
-            error-cleanup
+            log ERROR "You may need to delete it and try again."
             exit 1
         fi
 
-        # Install standalone Opkg from Entware
-        wget --no-verbose "$entware_remote/opkg" -O "$opkg_path"
+        if ! wget --no-verbose "$entware_remote/opkg" --output-document "$opkg_path"; then
+            log ERROR "Could not fetch opkg, make sure you have a stable Wi-Fi connection"
+            exit 1
+        fi
+
         chmod 755 "$opkg_path"
     fi
 
@@ -142,13 +148,15 @@ main() {
     # (otherwise it could get wiped out by the error-cleanup hook below)
     check-installed
 
-    trap cleanup EXIT
-    trap error-cleanup ERR
-
+    # Fetch temporary wget and opkg binaries used for bootstrapping
     wget-bootstrap
     opkg-bootstrap
 
-    # Download and install the latest toltec-bootstrap package
+    # Remove those binaries in any case when the script exits
+    trap cleanup EXIT
+
+    # Download and install the latest toltec-bootstrap package (without
+    # its dependencies) to use toltecctl definitions
     local pkg_basename
     pkg_basename="$(
         wget --quiet "$toltec_remote/Packages" -O - \
@@ -157,11 +165,15 @@ main() {
     local pkg_filename="/tmp/$pkg_basename"
     wget --no-verbose "$toltec_remote/$pkg_basename" -O "$pkg_filename"
 
-    opkg install --add-arch rmall:200 --offline-root / "$pkg_filename"
+    opkg install --add-arch rmall:200 --offline-root / --force-depends \
+        "$pkg_filename" > /dev/null 2>&1
     rm "$pkg_filename"
 
     # shellcheck source=../../package/toltec-bootstrap/toltecctl
     source /home/root/.local/bin/toltecctl
+
+    # Clean up the partial install if an uncaught error happens
+    trap error-cleanup ERR
 
     log "Installing Toltec and Entware"
 
@@ -214,7 +226,7 @@ main() {
     fi
 
     # Install base Toltec packages
-    local additional_packages=(toltec-completion)
+    local additional_packages=(toltec-base)
 
     [[ ! -d /opt/etc/ssl/certs ]] && additional_packages+=(ca-certificates)
     [[ ! -f /opt/bin/wget ]] && additional_packages+=(wget-ssl)
@@ -227,8 +239,8 @@ main() {
         opkg install "$@"
     fi
 
-    # Reinstall toltec-bootstrap to mark toltecctl file as managed
-    # and set the user’s PATH in configure
+    # Reinstall toltec-bootstrap to mark its files as managed,
+    # to install its dependencies, and to set the user’s PATH
     opkg install toltec-bootstrap
     log "After each system upgrade, run 'toltecctl reenable' to re-enable Toltec"
 }

@@ -6,23 +6,29 @@
     "flags": ["nosplash", "chroot"],
     "permissions": ["power"],
     "directories": [
+        "/dev/shm",
         "/etc",
         "/home/root",
+        "/opt/etc",
+        "/run/dbus",
+        "/run/lock",
+        "/run/systemd",
+        "/run/systemd/resolve",
+        "/run/udev",
         "/tmp/runtime-root",
         "/usr/share",
-        "/run/udev",
-        "/run/dbus",
-        "/run/systemd/resolve",
-        "/var/lib/dbus",
+        "/usr/share/remarkable/templates",
+        "/usr/local/share/ca-certificates",
         "/var/cache/fontconfig",
-        "/dev/shm",
-        "/opt/etc/xochitl.env.d"
+        "/var/lib/dbus",
+        "/var/volatile/tmp"
     ],
     "environment": {
-        "QMLSCENE_DEVICE": "epaper",
-        "QT_QPA_PLATFORM": "epaper",
-        "QT_QPA_EVDEV_TOUCHSCREEN_PARAMETERS": "rotate=180",
         "HOME": "/home/root",
+        "QMLSCENE_DEVICE": "epaper",
+        "QT_QPA_EVDEV_TOUCHSCREEN_PARAMETERS": "rotate=180",
+        "QT_QPA_PLATFORM": "epaper",
+        "SYSTEMD_IGNORE_CHROOT": "true",
         "XDG_RUNTIME_DIR": "/tmp/runtime-root"
     }
 }

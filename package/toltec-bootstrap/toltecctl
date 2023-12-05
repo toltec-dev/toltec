@@ -195,7 +195,7 @@ SHELL
     new_path="$(bash -l -c "echo \$PATH")"
 
     if [[ $old_path != "$new_path" ]]; then
-        echo "Please restart your SSH session or run 'exec bash -l' to use Toltec"
+        echo "Please restart your SSH session or run 'exec bash --login' to use Toltec"
     fi
 }
 
@@ -305,10 +305,44 @@ reenable() {
     set-path
 }
 
-# Remove all installed packages
+# List all installed packages such that any package comes before
+# its dependencies. Dependency cycles are broken arbitrarily
+list-installed-ordered() {
+    # shellcheck disable=SC2016
+    local awk_list_to_graph='
+        /^.* depends on:$/{
+            from=$1;
+            print from " " from;
+        }
+
+        /^\t/{
+            print from " " $1;
+        }
+    '
+    opkg depends '*' | awk "$awk_list_to_graph" | tsort 2> /dev/null || true
+    # tsort reports errors if there are dependency cycles, we ignore them
+}
+
+# Remove Toltec completely
 uninstall() {
-    opkg remove --force-depends --force-remove "*"
+    # Fetch standalone opkg used to uninstall packages
+    local opkg_path=/home/root/.local/bin/opkg
+    local opkg_remote=https://bin.entware.net/armv7sf-k3.2/installer/opkg
+
+    if ! wget --no-verbose "$opkg_remote" --output-document "$opkg_path"; then
+        echo "Unable to fetch standalone opkg, make sure you have a stable Wi-Fi connection"
+        return 1
+    fi
+
+    chmod u+x "$opkg_path"
+
+    # Remove installed packages in reverse dependency order
+    list-installed-ordered | while read -r pkgname; do
+        "$opkg_path" remove --force-removal-of-essential-packages --force-depends --force-remove "$pkgname"
+    done
+
     systemctl daemon-reload
+    rm -f "$opkg_path"
 
     # Remove mount point
     remove-bind-mount "$toltec_dest"

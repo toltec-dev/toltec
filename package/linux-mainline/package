@@ -1,0 +1,63 @@
+#!/usr/bin/env bash
+# Copyright (c) 2021 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+archs=(rm2)
+pkgnames=(linux-mainline)
+pkgdesc="reMarkable 2 kernel based on the mainline kernel"
+url=https://www.kernel.org
+pkgver=6.2.0-2
+timestamp=2022-05-22T21:50:09Z
+section=kernel
+maintainer="Alistair Francis <alistair@alistair23.me>"
+makedepends=(build:flex build:bison build:libssl-dev build:bc build:lzop build:libgmp-dev build:libmpc-dev)
+license=GPL-2.0-only
+flags=(nostrip)
+
+image=base:v2.3
+source=(
+    https://github.com/alistair23/linux/archive/8241218883331bfdc0800f30eb337ff97b7c648c.tar.gz
+    remarkable_defconfig
+)
+sha256sums=(
+    de69fc74f1d25f447da170967eeea13b24354e9b8aa1927addcaa88c2ea9cd7c
+    f4d8cbb2c0e7bff5b151729b45064eb9e95005cb91899f0a9df038343d95ebf2
+)
+
+build() {
+    cp remarkable_defconfig arch/arm/configs/
+    ARCH=arm make remarkable_defconfig
+    ARCH=arm make -j8
+}
+
+package() {
+    # Prepare files for the kernel archive
+    local staging="$srcdir"/staging
+    mkdir -p "$staging/boot"
+
+    cp --no-dereference {"$srcdir"/arch/arm,"$staging"}/boot/zImage
+    cp --no-dereference "$srcdir"/arch/arm/boot/dts/imx7d-remarkable2.dtb \
+        "$staging"/boot/zero-sugar.dtb
+
+    ARCH=arm make -C "$srcdir" modules_install INSTALL_MOD_PATH="$staging"
+    rm "$staging"/lib/modules/*/{source,build}
+
+    # Create the kernel archive
+    local archive="mainline-${pkgver%-*}.tar.bz2"
+    install -d "$pkgdir"/opt/usr/share/kernelctl
+    (cd "$staging" && tar --owner root:0 --group root:0 --mtime=$timestamp \
+        -cjf "$pkgdir"/opt/usr/share/kernelctl/"$archive" boot/* lib/modules/*)
+}
+
+configure() {
+    echo "The new kernel files have been copied, but not installed."
+    echo "Please use kernelctl to select the kernel to boot."
+    echo
+    echo "Known issues with the mainline kernel:"
+    echo " - No support for low power mode (suspend uses more power then it should)"
+    echo " - Device doesn't always resume from suspend, a reboot is required"
+    echo " - GUI shutdown in Oxide doesn't work"
+    echo " - Wacom stylus doesn't work in Xochitl (https://github.com/reMarkable/linux/issues/15)"
+    echo " - Finger input doesn't work in Koreader (https://github.com/koreader/koreader/issues/10012)"
+    echo " - No OTG control support"
+}

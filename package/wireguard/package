@@ -5,14 +5,15 @@
 pkgnames=(wireguard)
 pkgdesc="Fast, modern, secure VPN tunnel"
 url=https://www.wireguard.com
-pkgver=1.0.20210219-2
+pkgver=1.0.20210219-3
 _wireguardtoolsver=1.0.20210223
 timestamp=2021-02-19T14:08Z
-section=utils
+section=kernel
 maintainer="Jonah Weissman <jonahrweissman+toltec@gmail.com>"
 license=GPL-2.0-only
 makedepends=(build:bc build:lzop build:git)
 flags=(nostrip)
+provides=(wireguard-tools)
 
 _kernelrepo=https://github.com/remarkable/linux
 _kernelrevs=(

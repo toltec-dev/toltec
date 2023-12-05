@@ -5,24 +5,29 @@
 pkgnames=(innernet-client)
 pkgdesc="A private network system that uses WireGuard under the hood."
 url="https://github.com/tonarino/innernet"
-pkgver=1.3.1-2
-timestamp=2021-06-01T12:50:04Z
+pkgver=1.5.3-2
+timestamp=2022-01-31T20:08:43Z
 section="utils"
 maintainer="plan5 <30434574+plan5@users.noreply.github.com>"
 license=MIT
 installdepends=(wireguard)
-makedepends=(build:librust-clang-sys-dev build:libclang-dev build:libc6 build:libc6-dev build:clang build:gcc-multilib build:g++-multilib)
+makedepends=(build:librust-clang-sys-dev build:libclang-dev build:libc6 build:libc6-dev build:clang)
 
-image=rust:v2.1
-source=(https://github.com/tonarino/innernet/archive/refs/tags/v1.3.1.zip)
-sha256sums=(8a58914fa87d2f465b50fe715a7cf0c17fd4ec995469d675005b8b361630424c)
+image=rust:v2.2.2
+_srcver="v${pkgver%-*}"
+source=(
+    "https://github.com/tonarino/innernet/archive/refs/tags/$_srcver.zip"
+)
+sha256sums=(
+    2f7ca1d802d898b1c4fd090cba9e0562a1e80d617b55f23ba596e81c99441a1c
+)
 
 prepare() {
     # Change config folders to live under /opt
     sed -i "s/\/etc\/innernet/\/opt\/etc\/innernet/g" "$srcdir/shared/src/lib.rs"
     sed -i "s/\/var\/lib\/innernet/\/opt\/var\/lib\/innernet/g" "$srcdir/shared/src/lib.rs"
 
-    #Change binary path in service file
+    # Change binary path in service file
     sed -i "s/\/usr\/bin\/innernet/\/opt\/bin\/innernet/g" "$srcdir/client/innernet@.service"
 
     #tbd: change wireguard config dir to /opt/etc/wireguard?

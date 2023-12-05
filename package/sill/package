@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+# Copyright (c) 2020 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgnames=(sill)
+pkgdesc="Gesture-based text editor (and shell) for the reMarkable tablet"
+url=https://github.com/bkirwi/sill
+pkgver=0.1.1-1
+section="writing"
+timestamp=2023-08-12T00:00Z
+maintainer="Kai <z@kwi.li>"
+license="Apache-2.0"
+
+image=rust:v3.0
+source=(
+    https://github.com/bkirwi/sill/archive/refs/tags/v0.1.1.tar.gz
+    sill.draft
+)
+sha256sums=(
+    ed3ef2f7ff37101db16f7020e6af86da6c32e78d76247c91a1676b72ce87e3df
+    SKIP
+)
+
+build() {
+    cargo build --release
+}
+
+package() {
+    install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/target/armv7-unknown-linux-gnueabihf/release/sill
+    install -D -m 644 "$srcdir"/sill.draft "$pkgdir"/opt/etc/draft/sill.draft
+}

@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+# Copyright (c) 2021 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+pkgnames=(reterm)
+pkgdesc="Landscape terminal support for the Remarkable 2 + type cover"
+section="admin"
+pkgver="20230628.1927-2"
+timestamp="2023-06-28T19:28:06Z"
+maintainer="Eeems <eeems@eeems.email>"
+url="https://github.com/i-am-shodan/ReTerm"
+license=MIT
+_gitcommit="5730f56cf25642b9752fb9d7987a40f6af6b5f59"
+source=(https://github.com/i-am-shodan/ReTerm/archive/refs/tags/release_20230628_1927.tar.gz)
+sha256sums=(3a6db39cfb83606c4ac5153fe2ac0319ab5c8322c73172178534c047a15c635b)
+image=dotnet6:latest
+makedepends=(build:gawk build:git)
+
+prepare() {
+    cd "$srcdir"
+    git config --global --add safe.directory /src
+    git init
+    git remote add origin https://github.com/i-am-shodan/ReTerm.git
+    git fetch --depth=1 origin "$_gitcommit"
+    git checkout -f "$_gitcommit"
+    git submodule update --init --force
+}
+
+build() {
+    dotnet publish \
+        -r linux-arm \
+        --self-contained true \
+        -p:PublishSingleFile=true \
+        -p:PublishedTrimmed=true \
+        -p:PublishReadyToRun=true \
+        -p:Configuration=Release \
+        -p:PublishReadyToRunShowWarnings=true \
+        src/ReTerm/ReTerm.csproj
+}
+
+package() {
+    local pubdir
+    pubdir="$srcdir"/src/ReTerm/bin/Release/net6.0/linux-arm/publish
+    install -D -m 755 -t "$pkgdir"/opt/usr/lib/reterm "$pubdir"/ReTerm
+    install -D -m 755 -T "$pubdir"/ReTerm.sh "$pkgdir"/opt/bin/ReTerm
+    sed -i 's|/home/root/ReTerm/ReTerm|/opt/usr/lib/reterm/ReTerm|' "$pkgdir"/opt/bin/ReTerm
+    install -D -m 644 -t "$pkgdir"/opt/etc/draft "$srcdir"/draft/reterm.draft
+    sed -i 's|/home/root/ReTerm/ReTerm.sh|/opt/bin/ReTerm|' "$pkgdir"/opt/etc/draft/reterm.draft
+    sed -i 's|killall -9 dotnet|killall ReTerm|' "$pkgdir"/opt/etc/draft/reterm.draft
+    install -D -m 644 -t "$pkgdir"/opt/etc/draft/icons "$srcdir"/draft/reterm.png
+    install -D -m 644 -t "$pkgdir"/opt/usr/share/applications "$srcdir"/oxide/reterm.oxide
+}

@@ -1,58 +1,133 @@
-#!/bin/bash
+#!/usr/bin/env bash
+# Copyright (c) 2021 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+# shellcheck disable=SC2016,SC2207
 #
-# shellcheck disable=SC2016,SC2199,SC2207
-#
-# Some spellchecks were ignored to favor the style
+# Some shellchecks were ignored to favor the style
 # files in the bash-completion project are layed out.
 #
 # SC2016: Using '' after compgen commands is intentional
 # to make compgen evaluate the expression later.
-#
 
-# Currently pretty basic. Caveats / TODOs for anyone who has time:
-# - Does not support flag
-# - Only completes packages for install and remove commands
-# - The install command only supports very basic file (.ipkg) completion
-# - Package completion should probably get cached for speedup
-#
-# If this file gets properly supports opkg, we should probably
+# Once this file gets proper support for opkg, we should probably
 # consider backporting this to https://github.com/scop/bash-completion
+
+set +o posix
 
 _opkg() {
     local cur prev words cword split
     _init_completion -s || return
 
-    #echo "Cur: $cur" # Contains the partial word
-    #echo "Prev: $prev" # The previous word (the command if no previous one)
-    #echo "Words: $words" # Array of all words? (like $@ ?)
-    #echo "CWord: $cword" # Number for current word (first word = 1, ...)
-    #echo "Split: $split" # ???
-
-    # Since ALL words in $COMPREPLY get suggested (regardless whether
-    # the user partiall typed one) compreply handles only returning
-    # the relevant ones
+    #echo "cur: $cur" # Contains the partial word
+    #echo "prev: $prev" # The previous word (the command if no previous one)
+    #echo "words: $words" # Array of all words
+    #echo "cword: $cword" # Index of current word (first word = 1, ...)
 
     if [[ $cword -eq 1 ]]; then
-        OPKG_COMMANDS=("update" "upgrade" "install" "configure" "remove" "flag")
-        OPKG_COMMANDS+=("list" "list-installed" "list-upgradable" "list-changed-conffiles")
-        OPKG_COMMANDS+=("files" "search" "find" "info" "status" "download" "compare-versions")
-        OPKG_COMMANDS+=("print-architecture" "depends" "whatdepends" "whatdependsrec")
-        OPKG_COMMANDS+=("whatrecommends" "whatsuggests" "whatprovides" "whatconflicts")
-        OPKG_COMMANDS+=("whatreplaces")
-        COMPREPLY=($(compgen -W '${OPKG_COMMANDS[@]}' -- "$cur"))
-        return
-    fi
+        # Completion of subcommands (always the first argument)
+        local opkg_subcommands=(
+            "update" "upgrade" "install" "configure" "remove" "flag"
+            "list" "list-installed" "list-upgradable" "list-changed-conffiles"
+            "files" "search" "find" "info" "status" "download" "compare-versions"
+            "print-architecture" "depends" "whatdepends" "whatdependsrec"
+            "whatrecommends" "whatsuggests" "whatprovides" "whatconflicts"
+            "whatreplaces"
+        )
+        COMPREPLY=($(compgen -W '${opkg_subcommands[*]}' -- "$cur"))
+    else
+        # Completion of flag names
+        if [[ $cur =~ ^- ]]; then
+            local opkg_flags=(
+                "-A"
+                "-V0" "-V1" "-V2" "-V3" "-V4" "--verbosity"
+                "-f" "--conf"
+                "--cache"
+                "-d" "--dest"
+                "-o" "--offline-root"
+                "--verify-program"
+                "--add-arch"
+                "--add-dest"
+                "--force-depends" "--force-maintainer" "--force-reinstall"
+                "--force-overwrite" "--force-downgrade" "--force-space"
+                "--force-postinstall" "--force-remove" "--force-checksum"
+                "--no-check-certificate" "--noaction" "--download-only"
+                "--nodeps" "--nocase" "--size" "--strip-abi"
+                "--force-removal-of-dependent-packages" "--autoremove"
+                "-t" "--tmp-dir"
+                "-l" "--lists-dir"
+            )
+            COMPREPLY=($(compgen -W '${opkg_flags[*]}' -- "$cur"))
+            return
+        fi
 
-    COMPREPLY=()
-    OPKG_COMMANDS_WITH_PKG_COMPLETE=("install" "remove") # Todo: more
-    if [[ $cword -gt 1 ]] && [[ " ${OPKG_COMMANDS_WITH_PKG_COMPLETE[@]} " =~ \ ${words[1]}\  ]]; then
-        COMPREPLY+=($(compgen -W '$(opkg list | awk '\''{ print $1 }'\'')' -- "$cur"))
-    fi
+        # Completion of flag values
+        case $prev in
+            --verbosity)
+                COMPREPLY=($(compgen -W '0 1 2 3 4' -- "$cur"))
+                return
+                ;;
 
-    OPKG_COMMANDS_WITH_FILE_COMPLETE=("install") # Todo: more
-    if [[ $cword -gt 1 ]] && [[ " ${OPKG_COMMANDS_WITH_FILE_COMPLETE[@]} " =~ \ ${words[1]}\  ]]; then
-        # Pretty primitive and does subdirectories not properly
-        COMPREPLY+=($(compgen -W '$(ls)' -- "$cur"))
+            -f | --conf | --verify-program)
+                _filedir
+                return
+                ;;
+
+            --cache | -d | --dest | -o | --offline-root | -t | --tmpdir | \
+                -l | --lists-dir)
+                _filedir -d
+                return
+                ;;
+        esac
+
+        # Completion of subcommand arguments that do not involve package names
+        case ${words[1]} in
+            search)
+                _filedir
+                return
+                ;;
+
+            compare-versions)
+                if [[ $cword -eq 3 ]]; then
+                    COMPREPLY=($(compgen -W '<= < > >= = << >>' -- "$cur"))
+                fi
+                return
+                ;;
+        esac
+
+        # Completion of subcommand arguments involving package names
+        local available_pkgs installed_pkgs
+        mapfile -t available_pkgs < <(opkg list | awk '{ print $1 }')
+        mapfile -t installed_pkgs < <(opkg list-installed | awk '{ print $1 }')
+
+        case ${words[1]} in
+            install)
+                _filedir
+                COMPREPLY+=($(compgen -W '${available_pkgs[*]}' -- "$cur"))
+                return
+                ;;
+
+            depends | download | info | whatdepends | whatdependsrec | \
+                whatrecommends | whatsuggests | whatprovides | whatconflicts | \
+                whatreplaces)
+                COMPREPLY=($(compgen -W '${available_pkgs[*]}' -- "$cur"))
+                return
+                ;;
+
+            configure | files | remove | status | upgrade)
+                COMPREPLY=($(compgen -W '${installed_pkgs[*]}' -- "$cur"))
+                return
+                ;;
+
+            flag)
+                if [[ $cword -eq 2 ]]; then
+                    COMPREPLY=($(compgen -W 'hold noprune user ok installed unpacked' -- "$cur"))
+                else
+                    COMPREPLY=($(compgen -W '${installed_pkgs[*]}' -- "$cur"))
+                fi
+                return
+                ;;
+        esac
     fi
 }
 

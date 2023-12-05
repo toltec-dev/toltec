@@ -1,0 +1,7 @@
+diff --git a/rmfm b/rmfm
+index 63eeb98..b28dbd0 100755
+--- a/rmfm
++++ b/rmfm
+@@ -1 +1 @@
+-#!/usr/bin/env node
++#!/opt/bin/node

@@ -6,9 +6,9 @@ archs=(rm1 rm2)
 pkgnames=(fuse)
 pkgdesc="FUSE (Filesystem in Userspace) Kernel Module"
 url=https://github.com/libfuse/libfuse
-pkgver=1.0.0-2
+pkgver=1.0.0-4
 timestamp=2021-04-06T22:16Z
-section=utils
+section=kernel
 maintainer="plan5 <30434574+plan5@users.noreply.github.com>"
 license=GPL-2.0-only
 makedepends=(build:bc build:lzop build:git)
@@ -59,7 +59,15 @@ package() {
 
 configure() {
     if [[ $arch = rm1 ]]; then
+        # Regenerate /lib/modules/[ver]/modules.devname to request the
+        # creation of /dev/fuse used for on-demand loading of fuse
         depmod -a
+
+        # Force creation of /dev/fuse so that the module gets autoloaded
+        # on-demand (otherwise, the device needs to be rebooted or the module
+        # needs to be manually loaded before it can work)
+        systemctl restart kmod-static-nodes
+        systemctl restart systemd-tmpfiles-setup-dev
     fi
 }
 

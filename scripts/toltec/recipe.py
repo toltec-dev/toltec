@@ -41,6 +41,7 @@ class GenericRecipe:  # pylint:disable=too-many-instance-attributes
         :returns: loaded recipe
         """
         name = os.path.basename(path)
+        # pylint: disable-next=unspecified-encoding
         with open(os.path.join(path, "package"), "r") as recipe:
             return GenericRecipe(name, path, recipe.read())
 
@@ -105,9 +106,9 @@ class GenericRecipe:  # pylint:disable=too-many-instance-attributes
             if name not in variables:
                 variables[name] = value
             else:
-                normal_value = variables[name]
+                base_value = variables[name]
 
-                if isinstance(normal_value, str):
+                if isinstance(base_value, str):
                     if not isinstance(value, str):
                         raise RecipeError(
                             f"Recipe '{self.name}' declares the \
@@ -116,14 +117,14 @@ class GenericRecipe:  # pylint:disable=too-many-instance-attributes
 
                     variables[name] = value
 
-                if isinstance(normal_value, list):
+                if isinstance(base_value, list):
                     if not isinstance(value, list):
                         raise RecipeError(
                             f"Recipe '{self.name}' declares the \
 '{name}' field several times with different types"
                         )
 
-                    normal_value.extend(value)
+                    variables[name] = base_value + value
 
         self.recipes[arch] = Recipe(
             self, f"{self.name}-{arch}", variables, functions
@@ -343,6 +344,7 @@ class Package:  # pylint:disable=too-many-instance-attributes
     installdepends: Set[Dependency]
     conflicts: Set[Dependency]
     replaces: Set[Dependency]
+    provides: Set[Dependency]
 
     functions: bash.Functions
     custom_functions: bash.Functions
@@ -390,7 +392,7 @@ class Package:  # pylint:disable=too-many-instance-attributes
         self.license = _pop_field_string(variables, "license")
         self.variables["license"] = self.license
 
-        for field in ("installdepends", "conflicts", "replaces"):
+        for field in ("installdepends", "conflicts", "replaces", "provides"):
             field_raw = _pop_field_indexed(variables, field, [])
             self.variables[field] = field_raw
             setattr(self, field, set())
@@ -455,7 +457,9 @@ custom functions with '_'"
 
     def pkgid(self) -> str:
         """Get the unique identifier of this package."""
-        return "_".join((self.name, str(self.version), self.parent.arch))
+        return "_".join(
+            (self.name, str(self.version).replace(":", "_"), self.parent.arch)
+        )
 
     def filename(self) -> str:
         """Get the name of the archive corresponding to this package."""
@@ -480,6 +484,7 @@ custom functions with '_'"
             ("Depends", self.installdepends),
             ("Conflicts", self.conflicts),
             ("Replaces", self.replaces),
+            ("Provides", self.provides),
         ):
             if field:
                 control += (

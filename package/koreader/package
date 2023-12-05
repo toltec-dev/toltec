@@ -5,8 +5,8 @@
 pkgnames=(koreader)
 pkgdesc="Ebook reader supporting PDF, DjVu, EPUB, FB2 and many more formats"
 url=https://github.com/koreader/koreader
-pkgver=2021.07-1
-timestamp=2021-06-25T19:49:18Z
+pkgver=2023.08-2
+timestamp=2023-08-29T16:21:01Z
 section="readers"
 maintainer="raisjn <of.raisjn@gmail.com>"
 license=AGPL-3.0-or-later
@@ -14,13 +14,15 @@ installdepends=(fbink fbdepth display rm2fb-client)
 
 _srcver="v${pkgver%-*}"
 source=(
-    "https://build.koreader.rocks/download/stable/$_srcver/koreader-remarkable-$_srcver.zip"
+    "https://github.com/koreader/koreader/releases/download/$_srcver/koreader-remarkable-$_srcver.zip"
     koreader.draft
     KOReader.oxide
+    koreader-toltec.service
     koreader
 )
 sha256sums=(
-    47cd8a7f8f0fcfca8974ad02c3c6977e66502fef970de3881172c10cfe40774a
+    8cc9fad1cbcda5519c20afe6e33c4f80a51587daed7b959ef7284ce8b0c41ec0
+    SKIP
     SKIP
     SKIP
     SKIP
@@ -36,6 +38,41 @@ package() {
 
     install -D -m 644 -t "$pkgdir"/opt/etc/draft/ "$srcdir"/koreader.draft
     install -D -m 644 -t "$pkgdir"/opt/usr/share/applications/ "$srcdir"/KOReader.oxide
+    install -D -m 644 "$srcdir"/koreader-toltec.service "$pkgdir"/lib/systemd/system/koreader.service
     install -D -m 644 -t "$pkgdir"/opt/etc/draft/icons/ "$srcdir"/resources/koreader.png
     install -D -m 755 -t "$pkgdir"/opt/bin/ "$srcdir"/koreader
+}
+
+configure() {
+    # This file can cause issues with startup when moving from 2022.08 to another version
+    if [ -f /opt/koreader/cache/fontlist/fontinfo.dat ]; then
+        rm /opt/koreader/cache/fontlist/fontinfo.dat
+    fi
+
+    systemctl daemon-reload
+
+    if ! is-enabled "$pkgname.service"; then
+        cat << MSG
+
+Run the following command(s) to use $pkgname as your launcher
+$(how-to-enable "$pkgname.service")
+
+MSG
+    fi
+}
+
+preremove() {
+    if is-active "$pkgname"; then
+        echo "Stopping $pkgname"
+        systemctl stop "$pkgname"
+    fi
+
+    if is-enabled "$pkgname"; then
+        echo "Disabling $pkgname"
+        systemctl disable "$pkgname"
+    fi
+}
+
+postremove() {
+    systemctl daemon-reload
 }

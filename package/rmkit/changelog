@@ -1,3 +1,134 @@
+2023-03-12 raisjn <of.raisjn@arkose>
+
+	harmony
+
+	* fix exporting individual layers
+
+	rmkit
+
+	* swap M and N on keyboard
+	* fix image thumbnail code
+
+	simple:
+
+	* add "range" input widget
+	* add "canvas" widget
+	* less debug output
+	* make images clickable
+	* move 'timeout' to its own thread instead of jamming task queue
+	* ignore empty lines
+
+	remux
+
+	* add "suspend" to remux FIFO api
+
+	rpncalc
+
+	* make it more hp48 like (@cesss)
+
+
+2022-05-06 raisjn <of.raisjn@arkose>
+	remux
+
+	* make palm filtering a config option
+
+	harmony
+
+	* more layer dialog improvements
+	* sort import dialog by file date
+	* refactor pressure / tilt events to use hardware values
+
+2022-03-16 raisjn <of.raisjn@arkose>
+	remux
+
+	* RLE snapshots use less memory
+	* save bpp when screenshotting current app
+	* filter palm events from gestures (less false positives)
+
+	harmony:
+
+	* RLE snapshots for history (less memory usage)
+	* add layer support
+	* fix segfault when when showing empty load/import dialogs
+	* exporting canvas to png supports grays instead of dithering
+
+	rmkit:
+
+	* support SYN_DROPPED in wacom events
+
+2022-01-29 raisjn <of.raisjn@arkose>
+	rpncalc:
+
+	* add 'back' button for erasing digits
+	* modifying how 'drop' works a tiny bit
+	* align push/drop, and tan/tanh, cos/cosh, sin/sinh buttons
+
+2022-01-27 raisjn <of.raisjn@arkose>
+
+	rmkit:
+
+	* rmkit went through a large refactoring, this updates all apps
+	* fix keyboard layout (swapped U and I keys originally)
+
+	dumbskull:
+
+	* add new game, "Dumbskull", which is a themed solitaire
+
+	genie:
+
+	* add palm rejection to genie
+
+	iago:
+
+	* add settings dialog (@aeneas) that allows snapping
+
+	mines:
+
+	* fix spurious crash when playing multiple games in a row
+
+	remux:
+
+	* add dialog_height/dialog_width options to remux.conf
+	* better memory analysis (of all processes)
+	* rm1: remove usb check that keeps it powered indefinitely
+
+	rpncalc:
+
+	* add new calculator, rpncalc
+	* add better spacing and layout
+	* add push after operation behavior (next input is on new stack element)
+
+	wordlet:
+
+	* add new game, "Wordlet", which is a wordle clone
+
+
+2021-12-29 raisjn <of.raisjn@arkose>
+
+	harmony:
+
+	* fix harmony not loading saved images
+
+	bufshot:
+
+	* fix bufshot to correctly recognize the tablet
+
+2021-12-17 raisjn <of.raisjn@arkose>
+
+	harmony:
+
+	* add `launch` command to remux
+
+	mines:
+
+	* fix pixmap display in minesweeper
+
+2021-11-29:
+
+	remux:
+
+	* add custom power management to remux that disables PM during xochitl
+
 2021-03-22 raisjn <of.raisjn@arkose>
 
 
