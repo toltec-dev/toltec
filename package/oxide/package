@@ -34,7 +34,7 @@ oxide() {
     replaces=(erode tarnish decay corrupt)
     conflicts=(erode tarnish decay corrupt)
 
-    package(){
+    package() {
         # System service
         install -D -m 644 -t "$pkgdir"/etc/dbus-1/system.d "$srcdir"/release/etc/dbus-1/system.d/codes.eeems.oxide.conf
         install -D -m 644 -t "$pkgdir"/lib/systemd/system "$srcdir"/release/etc/systemd/system/tarnish.service
@@ -57,7 +57,7 @@ oxide() {
         install -D -m 644 -t "$pkgdir"/opt/usr/share/applications "$srcdir"/release/opt/usr/share/applications/codes.eeems.corrupt.oxide
     }
 
-    configure(){
+    configure() {
         systemctl daemon-reload
         if ! is-enabled "tarnish.service"; then
             echo ""
