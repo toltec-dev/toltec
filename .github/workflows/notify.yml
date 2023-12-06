@@ -14,6 +14,6 @@ jobs:
           channel: ${{ secrets.DISCORD_STABLE_CHANNEL_ID }}
           token: ${{ secrets.DISCORD_STABLE_CHANNEL_TOKEN }}
           title: New Toltec stable update available
-          link: https://toltec-dev.org/stable
+          link: ${{ github.event.release.url }}
           color: 0x2ea043
           message: ${{ github.event.release.body }}
