@@ -11,7 +11,7 @@ timestamp=2023-11-25T20:49:48Z
 maintainer="Mattéo Delabre <spam@delab.re>"
 license=GPL-3.0
 section="admin"
-image=base:v2.3
+image=base:v3.1
 installdepends=(display terminfo)
 
 source=(
