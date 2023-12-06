@@ -1,0 +1,19 @@
+name: notify on release
+on:
+  release:
+    types: [released]
+
+jobs:
+  notify:
+    name: Notify the stable channel
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Send notification to Discord
+        uses: ./.github/actions/discord-send
+        with:
+          channel: ${{ secrets.DISCORD_STABLE_CHANNEL_ID }}
+          token: ${{ secrets.DISCORD_STABLE_CHANNEL_TOKEN }}
+          title: New Toltec stable update available
+          link: https://toltec-dev.org/stable
+          color: 0x2ea043
+          message: ${{ github.event.release.body }}

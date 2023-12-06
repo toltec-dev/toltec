@@ -28,21 +28,14 @@ jobs:
               env:
                 GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
             - name: Create Github Release
-              continue-on-error: true
               run: |
-                sudo apt-get update && sudo apt-get install -y hub
-                hub release create -t $SHA -m $MESSAGE $(date +%G-W%V-%u)
+                gh release create \
+                  --draft \
+                  --target "$SHA" \
+                  --title "$(echo $MESSAGE | head -n 1)" \
+                  --notes "$(echo $MESSAGE | tail -n +2)" \
+                  $(date +%G-W%V-%u)
               env:
                 SHA: ${{ github.sha }}
                 GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
                 MESSAGE: ${{ github.event.commits[0].message }}
-            - name: Send notification to Discord
-              continue-on-error: true
-              uses: ./.github/actions/discord-send
-              with:
-                channel: ${{ secrets.DISCORD_STABLE_CHANNEL_ID }}
-                token: ${{ secrets.DISCORD_STABLE_CHANNEL_TOKEN }}
-                title: New Toltec stable update available
-                link: https://toltec-dev.org/stable
-                color: 0x2ea043
-                message: ${{ github.event.commits[0].message }}
