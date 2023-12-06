@@ -14,18 +14,10 @@ section="admin"
 image=base:v3.1
 installdepends=(display terminfo)
 
-source=(
-    "https://github.com/timower/rM2-stuff/archive/refs/tags/v${_tag}.zip"
-    input.patch
-)
-
-sha256sums=(
-    d6cafc2546feeda65412bf40778a669043fb98d83981edb1f55660bb999c2ccd
-    SKIP
-)
+source=("https://github.com/timower/rM2-stuff/archive/refs/tags/v${_tag}.zip")
+sha256sums=(d6cafc2546feeda65412bf40778a669043fb98d83981edb1f55660bb999c2ccd)
 
 build() {
-    patch -u libs/rMlib/Device.cpp -i input.patch
     mkdir build
     mkdir install
     cd build
