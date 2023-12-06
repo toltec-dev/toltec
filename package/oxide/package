@@ -30,7 +30,7 @@ build() {
 oxide() {
     pkgdesc="Launcher application"
     section="launchers"
-    installdepends=("oxide-utils=$pkgver" "liboxide=$pkgver" "libsentry=$_sentryver")
+    installdepends=("oxide-utils=$pkgver" "liboxide=$pkgver" "libsentry=$_sentryver" "reboot-guard")
     replaces=(erode tarnish decay corrupt)
     conflicts=(erode tarnish decay corrupt)
 
