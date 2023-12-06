@@ -7,7 +7,7 @@ After=home.mount
 [Service]
 Environment=HOME=/home/root
 Type=oneshot
-ExecStart=/home/root/.local/bin/webinterface-onboot local-exec
+ExecStart=/opt/bin/webinterface-onboot local-exec
 
 [Install]
 WantedBy=multi-user.target
