@@ -29,18 +29,18 @@ package() {
 }
 
 _restore() {
-    if webinterface-onboot is-hack-applied >/dev/null 2>&1; then
+    if webinterface-onboot is-hack-applied > /dev/null 2>&1; then
         echo "Reverting /usr/bin/xochitl"
-        if ! webinterface-onboot revert-hack --backup -y >/dev/null 2>&1; then
-            if ! webinterface-onboot revert-hack --reverse -y >/dev/null 2>&1; then
+        if ! webinterface-onboot revert-hack --backup -y > /dev/null 2>&1; then
+            if ! webinterface-onboot revert-hack --reverse -y > /dev/null 2>&1; then
                 echo "Could not revert /usr/bin/xochitl"
             fi
         fi
         echo "Success"
     fi
-    if webinterface-onboot is-prstip-applied >/dev/null 2>&1; then
+    if webinterface-onboot is-prstip-applied > /dev/null 2>&1; then
         echo "Reverting /etc/ifplugd/ifplugd.action"
-        if ! webinterface-onboot revert-prstip -y >/dev/null 2>&1; then
+        if ! webinterface-onboot revert-prstip -y > /dev/null 2>&1; then
             echo "Could not revert /etc/ifplugd/ifplugd.action"
         fi
         echo "Success"
