@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+# Copyright (c) 2021 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+_pkgname='webinterface-upload-button'
+pkgnames=("$_pkgname")
+pkgdesc="A simple upload button for the web interface"
+url="https://github.com/rM-self-serve/$_pkgname"
+pkgver=1.0.1-1
+timestamp=2023-12-06T11:43:00Z
+section="utils"
+maintainer="rM-self-serve <122753594+rM-self-serve@users.noreply.github.com>"
+license=MIT
+
+_pkgalias='webint-upldbtn'
+
+source=(
+    "$url"/archive/ec03bcf4de99c89fd8d99addc03e40cadba4345c.zip
+)
+sha256sums=(
+    f4697beb4a9e759f4e996cf7c4dfc30f523b469084c92698c69b23188c9c40fc
+)
+
+package() {
+    install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir/$_pkgname"
+    ln -s /opt/bin/"$_pkgname" "$pkgdir/opt/bin/$_pkgalias"
+}
+
+_restore() {
+    echo
+    webinterface-upload-button revert -y
+    echo
+}
+
+preremove() {
+    _restore
+}
+
+preupgrade() {
+    _restore
+}
