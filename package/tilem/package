@@ -10,7 +10,7 @@ timestamp=2023-11-25T20:49:48Z
 maintainer="Mattéo Delabre <spam@delab.re>"
 license=GPL-3.0
 section="utils"
-image=base:v2.1
+image=base:v3.1
 installdepends=(display)
 
 source=(https://github.com/timower/rM2-stuff/archive/refs/tags/v0.1.1.tar.gz)
