@@ -29,7 +29,9 @@ jobs:
                 GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
             - name: Create Github Release
               continue-on-error: true
-              run: hub release create -t $SHA -m $MESSAGE $(date +%G-W%V-%u)
+              run: |
+                sudo apt-get update && sudo apt-get install -y hub
+                hub release create -t $SHA -m $MESSAGE $(date +%G-W%V-%u)
               env:
                 SHA: ${{ github.sha }}
                 GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
