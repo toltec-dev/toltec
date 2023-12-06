@@ -5,7 +5,7 @@
 pkgnames=(koreader)
 pkgdesc="Ebook reader supporting PDF, DjVu, EPUB, FB2 and many more formats"
 url=https://github.com/koreader/koreader
-pkgver=2023.08-1
+pkgver=2023.08-2
 timestamp=2023-08-29T16:21:01Z
 section="readers"
 maintainer="raisjn <of.raisjn@gmail.com>"
@@ -14,7 +14,7 @@ installdepends=(fbink fbdepth display rm2fb-client)
 
 _srcver="v${pkgver%-*}"
 source=(
-    "https://build.koreader.rocks/download/stable/$_srcver/koreader-remarkable-$_srcver.zip"
+    "https://github.com/koreader/koreader/releases/download/$_srcver/koreader-remarkable-$_srcver.zip"
     koreader.draft
     KOReader.oxide
     koreader-toltec.service

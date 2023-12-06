@@ -5,7 +5,7 @@
 pkgnames=(changescrn)
 pkgdesc="Change sleep/suspend/poweroff/reboot screens"
 url=https://github.com/pr0fsmith/rMscreens/
-pkgver=1.0.0-1
+pkgver=1.0.0-2
 timestamp=2022-03-15T01:28:33Z
 section="utils"
 maintainer="pr0fsmith <evon_smith@yahoo.ca>"
@@ -16,4 +16,14 @@ sha256sums=(3c2e8b0952d848d7326c0a4ce45da625dd7fd0fbc6b564a2d40c3b97015138e3)
 
 package() {
     install -Dm755 "$srcdir"/changescrn "$pkgdir/opt/bin/changescrn"
+}
+
+configure() {
+    if [ ! -d /opt/usr/share/backupscrns ] || [ -z "$(ls -A /opt/usr/share/backupscrns)" ]; then
+        changescrn -b
+    fi
+}
+
+preremove() {
+    changescrn -r all
 }
