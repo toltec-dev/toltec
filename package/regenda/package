@@ -5,7 +5,7 @@
 pkgnames=(regenda)
 pkgdesc="Caldav agenda app"
 url=https://github.com/tenJirka/reGenda
-pkgver=0.0.2-1
+pkgver=0.0.2-2
 timestamp=2023-09-06T06:45Z
 section="utils"
 maintainer="tenJirka <jirka.steh@gmail.com>"

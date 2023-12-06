@@ -548,7 +548,9 @@ source file '{source.url}', got {req.status_code}"
         os.makedirs(ar_dir, exist_ok=True)
 
         # Inject Oxide-specific hook for reloading apps
-        if os.path.exists(os.path.join(pkg_dir, "opt/usr/share/applications")):
+        if os.path.exists(
+            os.path.join(pkg_dir, "opt/usr/share/applications")
+        ) or os.path.exists(os.path.join(pkg_dir, "opt/etc/draft")):
             oxide_hook = "\nreload-oxide-apps\n"
             package.functions["configure"] += oxide_hook
             package.functions["postupgrade"] += oxide_hook
