@@ -22,3 +22,9 @@ sha256sums=(
 package() {
     install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/neofetch
 }
+
+postupgrade() {
+    echo ""
+    echo "You may choose to remove ~/.config/neofetch/config.conf"
+    echo "in order to get the latest default config."
+}
