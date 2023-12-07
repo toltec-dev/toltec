@@ -61,6 +61,9 @@ configure() {
     echo "Run '\$ $pkgname' for usage information and a link to"
     echo "the documentation. You can also find the documentation locally"
     echo "at /opt/etc/webinterface-wifi/docs/"
+    echo ""
+    echo "Run the following command to use $pkgname"
+    how-to-enable "$pkgname.service"
 }
 
 preremove() {
