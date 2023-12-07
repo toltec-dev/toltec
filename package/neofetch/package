@@ -23,8 +23,10 @@ package() {
     install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/neofetch
 }
 
-postupgrade() {
-    echo ""
-    echo "You may choose to remove ~/.config/neofetch/config.conf"
-    echo "in order to get the latest default config."
+configure() {
+    if [ -f '/home/root/.config/neofetch/config.conf' ]; then
+        echo ""
+        echo "You may choose to remove ~/.config/neofetch/config.conf"
+        echo "in order to get the latest default config."
+    fi
 }
