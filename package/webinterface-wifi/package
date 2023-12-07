@@ -7,7 +7,7 @@ pkgnames=("$_pkgname")
 pkgdesc="View the web interface if running, over wifi"
 url="https://github.com/rM-self-serve/$_pkgname"
 pkgver=2.0.0-1
-timestamp=2023-11-26T12:23:17Z
+timestamp=2023-11-26T00:02:11Z
 section="utils"
 maintainer="rM-self-serve <122753594+rM-self-serve@users.noreply.github.com>"
 license=MIT
@@ -18,12 +18,12 @@ _configdir="/home/root/.config/$_pkgname"
 _etcdir="/opt/etc/$_pkgname"
 
 source=(
-    "$url/archive/d2d93b3bd8cf970e7a14a7517efe6c3c322ba356.zip"
+    "$url/archive/feb573ac5f16a75d3d7ce66b3957d5c753ad5561.zip"
     "$_pkgname-toltec.service"
 )
 
 sha256sums=(
-    92c8d84e51a57704bbcb9fe21df9a173b7b55533c3ced83d835023ac1858bf99
+    516f4c1684b8d50fc8c9c63a7f11f3183b259ba52243b719a73a56519dc45947
     SKIP
 )
 
@@ -58,8 +58,9 @@ configure() {
     systemctl daemon-reload
 
     echo ""
-    echo "Run the following command to use $pkgname"
-    how-to-enable "$pkgname.service"
+    echo "Run '\$ $pkgname' for usage information and a link to"
+    echo "the documentation. You can also find the documentation locally"
+    echo "at /opt/etc/webinterface-wifi/docs/"
 }
 
 preremove() {
