@@ -4,53 +4,89 @@
 
 _pkgname='webinterface-onboot'
 pkgnames=("$_pkgname")
-pkgdesc="Start the web interface without the cable"
+pkgdesc="Start the web interface without the cable, on boot."
 url="https://github.com/rM-self-serve/$_pkgname"
 pkgver=1.2.2-1
 timestamp=2023-12-03T11:43:00Z
 section="utils"
 maintainer="rM-self-serve <122753594+rM-self-serve@users.noreply.github.com>"
 license=MIT
+conflicts=(ddvk-hacks)
 
 _pkgalias="webint-onboot"
 
 source=(
-    "$url"/archive/cbb2b936f0d27898701695f4d166dcf01b0174e2.zip
+    "$url"/archive/cdfe457435974f7ca309b1ac50f1b2ef67000813.zip
     "$_pkgname-toltec.service"
 )
 sha256sums=(
-    053de1cb3c889df844f6c3e9ce1947803663a13b5efd3bd376a1937c0d1c3787
+    bad965b923fa0979e7c8b97f6a90a400300ef8461292276e6fa2107a89624c8b
     SKIP
 )
 
 package() {
     install -D -m 755 -t "$pkgdir/opt/bin" "$srcdir/$_pkgname"
-    ln -s "/opt/bin/$_pkgname" "$pkgdir/opt/bin/$_pkgalias"
+    install -D -m 644 "$srcdir/$_pkgname-toltec.service" \
+        "$pkgdir/lib/systemd/system/$_pkgname.service"
+}
+
+configure() {
+    systemctl daemon-reload
+
+    echo
+    echo "Applying usb0 ip persistence"
+    webinterface-onboot apply-prstip -y > /dev/null
+    echo "Success"
+    if webinterface-onboot is-hack-vers > /dev/null; then
+        echo
+        echo "Applying binary modification"
+        webinterface-onboot apply-hack -y > /dev/null
+        echo "Success"
+    fi
+
+    echo
+    echo "Run the following command to use $pkgname"
+    how-to-enable "$pkgname.service"
+    echo
+    echo "Then restart xochitl or the device"
 }
 
 _restore() {
-    if webinterface-onboot is-hack-applied > /dev/null 2>&1; then
-        echo "Reverting /usr/bin/xochitl"
-        if ! webinterface-onboot revert-hack --backup -y > /dev/null 2>&1; then
-            if ! webinterface-onboot revert-hack --reverse -y > /dev/null 2>&1; then
-                echo "Could not revert /usr/bin/xochitl"
-            fi
-        fi
+    if webinterface-onboot is-prstip-applied > /dev/null; then
+        echo
+        echo "Reverting usb0 ip persistence"
+        webinterface-onboot revert-prstip -y > /dev/null
         echo "Success"
     fi
-    if webinterface-onboot is-prstip-applied > /dev/null 2>&1; then
-        echo "Reverting /etc/ifplugd/ifplugd.action"
-        if ! webinterface-onboot revert-prstip -y > /dev/null 2>&1; then
-            echo "Could not revert /etc/ifplugd/ifplugd.action"
+
+    if webinterface-onboot is-hack-applied > /dev/null; then
+        echo
+        echo "Reverting binary modification"
+        if webinterface-onboot has-backup > /dev/null; then
+            webinterface-onboot revert-hack --backup -y > /dev/null
+        else
+            webinterface-onboot revert-hack --reverse -y > /dev/null
         fi
         echo "Success"
     fi
 }
 
 preremove() {
+    if is-active "$pkgname"; then
+        echo "Stopping $pkgname"
+        systemctl stop "$pkgname"
+    fi
+    if is-enabled "$pkgname"; then
+        echo "Disabling $pkgname"
+        systemctl disable "$pkgname"
+    fi
     _restore
 }
 
 preupgrade() {
     _restore
+}
+
+postremove() {
+    systemctl daemon-reload
 }
