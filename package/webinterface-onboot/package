@@ -13,8 +13,6 @@ maintainer="rM-self-serve <122753594+rM-self-serve@users.noreply.github.com>"
 license=MIT
 conflicts=(ddvk-hacks)
 
-_pkgalias="webint-onboot"
-
 source=(
     "$url"/archive/cdfe457435974f7ca309b1ac50f1b2ef67000813.zip
     "$_pkgname-toltec.service"
@@ -28,6 +26,9 @@ package() {
     install -D -m 755 -t "$pkgdir/opt/bin" "$srcdir/$_pkgname"
     install -D -m 644 "$srcdir/$_pkgname-toltec.service" \
         "$pkgdir/lib/systemd/system/$_pkgname.service"
+
+    touch "$srcdir"/emptyfile
+    install -D -m 666 -t "$pkgdir"/usr/share/toltec/reenable.d/"$_pkgname" "$srcdir"/emptyfile
 }
 
 configure() {
@@ -37,7 +38,7 @@ configure() {
     echo "Applying usb0 ip persistence"
     webinterface-onboot apply-prstip -y > /dev/null
     echo "Success"
-    if webinterface-onboot is-hack-vers > /dev/null; then
+    if webinterface-onboot is-hack-version > /dev/null; then
         echo
         echo "Applying binary modification"
         webinterface-onboot apply-hack -y > /dev/null
