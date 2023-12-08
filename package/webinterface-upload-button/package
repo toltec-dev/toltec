@@ -12,8 +12,6 @@ section="utils"
 maintainer="rM-self-serve <122753594+rM-self-serve@users.noreply.github.com>"
 license=MIT
 
-_pkgalias='webint-upldbtn'
-
 source=(
     "$url"/archive/1c69d4fcaa1cb8e2cf4b022a190429dc39946498.zip
 )
@@ -23,7 +21,6 @@ sha256sums=(
 
 package() {
     install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir/$_pkgname"
-    ln -s /opt/bin/"$_pkgname" "$pkgdir/opt/bin/$_pkgalias"
 
     touch "$srcdir"/emptyfile
     install -D -m 666 -t "$pkgdir"/usr/share/toltec/reenable.d/"$_pkgname" "$srcdir"/emptyfile
