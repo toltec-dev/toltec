@@ -73,7 +73,7 @@ _restore() {
 }
 
 preremove() {
-    disable-unit "$pkgname"
+    disable-unit "$pkgname.service"
     _restore
 }
 
