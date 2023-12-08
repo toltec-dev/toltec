@@ -6,7 +6,7 @@ archs=(rm1 rm2)
 pkgnames=(ddvk-hacks)
 pkgdesc="Enhance Xochitl with additional features"
 url=https://github.com/ddvk/remarkable-hacks
-pkgver=39.01-1
+pkgver=39.01-2
 timestamp=2022-11-09T18:31:51Z
 section="readers"
 maintainer="Mattéo Delabre <spam@delab.re>"
@@ -66,6 +66,8 @@ package() {
         install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/21501067_rm2/patch_38.2.03
         install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/21511189_rm2/patch_39.2.01
     fi
+    touch "$srcdir"/emptyfile
+    install -D -m 666 -t "$pkgdir"/usr/share/toltec/reenable.d/ddvk-hacks "$srcdir"/emptyfile
 }
 
 configure() {
