@@ -46,7 +46,7 @@ _restore() {
     if signature-rm has-backup > /dev/null; then
         signature-rm revert --backup -y > /dev/null
     else
-        signature-rm revert --reverse -y > /dev/null 2>&1
+        signature-rm revert --reverse -y > /dev/null
     fi
     echo "Success"
     echo
