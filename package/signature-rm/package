@@ -14,10 +14,10 @@ license=MIT
 image=rust:v3.1
 
 source=(
-    "$url"/archive/77eef2b421654d14d968f46c055392581e180b8e.zip
+    "$url"/archive/b5561af4eb6a0f5aa6e98e1a1279066f0c4bd9b7.zip
 )
 sha256sums=(
-    60ac53d2f621dd8baabf0032b0c67fd46ad567fe5e512129396b39f4c697bc2e
+    1a7cc8bf7a3f5a7cc9a10ca968bbb5a0082a065760f4cb7038fdb6b9aed4bb00
 )
 
 build() {
@@ -27,18 +27,28 @@ build() {
 package() {
     install -D -m 755 -t "$pkgdir"/opt/bin \
         "$srcdir/target/armv7-unknown-linux-gnueabihf/release/$_pkgname"
+
+    touch "$srcdir"/emptyfile
+    install -D -m 666 -t "$pkgdir"/usr/share/toltec/reenable.d/"$_pkgname" "$srcdir"/emptyfile
+}
+
+configure() {
+    echo
+    echo "Applying signature-rM"
+    signature-rm apply -y > /dev/null
+    echo "Success"
+    echo
 }
 
 _restore() {
-    if signature-rm is-applied > /dev/null 2>&1; then
-        echo "Reverting /usr/bin/xochitl"
-        if ! signature-rm revert --backup -y > /dev/null 2>&1; then
-            if ! signature-rm revert --reverse -y > /dev/null 2>&1; then
-                echo "Could not revert /usr/bin/xochitl"
-            fi
-        fi
-        echo "Success"
+    echo "Reverting /usr/bin/xochitl"
+    if signature-rm has-backup > /dev/null; then
+        signature-rm revert --backup -y > /dev/null
+    else
+        signature-rm revert --reverse -y > /dev/null 2>&1
     fi
+    echo "Success"
+    echo
 }
 
 preremove() {
