@@ -6,12 +6,13 @@ archs=(rm1 rm2)
 pkgnames=(ddvk-hacks)
 pkgdesc="Enhance Xochitl with additional features"
 url=https://github.com/ddvk/remarkable-hacks
-pkgver=39.01-1
+pkgver=39.01-2
 timestamp=2022-11-09T18:31:51Z
 section="readers"
 maintainer="Mattéo Delabre <spam@delab.re>"
 license=MIT
 flags=(nostrip)
+conflicts=(webinterface-onboot signature-rm)
 
 source=(https://github.com/ddvk/remarkable-hacks/archive/90e7e3e7ffc269373de191085453be50c9f8da0c.zip)
 sha256sums=(d3b1413bb9219804581afab598e7f5308233e7467d64e8084e67aae7346beaba)
