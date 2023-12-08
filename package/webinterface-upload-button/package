@@ -15,20 +15,33 @@ license=MIT
 _pkgalias='webint-upldbtn'
 
 source=(
-    "$url"/archive/ec03bcf4de99c89fd8d99addc03e40cadba4345c.zip
+    "$url"/archive/1c69d4fcaa1cb8e2cf4b022a190429dc39946498.zip
 )
 sha256sums=(
-    f4697beb4a9e759f4e996cf7c4dfc30f523b469084c92698c69b23188c9c40fc
+    a388d1db49a3c35782600efbd94ee449c59f46c223f14c254cb74d9509255d96
 )
 
 package() {
     install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir/$_pkgname"
     ln -s /opt/bin/"$_pkgname" "$pkgdir/opt/bin/$_pkgalias"
+
+    touch "$srcdir"/emptyfile
+    install -D -m 666 -t "$pkgdir"/usr/share/toltec/reenable.d/"$_pkgname" "$srcdir"/emptyfile
+}
+
+configure() {
+    echo
+    echo "Applying webinterface-upload-button"
+    webinterface-upload-button apply -y > /dev/null
+    echo "Success"
+    echo
 }
 
 _restore() {
     echo
-    webinterface-upload-button revert -y
+    echo "Reverting webinterface-upload-button"
+    webinterface-upload-button revert -y > /dev/null
+    echo "Success"
     echo
 }
 
