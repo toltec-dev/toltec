@@ -57,6 +57,11 @@ configure() {
 
     systemctl daemon-reload
 
+    if is-active "$pkgname"; then
+        echo "Restarting $pkgname"
+        systemctl restart "$pkgname"
+    fi
+
     echo ""
     echo "Run '\$ $pkgname' for usage information and a link to"
     echo "the documentation. You can also find the documentation locally"
