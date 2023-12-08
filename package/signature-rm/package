@@ -12,6 +12,7 @@ section="utils"
 maintainer="rM-self-serve <122753594+rM-self-serve@users.noreply.github.com>"
 license=MIT
 image=rust:v3.1
+conflicts=(ddvk-hacks)
 
 source=(
     "$url"/archive/b5561af4eb6a0f5aa6e98e1a1279066f0c4bd9b7.zip
