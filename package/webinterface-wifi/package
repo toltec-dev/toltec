@@ -18,12 +18,12 @@ _configdir="/home/root/.config/$_pkgname"
 _etcdir="/opt/etc/$_pkgname"
 
 source=(
-    "$url/archive/feb573ac5f16a75d3d7ce66b3957d5c753ad5561.zip"
+    "$url/archive/4513d5cbc5e323f2959987f3bc9e300b0aaddb19.zip"
     "$_pkgname-toltec.service"
 )
 
 sha256sums=(
-    516f4c1684b8d50fc8c9c63a7f11f3183b259ba52243b719a73a56519dc45947
+    a23c05faf4ccaafea9222255399c8c3a121079dd07970c8768b4315606eb7834
     SKIP
 )
 
