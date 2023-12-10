@@ -5,7 +5,7 @@
 pkgnames=(xochitl)
 pkgdesc="Read documents and take notes"
 url=https://remarkable.com
-pkgver=0.0.0-14
+pkgver=0.0.0-17
 timestamp=2022-11-07T20:19:57Z
 section="readers"
 maintainer="Mattéo Delabre <spam@delab.re>"
@@ -83,9 +83,7 @@ configure() {
 }
 
 preremove() {
-    if is-active manual-sync.service; then
-        systemctl disable --now manual-sync.service
-    fi
+    disable-unit manual-sync.service
 }
 
 postremove() {

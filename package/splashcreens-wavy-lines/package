@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+# Copyright (c) 2023 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgnames=(
+    splashscreen-starting-wavey-lines
+    splashscreen-suspended-wavey-lines
+)
+url=https://github.com/EnglishLFC/reMarkable
+pkgver=0.0.0-1
+timestamp=2021-03-19T18:46:40Z
+section="splashscreens"
+maintainer="Eeems <eeems@eeems.email>"
+license=BSD-2-Clause
+installdepends=(changescrn)
+
+source=("https://github.com/EnglishLFC/reMarkable/archive/a06b10ea9f28c784e6941085a30944c0489450f4.zip")
+sha256sums=(ec5f0321342bf6b48bb1431f4b1cf4416c37681879b3ec6c9375f889077a0b7f)
+
+splashscreen-starting-wavey-lines() {
+    pkgdesc="Barnsley Fern battery empty splashscreen"
+    replaces=("splashscreen-starting")
+    conflicts=("splashscreen-starting")
+    package() {
+        install -D -m 755 -T "$srcdir"/splash/splash.png \
+            "$pkgdir"/opt/share/remarkable/splashscreens/starting.png
+    }
+    configure() {
+        changescrn -c starting /opt/share/remarkable/splashscreens/starting.png
+    }
+    postremove() {
+        changescrn -r starting
+    }
+}
+
+splashscreen-suspended-wavey-lines() {
+    pkgdesc="Barnsley Fern power off splashscreen"
+    replaces=("splashscreen-suspended")
+    conflicts=("splashscreen-suspended")
+    package() {
+        install -D -m 755 -t "$pkgdir"/opt/share/remarkable/splashscreens \
+            "$srcdir"/splash/suspended.png
+    }
+    configure() {
+        changescrn -c suspended /opt/share/remarkable/splashscreens/suspended.png
+    }
+    postremove() {
+        changescrn -r suspended
+    }
+}
