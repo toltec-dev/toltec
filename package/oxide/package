@@ -4,7 +4,7 @@
 
 pkgnames=(oxide oxide-extra oxide-utils inject_evdev liboxide libsentry)
 _oxidever=2.7
-pkgver=$_oxidever-2
+pkgver=$_oxidever-3
 _sentryver=0.5.0
 timestamp=2023-12-05T04:43:04Z
 maintainer="Eeems <eeems@eeems.email>"
