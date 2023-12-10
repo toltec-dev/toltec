@@ -68,14 +68,7 @@ oxide() {
     }
 
     preremove() {
-        if is-active tarnish; then
-            echo "Stopping tarnish"
-            systemctl stop tarnish
-        fi
-        if is-enabled tarnish; then
-            echo "Disabling tarnish"
-            systemctl disable tarnish
-        fi
+        disable-unit tarnish.service
     }
 
     postremove() {
