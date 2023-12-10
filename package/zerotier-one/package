@@ -70,12 +70,7 @@ zerotier-one() {
         fi
     }
     preremove() {
-        if is-active zerotier-one.service; then
-            systemctl stop zerotier-one.service
-        fi
-        if is-enabled zerotier-one.service; then
-            systemctl disable zerotier-one.service
-        fi
+        disable-unit zerotier-one.service
     }
 }
 
