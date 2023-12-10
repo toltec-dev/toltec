@@ -65,8 +65,8 @@ package() {
 configure() {
     systemctl daemon-reload
 
-    # sync.service interferes with launchers
-    # we use manual-sync.service instead
+    # sync.service and rm-sync.service interfere with launchers
+    # we use manual-sync@.service instead
     if [ -f /usr/bin/sync ] && ! is-masked sync.service; then
         systemctl mask sync.service
     fi
@@ -74,6 +74,10 @@ configure() {
     if [ -f /usr/bin/rm-sync ] && ! is-masked rm-sync.service; then
         systemctl mask rm-sync.service
     fi
+
+    # manual-sync.service has been changed to manual-sync@.service
+    # Make sure to disable and stop the old version
+    disable-unit manual-sync.service
 
     if [ -f /usr/bin/rm-sync ] && ! is-active manual-sync@rm-sync.service; then
         systemctl enable --now manual-sync@rm-sync.service
@@ -90,13 +94,7 @@ configure() {
 }
 
 preremove() {
-    if is-active manual-sync@rm-sync.service; then
-        systemctl disable --now manual-sync@rm-sync.service
-    fi
-
-    if is-active manual-sync@sync.service; then
-        systemctl disable --now manual-sync@sync.service
-    fi
+    disable-unit manual-sync@rm-sync.service
 }
 
 postremove() {
@@ -114,14 +112,5 @@ postremove() {
         # launcher.service alias is removed
         systemctl disable xochitl.service 2> /dev/null
         systemctl enable xochitl.service 2> /dev/null
-    fi
-}
-
-preupgrade() {
-    if is-enabled manual-sync.service; then
-        systemctl disable manual-sync.service
-    fi
-    if is-active manual-sync.service; then
-        systemctl stop manual-sync.service
     fi
 }
