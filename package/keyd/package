@@ -48,15 +48,8 @@ configure() {
 }
 
 preremove() {
+    disable-unit keyd
     delgroup keyd
-    if is-active keyd; then
-        echo "Stopping keyd"
-        systemctl stop keyd
-    fi
-    if is-enabled keyd; then
-        echo "Disabling keyd"
-        systemctl disable keyd
-    fi
 }
 
 postremove() {
