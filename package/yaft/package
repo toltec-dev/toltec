@@ -35,7 +35,7 @@ build() {
     mkdir install
     cd build
     cmake -DCMAKE_TOOLCHAIN_FILE="/usr/share/cmake/$CHOST.cmake" \
-        -DCMAKE_INSTALL_PREFIX="../yaft/install" -DCMAKE_BUILD_TYPE=Release ../yaft
+        -DCMAKE_INSTALL_PREFIX="../install" -DCMAKE_BUILD_TYPE=Release ../yaft
     cd apps/yaft
     make
     make install
