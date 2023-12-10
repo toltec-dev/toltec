@@ -5,20 +5,28 @@
 pkgnames=(neofetch)
 pkgdesc="A command-line system information tool"
 url="https://github.com/rM-self-serve/neofetch-rM"
-pkgver=0.0.0-1
-timestamp=2023-02-09T11:43:00Z
+pkgver=1.1.0-1
+timestamp=2023-12-06T11:43:00Z
 section="utils"
 maintainer="rM-self-serve <122753594+rM-self-serve@users.noreply.github.com>"
 license=MIT
 
 source=(
-    https://github.com/rM-self-serve/neofetch-rM/archive/c497597ba4b481042cbb48b7c2c55e45dda25543.zip
+    https://github.com/rM-self-serve/neofetch-rM/archive/955997e4e3b8be682f40ee54366e44337df68959.zip
 )
 
 sha256sums=(
-    06492898eac6fb4f2cc95ca52c65f8f4f580ada57b4fe433722dabeae884b633
+    451017bd2517cf8c124af772e77b316ad784507709219e5831b28f613830f7e5
 )
 
 package() {
     install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/neofetch
+}
+
+configure() {
+    if [ -f '/home/root/.config/neofetch/config.conf' ]; then
+        echo ""
+        echo "You may choose to remove ~/.config/neofetch/config.conf"
+        echo "in order to get the latest default config."
+    fi
 }
