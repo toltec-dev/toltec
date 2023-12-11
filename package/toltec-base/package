@@ -31,10 +31,8 @@ configure() {
     sed -i \
         -e 's|^export TERM=xterm|if \[ -z "$TERM" \];then export TERM=xterm;fi|' \
         /opt/etc/profile
-    if is-enabled "update-engine.service"; then
-        echo "Disabling automatic update"
-        systemctl disable --now update-engine
-    fi
+    echo "Disabling automatic update"
+    disable-unit update-engine.service
     if [[ "$arch" == "rm1" ]] || [[ "$arch" == "rm1os2" ]] || [[ "$arch" == "rm1os3" ]] && ! is-masked sys-subsystem-net-devices-usb1.device; then
         echo "Disabling usb1 network device to avoid long boots"
         systemctl mask sys-subsystem-net-devices-usb1.device
