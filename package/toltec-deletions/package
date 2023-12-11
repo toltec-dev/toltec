@@ -12,8 +12,10 @@ section="utils"
 maintainer="Eeems <eeems@eeems.email>"
 license=MIT
 installdepends=(toltec-bootstrap)
-conflicts=(ddvk-hacks fuse wireguard)
-replaces=(ddvk-hacks fuse wireguard)
+conflicts_rmallos2=()
+replaces_rmallos2=()
+conflicts_rmallos3=(ddvk-hacks fuse wireguard)
+replaces_rmallos3=(ddvk-hacks fuse wireguard)
 
 source=()
 sha256sums=()
