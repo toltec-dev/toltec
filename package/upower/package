@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+# Copyright (c) 2023 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgnames=(upower)
+pkgdesc="Power management support for DeviceKit"
+url=https://gitlab.freedesktop.org/upower/upower
+timestamp=2023-07-06T09:03:00Z
+section=util
+maintainer="Eeems <eeems@eeems.email>"
+license=GPL-2.0-or-later
+_upower_ver=1.90.1
+pkgver=${_upower_ver}-1
+source=(https://gitlab.freedesktop.org/upower/upower/-/archive/v${_upower_ver}/upower-v${_upower_ver}.zip)
+sha256sums=(cba3cea3ae4cd345a4d7a787a47e20b35af00859b7089de5aab4796df406fe00)
+image=base:v3.1
+makedepends=(
+    build:gtk-doc-tools
+    build:libglib2.0
+    build:libglib2.0-dev-bin
+    build:xsltproc
+    host:libglib
+    host:libgudev
+)
+
+build() {
+    export PKG_CONFIG_LIBDIR="$PKG_CONFIG_LIBDIR:$PKG_CONFIG_SYSROOT_DIR/usr/share/pkgconfig"
+    export PKG_CONFIG_LIBDIR="$PKG_CONFIG_LIBDIR:$PKG_CONFIG_SYSROOT_DIR/opt/usr/lib/libglib/lib/pkgconfig"
+    export PKG_CONFIG_LIBDIR="$PKG_CONFIG_LIBDIR:$PKG_CONFIG_SYSROOT_DIR/opt/usr/lib/libgudev/lib/pkgconfig"
+    meson setup \
+        --cross-file /usr/share/meson/cross/arm-linux-gnueabihf \
+        --prefix /opt \
+        "${srcdir}/builddir"
+    meson compile -C "${srcdir}/builddir"
+    DESTDIR="${srcdir}/installdir" meson install -C "${srcdir}/builddir"
+}
+
+package() {
+    cp -al "${srcdir}/installdir/." ${pkgdir}
+}
