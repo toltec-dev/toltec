@@ -5,7 +5,7 @@
 pkgnames=(puzzles)
 timestamp=2021-03-04T14:03-08:00
 maintainer="Mattéo Delabre <spam@delab.re>"
-pkgver=0.2.2-4
+pkgver=0.2.4-4
 license=MIT
 pkgdesc="Simon Tatham's Puzzle Package"
 url="https://github.com/mrichards42/remarkable_puzzles"
@@ -19,7 +19,7 @@ source=(
     puzzles.draft
 )
 sha256sums=(
-    3fe3686757e69d1267e830ba527d15ff6d1a68e34f830842dcaf35f58b43d501
+    ae00474f6b1f7ced13bd6b1f18ff57b583fcd66c587a5180e87af997768345ff
     SKIP
 )
 
