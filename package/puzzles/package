@@ -13,7 +13,7 @@ section="games"
 makedepends=(build:git)
 flags=(patch_rm2fb)
 
-image=python:v2.1
+image=python:v2.3.2
 source=(
     "https://github.com/mrichards42/remarkable_puzzles/releases/download/v${pkgver%-*}/puzzles-source.tar.gz"
     puzzles.draft
