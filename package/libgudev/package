@@ -11,7 +11,7 @@ maintainer="Eeems <eeems@eeems.email>"
 license=GPL-2.0-or-later
 _libgudev_ver=237
 pkgver=${_libgudev_ver}-1
-source=(https://download.gnome.org/sources/libgudev/${_libgudev_ver}/libgudev-${_libgudev_ver}.tar.xz)
+source=("https://download.gnome.org/sources/libgudev/${_libgudev_ver}/libgudev-${_libgudev_ver}.tar.xz")
 sha256sums=(0d06b21170d20c93e4f0534dbb9b0a8b4f1119ffb00b4031aaeb5b9148b686aa)
 image=base:v3.1
 makedepends=(
@@ -30,5 +30,5 @@ build() {
 }
 
 package() {
-    cp -al "${srcdir}/installdir/." ${pkgdir}
+    cp -al "${srcdir}/installdir/." "${pkgdir}"
 }
