@@ -2,7 +2,7 @@
 # Copyright (c) 2021 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
-pkgnames=(oxide oxide-extra oxide-utils inject_evdev liboxide libsentry)
+pkgnames=(oxide oxide-extra oxide-utils inject_evdev liboxide liboxide-dev libsentry)
 _oxidever=2.7
 pkgver=$_oxidever-3
 _sentryver=0.5.0
@@ -17,7 +17,7 @@ source=(
     toltec-rm2-override.conf
 )
 sha256sums=(
-    2460ec84d8821943cf74e92fbbcdebb8fb36e45861ec070a0f70436802b4cc27
+    e1f20fc60ae8edccb941e09c0e61cbfb58f1f8a5f64be98870eb2d079f83316f
     SKIP
 )
 
@@ -131,6 +131,19 @@ liboxide() {
 
     package() {
         install -D -m 755 -t "$pkgdir"/opt/lib "$srcdir"/release/opt/lib/libliboxide.so*
+    }
+}
+
+liboxide-dev() {
+    pkgdesc="Shared library for oxide applications"
+    section="devel"
+    installdepends=("liboxide=$pkgver")
+
+    package() {
+        install -D -m 755 -t "$pkgdir"/opt/lib/pkgconfig "$srcdir"/release/opt/lib/pkgconfig/liboxide.pc
+        install -D -m 755 -t "$pkgdir"/opt/include "$srcdir"/release/opt/include/epframebuffer.h
+        install -D -m 755 -t "$pkgdir"/opt/include "$srcdir"/release/opt/include/liboxide.h
+        cp -ar "$srcdir"/release/opt/include/liboxide/ "$pkgdir"/opt/include/
     }
 }
 
