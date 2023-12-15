@@ -6,13 +6,14 @@ pkgnames=(wireguard-tools)
 pkgdesc="Fast, modern, secure VPN tunnel"
 url=https://www.wireguard.com
 # epoch is to make sure that this gets installed instead of the entware package
-pkgver=1:1.0.20210914-1
+_ver=1.0.20210914
+pkgver=1:${_ver}-1
 timestamp=2021-02-23T00:00Z
 section=kernel
 maintainer="Salvatore Stella <etn45p4m@gmail.com>"
 license=GPL-2.0-only
 image=base:v3.1
-source=("https://git.zx2c4.com/wireguard-tools/snapshot/wireguard-tools-${pkgver%-*}.tar.xz")
+source=("https://git.zx2c4.com/wireguard-tools/snapshot/wireguard-tools-${_ver}.tar.xz")
 
 sha256sums=(97ff31489217bb265b7ae850d3d0f335ab07d2652ba1feec88b734bc96bd05ac)
 
