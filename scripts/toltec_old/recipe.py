@@ -16,8 +16,8 @@ from typing import Dict, NamedTuple, Optional, Set
 import os
 import textwrap
 import dateutil.parser
-from toltec.version import Version, Dependency, DependencyKind
-from toltec import bash
+from toltec.version import Version, Dependency, DependencyKind  # type: ignore
+from toltec import bash  # type: ignore
 
 
 class RecipeError(Exception):

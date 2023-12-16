@@ -9,11 +9,11 @@ import os
 from typing import Dict, List, Optional
 from toltec_old import paths
 from toltec_old.repo import Repo, PackageStatus
-from toltec.recipe import Package
-from toltec import parse_recipe
-from toltec.builder import Builder
-from toltec.repo import make_index
-from toltec.util import argparse_add_verbose, LOGGING_FORMAT
+from toltec.recipe import Package  # type: ignore
+from toltec import parse_recipe  # type: ignore
+from toltec.builder import Builder  # type: ignore
+from toltec.repo import make_index  # type: ignore
+from toltec.util import argparse_add_verbose, LOGGING_FORMAT  # type: ignore
 
 parser = argparse.ArgumentParser(description=__doc__)
 
