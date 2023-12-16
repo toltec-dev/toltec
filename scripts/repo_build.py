@@ -6,9 +6,13 @@
 import argparse
 import logging
 import os
-from toltec import paths
+from typing import Dict, List, Optional
+from toltec_old import paths
+from toltec_old.repo import Repo, PackageStatus
+from toltec.recipe import Package
+from toltec import parse_recipe
 from toltec.builder import Builder
-from toltec.repo import Repo, PackageStatus
+from toltec.repo import make_index
 from toltec.util import argparse_add_verbose, LOGGING_FORMAT
 
 parser = argparse.ArgumentParser(description=__doc__)
@@ -47,9 +51,10 @@ remote = args.remote_repo if not args.local else None
 logging.basicConfig(format=LOGGING_FORMAT, level=args.verbose)
 
 repo = Repo(paths.RECIPE_DIR, paths.REPO_DIR)
-builder = Builder(paths.WORK_DIR, paths.REPO_DIR)
 results = repo.fetch_packages(remote)
-repo.make_index()
+
+os.makedirs(paths.REPO_DIR, exist_ok=True)
+make_index(paths.REPO_DIR)
 
 fetched = results[PackageStatus.Fetched]
 missing = results[PackageStatus.Missing]
@@ -58,9 +63,27 @@ ordered_missing = repo.order_dependencies(
 )
 
 for generic_recipe in ordered_missing:
-    if missing[generic_recipe.name]:
-        builder.make(generic_recipe, missing[generic_recipe.name])
-        repo.make_index()
+    # TODO - rework toltec_old.repo into something inline and actually easy to work with
+    # Currently generic_recipe is a Dict[str, Recipe] where the index is the arch. Every
+    # single entry will have the same path, so we can use that for the name of the generic
+    # recipe we are actually building.
+    name = os.path.basename(next(iter(generic_recipe.values())).path)
+    if missing[name]:
+        with Builder(os.path.join(paths.WORK_DIR, name), paths.REPO_DIR) as builder:
+            recipe_bundle = parse_recipe(os.path.join(paths.RECIPE_DIR, name))
+            build_matrix: Optional[Dict[str, Optional[List[Package]]]] = None
+            old_build_matrix = missing[name]
+            if old_build_matrix:
+                build_matrix = {}
+
+                for arch, recipes in old_build_matrix.items():
+                    build_matrix[arch] = [
+                        recipe_bundle[arch].packages[pkg_name]
+                        for pkg_name in recipe_bundle[arch].packages
+                    ]
+            builder.make(recipe_bundle, build_matrix, False)
+
+        make_index(paths.REPO_DIR)
 
 if args.diff:
     for name in fetched:
@@ -70,5 +93,5 @@ if args.diff:
                 local_path = os.path.join(repo.repo_dir, filename)
                 os.remove(local_path)
 
-repo.make_index()
+make_index(paths.REPO_DIR)
 repo.make_listing()

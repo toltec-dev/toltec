@@ -16,8 +16,8 @@ from typing import Dict, NamedTuple, Optional, Set
 import os
 import textwrap
 import dateutil.parser
-from .version import Version, Dependency, DependencyKind
-from . import bash
+from toltec.version import Version, Dependency, DependencyKind
+from toltec import bash
 
 
 class RecipeError(Exception):
@@ -126,9 +126,7 @@ class GenericRecipe:  # pylint:disable=too-many-instance-attributes
 
                     variables[name] = base_value + value
 
-        self.recipes[arch] = Recipe(
-            self, f"{self.name}-{arch}", variables, functions
-        )
+        self.recipes[arch] = Recipe(self, f"{self.name}-{arch}", variables, functions)
 
 
 class Source(NamedTuple):
@@ -250,9 +248,7 @@ class Recipe:  # pylint:disable=too-many-instance-attributes
 
         makedepends_raw = _pop_field_indexed(variables, "makedepends", [])
         self.variables["makedepends"] = makedepends_raw
-        self.makedepends = {
-            Dependency.parse(dep or "") for dep in makedepends_raw
-        }
+        self.makedepends = {Dependency.parse(dep or "") for dep in makedepends_raw}
 
         self.maintainer = _pop_field_string(variables, "maintainer")
         self.variables["maintainer"] = self.maintainer
@@ -315,9 +311,7 @@ corresponding package"
                         "pkgname": sub_pkg_name,
                     }
                 )
-                pkg_decls[sub_pkg_name] = bash.get_declarations(
-                    context + pkg_def
-                )
+                pkg_decls[sub_pkg_name] = bash.get_declarations(context + pkg_def)
 
                 for var_name in self.variables:
                     del pkg_decls[sub_pkg_name][0][var_name]
@@ -401,7 +395,7 @@ class Package:  # pylint:disable=too-many-instance-attributes
                 assert dep_raw is not None
                 dep = Dependency.parse(dep_raw)
 
-                if dep.kind != DependencyKind.Host:
+                if dep.kind != DependencyKind.HOST:
                     raise RecipeError(
                         f"Only host packages are supported in the \
 '{field}' field"
@@ -412,7 +406,7 @@ class Package:  # pylint:disable=too-many-instance-attributes
         if self.parent.flags & BuildFlags.PATCH_RM2FB:
             self.installdepends.add(
                 Dependency(
-                    DependencyKind.Host,
+                    DependencyKind.HOST,
                     "rm2fb-client",
                 )
             )

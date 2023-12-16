@@ -6,6 +6,6 @@ Load the Jinja2 templating engine.
 from jinja2 import Environment, PackageLoader
 
 env = Environment(
-    loader=PackageLoader("toltec", "templates"),
+    loader=PackageLoader("toltec_old", "templates"),
     autoescape=True,
 )

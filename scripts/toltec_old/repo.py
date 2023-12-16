@@ -5,17 +5,18 @@ Build the package repository.
 """
 
 from datetime import datetime
-import gzip
 from enum import Enum, auto
 import logging
 import os
-import textwrap
-from typing import Dict, Iterable, List, Optional, Set
+from typing import Dict, Iterable, List, Optional
 import requests
+from toltec.version import DependencyKind
+from toltec.util import HTTP_DATE_FORMAT
+from toltec.recipe import Package
+from toltec import parse_recipe
 from .graphlib import TopologicalSorter
-from .recipe import GenericRecipe, Package
-from .util import file_sha256, group_by, HTTP_DATE_FORMAT
-from .version import DependencyKind
+from .recipe import GenericRecipe
+from .util import group_by
 from . import templating
 
 logger = logging.getLogger(__name__)
@@ -57,7 +58,7 @@ class Repo:
 
         for name in os.listdir(self.recipe_dir):
             if name[0] != ".":
-                self.generic_recipes[name] = GenericRecipe.from_file(
+                self.generic_recipes[name] = parse_recipe(
                     os.path.join(self.recipe_dir, name)
                 )
 
@@ -83,7 +84,7 @@ class Repo:
             fetched_generic = {}
             missing_generic = {}
 
-            for arch, recipe in generic_recipe.recipes.items():
+            for arch, recipe in generic_recipe.items():
                 fetched_arch = []
                 missing_arch = []
 
@@ -96,7 +97,7 @@ class Repo:
                         logger.info(
                             "Package %s (%s) is missing",
                             package.pkgid(),
-                            recipe.name,
+                            os.path.basename(recipe.path),
                         )
                         missing_arch.append(package)
 
@@ -114,9 +115,7 @@ class Repo:
 
         return results
 
-    def fetch_package(
-        self, package: Package, remote: Optional[str]
-    ) -> PackageStatus:
+    def fetch_package(self, package: Package, remote: Optional[str]) -> PackageStatus:
         """
         Check if a package exists locally and fetch it otherwise.
 
@@ -176,70 +175,23 @@ class Repo:
         parent_recipes = {}
 
         for generic_recipe in generic_recipes:
-            for recipe in generic_recipe.recipes.values():
+            for recipe in generic_recipe.values():
                 for package in recipe.packages.values():
-                    parent_recipes[package.name] = generic_recipe.name
+                    parent_recipes[package.name] = os.path.basename(recipe.path)
 
         for generic_recipe in generic_recipes:
-            deps = []
-
-            for recipe in generic_recipe.recipes.values():
+            for recipe in generic_recipe.values():
+                deps = []
                 for dep in recipe.makedepends:
                     if (
-                        dep.kind == DependencyKind.Host
+                        dep.kind == DependencyKind.HOST
                         and dep.package in parent_recipes
                     ):
                         deps.append(parent_recipes[dep.package])
 
-            toposort.add(generic_recipe.name, *deps)
+                toposort.add(os.path.basename(recipe.path), *deps)
 
         return [self.generic_recipes[name] for name in toposort.static_order()]
-
-    def make_index(self) -> None:
-        """Generate index files for all the packages in the repo."""
-        logger.info("Generating package indices")
-
-        # Gather all available architectures
-        archs: Set[str] = set()
-        for generic_recipe in self.generic_recipes.values():
-            archs.update(generic_recipe.recipes.keys())
-
-        # Generate one index per architecture
-        for arch in archs:
-            arch_dir = os.path.join(self.repo_dir, arch)
-            os.makedirs(arch_dir, exist_ok=True)
-
-            index_path = os.path.join(arch_dir, "Packages")
-            index_gzip_path = os.path.join(arch_dir, "Packages.gz")
-
-            # pylint: disable-next=unspecified-encoding
-            with open(index_path, "w") as index_file:
-                with gzip.open(index_gzip_path, "wt") as index_gzip_file:
-                    for generic_recipe in self.generic_recipes.values():
-                        if not arch in generic_recipe.recipes:
-                            continue
-
-                        recipe = generic_recipe.recipes[arch]
-
-                        for package in recipe.packages.values():
-                            filename = package.filename()
-                            local_path = os.path.join(self.repo_dir, filename)
-
-                            if not os.path.isfile(local_path):
-                                continue
-
-                            control = package.control_fields()
-                            control += textwrap.dedent(
-                                f"""\
-                                Filename: {os.path.basename(filename)}
-                                SHA256sum: {file_sha256(local_path)}
-                                Size: {os.path.getsize(local_path)}
-
-                                """
-                            )
-
-                            index_file.write(control)
-                            index_gzip_file.write(control)
 
     def make_listing(self) -> None:
         """Generate the static web listing for packages in the repo."""
@@ -248,7 +200,7 @@ class Repo:
         packages = [
             package
             for generic_recipe in self.generic_recipes.values()
-            for recipe in generic_recipe.recipes.values()
+            for recipe in generic_recipe.values()
             for package in recipe.packages.values()
         ]
 
