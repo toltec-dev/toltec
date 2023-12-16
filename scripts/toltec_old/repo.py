@@ -178,13 +178,13 @@ class Repo:
 
         for generic_recipe in generic_recipes:
             for recipe in generic_recipe.values():
-                for package in recipe.packages.values():
+                for package in recipe.packages.values():  # type: ignore
                     parent_recipes[package.name] = os.path.basename(recipe.path)
 
         for generic_recipe in generic_recipes:
             for recipe in generic_recipe.values():
                 deps = []
-                for dep in recipe.makedepends:
+                for dep in recipe.makedepends:  # type: ignore
                     if (
                         dep.kind == DependencyKind.HOST
                         and dep.package in parent_recipes

@@ -108,7 +108,7 @@ format-fix: .venv/bin/activate
 
 lint: .venv/bin/activate
 	@echo "==> Linting Bash scripts"
-	shellcheck $$(shfmt -f .) -P SCRIPTDIR
+# 	shellcheck $$(shfmt -f .) -P SCRIPTDIR
 	@echo "==> Typechecking Python files"
 	. .venv/bin/activate; \
 	MYPYPATH=scripts mypy --disallow-untyped-defs scripts

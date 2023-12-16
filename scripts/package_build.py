@@ -13,6 +13,7 @@ from toltec_old.repo import Repo
 from toltec import parse_recipe  # type: ignore
 from toltec.builder import Builder  # type: ignore
 from toltec.recipe import Package  # type: ignore
+from toltec.repo import make_index  # type: ignore
 from toltec.util import argparse_add_verbose, LOGGING_FORMAT  # type: ignore
 
 parser = argparse.ArgumentParser(description=__doc__)
@@ -65,4 +66,4 @@ with Builder(
     if not builder.make(recipe_bundle, build_matrix):
         sys.exit(1)
 
-    repo.make_index()
+    make_index(paths.REPO_DIR)
