@@ -1,6 +1,6 @@
 black==23.7.0
 pylint==3.0.3
-toltecmk==0.3.0
+toltecmk==0.2.1
 mypy-extensions==1.0.0
 websocket-client==1.6.1
 typing-extensions==4.7.1
