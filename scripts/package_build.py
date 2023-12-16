@@ -47,7 +47,9 @@ repo = Repo(paths.RECIPE_DIR, paths.REPO_DIR)
 builder = Builder(paths.WORK_DIR, paths.REPO_DIR)
 arch_packages: Optional[Dict[str, Optional[List[Package]]]] = None
 
-with Builder(os.path.join(paths.WORK_DIR, args.recipe_name), paths.REPO_DIR) as builder:
+with Builder(
+    os.path.join(paths.WORK_DIR, args.recipe_name), paths.REPO_DIR
+) as builder:
     recipe_bundle = parse_recipe(f"package/{args.recipe_name}")
     build_matrix: Optional[Dict[str, Optional[List[Package]]]] = None
     if args.arch_name or args.packages_names:

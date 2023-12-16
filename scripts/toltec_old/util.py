@@ -38,5 +38,7 @@ def group_by(
     """
     return dict(
         (key, list(group))
-        for key, group in itertools.groupby(sorted(in_seq, key=key_fn), key=key_fn)
+        for key, group in itertools.groupby(
+            sorted(in_seq, key=key_fn), key=key_fn
+        )
     )

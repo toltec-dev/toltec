@@ -115,7 +115,9 @@ class Repo:
 
         return results
 
-    def fetch_package(self, package: Package, remote: Optional[str]) -> PackageStatus:
+    def fetch_package(
+        self, package: Package, remote: Optional[str]
+    ) -> PackageStatus:
         """
         Check if a package exists locally and fetch it otherwise.
 
