@@ -35,7 +35,7 @@ elif [[ $1 == "status" ]]; then
         "$0" list | xargs -rn1 "$0" status
     else
         s="entware-rc@${2}.service"
-        echo "${2}" $(systemctl is-active "${s}") $(systemctl is-enabled "${s}") \
+        echo "${2}" "$(systemctl is-active "${s}")" "$(systemctl is-enabled "${s}")" \
             | grep --color=always '\(disabled\|inactive\|$\)'
     fi
 elif [[ $1 == "logs" ]]; then
