@@ -5,7 +5,7 @@
 pkgnames=(tilem)
 pkgdesc="TI-84+ calculator emulator"
 url=https://github.com/timower/rM2-stuff/tree/master/apps/tilem
-pkgver=0.0.7-2
+pkgver=0.0.7-3
 timestamp=2021-04-30T10:42Z
 maintainer="Mattéo Delabre <spam@delab.re>"
 license=GPL-3.0

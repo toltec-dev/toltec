@@ -4,7 +4,7 @@
 
 pkgnames=(erode fret oxide rot tarnish decay corrupt anxiety oxide-utils inject_evdev liboxide libsentry)
 _oxidever=2.6
-pkgver=$_oxidever-2
+pkgver=$_oxidever-3
 _sentryver=0.5.0
 timestamp=2023-06-05T23:27:53Z
 maintainer="Eeems <eeems@eeems.email>"
@@ -49,10 +49,6 @@ fret() {
         install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/release/opt/bin/fret
         install -D -m 644 -t "$pkgdir"/opt/usr/share/applications "$srcdir"/release/opt/usr/share/applications/codes.eeems.fret.oxide
     }
-
-    configure() {
-        update-desktop-database
-    }
 }
 
 oxide() {
@@ -65,9 +61,6 @@ oxide() {
         install -D -m 644 -t "$pkgdir"/opt/etc "$srcdir"/release/opt/etc/oxide.conf
         install -D -m 644 -t "$pkgdir"/opt/usr/share/applications "$srcdir"/release/opt/usr/share/applications/codes.eeems.oxide.oxide
         install -D -m 644 -t "$pkgdir"/opt/usr/share/icons/oxide/702x702/splash "$srcdir"/release/opt/usr/share/icons/oxide/702x702/splash/oxide.png
-    }
-    configure() {
-        update-desktop-database
     }
 }
 
@@ -105,14 +98,7 @@ tarnish() {
         fi
     }
     preremove() {
-        if is-active tarnish; then
-            echo "Stopping tarnish"
-            systemctl stop tarnish
-        fi
-        if is-enabled tarnish; then
-            echo "Disabling tarnish"
-            systemctl disable tarnish
-        fi
+        disable-unit tarnish.service
     }
     postremove() {
         systemctl daemon-reload
@@ -128,10 +114,6 @@ decay() {
         install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/release/opt/bin/decay
         install -D -m 644 -t "$pkgdir"/opt/usr/share/applications "$srcdir"/release/opt/usr/share/applications/codes.eeems.decay.oxide
     }
-
-    configure() {
-        update-desktop-database
-    }
 }
 corrupt() {
     pkgdesc="Task Switcher for Oxide"
@@ -141,10 +123,6 @@ corrupt() {
     package() {
         install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/release/opt/bin/corrupt
         install -D -m 644 -t "$pkgdir"/opt/usr/share/applications "$srcdir"/release/opt/usr/share/applications/codes.eeems.corrupt.oxide
-    }
-
-    configure() {
-        update-desktop-database
     }
 }
 
@@ -158,10 +136,6 @@ anxiety() {
         install -D -m 644 -t "$pkgdir"/opt/usr/share/applications "$srcdir"/release/opt/usr/share/applications/codes.eeems.anxiety.oxide
         install -D -m 644 -t "$pkgdir"/opt/usr/share/icons/oxide/48x48/apps "$srcdir"/release/opt/usr/share/icons/oxide/48x48/apps/image.png
         install -D -m 644 -t "$pkgdir"/opt/usr/share/icons/oxide/702x702/splash "$srcdir"/release/opt/usr/share/icons/oxide/702x702/splash/anxiety.png
-    }
-
-    configure() {
-        update-desktop-database
     }
 }
 

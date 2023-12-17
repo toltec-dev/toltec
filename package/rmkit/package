@@ -40,20 +40,19 @@ bufshot() {
 dumbskull() {
     pkgdesc="Dungeon Crawl themed Solitaire"
     url="https://rmkit.dev/apps/dumbskull"
-    pkgver=0.0.1-2
+    pkgver=0.0.1-3
     section="games"
 
     package() {
         install -D -m 755 "$srcdir"/src/build/dumbskull "$pkgdir"/opt/bin/dumbskull
         install -D -m 644 "$srcdir"/src/dumbskull/dumbskull.draft "$pkgdir"/opt/etc/draft/dumbskull.draft
     }
-
 }
 
 genie() {
     pkgdesc="Gesture engine that connects commands to gestures"
     url="https://rmkit.dev/apps/genie"
-    pkgver=0.1.6-2
+    pkgver=0.1.6-3
     section="utils"
 
     package() {
@@ -68,8 +67,7 @@ genie() {
     }
 
     preremove() {
-        echo "Disabling $pkgname"
-        systemctl disable --now "$pkgname"
+        disable-unit "$pkgname.service"
     }
 
     postremove() {
@@ -80,7 +78,7 @@ genie() {
 harmony() {
     pkgdesc="Procedural sketching app"
     url="https://rmkit.dev/apps/harmony"
-    pkgver=0.2.2-1
+    pkgver=0.2.2-2
     section="drawing"
 
     package() {
@@ -120,7 +118,7 @@ lamp() {
 mines() {
     pkgdesc="Mine detection game"
     url="https://rmkit.dev/apps/minesweeper"
-    pkgver=0.1.4-2
+    pkgver=0.1.4-3
     section="games"
 
     package() {
@@ -133,7 +131,7 @@ mines() {
 nao() {
     pkgdesc="Nao Package Manager: opkg UI built with SAS"
     url="https://rmkit.dev/apps/nao"
-    pkgver=0.1.2-3
+    pkgver=0.1.2-4
     section="admin"
     installdepends+=(simple)
 
@@ -147,7 +145,7 @@ nao() {
 remux() {
     pkgdesc="Launcher that supports multi-tasking applications"
     url="https://rmkit.dev/apps/remux"
-    pkgver=0.2.4-1
+    pkgver=0.2.4-2
     section="launchers"
 
     package() {
@@ -167,8 +165,7 @@ remux() {
     }
 
     preremove() {
-        echo "Disabling $pkgname"
-        systemctl disable --now "$pkgname"
+        disable-unit "$pkgname.service"
     }
 
     postremove() {
@@ -179,7 +176,7 @@ remux() {
 rpncalc() {
     pkgdesc="RPN Calculator"
     url="https://rmkit.dev/apps/rpncalc"
-    pkgver=0.0.3-2
+    pkgver=0.0.3-3
     section="math"
 
     package() {
@@ -187,7 +184,6 @@ rpncalc() {
         install -D -m 644 "$srcdir"/src/rpncalc/rpncalc.draft "$pkgdir"/opt/etc/draft/rpncalc.draft
         install -D -m 644 "$srcdir"/src/rpncalc/rpncalc.png "$pkgdir"/opt/etc/draft/icons/rpncalc.png
     }
-
 }
 
 simple() {
@@ -204,12 +200,11 @@ simple() {
 wordlet() {
     pkgdesc="Wordle clone"
     url="https://rmkit.dev/apps/wordlet"
-    pkgver=0.0.2-2
+    pkgver=0.0.2-3
     section="games"
 
     package() {
         install -D -m 755 "$srcdir"/src/build/wordlet "$pkgdir"/opt/bin/wordlet
         install -D -m 644 "$srcdir"/src/wordlet/wordlet.draft "$pkgdir"/opt/etc/draft/wordlet.draft
     }
-
 }
