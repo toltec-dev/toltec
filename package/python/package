@@ -20,21 +20,21 @@ source=(
 sha256sums=(
     8dfb8f426fcd226657f9e2bd5f1e96e53264965176fa17d32658e873591aeb21
 )
-makedepends=(build:python${_ver%.*})
+makedepends=("build:python${_ver%.*}")
 
 build() {
     ./configure \
         --enable-optimizations \
         --with-lto \
         --prefix=/opt \
-        --build=$(./config.guess) \
-        --host=$CHOST \
-        --with-build-python=$(which python${_ver%.*}) \
+        --build="$(./config.guess)" \
+        --host="$CHOST" \
+        --with-build-python="$(which "python${_ver%.*}")" \
         --with-ensurepip=no \
         ac_cv_buggy_getaddrinfo=no \
         ac_cv_file__dev_ptmx=yes \
         ac_cv_file__dev_ptc=no
-    make --jobs=$(nproc)
+    make --jobs="$(nproc)"
     make DESTDIR=dist altinstall
 }
 
