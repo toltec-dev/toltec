@@ -30,3 +30,12 @@ jobs:
               with:
                 name: repo
                 path: build/repo
+            - name: Sync packages with the remote repository
+              if: ${{ contains(github.event.pull_request.labels.*.name, 'experimental') }}
+              uses: ./.github/actions/sync-repository
+              with:
+                local-path: build/repo/
+                ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
+                ssh-known-hosts: ${{ secrets.SSH_KNOWN_HOSTS }}
+                ssh-port: ${{ secrets.SSH_PORT }}
+                remote-path: ${{ secrets.REMOTE_SSH }}:/srv/toltec/experimental
