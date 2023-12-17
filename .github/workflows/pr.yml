@@ -30,6 +30,9 @@ jobs:
               with:
                 name: repo
                 path: build/repo
+            - name: Build packages for experimental
+              if: ${{ contains(github.event.pull_request.labels.*.name, 'experimental') }}
+              run: make repo FLAGS='--remote-repo https://toltec-dev.org/${{ github.base_ref }}'
             - name: Sync packages with the remote repository
               if: ${{ contains(github.event.pull_request.labels.*.name, 'experimental') }}
               uses: ./.github/actions/sync-repository
