@@ -74,43 +74,31 @@ check-version() {
     local check_branch
     local current_model
     local current_version
+    local cwd
     check_branch="$1"
     current_model="$(identify-model)"
     current_version="$(get-release-version)"
 
-    local supported_version_min
-    local supported_version_max
-    local compat
+    cwd="$(pwd)"
+    cd /home/root/.local/share/toltec
+    if ! wget "$toltec_srv_root"/"$check_branch"/Compatibility \
+        --timestamping \
+        --no-verbose \
+        --ignore-length 2> /dev/null; then
+        echo "Unable to fetch updated version compatibility information, make sure you have a stable Wi-Fi connection"
+        if ! [ -f Compatibility ]; then
+            return 2
+        fi
+        echo "Using outdated cached version compatibility information"
+    fi
+    local found=false
+    if [ ! -z $(grep "${current_model}=${current_version}" Compatibility) ]; then
+        found=false
+    fi
+    cd "$cwd"
 
-    if ! compat="$(
-        wget --no-verbose --output-document \
-            "$toltec_srv_root"/"$check_branch"/Compatibility \
-            2> /dev/null
-    )"; then
-        echo "Unable to fetch version compatibility information, make sure you have a stable Wi-Fi connection"
-        return 2
-    fi
-
-    supported_version_min="$(
-        echo "$compat" | awk "/$current_model-min-os-version/{ print \$2 }"
-    )"
-    supported_version_max="$(
-        echo "$compat" | awk "/$current_model-max-os-version/{ print \$2 }"
-    )"
-    local opkg_path=/home/root/.local/bin/opkg
-    local failed=false
-    if ! type -P opkg > /dev/null && ! install-standalone-opkg "$opkg_path"; then
-        return 3
-    fi
-    if opkg compare-versions "$current_version" '>>' "$supported_version_max" > /dev/null; then
-        failed=true
-    elif opkg compare-versions "$current_version" '<<' "$supported_version_min" > /dev/null; then
-        failed=true
-    fi
-    rm -f "$opkg_path"
-    if $failed; then
+    if ! $found; then
         echo "You’re running an unsupported OS version: $current_version"
-        echo "Toltec currently supports versions between $supported_version_min and $supported_version_max"
         echo "Please monitor Toltec releases for upcoming support"
         return 1
     fi
