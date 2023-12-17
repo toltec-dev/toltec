@@ -6,8 +6,8 @@ archs=(rm1 rm2)
 pkgnames=(toltec-base)
 pkgdesc="Metapackage defining the base set of packages in a Toltec install"
 url=https://toltec-dev.org/
-pkgver=1.2-3
-timestamp=2023-05-08T19:31Z
+pkgver=1.3-1
+timestamp=2023-12-17T00:32Z
 section="utils"
 maintainer="Eeems <eeems@eeems.email>"
 license=MIT
@@ -15,15 +15,22 @@ installdepends=(toltec-bootstrap toltec-completion)
 installdepends_rm1=(open-remarkable-shutdown)
 installdepends_rm2=(rm2-suspend-fix)
 
-source=()
-sha256sums=()
+source=(
+    entware-rc@.service
+    rcctl
+)
+sha256sums=(
+    SKIP
+    SKIP
+)
 
 package() {
-    touch "$srcdir"/emptyfile
-    install -D -m 666 -t "$pkgdir"/usr/share/toltec/reenable.d/toltec-base "$srcdir"/emptyfile
+    install -D -m 666 -t "$pkgdir"/lib/systemd/system/entware-rc@.service "$srcdir"/entware-rc@.service
+    install -D -m 755 -t "$pkgdir"/opt/bin/rcctl "$srcdir"/rcctl
 }
 
 configure() {
+    systemctl daemon-reload
     ln -sf /opt/etc/profile /etc/profile.d/toltec.sh
     # shellcheck disable=SC2016
     sed -i \
@@ -38,6 +45,8 @@ configure() {
         echo "Enabling usb1 network device to ensure usb SSH works"
         systemctl unmask sys-subsystem-net-devices-usb1.device
     fi
+    echo ""
+    echo "You can use rcctl to manage services installed by entware"
 }
 
 postremove() {
