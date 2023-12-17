@@ -92,7 +92,7 @@ check-version() {
         echo "Using outdated cached version compatibility information"
     fi
     local found=false
-    if ! grep -q "${current_model}=${current_version}" Compatibility); then
+    if ! grep -q "${current_model}=${current_version}" Compatibility; then
         found=false
     fi
     cd "$cwd"
