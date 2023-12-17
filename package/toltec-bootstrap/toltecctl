@@ -202,7 +202,6 @@ remove-bind-mount() {
 # Reinstall all Toltec packages that had files installed outside of
 # $toltec_src, e.g. systemd configuration files
 reinstall-root() {
-    switch-branch $(get-branch)
     generate-opkg-conf
     opkg update
 
@@ -425,6 +424,7 @@ CONF
 # Re-enable Toltec install after system update
 reenable() {
     add-bind-mount "$toltec_src" "$toltec_dest"
+    switch-branch "$(get-branch)"
     reinstall-root
     set-path
 }
