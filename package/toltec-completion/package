@@ -5,8 +5,8 @@
 pkgnames=(toltec-completion)
 pkgdesc="Expands bash-completion with functions for toltec-specific commands"
 url=https://github.com/toltec-dev/toltec
-pkgver=0.3.1-1
-timestamp=2022-01-23T23:29Z
+pkgver=0.4.0-1
+timestamp=2023-12-17T00:32Z
 section="utils"
 maintainer="Linus K. <linus@cosmos-ink.net>"
 license=MIT
@@ -15,8 +15,10 @@ installdepends=(bash-completion)
 source=(
     _opkg
     _toltecctl
+    _rcctl
 )
 sha256sums=(
+    SKIP
     SKIP
     SKIP
 )

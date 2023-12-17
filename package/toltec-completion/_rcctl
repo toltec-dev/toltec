@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+# Copyright (c) 2023 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+# shellcheck disable=SC2016,SC2199,SC2207
+
+_rcctl() {
+    local cur prev words cword split
+    _init_completion -s || return
+    if [[ $cword -eq 1 ]]; then
+        COMPREPLY=($(compgen -W 'help start stop restart enable disable status logs list' -- "$cur"))
+        return
+    fi
+    case ${words[1]} in
+        start | stop | restart | enable | disable | status)
+            if [[ $cword -eq 2 ]]; then
+                COMPREPLY+=($(compgen -W "$(rcctl list)" -- "$cur"))
+            fi
+            return
+            ;;
+        logs)
+            if [[ $cword -eq 2 ]]; then
+                COMPREPLY+=($(compgen -W "--follow $(rcctl list)" -- "$cur"))
+            elif [[ $cword -eq 3 ]]; then
+                COMPREPLY+=($(compgen -W "$(rcctl list)" -- "$cur"))
+            fi
+            return
+            ;;
+    esac
+}
+
+complete -F _rcctl rcctl
