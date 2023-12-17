@@ -11,7 +11,6 @@ timestamp=2023-12-08T00:00Z
 section=utils
 maintainer="Eeems <eeems@eeems.email>"
 license=PSF-2.0
-provides=(python3)
 
 image=python:v3.1
 source=(
