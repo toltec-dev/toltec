@@ -69,6 +69,7 @@ get-release-version() {
 # 0 - if the current version is supported
 # 1 - if unsupported
 # 2 - if version compatibility information could not be retrieved
+# 3 - if the standalone opkg could not be retrieved
 check-version() {
     local check_branch
     local current_model
@@ -99,7 +100,7 @@ check-version() {
     local opkg_path=/home/root/.local/bin/opkg
     local failed=false
     if ! type -P opkg > /dev/null && ! install-standalone-opkg "$opkg_path"; then
-        return 1
+        return 3
     fi
     if opkg compare-versions "$current_version" '>>' "$supported_version_max" > /dev/null; then
         failed=true
@@ -201,6 +202,8 @@ remove-bind-mount() {
 # Reinstall all Toltec packages that had files installed outside of
 # $toltec_src, e.g. systemd configuration files
 reinstall-root() {
+    switch-branch $(get-branch)
+    generate-opkg-conf
     opkg update
 
     # Get the list of installed packages with files on root
@@ -491,6 +494,51 @@ uninstall() {
     systemctl enable xochitl
 }
 
+# Output toltec installation status
+status() {
+    echo -ne "Enabled: \033[1m"
+    local unit_name
+    local enabled
+    unit_name="$(systemd-escape --path "$toltec_dest").mount"
+    if ! systemctl --quiet is-enabled "$unit_name"; then
+        enabled=false
+        echo -ne "\e[31mNo"
+    elif systemctl --quiet is-active "$unit_name"; then
+        enabled=true
+        echo -ne "\e[32mYes"
+    else
+        enabled=false
+        echo -ne "\e[33mPartial"
+    fi
+    echo -e "\e[0m"
+    echo -ne "Supported: \033[1m"
+    if $enabled; then
+        local rc
+        rc=0
+        check-version "$(get-branch)" > /dev/null || rc=$?
+        if [ $rc -eq 0 ]; then
+            echo -ne "\e[32mYes"
+        elif [ $rc -eq 2 ] || [ $rc -eq 3 ]; then
+            echo -ne "\e[33mUnknown"
+        else
+            echo -ne "\e[31mNo"
+        fi
+    else
+        echo -ne "\e[33mUnknown"
+    fi
+    echo -e "\e[0m"
+    echo -n "Branch: "
+    if $enabled; then
+        get-branch
+    else
+        echo -ne "\033[1m\e[33mUnknown\e[0m"
+    fi
+    echo -n "Model: "
+    identify-model
+    echo -n "OS: "
+    get-release-version
+}
+
 help() {
     echo "Usage: $(basename "$0") COMMAND
 Manage your Toltec install. Available commands:
@@ -637,6 +685,10 @@ MSG
 
             echo "Rebooting"
             reboot
+            ;;
+
+        status)
+            status
             ;;
 
         help | -h | --help)
