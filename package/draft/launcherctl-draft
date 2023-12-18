@@ -30,12 +30,12 @@ case "$1" in
         systemctl disable draft.service
         ;;
     apps)
-        find {/opt,}/etc/draft -maxdepth 1 -type f | while read file; do
+        find {/opt,}/etc/draft -maxdepth 1 -type f | while read -r file; do
             grep 'name=' "$file" | sed 's|^name=||'
         done
         ;;
     close)
-        find {/opt,}/etc/draft -maxdepth 1 -type f | while read file; do
+        find {/opt,}/etc/draft -maxdepth 1 -type f | while read -r file; do
             if [[ "$(grep 'name=' "$file" | sed 's|^name=||')" == "$2" ]]; then
                 term="$(grep 'term=' "$file" | sed 's|^term=||')"
                 if [ -z "$term" ]; then
@@ -48,10 +48,10 @@ case "$1" in
         ;;
     running)
         pid=$(draft_pid)
-        find {/opt,}/etc/draft -maxdepth 1 -type f | while read file; do
+        find {/opt,}/etc/draft -maxdepth 1 -type f | while read -r file; do
             call="$(grep 'call=' "$file" | sed 's|^call=||')"
             name="$(grep 'name=' "$file" | sed 's|^name=||')"
-            find /proc -mindepth 2 -maxdepth 2 -name status -type f | while read file; do
+            find /proc -mindepth 2 -maxdepth 2 -name status -type f | while read -r file; do
                 if ! [ -f "$file" ]; then
                     continue
                 fi

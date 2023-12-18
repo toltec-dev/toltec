@@ -45,7 +45,7 @@ running_remux_apps() {
 }
 kill_pid() {
     pid="$1"
-    if [[ "$(cat "/proc/${pid}/stat" | awk '{print $3}')" == "T" ]]; then
+    if [[ "$(awk '{print $3}' "/proc/${pid}/stat")" == "T" ]]; then
         kill -CONT "$pid"
     fi
     kill -TERM "$pid"

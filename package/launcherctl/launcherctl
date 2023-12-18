@@ -44,7 +44,7 @@ query() {
     "${data_dir}/${launcher}" "$@"
 }
 check_enabled_launchers() {
-    if [ $(enabled_launchers | wc -l) -lt 1 ]; then
+    if [ "$(enabled_launchers | wc -l)" -lt 1 ]; then
         echo "More than one launcher is currently enabled!"
         echo "Enabled launchers: ${current_launcher}"
         exit 1
