@@ -97,13 +97,23 @@ tarnish() {
         source /opt/bin/launcherctl
         if ! query oxide is-enabled; then
             echo ""
-            echo "Run the following command(s) to use $pkgname as your launcher"
+            echo "Run the following command(s) to use oxide as your launcher"
             echo "launcherctl switch-launcher --start oxide"
             echo ""
         fi
     }
     preremove() {
-        disable-unit tarnish.service
+        source /opt/bin/launcherctl
+        query oxide disable
+        if query oxide is-active; then
+            query oxide stop
+        fi
+        if [[ "$(enabled_launchers)" == "" ]]; then
+            query xochitl enable
+        fi
+        if [[ "$(active_launchers)" == "" ]]; then
+            query xochitl start
+        fi
     }
     postremove() {
         systemctl daemon-reload

@@ -171,7 +171,20 @@ remux() {
     }
 
     preremove() {
-        disable-unit "$pkgname.service"
+        if [[ "$(launcherctl status | grep "Current: " | awk '{print $2}')" == "$pkgname" ]]; then
+
+        fi
+        source /opt/bin/launcherctl
+        query "$pkgname" disable
+        if query "$pkgname" is-active; then
+            query "$pkgname" stop
+        fi
+        if [[ "$(enabled_launchers)" == "" ]]; then
+            query xochitl enable
+        fi
+        if [[ "$(active_launchers)" == "" ]]; then
+            query xochitl start
+        fi
     }
 
     postremove() {

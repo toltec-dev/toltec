@@ -16,6 +16,9 @@ help() {
     echo "    stop-app <app>: Stop an application with the current launcher"
     echo "    pause-app <app>: Pause an application with the current launcher"
     echo "    resume-app <app>: Resume an application with the current launcher"
+    echo "    is-current-launcher <launcher>: Check if the launcher is the current launcher"
+    echo "    is-enabled-launcher <launcher>: Check if the launcher is enabled"
+    echo "    is-active-launcher <launcher>: Check if the launcher is active"
 }
 data_dir="/opt/share/launcherctl"
 launchers() {
@@ -172,6 +175,28 @@ case "$1" in
         launcher="$(enabled_launchers)"
         check_launcher_has_app "$launcher" "$2"
         query "$launcher" resume "$2"
+        ;;
+    is-current-launcher)
+        check_enabled_launchers
+        if [[ "$(enabled_launchers)" != "$2" ]]; then
+            exit 1
+        fi
+        ;;
+    is-enabled-launcher)
+        enabled_launchers | while read launcher; do
+            if [[ "$launcher" == "$2" ]]; then
+                exit 0
+            fi
+        done
+        exit 1
+        ;;
+    is-active-launcher)
+        active_launchers | while read launcher; do
+            if [[ "$launcher" == "$2" ]]; then
+                exit 0
+            fi
+        done
+        exit 1
         ;;
     *)
         help

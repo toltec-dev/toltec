@@ -7,7 +7,7 @@ _launcherctl() {
     local cur prev words cword split
     _init_completion -s || return
     if [[ $cword -eq 1 ]]; then
-        COMPREPLY=($(compgen -W 'help status logs list-launchers switch-launcher start-launcher stop-launcher list-apps list-running-apps list-paused-apps start-app stop-app pause-app resume-app' -- "$cur"))
+        COMPREPLY=($(compgen -W 'help status logs list-launchers switch-launcher start-launcher stop-launcher list-apps list-running-apps list-paused-apps start-app stop-app pause-app resume-app is-current-launcher is-enabled-launcher is-active-launcher' -- "$cur"))
         return
     fi
     case ${words[1]} in
