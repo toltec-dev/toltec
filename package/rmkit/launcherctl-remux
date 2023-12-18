@@ -126,7 +126,7 @@ case "$1" in
                     continue
                 fi
                 if [[ "$(realpath "/proc/${pid}/exe")" == "$(realpath "$call")" ]]; then
-                   kill_pid "$pid"
+                    kill_pid "$pid"
                 fi
             done
         done
@@ -155,7 +155,7 @@ case "$1" in
                     continue
                 fi
                 if [[ "$(realpath "/proc/${pid}/exe")" == "$(realpath "$call")" ]]; then
-                   kill -STOP "$pid"
+                    kill -STOP "$pid"
                 fi
             done
         done
