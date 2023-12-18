@@ -49,6 +49,7 @@ build() {
         ac_cv_file__dev_ptc=no
     make --jobs="$(nproc)"
     make DESTDIR=dist altinstall
+
 }
 
 package() {
@@ -57,5 +58,13 @@ package() {
 }
 
 configure() {
-    /opt/bin/python3.12 -m ensurepip --upgrade --altinstall
+    "/opt/bin/python${_python_ver%.*}" -m ensurepip --upgrade --altinstall
+}
+
+postremove() {
+    if [ -d "/opt/lib/python${_python_ver%.*}/site-packages" ]; then
+        echo "WARNING: /opt/lib/python${_python_ver%.*}/site-packages is not empty."
+        echo "         You will need to remove the directory to fully uninstall any"
+        echo "         python modules installed with pip."
+    fi
 }
