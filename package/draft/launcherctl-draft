@@ -58,7 +58,7 @@ case "$1" in
                 if [[ "$(grep PPid "$file" | awk '{print $2}')" != "$pid" ]]; then
                     continue
                 fi
-                if [[ "$(cat cmdline | tr -d '\0')" == "$call" ]]; then
+                if [[ "$(tr -d '\0' < cmdline)" == "$call" ]]; then
                     echo "$name"
                     break
                 fi

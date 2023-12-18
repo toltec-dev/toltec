@@ -4,7 +4,7 @@ remux_pid() {
     systemctl show --no-pager --property MainPID remux.service | sed 's|MainPID=||'
 }
 remux_ppid() {
-    cat "/proc/$(remux_pid)/status" | grep "PPid:" | awk '{print $2}'
+    grep "PPid:" "/proc/$(remux_pid)/status" | awk '{print $2}'
 }
 draft_apps() {
     find {/opt,}/etc/draft -maxdepth 1 -type f | while read -r file; do
