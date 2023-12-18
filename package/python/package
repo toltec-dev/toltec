@@ -12,6 +12,7 @@ timestamp=2023-12-08T00:00Z
 section=utils
 maintainer="Eeems <eeems@eeems.email>"
 license=PSF-2.0
+flags="nostrip"
 
 image=python:v3.1
 source=(
@@ -27,13 +28,14 @@ makedepends=("build:python${_python_ver%.*}")
 
 build() {
     tar -xf "libffi-${_libffi_ver}.tar.gz"
-    cd libffi-${_libffi_ver}
+    cd "libffi-${_libffi_ver}"
     ./configure \
         --prefix=/usr \
         --host="$CHOST"
     make --jobs="$(nproc)"
     make DESTDIR="$SYSROOT" install
     cd "$srcdir"
+    rm -rf "libffi-${_libffi_ver}"
     ./configure \
         --enable-optimizations \
         --with-lto \
