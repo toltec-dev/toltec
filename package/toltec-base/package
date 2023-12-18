@@ -6,12 +6,12 @@ archs=(rm1 rm2)
 pkgnames=(toltec-base)
 pkgdesc="Metapackage defining the base set of packages in a Toltec install"
 url=https://toltec-dev.org/
-pkgver=1.2-3
+pkgver=1.2-4
 timestamp=2023-05-08T19:31Z
 section="utils"
 maintainer="Eeems <eeems@eeems.email>"
 license=MIT
-installdepends=(toltec-bootstrap toltec-completion)
+installdepends=(toltec-bootstrap toltec-completion launcherctl)
 installdepends_rm1=(open-remarkable-shutdown)
 installdepends_rm2=(rm2-suspend-fix)
 
