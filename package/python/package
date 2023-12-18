@@ -5,8 +5,9 @@
 pkgnames=(toltec-python)
 pkgdesc="Python is a programming language that lets you work quickly and integrate systems more effectively."
 url="https://python.org"
-_ver=3.12.1
-pkgver=${_ver}-1
+_python_ver=3.12.1
+_libffi_ver=3.3
+pkgver=${_python_ver}-1
 timestamp=2023-12-08T00:00Z
 section=utils
 maintainer="Eeems <eeems@eeems.email>"
@@ -14,21 +15,32 @@ license=PSF-2.0
 
 image=python:v3.1
 source=(
-    "https://www.python.org/ftp/python/${_ver}/Python-${_ver}.tar.xz"
+    "https://www.python.org/ftp/python/${_python_ver}/Python-${_python_ver}.tar.xz"
+    "https://github.com/libffi/libffi/releases/download/v${_libffi_ver}/libffi-${_libffi_ver}.tar.gz"
 )
 sha256sums=(
     8dfb8f426fcd226657f9e2bd5f1e96e53264965176fa17d32658e873591aeb21
+    72fba7922703ddfa7a028d513ac15a85c8d54c8d67f55fa5a4802885dc652056
 )
-makedepends=("build:python${_ver%.*}")
+noextract=("libffi-${_libffi_ver}.tar.gz")
+makedepends=("build:python${_python_ver%.*}")
 
 build() {
+    tar -xf "libffi-${_libffi_ver}.tar.gz"
+    cd libffi-${_libffi_ver}
+    ./configure \
+        --prefix=/usr \
+        --host="$CHOST"
+    make --jobs="$(nproc)"
+    make DESTDIR="$SYSROOT" install
+    cd ..
     ./configure \
         --enable-optimizations \
         --with-lto \
         --prefix=/opt \
         --build="$(./config.guess)" \
         --host="$CHOST" \
-        --with-build-python="$(which "python${_ver%.*}")" \
+        --with-build-python="$(which "python${_python_ver%.*}")" \
         --with-ensurepip=no \
         ac_cv_buggy_getaddrinfo=no \
         ac_cv_file__dev_ptmx=yes \
