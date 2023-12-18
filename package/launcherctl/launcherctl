@@ -25,14 +25,14 @@ launchers() {
     /opt/bin/find "$data_dir" -type f -perm '-u+x' | xargs -rn1 basename
 }
 active_launchers() {
-    launchers | while read launcher; do
+    launchers | while read -r launcher; do
         if query "$launcher" is-active; then
             echo "$launcher"
         fi
     done
 }
 enabled_launchers() {
-    launchers | while read launcher; do
+    launchers | while read -r launcher; do
         if query "$launcher" is-enabled; then
             echo "$launcher"
         fi
@@ -109,7 +109,7 @@ case "$1" in
             echo "${2} is not installed"
             exit 1
         fi
-        enabled_launchers | while read launcher; do
+        enabled_launchers | while read -r launcher; do
             if [[ "$launcher" != "$2" ]]; then
                 query "$launcher" disable
             fi
@@ -124,7 +124,7 @@ case "$1" in
     start-launcher)
         check_enabled_launchers
         current_launcher="$(enabled_launchers)"
-        active_launchers | while read launcher; do
+        active_launchers | while read -r launcher; do
             if [[ "$launcher" != "$current_launcher" ]]; then
                 query "$launcher" stop
             fi
@@ -136,7 +136,7 @@ case "$1" in
         query "$current_launcher" start
         ;;
     stop-launcher)
-        active_launchers | while read launcher; do
+        active_launchers | while read -r launcher; do
             query "$launcher" stop
         done
         ;;

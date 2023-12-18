@@ -155,7 +155,7 @@ remux() {
     package() {
         install -D -m 755 "$srcdir"/src/build/remux "$pkgdir"/opt/bin/remux
         install -D -m 644 "$srcdir"/remux.service "$pkgdir"/lib/systemd/system/remux.service
-        install -D -m 755 -t "$pkgdir"/opt/usr/toltecctl/$pkgname "$srcdir"/launcherctl-remux
+        install -D -m 755 -t "$pkgdir"/opt/usr/toltecctl/"$pkgname" "$srcdir"/launcherctl-remux
     }
 
     configure() {
