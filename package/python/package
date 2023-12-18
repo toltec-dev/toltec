@@ -33,7 +33,7 @@ build() {
         --host="$CHOST"
     make --jobs="$(nproc)"
     make DESTDIR="$SYSROOT" install
-    cd ..
+    cd "$srcdir"
     ./configure \
         --enable-optimizations \
         --with-lto \
