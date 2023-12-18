@@ -3,6 +3,25 @@ set -e
 draft_pid() {
     systemctl show --no-pager --property MainPID draft.service | sed 's|MainPID=||'
 }
+kill_pid() {
+    pid="$1"
+    if [[ "$(awk '{print $3}' "/proc/${pid}/stat")" == "T" ]]; then
+        kill -CONT "$pid"
+    fi
+    kill -TERM "$pid"
+    # Wait 5s for process to exit
+    start="$(date +'%s')"
+    while kill -0 "$pid" 2> /dev/null; do
+        sleep 0.5
+        if [ "$(date +'%s')" -gt $((start + 5)) ]; then
+            break
+        fi
+    done
+    if kill -0 "$pid" 2> /dev/null; then
+        # If process is still running, force kill it
+        kill -KILL "$pid"
+    fi
+}
 case "$1" in
     is-active)
         systemctl is-active --quiet draft.service
@@ -43,6 +62,14 @@ case "$1" in
                     exit 1
                 fi
                 $term
+                call="$(grep 'call=' "$file" | sed 's|^call=||')"
+                name="$(grep 'name=' "$file" | sed 's|^name=||')"
+                /opt/libexec/ps-procps-ng --ppid "$(draft_pid)" -o pid | tail -n +2 | while read -r pid; do
+                    if [[ "$(tr -d '\0' < "/proc/${pid}/cmdline")" == "$call" ]]; then
+                        kill_pid "$pid"
+                        break
+                    fi
+                done
             fi
         done
         ;;
@@ -51,14 +78,8 @@ case "$1" in
         find {/opt,}/etc/draft -maxdepth 1 -type f | while read -r file; do
             call="$(grep 'call=' "$file" | sed 's|^call=||')"
             name="$(grep 'name=' "$file" | sed 's|^name=||')"
-            find /proc -mindepth 2 -maxdepth 2 -name status -type f | while read -r file; do
-                if ! [ -f "$file" ]; then
-                    continue
-                fi
-                if [[ "$(grep PPid "$file" | awk '{print $2}')" != "$pid" ]]; then
-                    continue
-                fi
-                if [[ "$(tr -d '\0' < cmdline)" == "$call" ]]; then
+            /opt/libexec/ps-procps-ng --ppid "$(draft_pid)" -o pid | tail -n +2 | while read -r pid; do
+                if [[ "$(tr -d '\0' < "/proc/${pid}/cmdline")" == "$call" ]]; then
                     echo "$name"
                     break
                 fi
