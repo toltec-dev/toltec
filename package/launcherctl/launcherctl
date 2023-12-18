@@ -1,0 +1,153 @@
+#!/bin/bash
+set -e
+help() {
+    echo "Usage: launcherctl <command>"
+    echo "  commands:"
+    echo "    help: Display this message and exit"
+    echo "    status: Current launcher status"
+    echo "    logs [-f|--follow]: View current launcher logs"
+    echo "    list-launchers: List installed launchers"
+    echo "    switch-launcher <launcher>: Switch which launcher is active"
+    echo "    start-launcher: Start the current launcher"
+    echo "    stop-launcher: Stop the current launcher"
+    echo "    list-apps: List all application for current launcher"
+    echo "    list-running-apps: List all application for current launcher"
+    echo "    start-app <app>: Start an application with the current launcher"
+    echo "    stop-app <app>: Stop an application with the current launcher"
+    echo "    pause-app <app>: pause an application with the current launcher"
+}
+data_dir="/opt/share/launcherctl"
+launchers() {
+    /opt/bin/find "$data_dir" -type f -perm '-u+x' | xargs -rn1 basename
+}
+active_launchers() {
+    launchers | while read launcher; do
+        if query "$launcher" is-active; then
+            echo "$launcher"
+        fi
+    done
+}
+enabled_launchers() {
+    launchers | while read launcher; do
+        if query "$launcher" is-enabled; then
+            echo "$launcher"
+        fi
+    done
+}
+query() {
+    launcher="$1"
+    shift
+    "${data_dir}/${launcher}" "$@"
+}
+check_enabled_launchers() {
+    if [ $(enabled_launchers | wc -l) -lt 1 ]; then
+        echo "More than one launcher is currently enabled!"
+        echo "Enabled launchers: ${current_launcher}"
+        exit 1
+    fi
+}
+case "$1" in
+    help | --help)
+        help
+        ;;
+    logs)
+        if [ $# -gt 2 ]; then
+            echo "Too many arguments"
+            exit 1
+        elif [ $# -eq 2 ] && [[ "$2" != "-f" ]] && [[ "$2" != "--follow" ]]; then
+            echo "Invalid arguments"
+            exit 1
+        fi
+        check_enabled_launchers
+        query "$(enabled_launchers)" "$@"
+        ;;
+    status)
+        if [ $# -gt 1 ]; then
+            echo "Too many arguments"
+            exit 1
+        fi
+        check_enabled_launchers
+        current_launcher="$(enabled_launchers)"
+        echo -e "Launcher: \033[1m${current_launcher}\e[0m"
+        echo -ne "Status: \033[1m"
+        if query "$current_launcher" is-active; then
+            echo -ne "\e[32mrunning"
+        else
+            echo -ne "\e[31minactive"
+        fi
+        echo -e "\e[0m"
+        echo -n "Apps: $(query "$current_launcher" running | wc -l) running "
+        echo "$(query "$current_launcher" apps | wc -l) installed"
+        ;;
+    list-launchers)
+        launchers
+        ;;
+    switch-launcher)
+        if [ $# -lt 2 ]; then
+            echo "Too few arguments"
+            exit 1
+        fi
+        if ! [ -f "${data_dir}/${2}" ]; then
+            echo "${2} is not installed"
+            exit 1
+        fi
+        enabled_launchers | while read launcher; do
+            if [[ "$launcher" != "$2" ]]; then
+                query "$launcher" disable
+            fi
+        done
+        if ! query "$2" is-enabled; then
+            query "$2" enable
+        fi
+        ;;
+    start-launcher)
+        check_enabled_launchers
+        current_launcher="$(enabled_launchers)"
+        active_launchers | while read launcher; do
+            if [[ "$launcher" != "$current_launcher" ]]; then
+                query "$launcher" stop
+            fi
+        done
+        if query "$current_launcher" is-active; then
+            echo "Already started!"
+            exit
+        fi
+        query "$current_launcher" start
+        ;;
+    stop-launcher)
+        active_launchers | while read launcher; do
+            query "$launcher" stop
+        done
+        ;;
+    list-apps)
+        check_enabled_launchers
+        query "$(enabled_launchers)" apps
+        ;;
+    list-running-apps)
+        check_enabled_launchers
+        query "$(enabled_launchers)" running
+        ;;
+    list-paused-apps)
+        check_enabled_launchers
+        query "$(enabled_launchers)" paused
+        ;;
+    start-app)
+        check_enabled_launchers
+        query "$(enabled_launchers)" launch "$2"
+        ;;
+    stop-app)
+        check_enabled_launchers
+        query "$(enabled_launchers)" close "$2"
+        ;;
+    pause-app)
+        check_enabled_launchers
+        query "$(enabled_launchers)" pause "$2"
+        ;;
+    resume-app)
+        check_enabled_launchers
+        query "$(enabled_launchers)" resume "$2"
+        ;;
+    *)
+        help
+        exit 1
+esac

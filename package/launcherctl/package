@@ -1,0 +1,59 @@
+#!/usr/bin/env bash
+# Copyright (c) 2023 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgnames=(launcherctl)
+pkgdesc="Manage your installed launcher"
+url=https://toltec-dev.org/
+pkgver=0.0.1-1
+timestamp=2023-12-18T03:32Z
+section="launcher"
+maintainer="Eeems <eeems@eeems.email>"
+license=MIT
+
+source=(
+    toltecctl
+    15-systemd-input.rules
+)
+sha256sums=(
+    SKIP
+    SKIP
+)
+
+package() {
+    install -D -m 744 -t "$pkgdir"/home/root/.local/bin "$srcdir"/toltecctl
+    install -D -m 644 -t "$pkgdir"/lib/udev/rules.d/ "$srcdir"/15-systemd-input.rules
+}
+
+configure() {
+    # shellcheck source=toltecctl
+    source /home/root/.local/bin/toltecctl
+    set-path
+
+    # Apply the input udev rule
+    udevadm control --reload-rules && udevadm trigger
+
+    if [[ ! -d $opkg_conf_dir ]]; then
+        # Migrate existing config in /opt/etc/opkg.conf to be generated
+        # from split files and to use the multiarch repository layout
+        local branch
+
+        if [[ -f $opkg_conf ]]; then
+            # Get the first (...) value (aka \1) of the pattern if matching
+            branch="$(sed -E 's|^src/gz\s+toltec.*\s+https://toltec-dev.org/([[:alnum:]-]*).*$|\1|;t;d' "$opkg_conf" | head -n1)"
+        else
+            branch=stable
+        fi
+
+        create-entware-conf
+        switch-branch "$branch"
+        echo "Your Opkg configuration has been migrated"
+
+        if generate-opkg-conf; then
+            echo
+            echo "! The upgrade is not finished! Please run \`opkg update\`"
+            echo "! and \`opkg upgrade\` once more to complete it."
+            echo
+        fi
+    fi
+}
