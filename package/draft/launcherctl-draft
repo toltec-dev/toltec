@@ -1,0 +1,72 @@
+#!/bin/bash
+set -e
+draft_pid() {
+    systemctl show --no-pager --property MainPID draft.service | sed 's|MainPID=||'
+}
+case "$1" in
+    is-active)
+        systemctl is-active --quiet draft.service
+        ;;
+    is-enabled)
+        systemctl is-enabled --quiet draft.service
+        ;;
+    logs)
+        if [ $# -eq 2 ] && [[ "$2" == "-f" ]] || [[ "$2" == "--follow" ]]; then
+            journalctl --follow --all --unit draft.service
+        else
+            journalctl --no-pager --all --unit draft.service
+        fi
+        ;;
+    start)
+        systemctl start draft.service
+        ;;
+    stop)
+        systemctl stop draft.service
+        ;;
+    enable)
+        systemctl enable draft.service
+        ;;
+    disable)
+        systemctl disable draft.service
+        ;;
+    apps)
+        find {/opt,}/etc/draft -maxdepth 1 -type f | while read file; do
+            grep 'name=' "$file" | sed 's|^name=||'
+        done
+        ;;
+    close)
+        find {/opt,}/etc/draft -maxdepth 1 -type f | while read file; do
+            if [[ "$(grep 'name=' "$file" | sed 's|^name=||')" == "$2" ]]; then
+                term="$(grep 'term=' "$file" | sed 's|^term=||')"
+                if [ -z "$term" ]; then
+                    echo "No term= configuration specified for ${2}"
+                    exit 1
+                fi
+                $term
+            fi
+        done
+        ;;
+    running)
+        pid=$(draft_pid)
+        find {/opt,}/etc/draft -maxdepth 1 -type f | while read file; do
+            call="$(grep 'call=' "$file" | sed 's|^call=||')"
+            name="$(grep 'name=' "$file" | sed 's|^name=||')"
+            find /proc -mindepth 2 -maxdepth 2 -name status -type f | while read file; do
+                if ! [ -f "$file" ]; then
+                    continue
+                fi
+                if [[ "$(grep PPid "$file" | awk '{print $2}')" != "$pid" ]]; then
+                    continue
+                fi
+                if [[ "$(cat cmdline | tr -d '\0')" == "$call" ]]; then
+                    echo "$name"
+                    break
+                fi
+            done
+        done
+        ;;
+    *)
+        echo "Draft does not support this method"
+        exit 1
+        ;;
+esac

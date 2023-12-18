@@ -19,9 +19,11 @@ source=(
     KOReader.oxide
     koreader-toltec.service
     koreader
+    launcherctl-koreader
 )
 sha256sums=(
     fdb72bdb80c74b6c955ffde8852ce67b77ebc7d88ceb4a439b622aff74ad858e
+    SKIP
     SKIP
     SKIP
     SKIP
@@ -41,6 +43,7 @@ package() {
     install -D -m 644 "$srcdir"/koreader-toltec.service "$pkgdir"/lib/systemd/system/koreader.service
     install -D -m 644 -t "$pkgdir"/opt/etc/draft/icons/ "$srcdir"/resources/koreader.png
     install -D -m 755 -t "$pkgdir"/opt/bin/ "$srcdir"/koreader
+    install -D -m 755 -t "$pkgdir"/opt/usr/toltecctl/$pkgname "$srcdir"/launcherctl-koreader
 }
 
 configure() {
@@ -51,13 +54,12 @@ configure() {
 
     systemctl daemon-reload
 
-    if ! is-enabled "$pkgname.service"; then
-        cat << MSG
-
-Run the following command(s) to use $pkgname as your launcher
-$(how-to-enable "$pkgname.service")
-
-MSG
+    source /opt/bin/launcherctl
+    if ! query $pkgname is-enabled; then
+        echo ""
+        echo "Run the following command(s) to use $pkgname as your launcher"
+        echo "launcherctl switch-launcher --start $pkgname"
+        echo ""
     fi
 }
 

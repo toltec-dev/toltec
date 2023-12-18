@@ -93,10 +93,12 @@ tarnish() {
     }
     configure() {
         systemctl daemon-reload
-        if ! is-enabled "tarnish.service"; then
+
+        source /opt/bin/launcherctl
+        if ! query oxide is-enabled; then
             echo ""
             echo "Run the following command(s) to use $pkgname as your launcher"
-            how-to-enable "tarnish.service"
+            echo "launcherctl switch-launcher --start oxide"
             echo ""
         fi
     }

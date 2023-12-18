@@ -7,14 +7,15 @@ help() {
     echo "    status: Current launcher status"
     echo "    logs [-f|--follow]: View current launcher logs"
     echo "    list-launchers: List installed launchers"
-    echo "    switch-launcher <launcher>: Switch which launcher is active"
+    echo "    switch-launcher [--start] <launcher>: Switch which launcher is active"
     echo "    start-launcher: Start the current launcher"
     echo "    stop-launcher: Stop the current launcher"
     echo "    list-apps: List all application for current launcher"
     echo "    list-running-apps: List all application for current launcher"
     echo "    start-app <app>: Start an application with the current launcher"
     echo "    stop-app <app>: Stop an application with the current launcher"
-    echo "    pause-app <app>: pause an application with the current launcher"
+    echo "    pause-app <app>: Pause an application with the current launcher"
+    echo "    resume-app <app>: Resume an application with the current launcher"
 }
 data_dir="/opt/share/launcherctl"
 launchers() {
@@ -43,6 +44,12 @@ check_enabled_launchers() {
     if [ $(enabled_launchers | wc -l) -lt 1 ]; then
         echo "More than one launcher is currently enabled!"
         echo "Enabled launchers: ${current_launcher}"
+        exit 1
+    fi
+}
+check_launcher_has_app() {
+    if ! query "$1" apps | grep -q "$2"; then
+        echo "Unknown application: ${2}"
         exit 1
     fi
 }
@@ -86,7 +93,15 @@ case "$1" in
         if [ $# -lt 2 ]; then
             echo "Too few arguments"
             exit 1
+        elif [ $# -gt 3 ]; then
+            echo "Too many arguments"
+            exit 1
+        elif [ $# -eq 3 ] && [[ "$2" != "--start" ]]; then
+            echo "Invalid arguments"
+            exit 1
         fi
+        start=$([ $# -eq 3 ])
+        shift
         if ! [ -f "${data_dir}/${2}" ]; then
             echo "${2} is not installed"
             exit 1
@@ -98,6 +113,9 @@ case "$1" in
         done
         if ! query "$2" is-enabled; then
             query "$2" enable
+        fi
+        if $start; then
+            "$0" start-launcher
         fi
         ;;
     start-launcher)
@@ -133,22 +151,29 @@ case "$1" in
         ;;
     start-app)
         check_enabled_launchers
-        query "$(enabled_launchers)" launch "$2"
+        launcher="$(enabled_launchers)"
+        check_launcher_has_app "$launcher" "$2"
+        query "$launcher" launch "$2"
         ;;
     stop-app)
         check_enabled_launchers
-        query "$(enabled_launchers)" close "$2"
+        launcher="$(enabled_launchers)"
+        check_launcher_has_app "$launcher" "$2"
+        query "$launcher" close "$2"
         ;;
     pause-app)
         check_enabled_launchers
-        query "$(enabled_launchers)" pause "$2"
+        launcher="$(enabled_launchers)"
+        check_launcher_has_app "$launcher" "$2"
+        query "$launcher" pause "$2"
         ;;
     resume-app)
         check_enabled_launchers
-        query "$(enabled_launchers)" resume "$2"
+        launcher="$(enabled_launchers)"
+        check_launcher_has_app "$launcher" "$2"
+        query "$launcher" resume "$2"
         ;;
     *)
         help
         exit 1
-        ;;
 esac

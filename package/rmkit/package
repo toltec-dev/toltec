@@ -14,9 +14,11 @@ source=(
     https://github.com/rmkit-dev/rmkit/archive/2bf3488010eccf0d9e7f6c64e681517739420c58.zip
     remux.service
     genie.service
+    launcherctl-remux
 )
 sha256sums=(
     a0d1a8b16adeca688d7df6a18e4c7404d9d4a405b33615dfb4e374f24ff3dded
+    SKIP
     SKIP
     SKIP
 )
@@ -148,18 +150,22 @@ remux() {
     pkgver=0.2.4-2
     section="launchers"
 
+    installdepends=(procps-ng-ps)
+
     package() {
         install -D -m 755 "$srcdir"/src/build/remux "$pkgdir"/opt/bin/remux
         install -D -m 644 "$srcdir"/remux.service "$pkgdir"/lib/systemd/system/remux.service
+        install -D -m 755 -t "$pkgdir"/opt/usr/toltecctl/$pkgname "$srcdir"/launcherctl-remux
     }
 
     configure() {
         systemctl daemon-reload
 
-        if ! is-enabled "$pkgname.service"; then
+        source /opt/bin/launcherctl
+        if ! query $pkgname is-enabled; then
             echo ""
             echo "Run the following command(s) to use $pkgname as your launcher"
-            how-to-enable "$pkgname.service"
+            echo "launcherctl switch-launcher --start $pkgname"
             echo ""
         fi
     }
