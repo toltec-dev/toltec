@@ -94,8 +94,7 @@ tarnish() {
     configure() {
         systemctl daemon-reload
 
-        source /opt/bin/launcherctl
-        if ! query oxide is-enabled; then
+        if ! launcherctl is-current-launcher oxide; then
             echo ""
             echo "Run the following command(s) to use oxide as your launcher"
             echo "launcherctl switch-launcher --start oxide"
@@ -103,16 +102,9 @@ tarnish() {
         fi
     }
     preremove() {
-        source /opt/bin/launcherctl
-        query oxide disable
-        if query oxide is-active; then
-            query oxide stop
-        fi
-        if [[ "$(enabled_launchers)" == "" ]]; then
-            query xochitl enable
-        fi
-        if [[ "$(active_launchers)" == "" ]]; then
-            query xochitl start
+        # Just in case more than one launcher is active, do individual checks
+        if launcherctl is-active-launcher oxide || launcherctl is-enabled-launcher oxide; then
+            launcherctl switch-launcher --start xochitl
         fi
     }
     postremove() {

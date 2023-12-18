@@ -161,8 +161,7 @@ remux() {
     configure() {
         systemctl daemon-reload
 
-        source /opt/bin/launcherctl
-        if ! query $pkgname is-enabled; then
+        if ! launcherctl is-current-launcher "$pkgname"; then
             echo ""
             echo "Run the following command(s) to use $pkgname as your launcher"
             echo "launcherctl switch-launcher --start $pkgname"
@@ -171,19 +170,9 @@ remux() {
     }
 
     preremove() {
-        if [[ "$(launcherctl status | grep "Current: " | awk '{print $2}')" == "$pkgname" ]]; then
-
-        fi
-        source /opt/bin/launcherctl
-        query "$pkgname" disable
-        if query "$pkgname" is-active; then
-            query "$pkgname" stop
-        fi
-        if [[ "$(enabled_launchers)" == "" ]]; then
-            query xochitl enable
-        fi
-        if [[ "$(active_launchers)" == "" ]]; then
-            query xochitl start
+        # Just in case more than one launcher is active, do individual checks
+        if launcherctl is-active-launcher "$pkgname" || launcherctl is-enabled-launcher "$pkgname"; then
+            launcherctl switch-launcher --start xochitl
         fi
     }
 

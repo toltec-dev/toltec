@@ -183,20 +183,10 @@ case "$1" in
         fi
         ;;
     is-enabled-launcher)
-        enabled_launchers | while read launcher; do
-            if [[ "$launcher" == "$2" ]]; then
-                exit 0
-            fi
-        done
-        exit 1
+        query "$2" is-enabled
         ;;
     is-active-launcher)
-        active_launchers | while read launcher; do
-            if [[ "$launcher" == "$2" ]]; then
-                exit 0
-            fi
-        done
-        exit 1
+        query "$2" is-active
         ;;
     *)
         help
