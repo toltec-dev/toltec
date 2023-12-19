@@ -410,10 +410,10 @@ arch rmall 200
 src/gz toltec-rmall $toltec_srv_root/$branch/rmall
 arch $model 250
 src/gz toltec-$model $toltec_srv_root/$branch/$model
-arch rmall-$version 260
-src/gz toltec-$model $toltec_srv_root/$branch/rmall-$version
-arch $model-$version 270
-src/gz toltec-$model $toltec_srv_root/$branch/$model-$version
+arch rmall$version 260
+src/gz toltec-rmall$version $toltec_srv_root/$branch/rmall$version
+arch $model$version 270
+src/gz toltec-$model$version $toltec_srv_root/$branch/$model$version
 CONF
 }
 
