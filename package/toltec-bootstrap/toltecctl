@@ -80,6 +80,7 @@ check-version() {
     current_version="$(get-release-version)"
 
     cwd="$(pwd)"
+    mkdir -p /home/root/.local/share/toltec
     cd /home/root/.local/share/toltec
     if ! wget "$toltec_srv_root"/"$check_branch"/Compatibility \
         --timestamping \
