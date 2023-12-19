@@ -342,6 +342,18 @@ get-branch() {
     awk "$awk_get_branch" "$opkg_conf_dir/15-toltec.conf"
 }
 
+# Compare two version numbers
+#
+# Arguments:
+#
+# $1 - Version number to compare
+# $2 - Version number to compare
+#
+# Output: True if the first number is larger than the second
+compare-versions() {
+    [ $(echo -e "${1}\n${2}" | sort | head -n1) != "$1" ]
+}
+
 # Identify which toltec version this should be limited to
 #
 # Output: One of the following strings
@@ -350,23 +362,18 @@ get-branch() {
 # os3 - 3.x OS version
 # unknown
 identify-support-version() {
-    local opkg_path=/home/root/.local/bin/opkg
-    if ! type -P opkg > /dev/null && ! install-standalone-opkg "$opkg_path"; then
-        echo "unknown"
-        return
-    fi
     local current_version
     current_version="$(get-release-version)"
-    if opkg --noaction compare-versions "$current_version" '<<' "2.0" > /dev/null; then
+
+    if compare-versions "2.0" "$current_version"; then
         echo "unknown"
-    elif opkg --noaction compare-versions "$current_version" '<<' "3.0" > /dev/null; then
+    elif compare-versions "3.0" "$current_version"; then
         echo "os2"
-    elif opkg --noaction compare-versions "$current_version" '<<' "4.0" > /dev/null; then
+    elif compare-versions "4.0" "$current_version"; then
         echo "os3"
     else
         echo "unknown"
     fi
-    rm -f "$opkg_path"
 }
 
 # Set the Toltec branch for this installation
