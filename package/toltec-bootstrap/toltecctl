@@ -357,11 +357,11 @@ identify-support-version() {
     fi
     local current_version
     current_version="$(get-release-version)"
-    if opkg compare-versions "$current_version" '<<' "2.0" > /dev/null; then
+    if opkg --noaction compare-versions "$current_version" '<<' "2.0" > /dev/null; then
         echo "unknown"
-    elif opkg compare-versions "$current_version" '<<' "3.0" > /dev/null; then
+    elif opkg --noaction compare-versions "$current_version" '<<' "3.0" > /dev/null; then
         echo "os2"
-    elif opkg compare-versions "$current_version" '<<' "4.0" > /dev/null; then
+    elif opkg --noaction compare-versions "$current_version" '<<' "4.0" > /dev/null; then
         echo "os3"
     else
         echo "unknown"
