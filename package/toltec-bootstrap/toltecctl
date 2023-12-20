@@ -260,6 +260,22 @@ escape-for-sed() {
     printf %s "${REPLY%$'\n'}"
 }
 
+
+# Replace multiline string content in stdin
+#
+# Arguments:
+#
+# $1 - String to replace
+# $2 - string to replace with
+# stdin - Text to perform replacement on
+#
+# Output:
+#
+# Contents of stdin with the string replaced
+replace-string() {
+    sed "s/$(escape-for-sed "$1")/$(escape-for-sed "$2")/"
+}
+
 update-package-arch() {
     local model
     local new_status
@@ -276,12 +292,12 @@ update-package-arch() {
     case "$arch" in
         rmallos2 | rmallos3)
             version="$(identify-support-version)"
-            new_status="$(echo "$status" | sed "s/$(escape-for-sed "Architecture: ${arch}")/$(escape-for-sed "Architecture: rmall${version}")/")"
+            new_status="$(echo "$status" | replace-string "Architecture: ${arch}" "Architecture: rmall${version}")"
             ;;
         rm1os2 | rm1os3 | rm2os2 | rm2os3)
             model="$(identify-model)"
             version="$(identify-support-version)"
-            new_status="$(echo "$status" | sed "s/$(escape-for-sed "Architecture: ${arch}")/$(escape-for-sed "Architecture: ${model}${version}")/")"
+            new_status="$(echo "$status" | replace-string "Architecture: ${arch}" "Architecture: ${model}${version}")"
             ;;
         *)
             new_status="$status"
@@ -539,9 +555,8 @@ reenable() {
     add-bind-mount "$toltec_src" "$toltec_dest"
     switch-branch "$(get-branch)"
     log INFO "Generating /opt/etc/opkg.conf"
-    if generate-opkg-conf; then
-        opkg update
-    fi
+    generate-opkg-conf || true
+    opkg update
     log INFO "Reinsalling base packages"
     reinstall-base
     log INFO "Reinstalling packages with files on the root partition"

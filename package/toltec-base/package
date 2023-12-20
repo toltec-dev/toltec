@@ -11,11 +11,11 @@ timestamp=2023-12-03T04:51:58Z
 section="utils"
 maintainer="Eeems <eeems@eeems.email>"
 license=MIT
-installdepends=(toltec-bootstrap toltec-completion wget-ssl ca-certificates)
+installdepends=(toltec-bootstrap toltec-deletions toltec-completion wget-ssl ca-certificates)
 installdepends_rm1os2=(open-remarkable-shutdown)
-installdepends_rm1os3=(open-remarkable-shutdown toltec-deletions)
+installdepends_rm1os3=(open-remarkable-shutdown)
 installdepends_rm2os2=(rm2-suspend-fix)
-installdepends_rm2os3=(rm2-suspend-fix toltec-deletions)
+installdepends_rm2os3=(rm2-suspend-fix)
 
 source=()
 sha256sums=()
