@@ -22,7 +22,7 @@ package() {
     install -D -m 744 -t "$pkgdir"/opt/bin "$srcdir"/kernelctl
     install -d "$pkgdir"/opt/usr/share/kernelctl
     mkdir -p "$pkgdir"/opt/share/toltec/reenable.d
-    touch "$pkgdir"/opt/share/toltec/reenable.d/kernelctl
+    touch "$pkgdir"/opt/share/toltec/reenable.d/"$pkgname"
 }
 
 configure() {

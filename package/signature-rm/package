@@ -2,8 +2,7 @@
 # Copyright (c) 2021 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
-_pkgname='signature-rm'
-pkgnames=("$_pkgname")
+pkgnames=("signature-rm")
 pkgdesc="Remove the signature from the bottom of emails"
 url="https://github.com/rM-self-serve/signature-rM"
 pkgver=1.0.2-2
@@ -27,10 +26,10 @@ build() {
 
 package() {
     install -D -m 755 -t "$pkgdir"/opt/bin \
-        "$srcdir/target/armv7-unknown-linux-gnueabihf/release/$_pkgname"
+        "$srcdir/target/armv7-unknown-linux-gnueabihf/release/$pkgname"
 
     mkdir -p "$pkgdir"/opt/share/toltec/reenable.d
-    touch "$pkgdir"/opt/share/toltec/reenable.d/"$_pkgname"
+    touch "$pkgdir"/opt/share/toltec/reenable.d/"$pkgname"
 }
 
 configure() {

@@ -25,50 +25,52 @@ _old_backup_path="$_backup_path.old"
 _patched_path="$_work_dir/xochitl.patched"
 
 package() {
-    if [[ $arch = rm1os2 ]]; then
-        install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/26171_rm1/patch_19.1.02
-        install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/26275_rm1/patch_20.1.03
-        install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/27051_rm1/patch_21.1.04
-        install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/28098_rm1/patch_23.1.02
-        install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/291236_rm1/patch_24.1.02
-        install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/2100324_rm1/patch_25.1.03
-        install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/2102356_rm1/patch_27.1.03
-        install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/2103379_rm1/patch_28.1.02
-        install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/2110442_rm1/patch_29.1.02
-        install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/2121527_rm1/patch_30.1.08
-        install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/2122573_rm1/patch_31.1.01
-        install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/2123606_rm1/patch_32.1.03
-        install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/2140861_rm1/patch_34.1.01
-        install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/2141866_rm1/patch_35.1.01
-        install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/2143977_rm1/patch_36.1.01
-        install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/21431047_rm1/patch_37.1.01
-        install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/21501067_rm1/patch_38.1.03
-        install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/21511189_rm1/patch_39.1.01
-    elif [[ $arch = rm2os2 ]]; then
-        install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/26171_rm2/patch_19.2.02
-        install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/26275_rm2/patch_20.2.03
-        install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/27051_rm2/patch_21.2.05
-        install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/27153_rm2/patch_22.2.01
-        install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/28098_rm2/patch_23.2.02
-        install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/291217_rm2/patch_24.2.04
-        install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/2100324_rm2/patch_25.2.01
-        install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/2101332_rm2/patch_26.2.02
-        install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/2102356_rm2/patch_27.2.05
-        install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/2103379_rm2/patch_28.2.02
-        install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/2110442_rm2/patch_29.2.02
-        install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/2121527_rm2/patch_30.2.07
-        install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/2122573_rm2/patch_31.2.01
-        install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/2123606_rm2/patch_32.2.02
-        install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/2130758_rm2/patch_33.2.01
-        install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/2140861_rm2/patch_34.2.01
-        install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/2141866_rm2/patch_35.2.01
-        install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/2143977_rm2/patch_36.2.01
-        install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/21431047_rm2/patch_37.2.01
-        install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/21501067_rm2/patch_38.2.03
-        install -D -m 644 -t "$pkgdir$_patches_dir" "$srcdir"/patches/21511189_rm2/patch_39.2.01
-    fi
     mkdir -p "$pkgdir"/opt/share/toltec/reenable.d
-    touch "$pkgdir"/opt/share/toltec/reenable.d/ddvk-hacks
+    touch "$pkgdir"/opt/share/toltec/reenable.d/"$pkgname"
+    if [[ $arch = rm1os2 ]]; then
+        patches_dir="${pkgdir}${_patches_dir}"
+        install -D -m 644 -t "$patches_dir" "$srcdir"/patches/26171_rm1/patch_19.1.02
+        install -D -m 644 -t "$patches_dir" "$srcdir"/patches/26275_rm1/patch_20.1.03
+        install -D -m 644 -t "$patches_dir" "$srcdir"/patches/27051_rm1/patch_21.1.04
+        install -D -m 644 -t "$patches_dir" "$srcdir"/patches/28098_rm1/patch_23.1.02
+        install -D -m 644 -t "$patches_dir" "$srcdir"/patches/291236_rm1/patch_24.1.02
+        install -D -m 644 -t "$patches_dir" "$srcdir"/patches/2100324_rm1/patch_25.1.03
+        install -D -m 644 -t "$patches_dir" "$srcdir"/patches/2102356_rm1/patch_27.1.03
+        install -D -m 644 -t "$patches_dir" "$srcdir"/patches/2103379_rm1/patch_28.1.02
+        install -D -m 644 -t "$patches_dir" "$srcdir"/patches/2110442_rm1/patch_29.1.02
+        install -D -m 644 -t "$patches_dir" "$srcdir"/patches/2121527_rm1/patch_30.1.08
+        install -D -m 644 -t "$patches_dir" "$srcdir"/patches/2122573_rm1/patch_31.1.01
+        install -D -m 644 -t "$patches_dir" "$srcdir"/patches/2123606_rm1/patch_32.1.03
+        install -D -m 644 -t "$patches_dir" "$srcdir"/patches/2140861_rm1/patch_34.1.01
+        install -D -m 644 -t "$patches_dir" "$srcdir"/patches/2141866_rm1/patch_35.1.01
+        install -D -m 644 -t "$patches_dir" "$srcdir"/patches/2143977_rm1/patch_36.1.01
+        install -D -m 644 -t "$patches_dir" "$srcdir"/patches/21431047_rm1/patch_37.1.01
+        install -D -m 644 -t "$patches_dir" "$srcdir"/patches/21501067_rm1/patch_38.1.03
+        install -D -m 644 -t "$patches_dir" "$srcdir"/patches/21511189_rm1/patch_39.1.01
+    elif [[ $arch = rm2os2 ]]; then
+        patch_dir="${pkgdir}${_patches_dir}"
+        install -D -m 644 -t "$patches_dir" "$srcdir"/patches/26171_rm2/patch_19.2.02
+        install -D -m 644 -t "$patches_dir" "$srcdir"/patches/26275_rm2/patch_20.2.03
+        install -D -m 644 -t "$patches_dir" "$srcdir"/patches/27051_rm2/patch_21.2.05
+        install -D -m 644 -t "$patches_dir" "$srcdir"/patches/27153_rm2/patch_22.2.01
+        install -D -m 644 -t "$patches_dir" "$srcdir"/patches/28098_rm2/patch_23.2.02
+        install -D -m 644 -t "$patches_dir" "$srcdir"/patches/291217_rm2/patch_24.2.04
+        install -D -m 644 -t "$patches_dir" "$srcdir"/patches/2100324_rm2/patch_25.2.01
+        install -D -m 644 -t "$patches_dir" "$srcdir"/patches/2101332_rm2/patch_26.2.02
+        install -D -m 644 -t "$patches_dir" "$srcdir"/patches/2102356_rm2/patch_27.2.05
+        install -D -m 644 -t "$patches_dir" "$srcdir"/patches/2103379_rm2/patch_28.2.02
+        install -D -m 644 -t "$patches_dir" "$srcdir"/patches/2110442_rm2/patch_29.2.02
+        install -D -m 644 -t "$patches_dir" "$srcdir"/patches/2121527_rm2/patch_30.2.07
+        install -D -m 644 -t "$patches_dir" "$srcdir"/patches/2122573_rm2/patch_31.2.01
+        install -D -m 644 -t "$patches_dir" "$srcdir"/patches/2123606_rm2/patch_32.2.02
+        install -D -m 644 -t "$patches_dir" "$srcdir"/patches/2130758_rm2/patch_33.2.01
+        install -D -m 644 -t "$patches_dir" "$srcdir"/patches/2140861_rm2/patch_34.2.01
+        install -D -m 644 -t "$patches_dir" "$srcdir"/patches/2141866_rm2/patch_35.2.01
+        install -D -m 644 -t "$patches_dir" "$srcdir"/patches/2143977_rm2/patch_36.2.01
+        install -D -m 644 -t "$patches_dir" "$srcdir"/patches/21431047_rm2/patch_37.2.01
+        install -D -m 644 -t "$patches_dir" "$srcdir"/patches/21501067_rm2/patch_38.2.03
+        install -D -m 644 -t "$patches_dir" "$srcdir"/patches/21511189_rm2/patch_39.2.01
+    fi
 }
 
 configure() {
