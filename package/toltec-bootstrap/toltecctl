@@ -421,13 +421,14 @@ switch-branch() {
 # switch to a different Toltec branch
 
 arch rmall 200
-src/gz toltec-rmall $toltec_srv_root/$branch/rmall
-arch $model 250
-src/gz toltec-$model $toltec_srv_root/$branch/$model
-arch rmall$version 260
-src/gz toltec-rmall$version $toltec_srv_root/$branch/rmall$version
-arch $model$version 270
-src/gz toltec-$model$version $toltec_srv_root/$branch/$model$version
+src/gz toltec-rmall ${toltec_srv_root}/${branch}/rmall
+arch ${model} 250
+src/gz toltec-${model} ${toltec_srv_root}/${branch}/${model}
+arch rmall${version} 260
+src/gz toltec-rmall$version ${toltec_srv_root}/${branch}/rmall${version}
+arch ${model}os2 270
+arch ${model}os3 270
+src/gz toltec-${model}${version} ${toltec_srv_root}/${branch}/${model}${version}
 CONF
 }
 
@@ -435,14 +436,13 @@ CONF
 reenable() {
     add-bind-mount "$toltec_src" "$toltec_dest"
     switch-branch "$(get-branch)"
-    generate-opkg-conf
-    opkg update
-    # Update twice to make sure it's in the correct state
-    opkg update
+    if generate-opkg-conf; then
+        opkg update
+    fi
     reinstall-root
     if [ -d /opt/share/toltec/reenable.d ]; then
         find /opt/share/toltec/reenable.d -maxdepth 1 -mindepth 1 -print0 \
-            | xargs -rn1 basename \
+            | xargs -0rn1 basename \
             | while read -r pkg; do
                 local script
                 script="/opt/lib/opkg/info/${pkg}.postinst"
