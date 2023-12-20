@@ -561,11 +561,11 @@ install-state() {
     local enabled
     unit_name="$(systemd-escape --path "$toltec_dest").mount"
     if ! systemctl --quiet is-enabled "$unit_name" 2> /dev/null; then
-        echo "yes"
+        echo "no"
     elif systemctl --quiet is-active "$unit_name"2 > /dev/null; then
         echo "partial"
     else
-        echo "no"
+        echo "yes"
     fi
 }
 
@@ -590,19 +590,15 @@ status() {
     esac
     echo -e "\e[0m"
     echo -ne "Supported: \033[1m"
-    if $enabled; then
-        local rc
-        rc=0
-        check-version "$(get-branch)" > /dev/null || rc=$?
-        if [ $rc -eq 0 ]; then
-            echo -ne "\e[32mYes"
-        elif [ $rc -eq 2 ] || [ $rc -eq 3 ]; then
-            echo -ne "\e[33mUnknown"
-        else
-            echo -ne "\e[31mNo"
-        fi
-    else
+    local rc
+    rc=0
+    check-version "$(get-branch)" > /dev/null || rc=$?
+    if [ $rc -eq 0 ]; then
+        echo -ne "\e[32mYes"
+    elif [ $rc -eq 2 ] || [ $rc -eq 3 ]; then
         echo -ne "\e[33mUnknown"
+    else
+        echo -ne "\e[31mNo"
     fi
     echo -e "\e[0m"
     echo -n "Branch: "
