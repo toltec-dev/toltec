@@ -22,7 +22,7 @@ sha256sums=()
 
 package() {
     touch "$srcdir"/emptyfile
-    install -D -m 666 -t "$pkgdir"/usr/share/toltec/reenable.d/toltec-base "$srcdir"/emptyfile
+    install -D -m 666 -t "$pkgdir"/opt/share/toltec/reenable.d/toltec-base "$srcdir"/emptyfile
 }
 
 configure() {
