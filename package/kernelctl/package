@@ -5,7 +5,7 @@
 pkgnames=(kernelctl)
 pkgdesc="Manage aftermarket kernels"
 url=https://toltec-dev.org/
-pkgver=0.1-6
+pkgver=0.1-7
 timestamp=2022-11-12T00:00Z
 section="utils"
 maintainer="Salvatore Stella <etn45p4m@gmail.com>"
@@ -19,10 +19,9 @@ sha256sums=(
 )
 
 package() {
-    touch "$srcdir"/emptyfile
     install -D -m 744 -t "$pkgdir"/opt/bin "$srcdir"/kernelctl
     install -d "$pkgdir"/opt/usr/share/kernelctl
-    install -D -m 666 -t "$pkgdir"/usr/share/toltec/reenable.d/kernelctl "$srcdir"/emptyfile
+    touch "$pkgdir"/opt/share/toltec/reenable.d/kernelctl
 }
 
 configure() {

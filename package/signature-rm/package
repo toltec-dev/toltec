@@ -6,7 +6,7 @@ _pkgname='signature-rm'
 pkgnames=("$_pkgname")
 pkgdesc="Remove the signature from the bottom of emails"
 url="https://github.com/rM-self-serve/signature-rM"
-pkgver=1.0.2-1
+pkgver=1.0.2-2
 timestamp=2023-12-06T11:43:00Z
 section="utils"
 maintainer="rM-self-serve <122753594+rM-self-serve@users.noreply.github.com>"
@@ -29,8 +29,7 @@ package() {
     install -D -m 755 -t "$pkgdir"/opt/bin \
         "$srcdir/target/armv7-unknown-linux-gnueabihf/release/$_pkgname"
 
-    touch "$srcdir"/emptyfile
-    install -D -m 666 -t "$pkgdir"/usr/share/toltec/reenable.d/"$_pkgname" "$srcdir"/emptyfile
+    touch "$pkgdir"/opt/share/toltec/reenable.d/"$_pkgname"
 }
 
 configure() {
