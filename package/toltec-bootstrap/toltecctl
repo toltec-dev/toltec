@@ -440,13 +440,15 @@ reenable() {
     switch-branch "$(get-branch)"
     reinstall-root
     if [ -d /opt/share/toltec/reenable.d ]; then
-        find /opt/share/toltec/reenable.d -maxdepth 1 -mindepth 1 | xargs -rn1 basename | while read pkg; do
-            local script
-            script="/opt/lib/opkg/info/${pkg}.postinst"
-            if [ -f "$script" ]; then
-                "$script" configure || true
-            fi
-        done
+        find /opt/share/toltec/reenable.d -maxdepth 1 -mindepth 1 -print0 \
+            | xargs -rn1 basename \
+            | while read -r pkg; do
+                local script
+                script="/opt/lib/opkg/info/${pkg}.postinst"
+                if [ -f "$script" ]; then
+                    "$script" configure || true
+                fi
+            done
     fi
     set-path
 }
