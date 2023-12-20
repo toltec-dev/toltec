@@ -596,6 +596,7 @@ status() {
     echo -e "\e[0m"
     echo -n "Branch: "
     if [ -f "$opkg_conf" ]; then
+        # shellcheck disable=SC2005
         echo "$(get-branch)"
     else
         echo -e "\033[1m\e[33mUnknown\e[0m"
