@@ -176,7 +176,7 @@ main() {
     trap error-cleanup ERR
 
     if ! check-version "$toltec_branch"; then
-        if [[ "$1" != "--force" ]]; then
+        if [ $# -eq 0 ] || [[ "$1" != "--force" ]]; then
             exit 1
         fi
     fi

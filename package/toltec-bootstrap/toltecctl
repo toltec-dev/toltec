@@ -12,6 +12,8 @@ toltec_dest=/opt
 
 # Path where toltec caches compatibility information
 toltec_share=/home/root/.local/share/toltec
+# Path to static opkg build
+opkg_path=/home/root/.local/bin/opkg
 
 # Path to Opkg configuration
 opkg_conf="$toltec_src"/etc/opkg.conf
@@ -75,17 +77,14 @@ get-release-version() {
 # 3 - unable to install standalone wget
 check-version() {
     local wget
-    case "$(install-state)" in
-        yes)
-            wget="wget"
-            ;;
-        *)
-            if ! install-standalone-wget; then
-                return 3
-            fi
-            wget="${toltec_share}/wget}"
-            ;;
-    esac
+    if [[ "$(install-state)" != "yes" ]] || [[ "$(command -v wget)" != "/opt/bin/wget" ]]; then
+        if ! install-standalone-wget; then
+            return 2
+        fi
+        wget="${toltec_share}/wget"
+    else
+        wget="wget"
+    fi
     local check_branch
     local current_model
     local current_version
@@ -195,7 +194,10 @@ remove-bind-mount() {
 
     echo "Removing mount over '$1'"
     systemctl disable "$unit_name"
-    umount -l "$1"
+    systemctl stop "$unit_name"
+    if mountpoint -q "$1"; then
+        umount -l "$1"
+    fi
     rm "$unit_path"
     systemctl daemon-reload
 }
@@ -340,6 +342,9 @@ CONF
 #
 # Output: Current branch name
 get-branch() {
+    if ! [ -f "$opkg_conf_dir/15-toltec.conf" ]; then
+        return
+    fi
     local srv_prefix_len=${#toltec_srv_root}
     local srv_prefix="${toltec_srv_root//\//\\/}"
     local awk_get_branch="
@@ -457,10 +462,18 @@ list-installed-ordered() {
 
 # Install standalone opkg binary
 install-standalone-opkg() {
-    local opkg_path="{$1-/home/root/.local/bin/opkg}"
+    local wget
+    if [[ "$(install-state)" != "yes" ]] || [[ "$(command -v wget)" != "/opt/bin/wget" ]]; then
+        if ! install-standalone-wget; then
+            return 2
+        fi
+        wget="${toltec_share}/wget"
+    else
+        wget="wget"
+    fi
     local opkg_remote=https://bin.entware.net/armv7sf-k3.2/installer/opkg
 
-    if ! wget --no-verbose "$opkg_remote" --output-document "$opkg_path"; then
+    if ! "$wget" --no-verbose "$opkg_remote" --output-document "$opkg_path"; then
         echo "Unable to fetch standalone opkg, make sure you have a stable Wi-Fi connection"
         return 1
     fi
@@ -475,15 +488,11 @@ install-standalone-opkg() {
 # Install a local wget binary which supports TLS (the original one
 # installed on the reMarkable does not) in the PATH
 install-standalone-wget() {
-    local wget_path="${toltec_share}/wget}"
+    local wget_path="${toltec_share}/wget"
     local wget_remote=http://toltec-dev.org/thirdparty/bin/wget-v1.21.1
     local wget_checksum=8798fcdabbe560722a02f95b30385926e4452e2c98c15c2c217583eaa0db30fc
 
-    if [[ -e $wget_path ]]; then
-        rm "$wget_path"
-    fi
-
-    if [ -f "$wget_path" ] &&  ! sha256sum -c <(echo "$wget_checksum  $wget_path") > /dev/null 2>&1; then
+    if [ -f "$wget_path" ] && ! [[ -e $wget_path ]] || ! sha256sum -c <(echo "$wget_checksum  $wget_path") > /dev/null 2>&1; then
         rm "$wget_path"
     fi
 
@@ -509,9 +518,8 @@ install-standalone-wget() {
 
 # Remove Toltec completely
 uninstall() {
-    local opkg_path=/home/root/.local/bin/opkg
     # Fetch standalone opkg used to uninstall packages
-    if ! install-standalone-opkg "$opkg_path"; then
+    if ! install-standalone-opkg; then
         return 1
     fi
 
@@ -543,7 +551,7 @@ install-state() {
     unit_name="$(systemd-escape --path "$toltec_dest").mount"
     if ! systemctl --quiet is-enabled "$unit_name" 2> /dev/null; then
         echo "yes"
-    elif systemctl --quiet is-active "$unit_name"2> /dev/null; then
+    elif systemctl --quiet is-active "$unit_name"2 > /dev/null; then
         echo "partial"
     else
         echo "no"
@@ -588,7 +596,7 @@ status() {
     echo -e "\e[0m"
     echo -n "Branch: "
     if [ -f "$opkg_conf" ]; then
-        get-branch
+        echo "$(get-branch)"
     else
         echo -e "\033[1m\e[33mUnknown\e[0m"
     fi
