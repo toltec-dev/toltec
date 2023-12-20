@@ -260,7 +260,6 @@ escape-for-sed() {
     printf %s "${REPLY%$'\n'}"
 }
 
-
 # Replace multiline string content in stdin
 #
 # Arguments:
