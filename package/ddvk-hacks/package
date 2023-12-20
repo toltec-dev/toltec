@@ -20,6 +20,7 @@ sha256sums=(d3b1413bb9219804581afab598e7f5308233e7467d64e8084e67aae7346beaba)
 _patches_dir="/opt/share/ddvk-hacks"
 _xochitl_path="/usr/bin/xochitl"
 _work_dir="/home/root/.local/share/ddvk-hacks"
+_info_path="$_work_dir/xochitl.info"
 _backup_path="$_work_dir/xochitl.backup"
 _old_backup_path="$_backup_path.old"
 _patched_path="$_work_dir/xochitl.patched"
@@ -330,11 +331,25 @@ configure() {
     cp "$_patched_path" "$_xochitl_path"
     rm -rf /home/root/.cache/remarkable/xochitl/qmlcache/*
 
+    # shellcheck source=../toltec-bootstrap/toltecctl
+    source /home/root/.local/bin/toltecctl
+    get-release-version > "$_info_path"
+
     echo "Please restart Xochitl to use the patches"
     echo
 }
 
 _restore() {
+    # shellcheck source=../toltec-bootstrap/toltecctl
+    source /home/root/.local/bin/toltecctl
+
+    if ! [ -f "$_info_path" ] \
+        || [[ "$(get-release-version)" != "$(cat "$_info_path")" ]] \
+        || compare-versions "$(get-release-version)" "3.0"; then
+        echo "Skipping restore, as you are on a newer OS version"
+        return
+    fi
+
     echo
     echo "Restoring the original Xochitl binary"
 
@@ -344,6 +359,7 @@ _restore() {
     else
         cp "$_backup_path" "$_xochitl_path"
         rm -rf /home/root/.cache/remarkable/xochitl/qmlcache/*
+        rm "$_info_path"
     fi
 
     echo

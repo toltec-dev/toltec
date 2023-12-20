@@ -281,10 +281,23 @@ update-package-arch() {
     local new_status
     local status
     local version
-    status="$(opkg status "$1")"
-    if [ -z "$status" ]; then
-        log WARN "No status found for package ${1}"
+    local opkg_status="/opt/lib/opkg/status"
+    if ! grep -q "Package: ${1}" "$opkg_status"; then
         return
+    fi
+    status="$(opkg status "$1" | grep -v "has no valid architecture, ignoring" || true)"
+    if [ -z "$status" ]; then
+        local index
+        local index2
+        local count
+        index="$(grep --line-number "Package: ${1}" "$opkg_status" | cut -d':' -f1)"
+        count="$(tail -n +$((index + 1)) "$opkg_status" | grep --line-number "Package: " | head -n1 | cut -d':' -f1)"
+        index2=$((index + count))
+        status="$(sed -n "${index},${index2}p;$((index2 + 1))q" "$opkg_status")"
+        if [ -z "$status" ]; then
+            log WARN "No status found for package ${1}"
+            return
+        fi
     fi
     arch="$(echo "$status" | grep "Architecture:" | awk '{print $2}')"
     if [ -z "$arch" ]; then
@@ -312,12 +325,21 @@ update-package-arch() {
 
 # Reinstall toltec-base and toltec-deletions
 reinstall-base() {
-    opkg list-installed | cut -d' ' -f1 | while read -r pkg; do
-        update-package-arch "$pkg"
-    done
+    opkg list-installed \
+        | grep -v "has no valid architecture, ignoring" \
+        | cut -d' ' -f1 \
+        | while read -r pkg; do
+            update-package-arch "$pkg"
+        done
+    opkg list-installed \
+        | grep "has no valid architecture, ignoring" \
+        | cut -d' ' -f2 \
+        | while read -r pkg; do
+            update-package-arch "$pkg"
+        done
     update-package-arch toltec-base
     update-package-arch toltec-deletions
-    opkg install --force-reinstall toltec-base toltec-deletions
+    opkg install --force-reinstall toltec-base toltec-deletions || true
 }
 
 # Reinstall all Toltec packages that had files installed outside of
@@ -347,7 +369,7 @@ reinstall-root() {
     # temporarily
     set +u
     if [[ ${#reinstall_packages[@]} -ne 0 ]]; then
-        opkg install --force-reinstall --force-remove "${!reinstall_packages[@]}"
+        opkg install --force-reinstall --force-remove "${!reinstall_packages[@]}" || true
     else
         echo "No package needs to be reinstalled"
     fi
@@ -557,6 +579,7 @@ reenable() {
     switch-branch "$(get-branch)"
     log INFO "Generating /opt/etc/opkg.conf"
     generate-opkg-conf || true
+    log INFO "Opkg update"
     opkg update
     log INFO "Reinsalling base packages"
     reinstall-base
