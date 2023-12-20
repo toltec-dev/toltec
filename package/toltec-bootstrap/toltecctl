@@ -189,7 +189,7 @@ remove-bind-mount() {
 
     if [[ ! -e $unit_path ]]; then
         echo "No existing bind mount for '$1'"
-        return 1
+        return
     fi
 
     echo "Removing mount over '$1'"
