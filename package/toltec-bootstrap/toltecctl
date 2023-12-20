@@ -72,7 +72,20 @@ get-release-version() {
 # 0 - if the current version is supported
 # 1 - if unsupported
 # 2 - if version compatibility information could not be retrieved
+# 3 - unable to install standalone wget
 check-version() {
+    local wget
+    case "$(install-state)" in
+        yes)
+            wget="wget"
+            ;;
+        *)
+            if ! install-standalone-wget; then
+                return 3
+            fi
+            wget="${toltec_share}/wget}"
+            ;;
+    esac
     local check_branch
     local current_model
     local current_version
@@ -84,7 +97,7 @@ check-version() {
     cwd="$(pwd)"
     mkdir -p "$toltec_share"
     cd "$toltec_share"
-    if ! wget "$toltec_srv_root"/"$check_branch"/Compatibility \
+    if ! "$wget" "$toltec_srv_root"/"$check_branch"/Compatibility \
         --timestamping \
         --no-verbose \
         --ignore-length 2> /dev/null; then
@@ -338,7 +351,7 @@ get-branch() {
             )
         }
     "
-    awk "$awk_get_branch" "$opkg_conf_dir/15-toltec.conf" | head -n1
+    awk "$awk_get_branch" "$opkg_conf_dir/15-toltec.conf" | head -n1 || true
 }
 
 # Compare two version numbers
@@ -462,17 +475,19 @@ install-standalone-opkg() {
 # Install a local wget binary which supports TLS (the original one
 # installed on the reMarkable does not) in the PATH
 install-standalone-wget() {
-    local wget_path="${wget_path:-/home/root/.local/bin/wget}"
+    local wget_path="${toltec_share}/wget}"
     local wget_remote=http://toltec-dev.org/thirdparty/bin/wget-v1.21.1
     local wget_checksum=8798fcdabbe560722a02f95b30385926e4452e2c98c15c2c217583eaa0db30fc
 
-    if [[ ! -x $wget_path ]]; then
-        if [[ -e $wget_path ]]; then
-            echo "Error: '$wget_path' exists, but is not executable"
-            echo "You may need to delete it and try again."
-            exit 1
-        fi
+    if [[ -e $wget_path ]]; then
+        rm "$wget_path"
+    fi
 
+    if [ -f "$wget_path" ] &&  ! sha256sum -c <(echo "$wget_checksum  $wget_path") > /dev/null 2>&1; then
+        rm "$wget_path"
+    fi
+
+    if ! [ -f "$wget_path" ]; then
         echo "Fetching secure wget"
 
         # Download and compare to hash
@@ -489,12 +504,6 @@ install-standalone-wget() {
         fi
 
         chmod 755 "$wget_path"
-    fi
-
-    # Ensure the local binary is used
-    if [[ $(command -v wget) != "$wget_path" ]]; then
-        export PATH
-        PATH="$(dirname "$wget_path"):$PATH"
     fi
 }
 
@@ -565,18 +574,13 @@ status() {
     if $enabled; then
         local rc
         rc=0
-        install-standalone-wget > /dev/null || rc=$?
-        if [ $rc -ne 0 ] || [ $rc -eq 3 ]; then
+        check-version "$(get-branch)" > /dev/null || rc=$?
+        if [ $rc -eq 0 ]; then
+            echo -ne "\e[32mYes"
+        elif [ $rc -eq 2 ] || [ $rc -eq 3 ]; then
             echo -ne "\e[33mUnknown"
         else
-            check-version "$(get-branch)" > /dev/null || rc=$?
-            if [ $rc -eq 0 ]; then
-                echo -ne "\e[32mYes"
-            elif [ $rc -eq 2 ] || [ $rc -eq 3 ]; then
-                echo -ne "\e[33mUnknown"
-            else
-                echo -ne "\e[31mNo"
-            fi
+            echo -ne "\e[31mNo"
         fi
     else
         echo -ne "\e[33mUnknown"
@@ -700,10 +704,6 @@ MSG
         reenable)
             force=$({ (($# > 0)) && [[ $1 = "--force" || $1 = "-f" ]] && echo 1; } || true)
 
-            case "$(install-state)" in
-                no | partial)
-                    install-standalone-wget
-            esac
             if ! check-version "$(get-branch)"; then
                 if [[ -z $force ]]; then
                     exit 1
