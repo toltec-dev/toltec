@@ -48,7 +48,7 @@ package() {
         install -D -m 644 -t "$patches_dir" "$srcdir"/patches/21501067_rm1/patch_38.1.03
         install -D -m 644 -t "$patches_dir" "$srcdir"/patches/21511189_rm1/patch_39.1.01
     elif [[ $arch = rm2os2 ]]; then
-        patch_dir="${pkgdir}${_patches_dir}"
+        patches_dir="${pkgdir}${_patches_dir}"
         install -D -m 644 -t "$patches_dir" "$srcdir"/patches/26171_rm2/patch_19.2.02
         install -D -m 644 -t "$patches_dir" "$srcdir"/patches/26275_rm2/patch_20.2.03
         install -D -m 644 -t "$patches_dir" "$srcdir"/patches/27051_rm2/patch_21.2.05
