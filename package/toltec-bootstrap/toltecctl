@@ -205,9 +205,6 @@ remove-bind-mount() {
 # Reinstall all Toltec packages that had files installed outside of
 # $toltec_src, e.g. systemd configuration files
 reinstall-root() {
-    generate-opkg-conf
-    opkg update
-
     # Get the list of installed packages with files on root
     local pkgname
     declare -A on_root_packages
@@ -438,6 +435,10 @@ CONF
 reenable() {
     add-bind-mount "$toltec_src" "$toltec_dest"
     switch-branch "$(get-branch)"
+    generate-opkg-conf
+    opkg update
+    # Update twice to make sure it's in the correct state
+    opkg update
     reinstall-root
     if [ -d /opt/share/toltec/reenable.d ]; then
         find /opt/share/toltec/reenable.d -maxdepth 1 -mindepth 1 -print0 \
