@@ -32,6 +32,50 @@ bashrc_start_marker="# Added by Toltec bootstrap (do not modify!)"
 bashrc_old_start_marker="# Path added by Toltec bootstrap"
 bashrc_end_marker="# End of Toltec bootstrap additions"
 
+# Print a log message
+#
+# Arguments:
+#
+# [$1] - Log level: INFO, WARN or ERROR (default: INFO)
+# $2... - Messages to print, each argument goes to a separate line
+log() {
+    # Output stream where the messages will be sent
+    local log_type="INFO"
+    local fd=1
+    local colored_prefix
+
+    if [[ $# -ge 2 ]]; then
+        case "$1" in
+            INFO | WARN | ERROR)
+                log_type="$1"
+                shift
+                ;;
+        esac
+    fi
+
+    case "$log_type" in
+        INFO) colored_prefix='\e[32mINFO:\e[0m  ' ;;
+        WARN)
+            colored_prefix='\e[33mWARN:\e[0m  '
+            fd=2
+            ;;
+        ERROR)
+            colored_prefix='\e[31mERROR:\e[0m '
+            fd=2
+            ;;
+    esac
+
+    echo -e "${colored_prefix}$1" >&$fd
+
+    # Extra lines to print indented
+    shift
+    local line
+
+    for line in "$@"; do
+        echo -e "       $line" >&$fd
+    done
+}
+
 # Identify which reMarkable model we’re currently running on
 #
 # Output: One of the following strings
@@ -100,18 +144,18 @@ check-version() {
         --timestamping \
         --no-verbose \
         --ignore-length 2> /dev/null; then
-        echo "Error: Unable to fetch updated version compatibility information, make sure you have a stable Wi-Fi connection"
+        log ERROR "Unable to fetch updated version compatibility information, make sure you have a stable Wi-Fi connection"
         if ! [ -f Compatibility ]; then
             cd "$cwd"
             return 2
         fi
-        echo "Using outdated cached version compatibility information"
+        log WARN "Using outdated cached version compatibility information"
     fi
     cd "$cwd"
 
     if ! grep -q "${current_model}=${current_version}" "${toltec_share}/Compatibility"; then
-        echo "You’re running an unsupported OS version: $current_version"
-        echo "Please monitor Toltec releases for upcoming support"
+        LOG ERROR "You’re running an unsupported OS version: $current_version"
+        LOG ERROR "Please monitor Toltec releases for upcoming support"
         return 1
     fi
 
@@ -263,7 +307,7 @@ SHELL
     new_path="$(bash -l -c "echo \$PATH")"
 
     if [[ $old_path != "$new_path" ]]; then
-        echo "Please restart your SSH session or run 'exec bash --login' to use Toltec"
+        log WARN "Please restart your SSH session or run 'exec bash --login' to use Toltec"
     fi
 }
 
@@ -404,11 +448,11 @@ switch-branch() {
     version="$(identify-support-version)"
 
     if [[ $model = "unknown" ]]; then
-        echo "You’re running an unsupported or unrecognised device"
+        log ERROR "You’re running an unsupported or unrecognised device"
         exit 1
     fi
     if [[ $version = "unknown" ]]; then
-        echo "You're running an unsupported or unrecognised OS version"
+        log ERROR "You're running an unsupported or unrecognised OS version"
         exit 1
     fi
 
@@ -434,11 +478,14 @@ CONF
 
 # Re-enable Toltec install after system update
 reenable() {
+    log INFO "Mounting /opt"
     add-bind-mount "$toltec_src" "$toltec_dest"
     switch-branch "$(get-branch)"
+    log INFO "Generating /opt/etc/opkg.conf"
     if generate-opkg-conf; then
         opkg update
     fi
+    log INFO "Reinstalling packages with files on the root partition"
     reinstall-root
     if [ -d /opt/share/toltec/reenable.d ]; then
         find /opt/share/toltec/reenable.d -maxdepth 1 -mindepth 1 -print0 \
@@ -447,10 +494,12 @@ reenable() {
                 local script
                 script="/opt/lib/opkg/info/${pkg}.postinst"
                 if [ -f "$script" ]; then
+                    log INFO "Reconfiguring ${pkg}"
                     "$script" configure || true
                 fi
             done
     fi
+    log INFO "Configuring bashrc"
     set-path
 }
 
@@ -486,7 +535,7 @@ install-standalone-opkg() {
     local opkg_remote=https://bin.entware.net/armv7sf-k3.2/installer/opkg
 
     if ! "$wget" --no-verbose "$opkg_remote" --output-document "$opkg_path"; then
-        echo "Unable to fetch standalone opkg, make sure you have a stable Wi-Fi connection"
+        log ERROR "Unable to fetch standalone opkg, make sure you have a stable Wi-Fi connection"
         return 1
     fi
 
@@ -509,18 +558,18 @@ install-standalone-wget() {
     fi
 
     if ! [ -f "$wget_path" ]; then
-        echo "Fetching secure wget"
+        log INFO "Fetching secure wget"
 
         # Download and compare to hash
         mkdir -p "$(dirname "$wget_path")"
 
         if ! wget -q "$wget_remote" --output-document "$wget_path"; then
-            echo "Error: Could not fetch wget, make sure you have a stable Wi-Fi connection"
+            log ERROR "Could not fetch wget, make sure you have a stable Wi-Fi connection"
             exit 1
         fi
 
         if ! sha256sum -c <(echo "$wget_checksum  $wget_path") > /dev/null 2>&1; then
-            echo "Error: Invalid checksum for the local wget binary"
+            log ERROR "Invalid checksum for the local wget binary"
             exit 1
         fi
 
@@ -644,7 +693,7 @@ if [[ $0 = "${BASH_SOURCE[0]}" ]]; then
                 echo
 
                 if [[ $REPLY =~ ^[Nn]$ ]]; then
-                    echo "Not reloading. Use 'opkg update' to do it manually."
+                    log WARN "Not reloading. Use 'opkg update' to do it manually."
                 else
                     opkg update
                 fi
@@ -673,7 +722,7 @@ MSG
                 echo
 
                 if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-                    echo "Canceled"
+                    log WARN "Canceled"
                     exit 1
                 fi
             fi
@@ -696,7 +745,7 @@ MSG
                 echo
 
                 if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-                    echo "Canceled"
+                    log WARN "Canceled"
                     exit 1
                 fi
             fi
@@ -709,7 +758,7 @@ MSG
                     echo
 
                     if [[ $REPLY =~ ^[Nn]$ ]]; then
-                        echo "Not reloading. Use 'opkg update' to do it manually."
+                        log WARN "Not reloading. Use 'opkg update' to do it manually."
                         exit
                     fi
                 fi
@@ -738,7 +787,7 @@ MSG
                 echo
 
                 if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-                    echo "Canceled"
+                    log WARN "Canceled"
                     exit 1
                 fi
             fi
@@ -750,16 +799,16 @@ MSG
                 echo
 
                 if [[ $REPLY =~ ^[Nn]$ ]]; then
-                    echo "Please reboot your device manually to complete the uninstall process"
+                    log WARN "Please reboot your device manually to complete the uninstall process"
                     exit
                 fi
             fi
 
             if [[ ! -f $ssh_key_file ]]; then
-                echo "In case something goes wrong, your SSH password is: $(get-ssh-password)"
+                log WARN "In case something goes wrong, your SSH password is: $(get-ssh-password)"
             fi
 
-            echo "Rebooting"
+            log INFO "Rebooting"
             reboot
             ;;
 
@@ -772,7 +821,7 @@ MSG
             ;;
 
         *)
-            echo -e "Error: Invalid command '$action'\n"
+            log ERROR "Invalid command '$action'\n"
             help
             exit 1
             ;;
