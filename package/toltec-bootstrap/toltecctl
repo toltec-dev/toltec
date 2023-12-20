@@ -276,15 +276,17 @@ replace-string() {
 }
 
 update-package-arch() {
+    local arch
     local model
     local new_status
+    local status
     local version
-    local status="$(opkg status "$1")"
+    status="$(opkg status "$1")"
     if [ -z "$status" ]; then
         log WARN "No status found for package ${1}"
         return
     fi
-    local arch="$(echo "$status" | grep "Architecture:" | awk '{print $2}')"
+    arch="$(echo "$status" | grep "Architecture:" | awk '{print $2}')"
     if [ -z "$arch" ]; then
         return
     fi
