@@ -10,9 +10,12 @@ toltec_src=/home/root/.entware
 # Path where Toltec is mounted
 toltec_dest=/opt
 
+# Path where toltec caches compatibility information
+toltec_share=/home/root/.local/share/toltec
+
 # Path to Opkg configuration
-opkg_conf="$toltec_dest"/etc/opkg.conf
-opkg_conf_dir="$toltec_dest"/etc/opkg.conf.d
+opkg_conf="$toltec_src"/etc/opkg.conf
+opkg_conf_dir="$toltec_src"/etc/opkg.conf.d
 
 # Path to the Xochitl configuration
 xochitl_conf=/home/root/.config/remarkable/xochitl.conf
@@ -69,7 +72,6 @@ get-release-version() {
 # 0 - if the current version is supported
 # 1 - if unsupported
 # 2 - if version compatibility information could not be retrieved
-# 3 - if the standalone opkg could not be retrieved
 check-version() {
     local check_branch
     local current_model
@@ -80,25 +82,22 @@ check-version() {
     current_version="$(get-release-version)"
 
     cwd="$(pwd)"
-    mkdir -p /home/root/.local/share/toltec
-    cd /home/root/.local/share/toltec
+    mkdir -p "$toltec_share"
+    cd "$toltec_share"
     if ! wget "$toltec_srv_root"/"$check_branch"/Compatibility \
         --timestamping \
         --no-verbose \
         --ignore-length 2> /dev/null; then
-        echo "Unable to fetch updated version compatibility information, make sure you have a stable Wi-Fi connection"
+        echo "Error: Unable to fetch updated version compatibility information, make sure you have a stable Wi-Fi connection"
         if ! [ -f Compatibility ]; then
+            cd "$cwd"
             return 2
         fi
         echo "Using outdated cached version compatibility information"
     fi
-    local found=false
-    if ! grep -q "${current_model}=${current_version}" Compatibility; then
-        found=false
-    fi
     cd "$cwd"
 
-    if ! $found; then
+    if ! grep -q "${current_model}=${current_version}" "${toltec_share}/Compatibility"; then
         echo "You’re running an unsupported OS version: $current_version"
         echo "Please monitor Toltec releases for upcoming support"
         return 1
@@ -339,7 +338,7 @@ get-branch() {
             )
         }
     "
-    awk "$awk_get_branch" "$opkg_conf_dir/15-toltec.conf"
+    awk "$awk_get_branch" "$opkg_conf_dir/15-toltec.conf" | head -n1
 }
 
 # Compare two version numbers
@@ -460,6 +459,45 @@ install-standalone-opkg() {
     fi
 }
 
+# Install a local wget binary which supports TLS (the original one
+# installed on the reMarkable does not) in the PATH
+install-standalone-wget() {
+    local wget_path="${wget_path:-/home/root/.local/bin/wget}"
+    local wget_remote=http://toltec-dev.org/thirdparty/bin/wget-v1.21.1
+    local wget_checksum=8798fcdabbe560722a02f95b30385926e4452e2c98c15c2c217583eaa0db30fc
+
+    if [[ ! -x $wget_path ]]; then
+        if [[ -e $wget_path ]]; then
+            echo "Error: '$wget_path' exists, but is not executable"
+            echo "You may need to delete it and try again."
+            exit 1
+        fi
+
+        echo "Fetching secure wget"
+
+        # Download and compare to hash
+        mkdir -p "$(dirname "$wget_path")"
+
+        if ! wget -q "$wget_remote" --output-document "$wget_path"; then
+            echo "Error: Could not fetch wget, make sure you have a stable Wi-Fi connection"
+            exit 1
+        fi
+
+        if ! sha256sum -c <(echo "$wget_checksum  $wget_path") > /dev/null 2>&1; then
+            echo "Error: Invalid checksum for the local wget binary"
+            exit 1
+        fi
+
+        chmod 755 "$wget_path"
+    fi
+
+    # Ensure the local binary is used
+    if [[ $(command -v wget) != "$wget_path" ]]; then
+        export PATH
+        PATH="$(dirname "$wget_path"):$PATH"
+    fi
+}
+
 # Remove Toltec completely
 uninstall() {
     local opkg_path=/home/root/.local/bin/opkg
@@ -490,44 +528,65 @@ uninstall() {
     systemctl enable xochitl
 }
 
-# Output toltec installation status
-status() {
-    echo -ne "Enabled: \033[1m"
+install-state() {
     local unit_name
     local enabled
     unit_name="$(systemd-escape --path "$toltec_dest").mount"
-    if ! systemctl --quiet is-enabled "$unit_name"; then
-        enabled=false
-        echo -ne "\e[31mNo"
-    elif systemctl --quiet is-active "$unit_name"; then
-        enabled=true
-        echo -ne "\e[32mYes"
+    if ! systemctl --quiet is-enabled "$unit_name" 2> /dev/null; then
+        echo "yes"
+    elif systemctl --quiet is-active "$unit_name"2> /dev/null; then
+        echo "partial"
     else
-        enabled=false
-        echo -ne "\e[33mPartial"
+        echo "no"
     fi
+}
+
+# Output toltec installation status
+status() {
+    echo -ne "Enabled: \033[1m"
+    local enabled=false
+    case "$(install-state)" in
+        yes)
+            enabled=true
+            echo -ne "\e[32mYes"
+            ;;
+        no)
+            echo -ne "\e[31mNo"
+            ;;
+        partial)
+            echo -ne "\e[33mPartial"
+            ;;
+        *)
+            echo -ne "\e[31mUnknown"
+            ;;
+    esac
     echo -e "\e[0m"
     echo -ne "Supported: \033[1m"
     if $enabled; then
         local rc
         rc=0
-        check-version "$(get-branch)" > /dev/null || rc=$?
-        if [ $rc -eq 0 ]; then
-            echo -ne "\e[32mYes"
-        elif [ $rc -eq 2 ] || [ $rc -eq 3 ]; then
+        install-standalone-wget > /dev/null || rc=$?
+        if [ $rc -ne 0 ] || [ $rc -eq 3 ]; then
             echo -ne "\e[33mUnknown"
         else
-            echo -ne "\e[31mNo"
+            check-version "$(get-branch)" > /dev/null || rc=$?
+            if [ $rc -eq 0 ]; then
+                echo -ne "\e[32mYes"
+            elif [ $rc -eq 2 ] || [ $rc -eq 3 ]; then
+                echo -ne "\e[33mUnknown"
+            else
+                echo -ne "\e[31mNo"
+            fi
         fi
     else
         echo -ne "\e[33mUnknown"
     fi
     echo -e "\e[0m"
     echo -n "Branch: "
-    if $enabled; then
+    if [ -f "$opkg_conf" ]; then
         get-branch
     else
-        echo -ne "\033[1m\e[33mUnknown\e[0m"
+        echo -e "\033[1m\e[33mUnknown\e[0m"
     fi
     echo -n "Model: "
     identify-model
@@ -641,6 +700,10 @@ MSG
         reenable)
             force=$({ (($# > 0)) && [[ $1 = "--force" || $1 = "-f" ]] && echo 1; } || true)
 
+            case "$(install-state)" in
+                no | partial)
+                    install-standalone-wget
+            esac
             if ! check-version "$(get-branch)"; then
                 if [[ -z $force ]]; then
                     exit 1
