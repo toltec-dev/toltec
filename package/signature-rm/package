@@ -29,6 +29,7 @@ package() {
     install -D -m 755 -t "$pkgdir"/opt/bin \
         "$srcdir/target/armv7-unknown-linux-gnueabihf/release/$_pkgname"
 
+    mkdir -p "$pkgdir"/opt/share/toltec/reenable.d
     touch "$pkgdir"/opt/share/toltec/reenable.d/"$_pkgname"
 }
 

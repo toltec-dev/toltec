@@ -21,6 +21,7 @@ source=()
 sha256sums=()
 
 package() {
+    mkdir -p "$pkgdir"/opt/share/toltec/reenable.d
     touch "$pkgdir"/opt/share/toltec/reenable.d/toltec-base
 }
 

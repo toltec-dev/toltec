@@ -27,6 +27,7 @@ package() {
     install -D -m 644 "$srcdir/$_pkgname-toltec.service" \
         "$pkgdir/lib/systemd/system/$_pkgname.service"
 
+    mkdir -p "$pkgdir"/opt/share/toltec/reenable.d
     touch "$pkgdir"/opt/share/toltec/reenable.d/"$_pkgname"
 }
 

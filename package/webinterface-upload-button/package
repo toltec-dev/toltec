@@ -21,6 +21,7 @@ sha256sums=(
 
 package() {
     install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir/$_pkgname"
+    mkdir -p "$pkgdir"/opt/share/toltec/reenable.d
     touch "$pkgdir"/opt/share/toltec/reenable.d/"$_pkgname"
 }
 
