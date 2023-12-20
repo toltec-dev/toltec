@@ -487,6 +487,7 @@ reenable() {
     fi
     log INFO "Reinstalling packages with files on the root partition"
     reinstall-root
+    opkg install --force-reinstall toltec-base
     if [ -d /opt/share/toltec/reenable.d ]; then
         find /opt/share/toltec/reenable.d -maxdepth 1 -mindepth 1 -print0 \
             | xargs -0rn1 basename \

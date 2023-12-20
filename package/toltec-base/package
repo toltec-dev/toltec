@@ -11,7 +11,7 @@ timestamp=2023-12-03T04:51:58Z
 section="utils"
 maintainer="Eeems <eeems@eeems.email>"
 license=MIT
-installdepends=(toltec-bootstrap toltec-completion)
+installdepends=(toltec-bootstrap toltec-completion wget-ssl ca-certificates)
 installdepends_rm1os2=(open-remarkable-shutdown)
 installdepends_rm1os3=(open-remarkable-shutdown toltec-deletions)
 installdepends_rm2os2=(rm2-suspend-fix)
@@ -21,8 +21,7 @@ source=()
 sha256sums=()
 
 package() {
-    mkdir -p "$pkgdir"/opt/share/toltec/reenable.d
-    touch "$pkgdir"/opt/share/toltec/reenable.d/toltec-base
+    true
 }
 
 configure() {
@@ -33,13 +32,24 @@ configure() {
         /opt/etc/profile
     echo "Disabling automatic update"
     disable-unit update-engine.service
-    if [[ "$arch" == "rm1" ]] || [[ "$arch" == "rm1os2" ]] || [[ "$arch" == "rm1os3" ]] && ! is-masked sys-subsystem-net-devices-usb1.device; then
-        echo "Disabling usb1 network device to avoid long boots"
-        systemctl mask sys-subsystem-net-devices-usb1.device
-    elif [[ "$arch" == "rm2" ]] || [[ "$arch" == "rm2os2" ]] || [[ "$arch" == "rm2os3" ]] && is-masked sys-subsystem-net-devices-usb1.device; then
-        echo "Enabling usb1 network device to ensure usb SSH works"
-        systemctl unmask sys-subsystem-net-devices-usb1.device
-    fi
+    case "$arch" in
+        rmall | rmallos2 | rmallos3)
+            echo "Warning: rmall version of toltec-base should not be installed"
+            echo "Please run opkg install --force-reinstall toltec-base"
+            ;;
+        rm1 | rm1os2 | rm1os3)
+            if ! is-masked sys-subsystem-net-devices-usb1.device; then
+                echo "Disabling usb1 network device to avoid long boots"
+                systemctl mask sys-subsystem-net-devices-usb1.device
+            fi
+            ;;
+        rm2 | rm2os2 | rm2os3)
+            if is-masked sys-subsystem-net-devices-usb1.device; then
+                echo "Enabling usb1 network device to ensure usb SSH works"
+                systemctl unmask sys-subsystem-net-devices-usb1.device
+            fi
+            ;;
+    esac
 }
 
 postremove() {
