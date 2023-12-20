@@ -246,6 +246,63 @@ remove-bind-mount() {
     systemctl daemon-reload
 }
 
+# Escape a string for use in a sed replacement
+#
+# Arguments
+#
+# $1 - String to quote
+#
+# Output:
+#
+# Escaped string
+escape-for-sed() {
+    IFS= read -d '' -r < <(sed -e ':a' -e '$!{N;ba' -e '}' -e 's/[&/\]/\\&/g; s/\n/\\&/g' <<< "$1")
+    printf %s "${REPLY%$'\n'}"
+}
+
+update-package-arch() {
+    local model
+    local new_status
+    local version
+    local status="$(opkg status "$1")"
+    if [ -z "$status" ]; then
+        log WARN "No status found for package ${1}"
+        return
+    fi
+    local arch="$(echo "$status" | grep "Architecture:" | awk '{print $2}')"
+    if [ -z "$arch" ]; then
+        return
+    fi
+    case "$arch" in
+        rmallos2 | rmallos3)
+            version="$(identify-support-version)"
+            new_status="$(echo "$status" | sed "s/$(escape-for-sed "Architecture: ${arch}")/$(escape-for-sed "Architecture: rmall${version}")/")"
+            ;;
+        rm1os2 | rm1os3 | rm2os2 | rm2os3)
+            model="$(identify-model)"
+            version="$(identify-support-version)"
+            new_status="$(echo "$status" | sed "s/$(escape-for-sed "Architecture: ${arch}")/$(escape-for-sed "Architecture: ${model}${version}")/")"
+            ;;
+        *)
+            new_status="$status"
+            ;;
+    esac
+    if [[ "$status" == "$new_status" ]]; then
+        return
+    fi
+    sed -i "s/$(escape-for-sed "$status")/$(escape-for-sed "$new_status")/" /opt/lib/opkg/status
+}
+
+# Reinstall toltec-base and toltec-deletions
+reinstall-base() {
+    opkg list-installed | cut -d' ' -f1 | while read -r pkg; do
+        update-package-arch "$pkg"
+    done
+    update-package-arch toltec-base
+    update-package-arch toltec-deletions
+    opkg install --force-reinstall toltec-base toltec-deletions
+}
+
 # Reinstall all Toltec packages that had files installed outside of
 # $toltec_src, e.g. systemd configuration files
 reinstall-root() {
@@ -486,7 +543,7 @@ reenable() {
         opkg update
     fi
     log INFO "Reinsalling base packages"
-    opkg install --force-reinstall toltec-base toltec-deletions
+    reinstall-base
     log INFO "Reinstalling packages with files on the root partition"
     reinstall-root
     if [ -d /opt/share/toltec/reenable.d ]; then
@@ -644,7 +701,7 @@ status() {
     echo -ne "Supported: \033[1m"
     local rc
     rc=0
-    check-version "$(get-branch)" > /dev/null || rc=$?
+    check-version "$(get-branch)" &> /dev/null || rc=$?
     if [ $rc -eq 0 ]; then
         echo -ne "\e[32mYes"
     elif [ $rc -eq 2 ] || [ $rc -eq 3 ]; then
