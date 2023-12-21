@@ -258,7 +258,7 @@ remove-bind-mount() {
 #
 # Escaped string
 escape-for-sed() {
-    sed -e 's/[^^]/[&]/g; s/\^/\\^/g; $!a\'$'\n''\\n' <<< "$1" | tr -d '\n'
+    sed -e 's/[^^]/[&]/g; s/\^/\\^/g; $!a'\'''$'\n''\\n' <<< "$1" | tr -d '\n'
 }
 
 # Escape a string for use in a sed replacement
@@ -308,7 +308,7 @@ replace-string() {
 get-package-status() {
     local status
     status="$(opkg status "$1" | grep -v "has no valid architecture, ignoring" || true)"
-    if ! [ -z "$status" ]; then
+    if [ -n "$status" ]; then
         echo "$status"
         return 0
     fi
