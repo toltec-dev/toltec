@@ -393,22 +393,16 @@ update-package-arch() {
 # Reinstall toltec-base and toltec-deletions
 reinstall-base() {
     local packages=()
-    opkg list-installed \
-        | grep -v "has no valid architecture, ignoring" \
-        | cut -d' ' -f1 \
-        | while read -r pkg; do
-            if update-package-arch "$pkg"; then
-                packages+=("$pkg")
-            fi
-        done || true
-    opkg list-installed \
-        | grep "has no valid architecture, ignoring" \
-        | cut -d' ' -f2 \
-        | while read -r pkg; do
-            if update-package-arch "$pkg"; then
-                packages+=("$pkg")
-            fi
-        done || true
+    while read -r pkg; do
+        if update-package-arch "$pkg"; then
+            packages+=("$pkg")
+        fi
+    done < <(opkg list-installed | grep -v "has no valid architecture, ignoring" | cut -d' ' -f1)
+    while read -r pkg; do
+        if update-package-arch "$pkg"; then
+            packages+=("$pkg")
+        fi
+    done < <(opkg list-installed | grep "has no valid architecture, ignoring" | cut -d' ' -f2)
     update-package-arch toltec-base
     packages+=(toltec-base)
     update-package-arch toltec-deletions

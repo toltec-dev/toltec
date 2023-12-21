@@ -89,7 +89,7 @@ wget-bootstrap() {
             exit 1
         fi
 
-        log "Fetching secure wget"
+        log INFO "Fetching secure wget"
 
         # Download and compare to hash
         mkdir -p "$(dirname "$wget_path")"
