@@ -233,8 +233,8 @@ main() {
 
     opkg install toltec-base
 
-    if [[ $# -gt 0 ]]; then
-        opkg install "$@"
+    if [[ $# -gt 0 ]] && ! /opt/bin/opkg install "$@"; then
+        log ERROR "The install was still successful, but the requested packages failed to install"
     fi
 
     log "After each system upgrade, run 'toltecctl reenable' to re-enable Toltec"
