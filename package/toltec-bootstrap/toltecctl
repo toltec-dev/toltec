@@ -258,7 +258,8 @@ remove-bind-mount() {
 #
 # Escaped string
 escape-for-sed() {
-    sed -e 's/[^^]/[&]/g; s/\^/\\^/g; $!a'\'''$'\n''\\n' <<< "$1" | tr -d '\n'
+    # shellcheck disable=SC1003
+    sed -e 's/[^^]/[&]/g; s/\^/\\^/g; $!a\'$'\n''\\n' <<< "$1" | tr -d '\n'
 }
 
 # Escape a string for use in a sed replacement
@@ -315,11 +316,13 @@ get-package-status() {
     local index
     local index2
     local count
-    index="$(grep --line-number "Package: ${1}" "$opkg_status" | cut -d':' -f1 || echo "-1")"
+    # Don't use --line-number so this works on the built in grep
+    index="$(grep -n "Package: ${1}" "$opkg_status" | cut -d':' -f1 || echo "-1")"
     if [ "$index" -eq -1 ]; then
         return 1
     fi
-    count="$(tail -n +$((index + 1)) "$opkg_status" | grep --line-number "Package: " | head -n1 | cut -d':' -f1 || echo "-1")"
+    # Don't use --line-number so this works on the built in grep
+    count="$(tail -n +$((index + 1)) "$opkg_status" | grep -n "Package: " | head -n1 | cut -d':' -f1 || echo "-1")"
     if [ "$count" -eq -1 ]; then
         return 1
     fi
@@ -337,9 +340,14 @@ get-package-status() {
 # Arguments:
 #
 # $1 - Package name
+#
+# Exit Codes:
+#
+# 0 - Package status was updated
+# 1 - Package status was not modified
 update-package-arch() {
     if ! grep -q "Package: ${1}" "$opkg_status"; then
-        return
+        return 1
     fi
     local arch
     local model
@@ -350,11 +358,11 @@ update-package-arch() {
     status="$(get-package-status "$1" || true)"
     if [ -z "$status" ]; then
         log WARN "Unable to get status for package: ${1}"
-        return
+        return 1
     fi
     arch="$(echo "$status" | grep "Architecture:" | awk '{print $2}')"
     if [ -z "$arch" ]; then
-        return
+        return 1
     fi
     case "$arch" in
         rmallos2 | rmallos3)
@@ -371,7 +379,7 @@ update-package-arch() {
             ;;
     esac
     if [[ "$status" == "$new_status" ]]; then
-        return
+        return 1
     fi
     echo "Updating package architecture for package: ${1}"
     sed -i \
@@ -379,25 +387,33 @@ update-package-arch() {
         -e '$!{N;ba' -e '}' \
         -e "s/$(escape-for-sed "$status")/$(escape-for-sed-replace "$new_status")/" \
         "$opkg_status"
+    return 0
 }
 
 # Reinstall toltec-base and toltec-deletions
 reinstall-base() {
+    local packages=()
     opkg list-installed \
-        | grep -v "has no valid architecture, ignoring" || true \
+        | grep -v "has no valid architecture, ignoring" \
         | cut -d' ' -f1 \
         | while read -r pkg; do
-            update-package-arch "$pkg"
-        done
+            if update-package-arch "$pkg"; then
+                packages+=("$pkg")
+            fi
+        done || true
     opkg list-installed \
-        | grep "has no valid architecture, ignoring" || true \
+        | grep "has no valid architecture, ignoring" \
         | cut -d' ' -f2 \
         | while read -r pkg; do
-            update-package-arch "$pkg"
-        done
+            if update-package-arch "$pkg"; then
+                packages+=("$pkg")
+            fi
+        done || true
     update-package-arch toltec-base
+    packages+=(toltec-base)
     update-package-arch toltec-deletions
-    opkg install --force-reinstall toltec-base toltec-deletions || true
+    packages+=(toltec-deletions)
+    opkg install --force-reinstall "${packages[@]}" || true
 }
 
 # Reinstall all Toltec packages that had files installed outside of
