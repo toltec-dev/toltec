@@ -14,6 +14,8 @@ toltec_dest=/opt
 toltec_share=/home/root/.local/share/toltec
 # Path to static opkg build
 opkg_path=/home/root/.local/bin/opkg
+# Path to opkg install status file
+opkg_status="/opt/lib/opkg/status"
 
 # Path to Opkg configuration
 opkg_conf="$toltec_src"/etc/opkg.conf
@@ -246,16 +248,29 @@ remove-bind-mount() {
     systemctl daemon-reload
 }
 
-# Escape a string for use in a sed replacement
+# Escape a string for use in a sed search
 #
 # Arguments
 #
-# $1 - String to quote
+# $1 - String to escape
 #
 # Output:
 #
 # Escaped string
 escape-for-sed() {
+    sed -e 's/[^^]/[&]/g; s/\^/\\^/g; $!a\'$'\n''\\n' <<<"$1" | tr -d '\n';
+}
+
+# Escape a string for use in a sed replacement
+#
+# Arguments
+#
+# $1 - String to escape
+#
+# Output:
+#
+# Escaped string
+escape-for-sed-replace() {
     IFS= read -d '' -r < <(sed -e ':a' -e '$!{N;ba' -e '}' -e 's/[&/\]/\\&/g; s/\n/\\&/g' <<< "$1")
     printf %s "${REPLY%$'\n'}"
 }
@@ -272,32 +287,70 @@ escape-for-sed() {
 #
 # Contents of stdin with the string replaced
 replace-string() {
-    sed "s/$(escape-for-sed "$1")/$(escape-for-sed "$2")/"
+    sed \
+        -e ':a' \
+        -e '$!{N;ba' -e '}' \
+        -e "s/$(escape-for-sed "$1")/$(escape-for-sed-replace "$2")/"
 }
 
-update-package-arch() {
-    local arch
-    local model
-    local new_status
+# Get the opkg status for a package
+#
+# Arguments:
+#
+# $1 - Package name
+#
+# Output: Opkg status information for the package
+#
+# Exit Code:
+#
+# 0 - Status found
+# 1 - Status not found
+get-package-status() {
     local status
-    local version
-    local opkg_status="/opt/lib/opkg/status"
+    status="$(opkg status "$1" | grep -v "has no valid architecture, ignoring" || true)"
+    if ! [ -z "$status" ]; then
+        echo "$status"
+        return 0
+    fi
+    local index
+    local index2
+    local count
+    index="$(grep --line-number "Package: ${1}" "$opkg_status" | cut -d':' -f1 || echo "-1")"
+    if [ "$index" -eq -1 ]; then
+        return 1
+    fi
+    count="$(tail -n +$((index + 1)) "$opkg_status" | grep --line-number "Package: " | head -n1 | cut -d':' -f1 || echo "-1")"
+    if [ "$count" -eq -1 ]; then
+        return 1
+    fi
+    index2=$((index + count - 1))
+    status="$(sed -n "${index},${index2}p;$((index2 + 1))q" "$opkg_status")"
+    if [ -z "$status" ]; then
+        return 1
+    fi
+    echo "$status"
+    return 0
+}
+
+# Update the opkg status for a package with the correct architecture for the device
+#
+# Arguments:
+#
+# $1 - Package name
+update-package-arch() {
     if ! grep -q "Package: ${1}" "$opkg_status"; then
         return
     fi
-    status="$(opkg status "$1" | grep -v "has no valid architecture, ignoring" || true)"
+    local arch
+    local model
+    local new_status
+    local version
+    local status
+    local rc=0
+    status="$(get-package-status "$1" || true)"
     if [ -z "$status" ]; then
-        local index
-        local index2
-        local count
-        index="$(grep --line-number "Package: ${1}" "$opkg_status" | cut -d':' -f1)"
-        count="$(tail -n +$((index + 1)) "$opkg_status" | grep --line-number "Package: " | head -n1 | cut -d':' -f1)"
-        index2=$((index + count))
-        status="$(sed -n "${index},${index2}p;$((index2 + 1))q" "$opkg_status")"
-        if [ -z "$status" ]; then
-            log WARN "No status found for package ${1}"
-            return
-        fi
+        log WARN "Unable to get status for package: ${1}"
+        return
     fi
     arch="$(echo "$status" | grep "Architecture:" | awk '{print $2}')"
     if [ -z "$arch" ]; then
@@ -320,19 +373,24 @@ update-package-arch() {
     if [[ "$status" == "$new_status" ]]; then
         return
     fi
-    sed -i "s/$(escape-for-sed "$status")/$(escape-for-sed "$new_status")/" /opt/lib/opkg/status
+    echo "Updating package architecture for package: ${1}"
+    sed -i \
+        -e ':a' \
+        -e '$!{N;ba' -e '}' \
+        -e "s/$(escape-for-sed "$status")/$(escape-for-sed-replace "$new_status")/" \
+        "$opkg_status"
 }
 
 # Reinstall toltec-base and toltec-deletions
 reinstall-base() {
     opkg list-installed \
-        | grep -v "has no valid architecture, ignoring" \
+        | grep -v "has no valid architecture, ignoring" || true \
         | cut -d' ' -f1 \
         | while read -r pkg; do
             update-package-arch "$pkg"
         done
     opkg list-installed \
-        | grep "has no valid architecture, ignoring" \
+        | grep "has no valid architecture, ignoring" || true \
         | cut -d' ' -f2 \
         | while read -r pkg; do
             update-package-arch "$pkg"
@@ -704,6 +762,13 @@ uninstall() {
     systemctl enable xochitl
 }
 
+# The current toltec install state
+#
+# Output:
+#
+# yes - opt.mount is enabled and active
+# partial - opt.mount is active but not enabled
+# no - opt.mount is not enabled, or does not exist
 install-state() {
     local unit_name
     local enabled
