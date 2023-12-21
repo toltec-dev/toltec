@@ -335,6 +335,32 @@ get-package-status() {
     return 0
 }
 
+# Check if a string appears in a set of strings
+#
+# Arguments:
+#
+# $1 - String to look for
+# $2... - Elements to compare to $1
+#
+# Example:
+#
+# > has-element "needle" "${haystack[@]}"
+# Will return 0 if "needle" is found in the "haystack" array.
+#
+# Exit code: 0 if the element is found, 1 otherwise.
+has-element() {
+    local needle="$1"
+    shift
+
+    for element; do
+        if [[ $needle == "$element" ]]; then
+            return 0
+        fi
+    done
+
+    return 1
+}
+
 # Update the opkg status for a package with the correct architecture for the device
 #
 # Arguments:
@@ -405,10 +431,12 @@ reinstall-base() {
             packages+=("$pkg")
         fi
     done < <(opkg list-installed | grep "has no valid architecture, ignoring" | cut -d' ' -f2 || true)
-    update-package-arch toltec-base || true
-    packages+=(toltec-base)
-    update-package-arch toltec-deletions || true
-    packages+=(toltec-deletions)
+    if ! has-element "toltec-base" "${packages[@]}"; then
+        packages+=(toltec-base)
+    fi
+    if ! has-element "toltec-deletions" "${packages[@]}"; then
+        packages+=(toltec-deletions)
+    fi
     opkg install --force-reinstall "${packages[@]}" || true
 }
 
