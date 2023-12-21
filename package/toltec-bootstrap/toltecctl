@@ -345,6 +345,8 @@ get-package-status() {
 #
 # 0 - Package status was updated
 # 1 - Package status was not modified
+# 2 - Package status was not found
+# 3 - Package status has no architecture
 update-package-arch() {
     if ! grep -q "Package: ${1}" "$opkg_status"; then
         return 1
@@ -358,11 +360,11 @@ update-package-arch() {
     status="$(get-package-status "$1" || true)"
     if [ -z "$status" ]; then
         log WARN "Unable to get status for package: ${1}"
-        return 1
+        return 2
     fi
     arch="$(echo "$status" | grep "Architecture:" | awk '{print $2}')"
     if [ -z "$arch" ]; then
-        return 1
+        return 3
     fi
     case "$arch" in
         rmallos2 | rmallos3)
@@ -397,15 +399,15 @@ reinstall-base() {
         if update-package-arch "$pkg"; then
             packages+=("$pkg")
         fi
-    done < <(opkg list-installed | grep -v "has no valid architecture, ignoring" | cut -d' ' -f1)
+    done < <(opkg list-installed | grep -v "has no valid architecture, ignoring" | cut -d' ' -f1 || true)
     while read -r pkg; do
         if update-package-arch "$pkg"; then
             packages+=("$pkg")
         fi
-    done < <(opkg list-installed | grep "has no valid architecture, ignoring" | cut -d' ' -f2)
-    update-package-arch toltec-base
+    done < <(opkg list-installed | grep "has no valid architecture, ignoring" | cut -d' ' -f2 || true)
+    update-package-arch toltec-base || true
     packages+=(toltec-base)
-    update-package-arch toltec-deletions
+    update-package-arch toltec-deletions || true
     packages+=(toltec-deletions)
     opkg install --force-reinstall "${packages[@]}" || true
 }
