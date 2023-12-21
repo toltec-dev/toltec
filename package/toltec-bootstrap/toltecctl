@@ -258,7 +258,7 @@ remove-bind-mount() {
 #
 # Escaped string
 escape-for-sed() {
-    sed -e 's/[^^]/[&]/g; s/\^/\\^/g; $!a\'$'\n''\\n' <<<"$1" | tr -d '\n';
+    sed -e 's/[^^]/[&]/g; s/\^/\\^/g; $!a\'$'\n''\\n' <<< "$1" | tr -d '\n'
 }
 
 # Escape a string for use in a sed replacement
