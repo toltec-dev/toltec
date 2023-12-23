@@ -4,6 +4,8 @@
 
 pkgnames=(debian-chroot debootstrap)
 section="utils"
+# Each package has it's own timestamp override below
+timestamp=2023-12-22T19:37Z
 maintainer="Eeems <eeems@eeems.email>"
 installdepends=(display)
 flags=(nostrip)
