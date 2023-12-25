@@ -16,6 +16,7 @@ source=("https://github.com/BurntSushi/ripgrep/archive/refs/tags/${pkgver%-*}.zi
 sha256sums=(eb91f202fc25d51755390736775a7e7f8e146eb97e584aaa01fb0c45aa5de654)
 
 build() {
+    sed -i "s/debug = \"none\"/debug = false/" "$srcdir"/Cargo.toml
     cargo build --release
 }
 
