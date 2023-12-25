@@ -11,13 +11,11 @@ section="utils"
 maintainer="gbyl <gbyl@users.noreply.github.com>"
 license=MIT
 
-image=rust:v2.3
+image=rust:v3.1
 source=("https://github.com/BurntSushi/ripgrep/archive/refs/tags/${pkgver%-*}.zip")
 sha256sums=(eb91f202fc25d51755390736775a7e7f8e146eb97e584aaa01fb0c45aa5de654)
 
 build() {
-    rustup update
-    sed -i "s/debug = \"none\"/debug = false/" "$srcdir"/Cargo.toml
     cargo build --release
 }
 
