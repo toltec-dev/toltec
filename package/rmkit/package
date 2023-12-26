@@ -52,7 +52,7 @@ dumbskull() {
 genie() {
     pkgdesc="Gesture engine that connects commands to gestures"
     url="https://rmkit.dev/apps/genie"
-    pkgver=0.1.6-2
+    pkgver=0.1.6-3
     section="utils"
 
     package() {
@@ -67,8 +67,7 @@ genie() {
     }
 
     preremove() {
-        echo "Disabling $pkgname"
-        systemctl disable --now "$pkgname"
+        disable-unit "$pkgname.service"
     }
 
     postremove() {
@@ -146,7 +145,7 @@ nao() {
 remux() {
     pkgdesc="Launcher that supports multi-tasking applications"
     url="https://rmkit.dev/apps/remux"
-    pkgver=0.2.4-1
+    pkgver=0.2.4-2
     section="launchers"
 
     package() {
@@ -166,8 +165,7 @@ remux() {
     }
 
     preremove() {
-        echo "Disabling $pkgname"
-        systemctl disable --now "$pkgname"
+        disable-unit "$pkgname.service"
     }
 
     postremove() {
