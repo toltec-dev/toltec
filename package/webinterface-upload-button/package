@@ -20,7 +20,7 @@ sha256sums=(
 
 package() {
     install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir/$pkgname"
-    install -D -m 644 -t "$pkgdir"/usr/share/remarkable/webui/ "$srcdir/$_pkgname.js"
+    install -D -m 644 -t "$pkgdir"/usr/share/remarkable/webui/ "$srcdir/$pkgname.js"
 
     mkdir -p "$pkgdir"/opt/share/toltec/reenable.d
     touch "$pkgdir"/opt/share/toltec/reenable.d/"$pkgname"
