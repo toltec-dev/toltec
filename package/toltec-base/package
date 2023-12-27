@@ -31,18 +31,21 @@ configure() {
         /opt/etc/profile
     echo "Disabling automatic update"
     disable-unit update-engine.service
-    if [[ "$arch" == "rm1" ]] && ! is-masked sys-subsystem-net-devices-usb1.device; then
+    if [[ "$arch" == "rm1" ]]; then
         echo "Disabling usb1 network device to avoid long boots"
-        systemctl mask sys-subsystem-net-devices-usb1.device
-    elif [[ "$arch" == "rm2" ]] && is-masked sys-subsystem-net-devices-usb1.device; then
+        ! is-masked sys-subsystem-net-devices-usb1.device && systemctl mask sys-subsystem-net-devices-usb1.device
+        ! is-masked busybox-ifplugd@usb1.service && systemctl mask busybox-ifplugd@usb1.service
+    elif [[ "$arch" == "rm2" ]]; then
         echo "Enabling usb1 network device to ensure usb SSH works"
-        systemctl unmask sys-subsystem-net-devices-usb1.device
+        is-masked sys-subsystem-net-devices-usb1.device && systemctl unmask sys-subsystem-net-devices-usb1.device
+        is-masked busybox-ifplugd@usb1.service && systemctl unmask busybox-ifplugd@usb1.service
     fi
 }
 
 postremove() {
     if is-masked sys-subsystem-net-devices-usb1.device; then
         systemctl unmask sys-subsystem-net-devices-usb1.device
+        systemctl unmask busybox-ifplugd@usb1.service
     fi
     if ! is-enabled "update-engine.service"; then
         systemctl enable update-engine
