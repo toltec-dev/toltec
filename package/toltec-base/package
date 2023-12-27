@@ -33,21 +33,21 @@ configure() {
     disable-unit update-engine.service
     if [[ "$arch" == "rm1" ]]; then
         echo "Disabling usb1 network device to avoid long boots"
-        ! is-masked sys-subsystem-net-devices-usb1.device && systemctl mask sys-subsystem-net-devices-usb1.device
-        ! is-masked busybox-ifplugd@usb1.service && systemctl mask busybox-ifplugd@usb1.service
+        ! systemctl is-masked sys-subsystem-net-devices-usb1.device && systemctl mask sys-subsystem-net-devices-usb1.device
+        ! systemctl is-masked busybox-ifplugd@usb1.service && systemctl mask busybox-ifplugd@usb1.service
     elif [[ "$arch" == "rm2" ]]; then
         echo "Enabling usb1 network device to ensure usb SSH works"
-        is-masked sys-subsystem-net-devices-usb1.device && systemctl unmask sys-subsystem-net-devices-usb1.device
-        is-masked busybox-ifplugd@usb1.service && systemctl unmask busybox-ifplugd@usb1.service
+        systemctl is-masked sys-subsystem-net-devices-usb1.device && systemctl unmask sys-subsystem-net-devices-usb1.device
+        systemctl is-masked busybox-ifplugd@usb1.service && systemctl unmask busybox-ifplugd@usb1.service
     fi
 }
 
 postremove() {
-    if is-masked sys-subsystem-net-devices-usb1.device; then
+    if systemctl is-masked sys-subsystem-net-devices-usb1.device; then
         systemctl unmask sys-subsystem-net-devices-usb1.device
         systemctl unmask busybox-ifplugd@usb1.service
     fi
-    if ! is-enabled "update-engine.service"; then
+    if ! systemctl is-enabled update-engine.service; then
         systemctl enable update-engine
     fi
 }
