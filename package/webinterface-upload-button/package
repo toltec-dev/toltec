@@ -5,21 +5,23 @@
 pkgnames=("webinterface-upload-button")
 pkgdesc="A simple upload button for the web interface"
 url="https://github.com/rM-self-serve/webinterface-upload-button"
-pkgver=1.0.1-2
-timestamp=2023-12-06T11:43:00Z
+pkgver=1.1.1-2
+timestamp=2023-12-16T15:35:49Z
 section="utils"
 maintainer="rM-self-serve <122753594+rM-self-serve@users.noreply.github.com>"
 license=MIT
 
 source=(
-    "$url"/archive/1c69d4fcaa1cb8e2cf4b022a190429dc39946498.zip
+    "$url"/archive/1d28b2d91c0179059017696ae5a33aa49e1e7c7d.zip
 )
 sha256sums=(
-    a388d1db49a3c35782600efbd94ee449c59f46c223f14c254cb74d9509255d96
+    99ac382e665b55c43876e8991c9dfa7f11a625d4f3ed4f35d3bc58762e04db39
 )
 
 package() {
     install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir/$pkgname"
+    install -D -m 644 -t "$pkgdir"/usr/share/remarkable/webui/ "$srcdir/$_pkgname.js"
+
     mkdir -p "$pkgdir"/opt/share/toltec/reenable.d
     touch "$pkgdir"/opt/share/toltec/reenable.d/"$pkgname"
 }
