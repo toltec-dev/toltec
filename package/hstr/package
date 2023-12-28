@@ -10,12 +10,10 @@ timestamp=2023-04-18T10:48Z
 section="utils"
 maintainer="gbyl <gbyl@users.noreply.github.com>"
 license=Apache-2.0
-source=(
-    "https://github.com/dvorka/hstr/archive/refs/tags/${pkgver%-*}.zip"
-)
-sha256sums=(
-    12f83d1c2a2216854b9389053022591e96c2f11d1e6ec0fae0355b7e43a76ac1
-)
+
+image=base:v3.1
+source=("https://github.com/dvorka/hstr/archive/refs/tags/${pkgver%-*}.zip")
+sha256sums=(12f83d1c2a2216854b9389053022591e96c2f11d1e6ec0fae0355b7e43a76ac1)
 
 build() {
     ./build/tarball/tarball-automake.sh && ./configure && make
