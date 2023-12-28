@@ -18,10 +18,10 @@ sha256sums=(
 )
 
 build() {
-    cd ./build/tarball &&
-    ./tarball-automake.sh &&
-    cd ../.. &&
-    ./configure && make
+    cd ./build/tarball \
+    && ./tarball-automake.sh \
+    && cd ../.. \
+    && ./configure && make
 }
 
 package() {
