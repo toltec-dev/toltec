@@ -1,4 +1,11 @@
 #!/usr/bin/env bash
-# Copyright (c) 2021 The Toltec Contributors
+# Copyright (c) 2023 The Toltec Contributors
 # SPDX-License-Identifier: MIT
-LD_PRELOAD=/opt/lib/librm2fb_client.so.1 KO_DONT_GRAB_INPUT=1 exec -a /opt/bin/koreader bash /opt/koreader/koreader.sh
+
+read -r device_version < "/sys/devices/soc0/machine"
+
+if [ "${device_version}" = "reMarkable 1.0" ]; then
+    exec -a /opt/bin/koreader bash /opt/koreader/koreader.sh
+elif [ "${device_version}" = "reMarkable 2.0" ]; then
+    LD_PRELOAD=/opt/lib/librm2fb_client.so.1 KO_DONT_GRAB_INPUT=1 exec -a /opt/bin/koreader bash /opt/koreader/koreader.sh
+fi
