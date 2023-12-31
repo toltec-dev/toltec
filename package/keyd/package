@@ -22,13 +22,14 @@ sha256sums=(
 )
 
 build() {
-    make PREFIX=/opt "CC=${CROSS_COMPILE}cc"
+    make PREFIX=/opt CONFIG_DIR=/opt/etc/keyd "CC=${CROSS_COMPILE}cc"
 }
 
 package() {
     cd "$srcdir"
-    make PREFIX=/opt DESTDIR="$pkgdir" install
+    make PREFIX=/opt CONFIG_DIR=/opt/etc/keyd DESTDIR="$pkgdir" install
     install -D -m 644 -t "$pkgdir"/etc/systemd/system "$srcdir"/keyd.service
+    install -D -m 644 -t "$pkgdir"/opt/etc/keyd "$srcdir"/default.conf
 }
 
 configure() {
