@@ -28,7 +28,7 @@ build() {
 package() {
     make PREFIX=/opt DESTDIR="$pkgdir" install
     mv "$pkgdir"/lib/systemd/system/keyd.service "$pkgdir"/etc/systemd/system/keyd.service
-    rm -r "$pkgdir"/lib
+    rm -r "${pkgdir:?}"/lib
 }
 
 configure() {
