@@ -26,6 +26,7 @@ build() {
 }
 
 package() {
+    cd "$srcdir"
     make PREFIX=/opt DESTDIR="$pkgdir" install
     mv "$pkgdir"/lib/systemd/system/keyd.service "$pkgdir"/etc/systemd/system/keyd.service
     rm -r "${pkgdir:?}"/lib
