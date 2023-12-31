@@ -23,7 +23,7 @@ sha256sums=(
 
 build() {
     make PREFIX=/opt CONFIG_DIR=/opt/etc/keyd "CC=${CROSS_COMPILE}cc"
-    sed -i 's|ExecStart=/usr/bin/keyd|ExecStart=/opt/usr/bin/keyd|' keyd.service
+    sed -i 's|ExecStart=/usr/bin/keyd|ExecStart=/opt/bin/keyd|' keyd.service
 }
 
 package() {
