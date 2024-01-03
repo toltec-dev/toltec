@@ -44,7 +44,7 @@ export USAGE
 help:
 	@echo "$$USAGE"
 
-.venv/bin/activate:
+.venv/bin/activate: requirements.txt
 	@echo "Setting up development virtual env in .venv"
 	python -m venv .venv; \
 	. .venv/bin/activate; \
