@@ -83,7 +83,7 @@ for generic_recipe in ordered_missing:
                         recipe_bundle[arch].packages[pkg_name]
                         for pkg_name in recipe_bundle[arch].packages
                     ]
-            builder.make(recipe_bundle, build_matrix)
+            builder.make(recipe_bundle, build_matrix, False)
 
         make_index(paths.REPO_DIR)
 

@@ -63,7 +63,7 @@ with Builder(
             else:
                 build_matrix[arch] = None
 
-    if not builder.make(recipe_bundle, build_matrix):
+    if not builder.make(recipe_bundle, build_matrix, False):
         sys.exit(1)
 
     make_index(paths.REPO_DIR)
