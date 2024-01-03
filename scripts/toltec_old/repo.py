@@ -13,9 +13,9 @@ import requests
 from toltec.version import DependencyKind  # type: ignore
 from toltec.util import HTTP_DATE_FORMAT  # type: ignore
 from toltec.recipe import Package  # type: ignore
+from toltec.recipe import Recipe  # type: ignore
 from toltec import parse_recipe  # type: ignore
 from .graphlib import TopologicalSorter
-from .recipe import GenericRecipe
 from .util import group_by
 from . import templating
 
@@ -160,8 +160,8 @@ class Repo:
 
     def order_dependencies(
         self,
-        generic_recipes: List[Dict[str, GenericRecipe]],
-    ) -> Iterable[Dict[str, GenericRecipe]]:
+        generic_recipes: List[Dict[str, Recipe]],
+    ) -> Iterable[dict[str, Recipe]]:
         """
         Order a list of recipes so that all recipes that a recipe needs
         come before that recipe in the list.
