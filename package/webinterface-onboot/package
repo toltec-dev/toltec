@@ -6,12 +6,13 @@ _pkgname='webinterface-onboot'
 pkgnames=("$_pkgname")
 pkgdesc="Start the web interface without the cable, on boot."
 url="https://github.com/rM-self-serve/$_pkgname"
-pkgver=1.2.2-3
+pkgver=1.2.2-4
 timestamp=2023-12-03T11:43:00Z
 section="utils"
 maintainer="rM-self-serve <122753594+rM-self-serve@users.noreply.github.com>"
 license=MIT
 conflicts=(ddvk-hacks signature-rm)
+installdepends=(libbfd)
 
 source=(
     "$url"/archive/cdfe457435974f7ca309b1ac50f1b2ef67000813.zip
