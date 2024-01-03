@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+# Copyright (c) 2024 HookedBehemoth
+# SPDX-License-Identifier: GPL-3.0-only
+
+pkgnames=(rm-sudoku)
+pkgdesc="Sudoku for Remarkable"
+url="https://github.com/HookedBehemoth/remarkable-sudoku"
+pkgver=0.1.0-1
+timestamp=2023-01-03T10:31Z
+section="games"
+maintainer="Luis S. <luis@scheurenbrand.me>"
+license=GPL-3.0-only
+installdepends=(display)
+flags=(patch_rm2fb)
+
+image=rust:v3.1
+source=(https://github.com/HookedBehemoth/remarkable-sudoku/archive/refs/tags/v${pkgver%-*}.tar.gz)
+sha256sums=(ebd280c7d46ecb28851e1ee6b2e0e747c70a9d39ad2a39e4cbf9b6a93b324742)
+
+build() {
+    cargo build --release
+}
+
+package() {
+    install -D -m 755 -t "$pkgdir"/opt/bin \
+        "$srcdir"/target/armv7-unknown-linux-gnueabihf/release/rm-sudoku
+    install -D -m 644 -t "$pkgdir"/opt/etc/draft/ \
+        "$srcdir"/sudoku.draft
+    install -D -m 644 -t "$pkgdir"/opt/etc/draft/icons \
+        "$srcdir"/res/rm-sudoku.png
+}
