@@ -10,6 +10,9 @@ import logging
 import os
 from typing import Dict, Iterable, List, Optional
 import requests
+from jinja2 import Environment
+from jinja2 import PackageLoader
+
 from toltec.version import DependencyKind  # type: ignore
 from toltec.util import HTTP_DATE_FORMAT  # type: ignore
 from toltec.recipe import Package  # type: ignore
@@ -17,7 +20,11 @@ from toltec.recipe import Recipe  # type: ignore
 from toltec import parse_recipe  # type: ignore
 from .graphlib import TopologicalSorter
 from .util import group_by
-from . import templating
+
+templating_env = Environment(
+    loader=PackageLoader("toltec_old", "templates"),
+    autoescape=True,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -115,9 +122,7 @@ class Repo:
 
         return results
 
-    def fetch_package(
-        self, package: Package, remote: Optional[str]
-    ) -> PackageStatus:
+    def fetch_package(self, package: Package, remote: Optional[str]) -> PackageStatus:
         """
         Check if a package exists locally and fetch it otherwise.
 
@@ -215,7 +220,7 @@ class Repo:
         }
 
         listing_path = os.path.join(self.repo_dir, "index.html")
-        template = templating.env.get_template("listing.html")
+        template = templating_env.get_template("listing.html")
 
         # pylint: disable-next=unspecified-encoding
         with open(listing_path, "w") as listing_file:
