@@ -7,9 +7,13 @@ import argparse
 import logging
 import os
 import sys
-from typing import Dict, List, Optional
-from toltec_old import paths
-from toltec_old.repo import Repo
+from typing import (
+    Dict,
+    List,
+    Optional,
+)
+from build import paths
+from build.repo import Repo
 from toltec import parse_recipe  # type: ignore
 from toltec.builder import Builder  # type: ignore
 from toltec.recipe import Package  # type: ignore
@@ -48,9 +52,7 @@ repo = Repo(paths.RECIPE_DIR, paths.REPO_DIR)
 builder = Builder(paths.WORK_DIR, paths.REPO_DIR)
 arch_packages: Optional[Dict[str, Optional[List[Package]]]] = None
 
-with Builder(
-    os.path.join(paths.WORK_DIR, args.recipe_name), paths.REPO_DIR
-) as builder:
+with Builder(os.path.join(paths.WORK_DIR, args.recipe_name), paths.REPO_DIR) as builder:
     recipe_bundle = parse_recipe(f"package/{args.recipe_name}")
     build_matrix: Optional[Dict[str, Optional[List[Package]]]] = None
     if args.arch_name or args.packages_names:

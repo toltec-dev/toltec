@@ -3,28 +3,35 @@
 """
 Build the package repository.
 """
-
-from datetime import datetime
-from enum import Enum, auto
 import logging
 import os
-from typing import Dict, Iterable, List, Optional
-import requests
-from jinja2 import Environment
-from jinja2 import PackageLoader
+import pathlib
 
-from toltec.version import DependencyKind  # type: ignore
-from toltec.util import HTTP_DATE_FORMAT  # type: ignore
-from toltec.recipe import Package  # type: ignore
-from toltec.recipe import Recipe  # type: ignore
+from datetime import datetime
+from enum import auto
+from enum import Enum
+from typing import (
+    Dict,
+    Iterable,
+    List,
+    Optional,
+)
+
+import requests
+from jinja2 import (
+    Environment,
+    FileSystemLoader,
+)
 from toltec import parse_recipe  # type: ignore
+from toltec.recipe import (
+    Package,  # type: ignore
+    Recipe,  # type: ignore
+)
+from toltec.util import HTTP_DATE_FORMAT  # type: ignore
+from toltec.version import DependencyKind  # type: ignore
+
 from .graphlib import TopologicalSorter
 from .util import group_by
-
-templating_env = Environment(
-    loader=PackageLoader("toltec_old", "templates"),
-    autoescape=True,
-)
 
 logger = logging.getLogger(__name__)
 
@@ -220,7 +227,12 @@ class Repo:
         }
 
         listing_path = os.path.join(self.repo_dir, "index.html")
-        template = templating_env.get_template("listing.html")
+        template = Environment(
+            loader=FileSystemLoader(
+                pathlib.Path(__file__).parent.resolve() / ".." / "templates"
+            ),
+            autoescape=True,
+        ).get_template("listing.html")
 
         # pylint: disable-next=unspecified-encoding
         with open(listing_path, "w") as listing_file:

@@ -6,9 +6,13 @@
 import argparse
 import logging
 import os
-from typing import Dict, List, Optional
-from toltec_old import paths
-from toltec_old.repo import Repo, PackageStatus
+from typing import (
+    Dict,
+    List,
+    Optional,
+)
+from build import paths
+from build.repo import Repo, PackageStatus
 from toltec.recipe import Package  # type: ignore
 from toltec import parse_recipe  # type: ignore
 from toltec.builder import Builder  # type: ignore
@@ -69,9 +73,7 @@ for generic_recipe in ordered_missing:
     # recipe we are actually building.
     name = os.path.basename(next(iter(generic_recipe.values())).path)
     if missing[name]:
-        with Builder(
-            os.path.join(paths.WORK_DIR, name), paths.REPO_DIR
-        ) as builder:
+        with Builder(os.path.join(paths.WORK_DIR, name), paths.REPO_DIR) as builder:
             recipe_bundle = parse_recipe(os.path.join(paths.RECIPE_DIR, name))
             build_matrix: Optional[Dict[str, Optional[List[Package]]]] = None
             old_build_matrix = missing[name]
