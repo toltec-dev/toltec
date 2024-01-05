@@ -15,7 +15,7 @@ installdepends=(libbfd)
 
 source=(
     "$url"/archive/e184b6a37ccba0ebeacd34faf63c8f4cdfa5c448.zip
-    "$_pkgname-toltec.service"
+    "webinterface-onboot-toltec.service"
 )
 sha256sums=(
     2e3666b1875f874ef09da2bbd163295b89e9e241f1e59e77349b0e2db716b8ff
