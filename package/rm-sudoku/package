@@ -18,17 +18,17 @@ source=("https://github.com/HookedBehemoth/remarkable-sudoku/archive/refs/tags/v
 sha256sums=(c3d9e941d0d837b90d376104eec7693f6b609010662d7e9b5ae57570648d8856)
 
 build() {
-	cargo build --release
+  cargo build --release
 }
 
 package() {
-	install -D -m 755 -t "$pkgdir"/opt/bin \
-		"$srcdir"/target/armv7-unknown-linux-gnueabihf/release/sudoku
-	install -D -m 644 -t "$pkgdir"/opt/etc/draft \
-		"$srcdir"/sudoku.draft
-	install -D -m 644 -T "$srcdir"/res/702.png "$pkgdir"/opt/etc/draft/icons/sudoku.png
-	install -D -m 644 -t "$pkgdir"/opt/usr/share/applications \
-		"$srcdir"/sudoku.oxide
-	install -D -m 644 -T "$srcdir"/res/702.png "$pkgdir"/opt/usr/share/icons/oxide/702x702/sudoku.png
-	install -D -m 644 -T "$srcdir"/res/48.png "$pkgdir"/opt/usr/share/icons/oxide/48x48/apps/sudoku.png
+  install -D -m 755 -t "$pkgdir"/opt/bin \
+    "$srcdir"/target/armv7-unknown-linux-gnueabihf/release/sudoku
+  install -D -m 644 -t "$pkgdir"/opt/etc/draft \
+    "$srcdir"/sudoku.draft
+  install -D -m 644 -T "$srcdir"/res/702.png "$pkgdir"/opt/etc/draft/icons/sudoku.png
+  install -D -m 644 -t "$pkgdir"/opt/usr/share/applications \
+    "$srcdir"/sudoku.oxide
+  install -D -m 644 -T "$srcdir"/res/702.png "$pkgdir"/opt/usr/share/icons/oxide/702x702/sudoku.png
+  install -D -m 644 -T "$srcdir"/res/48.png "$pkgdir"/opt/usr/share/icons/oxide/48x48/apps/sudoku.png
 }
