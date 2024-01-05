@@ -14,7 +14,7 @@ installdepends=(display)
 flags=(patch_rm2fb)
 
 image=rust:v3.1
-source=(https://github.com/HookedBehemoth/remarkable-sudoku/archive/refs/tags/v${pkgver%-*}.tar.gz)
+source=("https://github.com/HookedBehemoth/remarkable-sudoku/archive/refs/tags/v${pkgver%-*}.tar.gz")
 sha256sums=(ebd280c7d46ecb28851e1ee6b2e0e747c70a9d39ad2a39e4cbf9b6a93b324742)
 
 build() {
