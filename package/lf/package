@@ -5,11 +5,12 @@
 pkgnames=(lf)
 pkgdesc="Terminal file manager"
 url=https://github.com/gokcehan/lf
-pkgver=r31-1
+pkgver=r31-2
 timestamp=2023-09-17T12:55Z
 section="utils"
 maintainer="gbyl <gbyl@users.noreply.github.com>"
 license=MIT
+installdepends=(libncurses-dev)
 
 image=golang:v3.1
 source=("https://github.com/gokcehan/lf/archive/refs/tags/${pkgver%-*}.zip")
