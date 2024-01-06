@@ -19,7 +19,7 @@ build() {
     find . -name "*.pro" -type f -print0 \
         | xargs -r -0 sed -i 's/linux-oe-g++/linux-arm-remarkable-g++/g'
     qmake
-    make -j$(nproc)
+    make -j"$(nproc)"
     INSTALL_ROOT="dist" make install
 }
 
