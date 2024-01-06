@@ -4,7 +4,7 @@
 
 pkgnames=(erode fret oxide rot tarnish decay corrupt anxiety oxide-utils inject_evdev liboxide libsentry)
 _oxidever=2.6
-pkgver=$_oxidever-3
+pkgver=$_oxidever-4
 _sentryver=0.5.0
 timestamp=2023-06-05T23:27:53Z
 maintainer="Eeems <eeems@eeems.email>"
@@ -77,7 +77,7 @@ rot() {
 tarnish() {
     pkgdesc="Service managing power states, connectivity and buttons"
     section="devel"
-    installdepends=(display xochitl "liboxide=$pkgver" "libsentry=$_sentryver")
+    installdepends=(display xochitl "liboxide=$pkgver" "libsentry=$_sentryver" sysfs_preload)
 
     package() {
         install -D -m 644 -t "$pkgdir"/etc/dbus-1/system.d "$srcdir"/release/etc/dbus-1/system.d/codes.eeems.oxide.conf
