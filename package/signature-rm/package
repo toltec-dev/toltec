@@ -2,6 +2,7 @@
 # Copyright (c) 2021 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
+archs=(rmallos2 rmallos3)
 pkgnames=("signature-rm")
 pkgdesc="Remove the signature from the bottom of emails"
 url="https://github.com/rM-self-serve/signature-rM"
@@ -11,7 +12,8 @@ section="utils"
 maintainer="rM-self-serve <122753594+rM-self-serve@users.noreply.github.com>"
 license=MIT
 image=rust:v3.1
-conflicts=(ddvk-hacks webinterface-onboot)
+conflicts=(webinterface-onboot)
+conflicts_rmallos2=(ddvk-hacks)
 
 source=(
     "$url"/archive/b5561af4eb6a0f5aa6e98e1a1279066f0c4bd9b7.zip

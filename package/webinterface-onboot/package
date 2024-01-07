@@ -2,6 +2,7 @@
 # Copyright (c) 2021 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
+archs=(rmallos2 rmallos3)
 pkgnames=("webinterface-onboot")
 pkgdesc="Start the web interface without the cable, on boot."
 url="https://github.com/rM-self-serve/webinterface-onboot"
@@ -10,7 +11,8 @@ timestamp=2023-12-31T11:43:00Z
 section="utils"
 maintainer="rM-self-serve <122753594+rM-self-serve@users.noreply.github.com>"
 license=MIT
-conflicts=(ddvk-hacks signature-rm)
+conflicts=(signature-rm)
+conflicts_rmallos2=(ddvk-hacks)
 installdepends=(libbfd)
 
 source=(
