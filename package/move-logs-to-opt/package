@@ -11,68 +11,46 @@ section="utils"
 maintainer="Eeems <eeems@eeems.email>"
 license=MIT
 
+source=(var-log.mount)
+sha256sums=(SKIP)
+
 package() {
-    mkdir -p "$pkgdir"/opt/var/log/journal
+    mkdir -p "$pkgdir"/opt/var/log
+    install -D -m 744 -t "$pkgdir"/lib/systemd/system/var-log.mount "$srcdir"/var-log.mount
 }
 
 configure() {
-    local source_path=/var/log/journal
-    local target_path="/home/root/.entware${source_path}"
-    local unit_name
-    unit_name="$(systemd-escape --path "$source_path").mount"
-    local unit_path="/lib/systemd/system/$unit_name"
-
+    systemctl daemon-reload
     if is-active systemd-journald.service; then
         journalctl --sync --flush
         systemctl stop systemd-journald.service
     fi
-    if ! unit-exists "$unit_name"; then
+    if ! mountpoint -q /var/log; then
         echo "Moving log files to new location"
+        local target_path=/home/root/.entware/var/log
         mkdir -p "$target_path"
-        cp -af "${source_path}/." "$target_path"
-        rm -rf "${source_path:?}/"*
+        cp -af "/var/log/." "$target_path"
+        rm -rf "/var/log/"*
     fi
-    if [[ -e $unit_path ]]; then
-        echo "Bind mount configuration for '${source_path}' already exists, updating"
-    else
-        echo "Mounting '${target_path}' over '${source_path}'"
+    if ! is-enabled "var-log.mount"; then
+        systemctl enable "var-log.mount"
     fi
-    cat > "$unit_path" << UNIT
-[Unit]
-Description=Bind mount ${target_path} over ${source_path}
-DefaultDependencies=no
-Conflicts=umount.target
-Before=local-fs.target umount.target systemd-journald.service
-After=home.mount
-
-[Mount]
-What=${target_path}
-Where=${source_path}
-Type=none
-Options=bind
-
-[Install]
-WantedBy=local-fs.target
-UNIT
-    systemctl daemon-reload
-    systemctl enable "$unit_name"
-    systemctl restart "$unit_name"
+    systemctl restart "var-log.mount"
     systemctl start systemd-journald.service
 }
 
+preremove() {
+    if is-active systemd-journald.service; then
+        journalctl --sync --flush
+        systemctl stop systemd-journald.service
+    fi
+    disable-unit "var-log.mount"
+}
+
 postremove() {
-    local bind_path
-    local unit_name
-    local unit_path
-    bind_path=/var/log/journal
-    unit_name="$(systemd-escape --path "$bind_path").mount"
-    unit_path="/lib/systemd/system/$unit_name"
-    if [[ -e $unit_path ]]; then
-        if is-active systemd-journald.service; then
-            journalctl --sync --flush
-            systemctl stop systemd-journald.service
-        fi
-        remove-bind-mount "$bind_path"
-        systemctl start systemd-journald.service
+    systemctl daemon-reload
+    systemctl start systemd-journald.service
+    if mountpoint -q /var/log; then
+        umount -l /var/log
     fi
 }
