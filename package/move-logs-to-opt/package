@@ -19,7 +19,9 @@ configure() {
     local source_path=/var/log
     local target_path="/home/root/.entware{$source_path}"
     local unit_name
-    local unit_name="$(systemd-escape --path "$source_path").mount"
+    unit_name="$(systemd-escape --path "$source_path").mount"
+    local unit_path="/lib/systemd/system/$unit_name"
+
     journalctl --sync --flush
     systemctl stop systemd-journald.service
     if ! unit-exists "$unit_name"; then
@@ -33,7 +35,6 @@ configure() {
     else
         echo "Mounting '${target_path}' over '${source_path}'"
     fi
-    local unit_path="/lib/systemd/system/$unit_name"
     cat > "$unit_path" << UNIT
 [Unit]
 Description=Bind mount $1 over $2
