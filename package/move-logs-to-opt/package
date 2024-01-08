@@ -25,7 +25,7 @@ configure() {
         echo "Moving log files to new location"
         mkdir -p "$target_path"
         mv -r "${source_path}/." "$target_path"
-        rm -r "${source_path}/*"
+        rm -r "${source_path:?}/*"
     fi
     if [[ -e $unit_path ]]; then
         echo "Bind mount configuration for '${source_path}' already exists, updating"
