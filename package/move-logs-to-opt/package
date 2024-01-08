@@ -18,6 +18,7 @@ package() {
 configure() {
     local source_path=/var/log
     local target_path="/home/root/.entware{$source_path}"
+    local unit_name
     local unit_name="$(systemd-escape --path "$source_path").mount"
     journalctl --sync --flush
     systemctl stop systemd-journald.service
