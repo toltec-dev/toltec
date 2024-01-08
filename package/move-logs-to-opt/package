@@ -29,8 +29,8 @@ configure() {
     if ! unit-exists "$unit_name"; then
         echo "Moving log files to new location"
         mkdir -p "$target_path"
-        cp -r "${source_path}/." "$target_path"
-        rm -r "${source_path:?}/"*
+        cp -af "${source_path}/." "$target_path"
+        rm -rf "${source_path:?}/"*
     fi
     if [[ -e $unit_path ]]; then
         echo "Bind mount configuration for '${source_path}' already exists, updating"
