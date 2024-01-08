@@ -15,24 +15,41 @@ package() {
     mkdir -p "$pkgdir"/opt/var/log
 }
 
-preinstall() {
+configure() {
     local source_path=/var/log
     local target_path="/home/root/.entware{$source_path}"
-    if [ ! -d "$source_path" ]; then
-        journalctl --sync --flush
-        systemctl stop systemd-journald.service
+    local unit_name="$(systemd-escape --path "$source_path").mount"
+    journalctl --sync --flush
+    systemctl stop systemd-journald.service
+    if ! unit-exists "$unit_name"; then
+        echo "Moving log files to new location"
         mkdir -p "$target_path"
         mv -r "${source_path}/." "$target_path"
         rm -r "${source_path}/*"
     fi
-}
-
-configure() {
-    local source_path=/var/log
-    add-bind-mount "/home/root/.entware{$source_path}" "$source_path"
-    if ! is-active systemd-journald.service; then
-        systemctl start systemd-journald.service
+    if [[ -e $unit_path ]]; then
+        echo "Bind mount configuration for '${source_path}' already exists, updating"
+    else
+        echo "Mounting '${target_path}' over '${source_path}'"
     fi
+    local unit_path="/lib/systemd/system/$unit_name"
+    cat > "$unit_path" << UNIT
+[Unit]
+Description=Bind mount $1 over $2
+DefaultDependencies=no
+Conflicts=umount.target
+Before=local-fs.target umount.target systemd-journald.service
+
+[Mount]
+What=${target_path}
+Where=${source_path}
+Type=none
+Options=bind
+UNIT
+    systemctl daemon-reload
+    systemctl enable "$unit_name"
+    systemctl restart "$unit_name"
+    systemctl start systemd-journald.service
 }
 
 postremove() {
