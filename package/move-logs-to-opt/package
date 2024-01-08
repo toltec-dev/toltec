@@ -37,7 +37,7 @@ configure() {
     fi
     cat > "$unit_path" << UNIT
 [Unit]
-Description=Bind mount $1 over $2
+Description=Bind mount ${target_path} over ${source_path}
 DefaultDependencies=no
 Conflicts=umount.target
 Before=local-fs.target umount.target systemd-journald.service
@@ -62,8 +62,10 @@ postremove() {
     unit_name="$(systemd-escape --path "$bind_path").mount"
     unit_path="/lib/systemd/system/$unit_name"
     if [[ -e $unit_path ]]; then
-        journalctl --sync --flush
-        systemctl stop systemd-journald.service
+        if is-active systemd-journald.service; then
+            journalctl --sync --flush
+            systemctl stop systemd-journald.service
+        fi
         remove-bind-mount "$bind_path"
         systemctl start systemd-journald.service
     fi
