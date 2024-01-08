@@ -12,23 +12,25 @@ maintainer="Eeems <eeems@eeems.email>"
 license=MIT
 
 package() {
-    mkdir -p "$pkgdir"/opt/var/log
+    mkdir -p "$pkgdir"/opt/var/log/journal
 }
 
 configure() {
-    local source_path=/var/log
-    local target_path="/home/root/.entware{$source_path}"
+    local source_path=/var/log/journal
+    local target_path="/home/root/.entware${source_path}"
     local unit_name
     unit_name="$(systemd-escape --path "$source_path").mount"
     local unit_path="/lib/systemd/system/$unit_name"
 
-    journalctl --sync --flush
-    systemctl stop systemd-journald.service
+    if is-active systemd-journald.service; then
+        journalctl --sync --flush
+        systemctl stop systemd-journald.service
+    fi
     if ! unit-exists "$unit_name"; then
         echo "Moving log files to new location"
         mkdir -p "$target_path"
-        mv -r "${source_path}/." "$target_path"
-        rm -r "${source_path:?}/*"
+        cp -r "${source_path}/." "$target_path"
+        rm -r "${source_path:?}/"*
     fi
     if [[ -e $unit_path ]]; then
         echo "Bind mount configuration for '${source_path}' already exists, updating"
@@ -41,12 +43,16 @@ Description=Bind mount ${target_path} over ${source_path}
 DefaultDependencies=no
 Conflicts=umount.target
 Before=local-fs.target umount.target systemd-journald.service
+After=home.mount
 
 [Mount]
 What=${target_path}
 Where=${source_path}
 Type=none
 Options=bind
+
+[Install]
+WantedBy=local-fs.target
 UNIT
     systemctl daemon-reload
     systemctl enable "$unit_name"
@@ -58,7 +64,7 @@ postremove() {
     local bind_path
     local unit_name
     local unit_path
-    bind_path=/var/log
+    bind_path=/var/log/journal
     unit_name="$(systemd-escape --path "$bind_path").mount"
     unit_path="/lib/systemd/system/$unit_name"
     if [[ -e $unit_path ]]; then
