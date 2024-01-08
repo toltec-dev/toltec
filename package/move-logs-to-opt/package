@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+# Copyright (c) 2023 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgnames=(move-logs-to-opt)
+pkgdesc="Move log files to /opt to save space on the root partition"
+url=https://github.com/toltec-dev/toltec
+pkgver=0.0.1-1
+timestamp=2024-01-07T23:55Z
+section="utils"
+maintainer="Eeems <eeems@eeems.email>"
+license=MIT
+
+package() {
+    mkdir -p "$pkgdir"/opt/var/log
+}
+
+preinstall() {
+    local source_path=/var/log
+    local target_path="/home/root/.entware{$source_path}"
+    if [ ! -d "$source_path" ]; then
+        journalctl --sync --flush
+        systemctl stop systemd-journald.service
+        mkdir -p "$target_path"
+        mv -r "${source_path}/." "$target_path"
+        rm -r "${source_path}/*"
+    fi
+}
+
+configure() {
+    local source_path=/var/log
+    add-bind-mount "/home/root/.entware{$source_path}" "$source_path"
+    if ! is-active systemd-journald.service; then
+        systemctl start systemd-journald.service
+    fi
+}
+
+postremove() {
+    local bind_path
+    local unit_name
+    local unit_path
+    bind_path=/var/log
+    unit_name="$(systemd-escape --path "$bind_path").mount"
+    unit_path="/lib/systemd/system/$unit_name"
+    if [[ -e $unit_path ]]; then
+        journalctl --sync --flush
+        systemctl stop systemd-journald.service
+        remove-bind-mount "$bind_path"
+        systemctl start systemd-journald.service
+    fi
+}
