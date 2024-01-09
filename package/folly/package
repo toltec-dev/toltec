@@ -11,7 +11,7 @@ section=games
 maintainer="Ben Kirwin <ben@kirw.in>"
 license=MIT
 installdepends=(display)
-makedepends=(build:librust-clang-sys-dev build:libclang-dev build:libc6 build:libc6-dev build:clang)
+makedepends=(build:libclang-14-dev build:clang-14 build:llvm-14-dev)
 
 image=rust:v2.3
 
