@@ -5,9 +5,10 @@ StartLimitBurst=4
 After=home.mount
 
 [Service]
-Environment=HOME=/home/root
 Type=simple
-ExecStart=/opt/bin/webinterface-wifi --run 80
+Environment=HOME=/home/root
+Environment=WEBINT_WIFI_RUN_ENV=DAEMON
+ExecStart=/opt/bin/webinterface-wifi local-exec
 Restart=on-failure
 
 [Install]
