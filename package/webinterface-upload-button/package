@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+# Copyright (c) 2021 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+_pkgname='webinterface-upload-button'
+pkgnames=("$_pkgname")
+pkgdesc="A simple upload button for the web interface"
+url="https://github.com/rM-self-serve/$_pkgname"
+pkgver=1.1.1-1
+timestamp=2023-12-16T15:35:49Z
+section="utils"
+maintainer="rM-self-serve <122753594+rM-self-serve@users.noreply.github.com>"
+license=MIT
+
+source=(
+    "$url"/archive/1d28b2d91c0179059017696ae5a33aa49e1e7c7d.zip
+)
+sha256sums=(
+    99ac382e665b55c43876e8991c9dfa7f11a625d4f3ed4f35d3bc58762e04db39
+)
+
+package() {
+    install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir/$_pkgname"
+    install -D -m 644 -t "$pkgdir"/usr/share/remarkable/webui/ "$srcdir/$_pkgname.js"
+
+    touch "$srcdir"/emptyfile
+    install -D -m 666 -t "$pkgdir"/usr/share/toltec/reenable.d/"$_pkgname" "$srcdir"/emptyfile
+}
+
+configure() {
+    echo
+    echo "Applying webinterface-upload-button"
+    webinterface-upload-button apply -y > /dev/null
+    echo "Success"
+    echo
+}
+
+_restore() {
+    echo
+    echo "Reverting webinterface-upload-button"
+    webinterface-upload-button revert -y > /dev/null
+    echo "Success"
+    echo
+}
+
+preremove() {
+    _restore
+}
+
+preupgrade() {
+    _restore
+}

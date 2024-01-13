@@ -55,7 +55,7 @@ configure() {
         install-hosts
     else
         uninstall-certificates
-        systemctl disable --now rmfakecloud-proxy
+        disable-unit rmfakecloud-proxy.service
         uninstall-hosts
     fi
 

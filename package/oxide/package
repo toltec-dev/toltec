@@ -4,7 +4,7 @@
 
 pkgnames=(erode fret oxide rot tarnish decay corrupt anxiety oxide-utils inject_evdev liboxide libsentry)
 _oxidever=2.6
-pkgver=$_oxidever-2
+pkgver=$_oxidever-3
 _sentryver=0.5.0
 timestamp=2023-06-05T23:27:53Z
 maintainer="Eeems <eeems@eeems.email>"
@@ -98,14 +98,7 @@ tarnish() {
         fi
     }
     preremove() {
-        if is-active tarnish; then
-            echo "Stopping tarnish"
-            systemctl stop tarnish
-        fi
-        if is-enabled tarnish; then
-            echo "Disabling tarnish"
-            systemctl disable tarnish
-        fi
+        disable-unit tarnish.service
     }
     postremove() {
         systemctl daemon-reload
