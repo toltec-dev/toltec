@@ -6,6 +6,10 @@ RECIPES=$(shell ls package/)
 RECIPES_PUSH=$(foreach app, $(RECIPES), $(app)-push)
 RECIPES_CLEAN=$(foreach app, $(RECIPES), $(app)-clean)
 
+ifeq ($(RUNNER_DEBUG), 1)
+FLAGS+= --verbose
+endif
+
 define USAGE
 Building packages:
 

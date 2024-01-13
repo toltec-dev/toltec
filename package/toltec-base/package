@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
-# Copyright (c) 2021 The Toltec Contributors
+# Copyright (c) 2023 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
 archs=(rmall rmallos2 rmallos3 rm1 rm1os2 rm1os3 rm2 rm2os2 rm2os3)
 pkgnames=(toltec-base)
 pkgdesc="Metapackage defining the base set of packages in a Toltec install"
 url=https://toltec-dev.org/
-pkgver=1.3-1
-timestamp=2023-12-03T04:51:58Z
+pkgver=1.3-2
+timestamp=2023-12-27T08:30Z
 section="utils"
 maintainer="Eeems <eeems@eeems.email>"
 license=MIT
@@ -39,14 +39,18 @@ configure() {
             ;;
         rm1 | rm1os2 | rm1os3)
             if ! is-masked sys-subsystem-net-devices-usb1.device; then
-                echo "Disabling usb1 network device to avoid long boots"
                 systemctl mask sys-subsystem-net-devices-usb1.device
+            fi
+            if ! is-masked busybox-ifplugd@usb1.service; then
+                systemctl mask busybox-ifplugd@usb1.service
             fi
             ;;
         rm2 | rm2os2 | rm2os3)
             if is-masked sys-subsystem-net-devices-usb1.device; then
-                echo "Enabling usb1 network device to ensure usb SSH works"
                 systemctl unmask sys-subsystem-net-devices-usb1.device
+            fi
+            if is-masked busybox-ifplugd@usb1.service; then
+                systemctl unmask busybox-ifplugd@usb1.service
             fi
             ;;
     esac
@@ -56,7 +60,10 @@ postremove() {
     if is-masked sys-subsystem-net-devices-usb1.device; then
         systemctl unmask sys-subsystem-net-devices-usb1.device
     fi
-    if ! is-enabled "update-engine.service"; then
+    if is-masked busybox-ifplugd@usb1.service; then
+        systemctl unmask busybox-ifplugd@usb1.service
+    fi
+    if ! is-enabled update-engine.service; then
         systemctl enable update-engine
     fi
 }
