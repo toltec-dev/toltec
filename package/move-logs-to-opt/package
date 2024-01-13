@@ -16,7 +16,7 @@ sha256sums=(SKIP)
 
 package() {
     mkdir -p "$pkgdir"/opt/var/log
-    install -D -m 744 -t "$pkgdir"/lib/systemd/system/var-log.mount "$srcdir"/var-log.mount
+    install -D -m 744 -t "$pkgdir"/lib/systemd/system/ "$srcdir"/var-log.mount
 }
 
 configure() {
