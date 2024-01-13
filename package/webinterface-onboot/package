@@ -6,19 +6,20 @@ _pkgname='webinterface-onboot'
 pkgnames=("$_pkgname")
 pkgdesc="Start the web interface without the cable, on boot."
 url="https://github.com/rM-self-serve/$_pkgname"
-pkgver=1.2.2-1
-timestamp=2023-12-03T11:43:00Z
+pkgver=1.2.3-1
+timestamp=2023-12-31T11:43:00Z
 section="utils"
 maintainer="rM-self-serve <122753594+rM-self-serve@users.noreply.github.com>"
 license=MIT
 conflicts=(ddvk-hacks signature-rm)
+installdepends=(libbfd)
 
 source=(
-    "$url"/archive/cdfe457435974f7ca309b1ac50f1b2ef67000813.zip
+    "$url"/archive/e184b6a37ccba0ebeacd34faf63c8f4cdfa5c448.zip
     "$_pkgname-toltec.service"
 )
 sha256sums=(
-    bad965b923fa0979e7c8b97f6a90a400300ef8461292276e6fa2107a89624c8b
+    2e3666b1875f874ef09da2bbd163295b89e9e241f1e59e77349b0e2db716b8ff
     SKIP
 )
 
@@ -73,14 +74,7 @@ _restore() {
 }
 
 preremove() {
-    if is-active "$pkgname"; then
-        echo "Stopping $pkgname"
-        systemctl stop "$pkgname"
-    fi
-    if is-enabled "$pkgname"; then
-        echo "Disabling $pkgname"
-        systemctl disable "$pkgname"
-    fi
+    disable-unit "$pkgname.service"
     _restore
 }
 
