@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
-# Copyright (c) 2021 The Toltec Contributors
+# Copyright (c) 2023 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
+archs=(rm1 rm2)
 pkgnames=(oxide oxide-extra oxide-utils inject_evdev liboxide liboxide-dev libsentry)
 _oxidever=2.7
 pkgver=$_oxidever-4
@@ -34,7 +35,6 @@ oxide() {
     installdepends_rm2=(display)
     replaces=(erode tarnish decay corrupt)
     conflicts=(erode tarnish decay corrupt)
-    archs=(rm1 rm2)
 
     package() {
         # System service
