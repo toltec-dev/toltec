@@ -5,36 +5,39 @@
 pkgnames=(yaft)
 pkgdesc="Yet another framebuffer terminal"
 url=https://github.com/timower/rM2-stuff/tree/master/apps/yaft
-_tag=0.0.10
-pkgver=${_tag}-2
-timestamp=2023-08-12T14:31Z
+_tag=0.1.1
+pkgver=${_tag}-1
+timestamp=2023-11-25T20:49:48Z
 maintainer="Mattéo Delabre <spam@delab.re>"
 license=GPL-3.0
 section="admin"
-image=base:v2.3
+image=base:v3.1
 installdepends=(display terminfo)
 
-source=(
-    "https://github.com/timower/rM2-stuff/archive/refs/tags/v${_tag}.zip"
-    input.patch
-)
+source=()
+sha256sums=()
 
-sha256sums=(
-    1cd4741a93cde6bd545215eb303e51219fc9901cba1c28b6206b1b5e0871a7b5
-    SKIP
-)
+prepare() {
+    cd "$srcdir"
+    mkdir -p yaft
+    cd yaft
+    git init
+    git lfs install
+    git remote add origin https://github.com/timower/rM2-stuff.git
+    git fetch --depth 1 origin tag v${_tag} --no-tags
+    git checkout v${_tag}
+    git lfs fetch
+    git lfs checkout
+}
 
 build() {
-    patch -u libs/rMlib/Device.cpp -i input.patch
     mkdir build
     mkdir install
     cd build
     cmake -DCMAKE_TOOLCHAIN_FILE="/usr/share/cmake/$CHOST.cmake" \
-        -DCMAKE_INSTALL_PREFIX="../install" -DCMAKE_BUILD_TYPE=Release ..
+        -DCMAKE_INSTALL_PREFIX="../install" -DCMAKE_BUILD_TYPE=Release ../yaft
     cd apps/yaft
     make
-    make install
-    cd ../../libs/libYaft
     make install
 }
 
