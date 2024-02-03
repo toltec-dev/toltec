@@ -6,8 +6,8 @@ archs=(rm1 rm2)
 pkgnames=(linux-stracciatella linux-stracciatella-perf)
 pkgdesc="RemarkableAS's vanilla kernel with a few extra flakes"
 url=https://github.com/Etn40ff/linux-remarkable
-pkgver=5.4.70-3
-timestamp=2023-09-23T00:12:00Z
+pkgver=5.4.70.4-1
+timestamp=2023-12-28T22:42:42Z
 section="kernel"
 maintainer="Salvatore Stella <etn45p4m@gmail.com>"
 makedepends=(build:flex build:bison build:libssl-dev build:bc build:lzop build:libgmp-dev build:libmpc-dev build:kmod build:python-is-python3)
@@ -17,11 +17,11 @@ installdepends=(kernelctl)
 image=base:v3.1
 _wireguard_version=1.0.20220627
 source=(
-    https://github.com/Etn40ff/linux-remarkable/archive/c908b16d6b848964ecc9b116a024f247c290a1bf.tar.gz
+    "https://github.com/Etn40ff/linux-remarkable/archive/refs/tags/${pkgver%-*}.tar.gz"
     "https://git.zx2c4.com/wireguard-linux-compat/snapshot/wireguard-linux-compat-$_wireguard_version.tar.xz"
 )
 sha256sums=(
-    2075b9eb69172751b3e8e0d3a40d63c0c05982e79a2724ed7c3bdfc4f7988eea
+    29fd9d7adcb243b841d3577088dd2aec6106eaaa3bc51440411f49ea50658c01
     362d412693c8fe82de00283435818d5c5def7f15e2433a07a9fe99d0518f63c0
 )
 noextract=("wireguard-linux-compat-$_wireguard_version.tar.xz")
