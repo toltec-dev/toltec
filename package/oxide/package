@@ -130,7 +130,8 @@ liboxide() {
     section="devel"
 
     package() {
-        install -D -m 755 -t "$pkgdir"/opt/lib "$srcdir"/release/opt/lib/libliboxide.so*
+        install -D -m 755 -t "$pkgdir"/opt/lib "$srcdir"/release/opt/lib/liboxide.so*
+        install -D -m 755 -t "$pkgdir"/opt/lib "$srcdir"/release/opt/lib/libqsgepaper.so*
     }
 }
 
@@ -140,7 +141,7 @@ liboxide-dev() {
     installdepends=("liboxide=$pkgver")
 
     package() {
-        install -D -m 755 -t "$pkgdir"/opt/lib/pkgconfig "$srcdir"/release/opt/lib/pkgconfig/liboxide.pc
+        install -D -m 755 -t "$pkgdir"/opt/lib/pkgconfig "$srcdir"/release/opt/lib/pkgconfig/oxide.pc
         install -D -m 755 -t "$pkgdir"/opt/include "$srcdir"/release/opt/include/epframebuffer.h
         install -D -m 755 -t "$pkgdir"/opt/include "$srcdir"/release/opt/include/liboxide.h
         cp -ar "$srcdir"/release/opt/include/liboxide/ "$pkgdir"/opt/include/
