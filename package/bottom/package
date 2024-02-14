@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+# Copyright (c) 2023 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgnames=(bottom)
+pkgdesc="Cross-platform graphical process/system monitor"
+url=https://github.com/ClementTsang/bottom
+pkgver=0.9.6-1
+timestamp=2023-08-26T14:43Z
+section="utils"
+maintainer="gbyl <gbyl@users.noreply.github.com>"
+license=MIT
+
+image=rust:v3.1
+source=("https://github.com/ClementTsang/bottom/archive/refs/tags/${pkgver%-*}.zip")
+sha256sums=(38c1a544ceeac4792f8e4acbf3adbf0a6d7a935afb7ef9121aaba1e7ed25cea3)
+
+build() {
+    cargo build --release
+}
+
+package() {
+    install -D -m 755 "$srcdir"/target/armv7-unknown-linux-gnueabihf/release/btm "$pkgdir"/opt/bin/btm
+}
