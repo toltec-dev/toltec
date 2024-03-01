@@ -5,8 +5,8 @@
 pkgnames=(netevent)
 pkgdesc="Input-Event device cloning utility"
 url="https://github.com/Blub/netevent"
-pkgver=2.2.1-1
-timestamp=2021-12-03T19:43:04+01:00
+pkgver=2.2.2-1
+timestamp=2023-04-29T14:21:02Z
 section=utils
 maintainer="Salvatore Stella <etn45p4m@gmail.com>"
 license=GPL-2.0-only
@@ -16,7 +16,7 @@ source=(
     "https://github.com/Blub/netevent/archive/refs/tags/${pkgver%-*}.tar.gz"
 )
 sha256sums=(
-    ba1289cc04aef563baa9cc203111af3980a9311442233ffcf76760cda9f6aa69
+    09c0e97cd5c2cf5ed51e44ce955cc28cfa2cd0022bd48241f1096bc441439d3a
 )
 
 build() {
