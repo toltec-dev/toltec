@@ -19,9 +19,11 @@ source=(
     KOReader.oxide
     koreader-toltec.service
     koreader
+    launcherctl-koreader
 )
 sha256sums=(
     2616c7f0c63d54810f4ec78477ecb5dac2443990c7d2c8188c577ad5d925cca1
+    SKIP
     SKIP
     SKIP
     SKIP
@@ -41,6 +43,7 @@ package() {
     install -D -m 644 "$srcdir"/koreader-toltec.service "$pkgdir"/lib/systemd/system/koreader.service
     install -D -m 644 -t "$pkgdir"/opt/etc/draft/icons/ "$srcdir"/resources/koreader.png
     install -D -m 755 -t "$pkgdir"/opt/bin/ "$srcdir"/koreader
+    install -D -m 755 -t "$pkgdir"/opt/share/launcherctl/"$pkgname" "$srcdir"/launcherctl-koreader
 }
 
 configure() {
@@ -51,18 +54,19 @@ configure() {
 
     systemctl daemon-reload
 
-    if ! is-enabled "$pkgname.service"; then
-        cat << MSG
-
-Run the following command(s) to use $pkgname as your launcher
-$(how-to-enable "$pkgname.service")
-
-MSG
+    if ! launcherctl is-current-launcher "$pkgname"; then
+        echo ""
+        echo "Run the following command(s) to use $pkgname as your launcher"
+        echo "launcherctl switch-launcher --start $pkgname"
+        echo ""
     fi
 }
 
 preremove() {
-    disable-unit "$pkgname.service"
+    # Just in case more than one launcher is active, do individual checks
+    if launcherctl is-active-launcher "$pkgname" || launcherctl is-enabled-launcher "$pkgname"; then
+        launcherctl switch-launcher --start xochitl
+    fi
 }
 
 postremove() {

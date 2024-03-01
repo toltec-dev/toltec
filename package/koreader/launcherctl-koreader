@@ -1,0 +1,41 @@
+#!/bin/bash
+set -e
+case "$1" in
+    is-active)
+        systemctl is-active --quiet koreader.service
+        ;;
+    is-enabled)
+        systemctl is-enabled --quiet koreader.service
+        ;;
+    logs)
+        if [ $# -eq 2 ] && [[ "$2" == "-f" ]] || [[ "$2" == "--follow" ]]; then
+            journalctl --follow --all --unit koreader.service
+        else
+            journalctl --no-pager --all --unit koreader.service
+        fi
+        ;;
+    start | launch)
+        systemctl start koreader.service
+        ;;
+    stop | close)
+        systemctl stop koreader.service
+        ;;
+    enable)
+        systemctl enable koreader.service
+        ;;
+    disable)
+        systemctl disable koreader.service
+        ;;
+    apps)
+        echo "koreader"
+        ;;
+    running)
+        if "$0" is-active; then
+            echo "koreader"
+        fi
+        ;;
+    *)
+        echo "KOReader does not support this method"
+        exit 1
+        ;;
+esac
