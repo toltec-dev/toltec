@@ -1,3 +1,26 @@
+2024-01-11 raisjn <of.raisjn@arkose>
+
+	harmony
+
+	* fix for buffer crash / weird buffers when saved buffer is wrong dims
+
+	remux
+
+	* add launcher-ctrl APIs
+
+	iago
+
+	* add table shape (yogatbear)
+
+	rmkit
+
+	* refactor how scene stack works
+	* fixes for image code
+
+	genie
+
+	* add support for conf directory
+
 2023-03-12 raisjn <of.raisjn@arkose>
 
 	harmony

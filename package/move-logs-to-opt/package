@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+# Copyright (c) 2023 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgnames=(move-logs-to-opt)
+pkgdesc="Move log files to /opt to save space on the root partition"
+url=https://github.com/toltec-dev/toltec
+pkgver=0.0.1-1
+timestamp=2024-01-07T23:55Z
+section="utils"
+maintainer="Eeems <eeems@eeems.email>"
+license=MIT
+
+source=(var-log.mount)
+sha256sums=(SKIP)
+
+package() {
+    mkdir -p "$pkgdir"/opt/var/log
+    install -D -m 644 -t "$pkgdir"/lib/systemd/system/ "$srcdir"/var-log.mount
+}
+
+configure() {
+    systemctl daemon-reload
+    if is-active systemd-journald.service; then
+        journalctl --sync --flush
+        systemctl stop systemd-journald.service
+    fi
+    if ! mountpoint -q /var/log; then
+        echo "Moving log files to new location"
+        local target_path=/home/root/.entware/var/log
+        mkdir -p "$target_path"
+        cp -af "/var/log/." "$target_path"
+        rm -rf "/var/log/"*
+    fi
+    if ! is-enabled "var-log.mount"; then
+        systemctl enable "var-log.mount"
+    fi
+    systemctl restart "var-log.mount"
+    systemctl start systemd-journald.service
+}
+
+preremove() {
+    if is-active systemd-journald.service; then
+        journalctl --sync --flush
+        systemctl stop systemd-journald.service
+    fi
+    disable-unit "var-log.mount"
+}
+
+postremove() {
+    systemctl daemon-reload
+    systemctl start systemd-journald.service
+    if mountpoint -q /var/log; then
+        umount -l /var/log
+    fi
+}

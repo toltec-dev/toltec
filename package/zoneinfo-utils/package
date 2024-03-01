@@ -7,23 +7,24 @@
 pkgnames=(zoneinfo-utils)
 pkgdesc="Utilities for interacting with zoneinfo files"
 url=https://www.iana.org/time-zones
-_tzver=2021a
-pkgver="$_tzver"-2
-timestamp=2020-05-04T06:16Z
+_tzver=2023c
+pkgver="$_tzver"-1
+timestamp=2023-03-28T00:00Z
 section=utils
 maintainer="Eeems <eeems@eeems.email>"
 license="custom: public domain"
 installdepends=(zoneinfo-core)
 makedepends=(build:gawk)
+flags=(nostrip)
 
-image=base:v2.1
+image=base:v3.0
 source=(
     "https://www.iana.org/time-zones/repository/releases/tzcode${_tzver}.tar.gz"
     "https://www.iana.org/time-zones/repository/releases/tzdata${_tzver}.tar.gz"
 )
 sha256sums=(
-    eb46bfa124b5b6bd13d61a609bfde8351bd192894708d33aa06e5c1e255802d0
-    39e7d2ba08c68cbaefc8de3227aab0dec2521be8042cf56855f7dc3a9fb14e08
+    46d17f2bb19ad73290f03a203006152e0fa0d7b11e5b71467c4a823811b214e7
+    3f510b5d1b4ae9bb38e485aa302a776b317fb3637bdb6404c4adf7b6cadd965c
 )
 
 prepare() {
@@ -35,17 +36,20 @@ build() {
     pushd .x86 > /dev/null
 
     shopt -s extglob
-    cp -r ../* .
-    make VERSION="$_tzver"
+    ln -s ../* .
+    make VERSION="$_tzver" zic
+    mv zic ../zic.x86
 
     popd > /dev/null
-
+    rm -r .x86
     make VERSION="$_tzver" CC=arm-linux-gnueabihf-cc
+    "${CROSS_COMPILE}strip" --strip-all zic zdump
 }
 
 package() {
     pushd "${srcdir}" > /dev/null
-    local zic=.x86/zic
+
+    local zic=./zic.x86
     # install tzcode stuff
     make DESTDIR="${pkgdir}" zic="$zic" install
     # install license

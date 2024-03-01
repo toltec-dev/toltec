@@ -5,7 +5,7 @@ on:
 jobs:
     check-labels:
         name: Check that PRs against the stable branch are labelled correctly
-        runs-on: ubuntu-20.04
+        runs-on: ubuntu-22.04
         steps:
             - name: Check labels
               run: |

@@ -6,9 +6,9 @@ archs=(rm2)
 pkgnames=(rm2-suspend-fix)
 pkgdesc="Fix issue where suspend breaks networking on the reMarkable 2"
 url=https://toltec-dev.org/
-pkgver=0.0.0-2
+pkgver=0.0.0-3
 timestamp=2021-01-04T22:40Z
-section="devel"
+section="utils"
 maintainer="Eeems <eeems@eeems.email>"
 license=MIT
 

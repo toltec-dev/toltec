@@ -5,23 +5,37 @@
 pkgnames=(tilem)
 pkgdesc="TI-84+ calculator emulator"
 url=https://github.com/timower/rM2-stuff/tree/master/apps/tilem
-pkgver=0.0.7-3
-timestamp=2021-04-30T10:42Z
+_tag=0.1.1
+pkgver=${_tag}-1
+timestamp=2023-11-25T20:49:48Z
 maintainer="Mattéo Delabre <spam@delab.re>"
 license=GPL-3.0
 section="utils"
-image=base:v2.1
+image=base:v3.1
 installdepends=(display)
 
-source=(https://github.com/timower/rM2-stuff/archive/refs/tags/v0.0.7.tar.gz)
-sha256sums=(ed2db5f1aa7c9e8b0bead53bd60cb8fd9eec24c028d789fdbdc4b1655d6c78ce)
+source=()
+sha256sums=()
+
+prepare() {
+    cd "$srcdir"
+    mkdir -p tilem
+    cd tilem
+    git init
+    git lfs install
+    git remote add origin https://github.com/timower/rM2-stuff.git
+    git fetch --depth 1 origin tag v${_tag} --no-tags
+    git checkout v${_tag}
+    git lfs fetch
+    git lfs checkout
+}
 
 build() {
     mkdir build
     mkdir install
     cd build
     cmake -DCMAKE_TOOLCHAIN_FILE="/usr/share/cmake/$CHOST.cmake" \
-        -DCMAKE_INSTALL_PREFIX="../install" -DCMAKE_BUILD_TYPE=Release ..
+        -DCMAKE_INSTALL_PREFIX="../install" -DCMAKE_BUILD_TYPE=Release ../tilem
     cd apps/tilem
     make
     make install

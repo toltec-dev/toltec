@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: MIT
 
 pkgnames=(bufshot dumbskull genie harmony iago lamp mines nao remux rpncalc simple wordlet)
-timestamp=2023-03-12T20:03:10Z
+timestamp=2024-01-11T20:03:10Z
 maintainer="raisjn <of.raisjn@gmail.com>"
 license=MIT
 installdepends=(display)
@@ -11,12 +11,12 @@ flags=(patch_rm2fb)
 
 image=python:v2.1
 source=(
-    https://github.com/rmkit-dev/rmkit/archive/2bf3488010eccf0d9e7f6c64e681517739420c58.zip
+    https://github.com/rmkit-dev/rmkit/archive/7edc291646c4a72b7b8a512205646a9ad6586fd6.zip
     remux.service
     genie.service
 )
 sha256sums=(
-    a0d1a8b16adeca688d7df6a18e4c7404d9d4a405b33615dfb4e374f24ff3dded
+    2861ea61ef272acd0d1d9ec4c80f44ef620be3f8ce58a356fbcbdb27e01dc9e8
     SKIP
     SKIP
 )
@@ -52,7 +52,7 @@ dumbskull() {
 genie() {
     pkgdesc="Gesture engine that connects commands to gestures"
     url="https://rmkit.dev/apps/genie"
-    pkgver=0.1.6-3
+    pkgver=0.1.7-1
     section="utils"
 
     package() {
@@ -78,7 +78,7 @@ genie() {
 harmony() {
     pkgdesc="Procedural sketching app"
     url="https://rmkit.dev/apps/harmony"
-    pkgver=0.2.2-2
+    pkgver=0.2.3-1
     section="drawing"
 
     package() {
@@ -95,7 +95,7 @@ harmony() {
 iago() {
     pkgdesc="overlay for drawing shapes via stroke injection"
     url="https://rmkit.dev/apps/iago"
-    pkgver=0.1.1-2
+    pkgver=0.1.2-1
     section="utils"
     installdepends+=("lamp")
 
@@ -145,7 +145,7 @@ nao() {
 remux() {
     pkgdesc="Launcher that supports multi-tasking applications"
     url="https://rmkit.dev/apps/remux"
-    pkgver=0.2.4-2
+    pkgver=0.3.0-1
     section="launchers"
 
     package() {
@@ -189,7 +189,7 @@ rpncalc() {
 simple() {
     pkgdesc="Simple app script for writing scripted applications"
     url="https://rmkit.dev/apps/sas"
-    pkgver=0.2.0-2
+    pkgver=0.2.1-1
     section="devel"
 
     package() {
