@@ -21,6 +21,10 @@ sha256sums=(
     SKIP
 )
 
+build() {
+    sed -i 's|/usr/sbin|/sbin|' Makefile
+}
+
 debian-chroot() {
     pkgdesc="A minimal Debian chroot for the reMarkable tablet"
     url=https://github.com/Eeems-Org/remarkable-debian-chroot
