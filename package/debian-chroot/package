@@ -51,7 +51,7 @@ debian-chroot() {
             grep /opt/lib/debian-chroot /proc/mounts \
                 | sort -r \
                 | cut -d' ' -f2 \
-                | xargs -rn1 umount -lqR
+                | xargs -rn1 /bin/umount -lqR
         done
     }
     postremove() {
