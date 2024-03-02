@@ -70,6 +70,6 @@ debootstrap() {
         cd "$srcdir"
         sed -i 's|/usr/sbin|/sbin|' Makefile
         make DESTDIR="$pkgdir"/opt install
-        sed 's|DEBOOTSTRAP_DIR=/usr/share/debootstrap|DEBOOTSTRAP_DIR=/opt/usr/share/debootstrap|' "$pkgdir"/sbin/debootstrap
+        sed -i 's|DEBOOTSTRAP_DIR=/usr/share/debootstrap|DEBOOTSTRAP_DIR=/opt/usr/share/debootstrap|' "$pkgdir"/sbin/debootstrap
     }
 }
