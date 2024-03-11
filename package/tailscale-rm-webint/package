@@ -1,0 +1,55 @@
+#!/usr/bin/env bash
+# Copyright (c) 2020 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+_pkgname="tailscale-rm-webint"
+pkgnames=("$_pkgname")
+pkgdesc="View the web interface if running, over tailscale"
+url="https://github.com/rM-self-serve/$_pkgname"
+pkgver=1.0.0-1
+timestamp=2024-03-11T13:03:16Z
+section="utils"
+maintainer="rM-self-serve <122753594+rM-self-serve@users.noreply.github.com>"
+license=MIT
+image=golang:v3.1
+
+source=(
+    "$url/archive/70082714553e88f8c59f156aca61024e99fbcb39.zip"
+)
+
+sha256sums=(
+    0daf011c102f79e92e19f3239823de617edf73c2f28a22fc81a63b8e9a6d5e79
+)
+
+build() {
+    GOOS=linux GOARCH=arm go build -ldflags="-s -w" -o $_pkgname src/main.go
+}
+
+package() {
+    install -D -m 755 -t "$pkgdir/opt/bin" \
+        "$srcdir/$_pkgname"
+
+    install -D -m 644 -t "$pkgdir/lib/systemd/system" \
+        "$srcdir/$_pkgname.service"
+
+}
+
+configure() {
+    systemctl daemon-reload
+
+    if is-active "$pkgname"; then
+        echo "Restarting $pkgname"
+        systemctl restart "$pkgname"
+    fi
+
+    echo "Run the following command to use $pkgname"
+    how-to-enable "$pkgname.service"
+}
+
+preremove() {
+    disable-unit "$pkgname.service"
+}
+
+postremove() {
+    systemctl daemon-reload
+}
