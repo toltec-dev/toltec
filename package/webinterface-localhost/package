@@ -37,8 +37,7 @@ configure() {
         systemctl restart "$pkgname".socket
     fi
 
-    echo "Run the following command to use $pkgname"
-    how-to-enable "$pkgname.socket"
+    systemctl enable --now "$pkgname.socket"
 }
 
 preremove() {
