@@ -1,0 +1,8 @@
+[Unit]
+Description=View the web interface if running, on localhost
+Requires=webinterface-localhost.socket
+After=webinterface-localhost.socket
+
+[Service]
+Type=notify
+ExecStart=/lib/systemd/systemd-socket-proxyd 10.11.99.1:80
