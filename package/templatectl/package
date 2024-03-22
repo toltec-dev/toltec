@@ -5,7 +5,7 @@
 pkgnames=(templatectl)
 pkgdesc="Tool to add/remove templates for xochitl"
 url=https://github.com/PeterGrace/templatectl
-pkgver=0.1.3-4
+pkgver=0.1.3-5
 timestamp=2021-01-15T01:23Z
 section="templates"
 maintainer="Peter Grace <pete.grace@gmail.com>"
@@ -22,6 +22,8 @@ build() {
 package() {
     install -D -m 755 -t "$pkgdir"/opt/bin \
         "$srcdir"/target/armv7-unknown-linux-gnueabihf/release/templatectl
+    mkdir -p "$pkgdir"/opt/share/toltec/reenable.d
+    touch "$pkgdir"/opt/share/toltec/reenable.d/"$pkgname"
 }
 
 preinstall() {

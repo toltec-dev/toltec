@@ -38,6 +38,7 @@ default_variables = {
     "BASH_SUBSHELL",
     "BASH_VERSINFO",
     "BASH_VERSION",
+    "BASH_LOADABLES_PATH",
     "COLUMNS",
     "COMP_WORDBREAKS",
     "DIRSTACK",
@@ -132,10 +133,10 @@ declare -p
     while True:
         token = lexer.get_token()
 
-        if token == lexer.eof:
+        if token == lexer.eof or token is None:
             break
 
-        next_token = lexer.get_token()
+        next_token = lexer.get_token() or ""
 
         if token == "declare" and next_token[0] == "-":
             lexer.push_token(next_token)
@@ -144,8 +145,16 @@ declare -p
             if name not in default_variables:
                 variables[name] = value
         else:
-            assert next_token == "("
-            assert lexer.get_token() == ")"
+            if next_token != "(":
+                raise ScriptError(
+                    f"Unexpected token '{next_token}' on line {lexer.lineno}. Expecting '('."
+                )
+
+            _token = lexer.get_token()
+            if _token != ")":
+                raise ScriptError(
+                    f"Unexpected token '{_token}' on line {lexer.lineno}. Expecting ')'."
+                )
             start, end = _parse_func(lexer)
             functions[token] = declarations[start:end]
 
@@ -217,10 +226,13 @@ def _parse_indexed(lexer: shlex.shlex) -> IndexedArray:
             break
 
         assert token == "["
-        index = int(lexer.get_token())
+        index = int(lexer.get_token() or "")
         assert lexer.get_token() == "]"
         assert lexer.get_token() == "="
-        value = _parse_string(lexer.get_token())
+        string_token = lexer.get_token() or ""
+        if string_token == "$":
+            string_token = lexer.get_token() or ""
+        value = _parse_string(string_token)
 
         # Grow the result array so that the index exists
         if index >= len(result):
@@ -247,7 +259,7 @@ def _generate_indexed(array: IndexedArray) -> str:
 def _parse_assoc(lexer: shlex.shlex) -> AssociativeArray:
     """Parse an associative Bash array."""
     assert lexer.get_token() == "("
-    result = {}
+    result: AssociativeArray = {}
 
     while True:
         token = lexer.get_token()
@@ -258,9 +270,13 @@ def _parse_assoc(lexer: shlex.shlex) -> AssociativeArray:
 
         assert token == "["
         key = lexer.get_token()
+        assert key is not None
         assert lexer.get_token() == "]"
         assert lexer.get_token() == "="
-        value = _parse_string(lexer.get_token())
+        string_token = lexer.get_token() or ""
+        if string_token == "$":
+            string_token = lexer.get_token() or ""
+        value = _parse_string(string_token)
 
         result[key] = value
 
@@ -283,14 +299,14 @@ def _parse_var(lexer: shlex.shlex) -> Tuple[str, Optional[Any]]:
     """Parse a variable declaration."""
     flags_token = lexer.get_token()
 
-    if flags_token != "--":
+    if flags_token != "--" and flags_token is not None:
         var_flags = set(flags_token[1:])
     else:
         var_flags = set()
 
-    var_name = lexer.get_token()
+    var_name: str = lexer.get_token() or ""
     var_value: Optional[Any] = None
-    lookahead = lexer.get_token()
+    lookahead = lexer.get_token() or ""
 
     if lookahead == "=":
         if "a" in var_flags:
@@ -298,7 +314,10 @@ def _parse_var(lexer: shlex.shlex) -> Tuple[str, Optional[Any]]:
         elif "A" in var_flags:
             var_value = _parse_assoc(lexer)
         else:
-            var_value = _parse_string(lexer.get_token())
+            string_token = lexer.get_token() or ""
+            if string_token == "$":
+                string_token = lexer.get_token() or ""
+            var_value = _parse_string(string_token)
     else:
         lexer.push_token(lookahead)
 

@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+# Copyright (c) 2023 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+archs=(rmallos2 rmallos3)
+pkgnames=(toltec-deletions)
+pkgdesc="Metapackage to handle package deletions between OS versions"
+url=https://toltec-dev.org/
+pkgver=0.1-1
+timestamp=2023-12-03T04:51:58Z
+section="utils"
+maintainer="Eeems <eeems@eeems.email>"
+license=MIT
+installdepends=(toltec-bootstrap)
+conflicts_rmallos2=()
+replaces_rmallos2=()
+conflicts_rmallos3=(ddvk-hacks fuse wireguard)
+replaces_rmallos3=(ddvk-hacks fuse wireguard)
+
+source=()
+sha256sums=()
+
+package() {
+    # This should be fully reinstalled on reenable
+    # So add a file to root
+    mkdir -p "$pkgdir"/usr/share/toltec/reenable.d
+    touch "$pkgdir"/usr/share/toltec/reenable.d/toltec-deletions
+}
