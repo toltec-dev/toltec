@@ -165,8 +165,7 @@ main() {
     local pkg_filename="/tmp/$pkg_basename"
     wget --no-verbose "$toltec_remote/$pkg_basename" -O "$pkg_filename"
 
-    opkg install --add-arch rmall:200 --offline-root / --force-depends \
-        "$pkg_filename" > /dev/null 2>&1
+    tar -zxvOf "$pkg_filename" ./data.tar.gz | tar -zxf - -C /
     rm "$pkg_filename"
 
     # shellcheck source=../../package/toltec-bootstrap/toltecctl
