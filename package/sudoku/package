@@ -5,8 +5,8 @@
 pkgnames=(sudoku)
 pkgdesc="Sudoku for Remarkable"
 url="https://github.com/HookedBehemoth/remarkable-sudoku"
-pkgver=0.1.1-1
-timestamp=2023-01-05T03:15Z
+pkgver=0.1.2-1
+timestamp=2023-02-04T22:49Z
 section="games"
 maintainer="Luis S. <luis@scheurenbrand.me>"
 license=GPL-3.0-only
@@ -15,7 +15,7 @@ flags=(patch_rm2fb)
 
 image=rust:v3.1
 source=("https://github.com/HookedBehemoth/remarkable-sudoku/archive/refs/tags/v${pkgver%-*}.tar.gz")
-sha256sums=(c3d9e941d0d837b90d376104eec7693f6b609010662d7e9b5ae57570648d8856)
+sha256sums=(08a801a6ffc3f328fc92c8aebadbcc7a123b1abebf5cbe276d5f9f52058ee864)
 
 build() {
     cargo build --release
