@@ -27,6 +27,7 @@ makedepends=(
     host:libglib
     host:libgudev
 )
+installdepends=(libgudev)
 
 build() {
     # Workaround https://github.com/toltec-dev/toolchain/issues/33
