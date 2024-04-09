@@ -18,6 +18,7 @@ makedepends=(
     build:libglib2.0
     host:libglib
 )
+installdepends=(libglib)
 
 build() {
     export PKG_CONFIG_LIBDIR="$PKG_CONFIG_LIBDIR:$PKG_CONFIG_SYSROOT_DIR/opt/usr/lib/libglib/lib/pkgconfig"
