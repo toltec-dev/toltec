@@ -2,7 +2,7 @@
 Description=Enable the web interface on boot
 StartLimitIntervalSec=600
 StartLimitBurst=4
-After=home.mount
+After=home.mount sys-subsystem-net-devices-usb0.device
 
 [Service]
 Environment=HOME=/home/root
