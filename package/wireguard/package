@@ -6,7 +6,6 @@ pkgnames=(wireguard)
 pkgdesc="Fast, modern, secure VPN tunnel"
 url=https://www.wireguard.com
 pkgver=1.0.20220627-1
-_wireguardtoolsver=1.0.20210914
 timestamp=2021-02-19T14:08Z
 section=kernel
 maintainer="Jonah Weissman <jonahrweissman+toltec@gmail.com>"
@@ -32,7 +31,6 @@ source=(
 )
 sha256sums=(
     362d412693c8fe82de00283435818d5c5def7f15e2433a07a9fe99d0518f63c0
-    97ff31489217bb265b7ae850d3d0f335ab07d2652ba1feec88b734bc96bd05ac
     SKIP
 )
 
