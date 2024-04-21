@@ -13,7 +13,7 @@ maintainer="Jonah Weissman <jonahrweissman+toltec@gmail.com>"
 license=GPL-2.0-only
 makedepends=(build:bc build:lzop build:git build:flex build:bison build:libssl-dev)
 flags=(nostrip)
-provides=(wireguard-tools)
+installdepends=(wireguard-tools)
 
 _kernelrepo=https://github.com/remarkable/linux
 _kernelrevs=(
@@ -28,28 +28,15 @@ _defconfigs=(
 image=base:v2.3
 source=(
     "https://git.zx2c4.com/wireguard-linux-compat/snapshot/wireguard-linux-compat-${pkgver%-*}.tar.xz"
-    "https://git.zx2c4.com/wireguard-tools/snapshot/wireguard-tools-${_wireguardtoolsver}.tar.xz"
     fix-multiple-yylloc-definitions.patch
 )
-noextract=("wireguard-tools-${_wireguardtoolsver}.tar.xz")
 sha256sums=(
     362d412693c8fe82de00283435818d5c5def7f15e2433a07a9fe99d0518f63c0
     97ff31489217bb265b7ae850d3d0f335ab07d2652ba1feec88b734bc96bd05ac
     SKIP
 )
 
-prepare() {
-    bsdtar -x \
-        --directory "$srcdir" \
-        --file "$srcdir/wireguard-tools-${_wireguardtoolsver}.tar.xz"
-    mv "$srcdir/wireguard-tools-${_wireguardtoolsver}" "$srcdir/wireguard-tools"
-    # the symlink at src/wg-quick/wg needs something to point to
-    touch "$srcdir/wireguard-tools/src/wg"
-}
-
 build() {
-    make -C wireguard-tools/src PLATFORM=linux "CC=${CROSS_COMPILE}cc"
-
     mkdir pkg
     git init linux
     for i in $(seq 0 1); do
@@ -81,8 +68,6 @@ build() {
 }
 
 package() {
-    make -C "$srcdir/wireguard-tools/src" DESTDIR="$pkgdir" WITH_WGQUICK=yes \
-        WITH_SYSTEMDUNITS=yes WITH_BASHCOMPLETION=no install
     mkdir -p "$pkgdir/lib/modules"
     cp -r "$srcdir/pkg"/* "$pkgdir/lib/modules"
 }
