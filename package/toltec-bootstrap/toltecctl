@@ -489,7 +489,7 @@ MSG
             fi
 
             echo "Rebooting"
-            reboot
+            systemctl reboot
             ;;
 
         help | -h | --help)
