@@ -1,0 +1,15 @@
+[Unit]
+Description=Bind mount '/home/root/.entware/var/log' over '/var/log'
+DefaultDependencies=no
+Conflicts=umount.target
+Before=local-fs.target umount.target systemd-journald.service
+After=home.mount
+
+[Mount]
+What=/home/root/.entware/var/log
+Where=/var/log
+Type=none
+Options=bind
+
+[Install]
+WantedBy=local-fs.target
