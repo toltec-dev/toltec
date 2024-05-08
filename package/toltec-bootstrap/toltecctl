@@ -10,9 +10,16 @@ toltec_src=/home/root/.entware
 # Path where Toltec is mounted
 toltec_dest=/opt
 
+# Path where toltec caches compatibility information
+toltec_share=/home/root/.local/share/toltec
+# Path to static opkg build
+opkg_path=/home/root/.local/bin/opkg
+# Path to opkg install status file
+opkg_status="/opt/lib/opkg/status"
+
 # Path to Opkg configuration
-opkg_conf="$toltec_dest"/etc/opkg.conf
-opkg_conf_dir="$toltec_dest"/etc/opkg.conf.d
+opkg_conf="$toltec_src"/etc/opkg.conf
+opkg_conf_dir="$toltec_src"/etc/opkg.conf.d
 
 # Path to the Xochitl configuration
 xochitl_conf=/home/root/.config/remarkable/xochitl.conf
@@ -26,6 +33,50 @@ bashrc_path=/home/root/.bashrc
 bashrc_start_marker="# Added by Toltec bootstrap (do not modify!)"
 bashrc_old_start_marker="# Path added by Toltec bootstrap"
 bashrc_end_marker="# End of Toltec bootstrap additions"
+
+# Print a log message
+#
+# Arguments:
+#
+# [$1] - Log level: INFO, WARN or ERROR (default: INFO)
+# $2... - Messages to print, each argument goes to a separate line
+log() {
+    # Output stream where the messages will be sent
+    local log_type="INFO"
+    local fd=1
+    local colored_prefix
+
+    if [[ $# -ge 2 ]]; then
+        case "$1" in
+            INFO | WARN | ERROR)
+                log_type="$1"
+                shift
+                ;;
+        esac
+    fi
+
+    case "$log_type" in
+        INFO) colored_prefix='\e[32mINFO:\e[0m  ' ;;
+        WARN)
+            colored_prefix='\e[33mWARN:\e[0m  '
+            fd=2
+            ;;
+        ERROR)
+            colored_prefix='\e[31mERROR:\e[0m '
+            fd=2
+            ;;
+    esac
+
+    echo -e "${colored_prefix}$1" >&$fd
+
+    # Extra lines to print indented
+    shift
+    local line
+
+    for line in "$@"; do
+        echo -e "       $line" >&$fd
+    done
+}
 
 # Identify which reMarkable model we’re currently running on
 #
@@ -49,6 +100,68 @@ identify-model() {
             echo "unknown"
             ;;
     esac
+}
+
+# Find the current OS release version
+#
+# Output: Current version in the X.Y.Z.P format
+get-release-version() {
+    awk -F= '/RELEASE_VERSION/{print $2}' /usr/share/remarkable/update.conf
+}
+
+# Check to see if the version is supported and error if it isn't supported
+#
+# Arguments:
+#
+# $1 - Branch for which to check support
+#
+# Exit code:
+#
+# 0 - if the current version is supported
+# 1 - if unsupported
+# 2 - if version compatibility information could not be retrieved
+# 3 - unable to install standalone wget
+check-version() {
+    local wget
+    if [[ "$(install-state)" != "yes" ]] || [[ "$(command -v wget)" != "/opt/bin/wget" ]]; then
+        if ! install-standalone-wget; then
+            return 2
+        fi
+        wget="${toltec_share}/wget"
+    else
+        wget="wget"
+    fi
+    local check_branch
+    local current_model
+    local current_version
+    local cwd
+    check_branch="$1"
+    current_model="$(identify-model)"
+    current_version="$(get-release-version)"
+
+    cwd="$(pwd)"
+    mkdir -p "$toltec_share"
+    cd "$toltec_share"
+    if ! "$wget" "$toltec_srv_root"/"$check_branch"/Compatibility \
+        --timestamping \
+        --no-verbose \
+        --ignore-length 2> /dev/null; then
+        log ERROR "Unable to fetch updated version compatibility information, make sure you have a stable Wi-Fi connection"
+        if ! [ -f Compatibility ]; then
+            cd "$cwd"
+            return 2
+        fi
+        log WARN "Using outdated cached version compatibility information"
+    fi
+    cd "$cwd"
+
+    if ! grep -q "${current_model}=${current_version}" "${toltec_share}/Compatibility"; then
+        LOG ERROR "You’re running an unsupported OS version: $current_version"
+        LOG ERROR "Please monitor Toltec releases for upcoming support"
+        return 1
+    fi
+
+    return 0
 }
 
 # Get the password used to login to the SSH prompt
@@ -122,21 +235,214 @@ remove-bind-mount() {
 
     if [[ ! -e $unit_path ]]; then
         echo "No existing bind mount for '$1'"
-        return 1
+        return
     fi
 
     echo "Removing mount over '$1'"
     systemctl disable "$unit_name"
-    umount -l "$1"
+    systemctl stop "$unit_name"
+    if mountpoint -q "$1"; then
+        umount -l "$1"
+    fi
     rm "$unit_path"
     systemctl daemon-reload
+}
+
+# Escape a string for use in a sed search
+#
+# Arguments
+#
+# $1 - String to escape
+#
+# Output:
+#
+# Escaped string
+escape-for-sed() {
+    # shellcheck disable=SC1003
+    sed -e 's/[^^]/[&]/g; s/\^/\\^/g; $!a\'$'\n''\\n' <<< "$1" | tr -d '\n'
+}
+
+# Escape a string for use in a sed replacement
+#
+# Arguments
+#
+# $1 - String to escape
+#
+# Output:
+#
+# Escaped string
+escape-for-sed-replace() {
+    IFS= read -d '' -r < <(sed -e ':a' -e '$!{N;ba' -e '}' -e 's/[&/\]/\\&/g; s/\n/\\&/g' <<< "$1")
+    printf %s "${REPLY%$'\n'}"
+}
+
+# Replace multiline string content in stdin
+#
+# Arguments:
+#
+# $1 - String to replace
+# $2 - string to replace with
+# stdin - Text to perform replacement on
+#
+# Output:
+#
+# Contents of stdin with the string replaced
+replace-string() {
+    sed \
+        -e ':a' \
+        -e '$!{N;ba' -e '}' \
+        -e "s/$(escape-for-sed "$1")/$(escape-for-sed-replace "$2")/"
+}
+
+# Get the opkg status for a package
+#
+# Arguments:
+#
+# $1 - Package name
+#
+# Output: Opkg status information for the package
+#
+# Exit Code:
+#
+# 0 - Status found
+# 1 - Status not found
+get-package-status() {
+    local status
+    status="$(opkg status "$1" | grep -v "has no valid architecture, ignoring" || true)"
+    if [ -n "$status" ]; then
+        echo "$status"
+        return 0
+    fi
+    local index
+    local index2
+    local count
+    # Don't use --line-number so this works on the built in grep
+    index="$(grep -n "Package: ${1}" "$opkg_status" | cut -d':' -f1 || echo "-1")"
+    if [ "$index" -eq -1 ]; then
+        return 1
+    fi
+    # Don't use --line-number so this works on the built in grep
+    count="$(tail -n +$((index + 1)) "$opkg_status" | grep -n "Package: " | head -n1 | cut -d':' -f1 || echo "-1")"
+    if [ "$count" -eq -1 ]; then
+        return 1
+    fi
+    index2=$((index + count - 1))
+    status="$(sed -n "${index},${index2}p;$((index2 + 1))q" "$opkg_status")"
+    if [ -z "$status" ]; then
+        return 1
+    fi
+    echo "$status"
+    return 0
+}
+
+# Check if a string appears in a set of strings
+#
+# Arguments:
+#
+# $1 - String to look for
+# $2... - Elements to compare to $1
+#
+# Example:
+#
+# > has-element "needle" "${haystack[@]}"
+# Will return 0 if "needle" is found in the "haystack" array.
+#
+# Exit code: 0 if the element is found, 1 otherwise.
+has-element() {
+    local needle="$1"
+    shift
+
+    for element; do
+        if [[ $needle == "$element" ]]; then
+            return 0
+        fi
+    done
+
+    return 1
+}
+
+# Update the opkg status for a package with the correct architecture for the device
+#
+# Arguments:
+#
+# $1 - Package name
+#
+# Exit Codes:
+#
+# 0 - Package status was updated
+# 1 - Package status was not modified
+# 2 - Package status was not found
+# 3 - Package status has no architecture
+update-package-arch() {
+    if ! grep -q "Package: ${1}" "$opkg_status"; then
+        return 1
+    fi
+    local arch
+    local model
+    local new_status
+    local version
+    local status
+    local rc=0
+    status="$(get-package-status "$1" || true)"
+    if [ -z "$status" ]; then
+        log WARN "Unable to get status for package: ${1}"
+        return 2
+    fi
+    arch="$(echo "$status" | grep "Architecture:" | awk '{print $2}')"
+    if [ -z "$arch" ]; then
+        return 3
+    fi
+    case "$arch" in
+        rmallos2 | rmallos3)
+            version="$(identify-support-version)"
+            new_status="$(echo "$status" | replace-string "Architecture: ${arch}" "Architecture: rmall${version}")"
+            ;;
+        rm1os2 | rm1os3 | rm2os2 | rm2os3)
+            model="$(identify-model)"
+            version="$(identify-support-version)"
+            new_status="$(echo "$status" | replace-string "Architecture: ${arch}" "Architecture: ${model}${version}")"
+            ;;
+        *)
+            new_status="$status"
+            ;;
+    esac
+    if [[ "$status" == "$new_status" ]]; then
+        return 1
+    fi
+    echo "Updating package architecture for package: ${1}"
+    sed -i \
+        -e ':a' \
+        -e '$!{N;ba' -e '}' \
+        -e "s/$(escape-for-sed "$status")/$(escape-for-sed-replace "$new_status")/" \
+        "$opkg_status"
+    return 0
+}
+
+# Reinstall toltec-base and toltec-deletions
+reinstall-base() {
+    local packages=()
+    while read -r pkg; do
+        if update-package-arch "$pkg"; then
+            packages+=("$pkg")
+        fi
+    done < <(opkg list-installed | grep -v "has no valid architecture, ignoring" | cut -d' ' -f1 || true)
+    while read -r pkg; do
+        if update-package-arch "$pkg"; then
+            packages+=("$pkg")
+        fi
+    done < <(opkg list-installed | grep "has no valid architecture, ignoring" | cut -d' ' -f2 || true)
+    if ! has-element "toltec-base" "${packages[@]}"; then
+        packages+=(toltec-base)
+    fi
+    if ! has-element "toltec-deletions" "${packages[@]}"; then
+        packages+=(toltec-deletions)
+    fi
+    opkg install --force-reinstall "${packages[@]}" || true
 }
 
 # Reinstall all Toltec packages that had files installed outside of
 # $toltec_src, e.g. systemd configuration files
 reinstall-root() {
-    opkg update
-
     # Get the list of installed packages with files on root
     local pkgname
     declare -A on_root_packages
@@ -161,7 +467,7 @@ reinstall-root() {
     # temporarily
     set +u
     if [[ ${#reinstall_packages[@]} -ne 0 ]]; then
-        opkg install --force-reinstall --force-remove "${!reinstall_packages[@]}"
+        opkg install --force-reinstall --force-remove "${!reinstall_packages[@]}" || true
     else
         echo "No package needs to be reinstalled"
     fi
@@ -195,7 +501,7 @@ SHELL
     new_path="$(bash -l -c "echo \$PATH")"
 
     if [[ $old_path != "$new_path" ]]; then
-        echo "Please restart your SSH session or run 'exec bash --login' to use Toltec"
+        log WARN "Please restart your SSH session or run 'exec bash --login' to use Toltec"
     fi
 }
 
@@ -267,6 +573,61 @@ src/gz entware https://bin.entware.net/armv7sf-k3.2
 CONF
 }
 
+# Get the current Toltec branch of this installation
+#
+# Output: Current branch name
+get-branch() {
+    if ! [ -f "$opkg_conf_dir/15-toltec.conf" ]; then
+        return
+    fi
+    local srv_prefix_len=${#toltec_srv_root}
+    local srv_prefix="${toltec_srv_root//\//\\/}"
+    local awk_get_branch="
+        match(\$0, /$srv_prefix\/(.+)\/rmall/) {
+            print substr( \
+                \$0, \
+                RSTART+$srv_prefix_len+1, \
+                RLENGTH-$srv_prefix_len-1-6 \
+            )
+        }
+    "
+    awk "$awk_get_branch" "$opkg_conf_dir/15-toltec.conf" | head -n1 || true
+}
+
+# Compare two version numbers
+#
+# Arguments:
+#
+# $1 - Version number to compare
+# $2 - Version number to compare
+#
+# Output: True if the first number is larger than the second
+compare-versions() {
+    [ "$(echo -e "${1}\n${2}" | sort | head -n1)" != "$1" ]
+}
+
+# Identify which toltec version this should be limited to
+#
+# Output: One of the following strings
+#
+# os2 - 2.x OS version
+# os3 - 3.x OS version
+# unknown
+identify-support-version() {
+    local current_version
+    current_version="$(get-release-version)"
+
+    if compare-versions "2.0" "$current_version"; then
+        echo "unknown"
+    elif compare-versions "3.0" "$current_version"; then
+        echo "os2"
+    elif compare-versions "4.0" "$current_version"; then
+        echo "os3"
+    else
+        echo "unknown"
+    fi
+}
+
 # Set the Toltec branch for this installation
 # (generate-opkg-conf must be run afterwards to rebuild the main config file)
 #
@@ -276,10 +637,16 @@ CONF
 switch-branch() {
     local branch="${1:-stable}"
     local model
+    local version
     model="$(identify-model)"
+    version="$(identify-support-version)"
 
     if [[ $model = "unknown" ]]; then
-        echo "You’re running an unsupported or unrecognised device"
+        log ERROR "You’re running an unsupported or unrecognised device"
+        exit 1
+    fi
+    if [[ $version = "unknown" ]]; then
+        log ERROR "You're running an unsupported or unrecognised OS version"
         exit 1
     fi
 
@@ -292,16 +659,43 @@ switch-branch() {
 # switch to a different Toltec branch
 
 arch rmall 200
-src/gz toltec-rmall $toltec_srv_root/$branch/rmall
-arch $model 250
-src/gz toltec-$model $toltec_srv_root/$branch/$model
+src/gz toltec-rmall ${toltec_srv_root}/${branch}/rmall
+arch ${model} 250
+src/gz toltec-${model} ${toltec_srv_root}/${branch}/${model}
+arch rmall${version} 260
+src/gz toltec-rmall$version ${toltec_srv_root}/${branch}/rmall${version}
+arch ${model}os2 270
+arch ${model}os3 270
+src/gz toltec-${model}${version} ${toltec_srv_root}/${branch}/${model}${version}
 CONF
 }
 
 # Re-enable Toltec install after system update
 reenable() {
+    log INFO "Mounting /opt"
     add-bind-mount "$toltec_src" "$toltec_dest"
+    switch-branch "$(get-branch)"
+    log INFO "Generating /opt/etc/opkg.conf"
+    generate-opkg-conf || true
+    log INFO "Opkg update"
+    opkg update
+    log INFO "Reinsalling base packages"
+    reinstall-base
+    log INFO "Reinstalling packages with files on the root partition"
     reinstall-root
+    if [ -d /opt/share/toltec/reenable.d ]; then
+        find /opt/share/toltec/reenable.d -maxdepth 1 -mindepth 1 -print0 \
+            | xargs -0rn1 basename \
+            | while read -r pkg; do
+                local script
+                script="/opt/lib/opkg/info/${pkg}.postinst"
+                if [ -f "$script" ]; then
+                    log INFO "Reconfiguring ${pkg}"
+                    "$script" configure || true
+                fi
+            done
+    fi
+    log INFO "Configuring bashrc"
     set-path
 }
 
@@ -323,18 +717,68 @@ list-installed-ordered() {
     # tsort reports errors if there are dependency cycles, we ignore them
 }
 
-# Remove Toltec completely
-uninstall() {
-    # Fetch standalone opkg used to uninstall packages
-    local opkg_path=/home/root/.local/bin/opkg
+# Install standalone opkg binary
+install-standalone-opkg() {
+    local wget
+    if [[ "$(install-state)" != "yes" ]] || [[ "$(command -v wget)" != "/opt/bin/wget" ]]; then
+        if ! install-standalone-wget; then
+            return 2
+        fi
+        wget="${toltec_share}/wget"
+    else
+        wget="wget"
+    fi
     local opkg_remote=https://bin.entware.net/armv7sf-k3.2/installer/opkg
 
-    if ! wget --no-verbose "$opkg_remote" --output-document "$opkg_path"; then
-        echo "Unable to fetch standalone opkg, make sure you have a stable Wi-Fi connection"
+    if ! "$wget" --no-verbose "$opkg_remote" --output-document "$opkg_path"; then
+        log ERROR "Unable to fetch standalone opkg, make sure you have a stable Wi-Fi connection"
         return 1
     fi
 
     chmod u+x "$opkg_path"
+    if [[ $(command -v opkg) != "$opkg_path" ]]; then
+        export PATH
+        PATH="$(dirname "$opkg_path"):$PATH)"
+    fi
+}
+
+# Install a local wget binary which supports TLS (the original one
+# installed on the reMarkable does not) in the PATH
+install-standalone-wget() {
+    local wget_path="${toltec_share}/wget"
+    local wget_remote=http://toltec-dev.org/thirdparty/bin/wget-v1.21.1
+    local wget_checksum=8798fcdabbe560722a02f95b30385926e4452e2c98c15c2c217583eaa0db30fc
+
+    if [ -f "$wget_path" ] && ! [[ -e $wget_path ]] || ! sha256sum -c <(echo "$wget_checksum  $wget_path") > /dev/null 2>&1; then
+        rm "$wget_path"
+    fi
+
+    if ! [ -f "$wget_path" ]; then
+        log INFO "Fetching secure wget"
+
+        # Download and compare to hash
+        mkdir -p "$(dirname "$wget_path")"
+
+        if ! wget -q "$wget_remote" --output-document "$wget_path"; then
+            log ERROR "Could not fetch wget, make sure you have a stable Wi-Fi connection"
+            exit 1
+        fi
+
+        if ! sha256sum -c <(echo "$wget_checksum  $wget_path") > /dev/null 2>&1; then
+            log ERROR "Invalid checksum for the local wget binary"
+            exit 1
+        fi
+
+        chmod 755 "$wget_path"
+    fi
+}
+
+# Remove Toltec completely
+uninstall() {
+    # Fetch standalone opkg used to uninstall packages
+    if ! install-standalone-opkg; then
+        return 1
+    fi
 
     # Remove installed packages in reverse dependency order
     list-installed-ordered | while read -r pkgname; do
@@ -356,6 +800,71 @@ uninstall() {
 
     # Re-enable xochitl if needed
     systemctl enable xochitl
+}
+
+# The current toltec install state
+#
+# Output:
+#
+# yes - opt.mount is enabled and active
+# partial - opt.mount is active but not enabled
+# no - opt.mount is not enabled, or does not exist
+install-state() {
+    local unit_name
+    local enabled
+    unit_name="$(systemd-escape --path "$toltec_dest").mount"
+    if ! systemctl --quiet is-enabled "$unit_name" 2> /dev/null; then
+        echo "no"
+    elif systemctl --quiet is-active "$unit_name"2 > /dev/null; then
+        echo "partial"
+    else
+        echo "yes"
+    fi
+}
+
+# Output toltec installation status
+status() {
+    echo -ne "Enabled: \033[1m"
+    local enabled=false
+    case "$(install-state)" in
+        yes)
+            enabled=true
+            echo -ne "\e[32mYes"
+            ;;
+        no)
+            echo -ne "\e[31mNo"
+            ;;
+        partial)
+            echo -ne "\e[33mPartial"
+            ;;
+        *)
+            echo -ne "\e[31mUnknown"
+            ;;
+    esac
+    echo -e "\e[0m"
+    echo -ne "Supported: \033[1m"
+    local rc
+    rc=0
+    check-version "$(get-branch)" &> /dev/null || rc=$?
+    if [ $rc -eq 0 ]; then
+        echo -ne "\e[32mYes"
+    elif [ $rc -eq 2 ] || [ $rc -eq 3 ]; then
+        echo -ne "\e[33mUnknown"
+    else
+        echo -ne "\e[31mNo"
+    fi
+    echo -e "\e[0m"
+    echo -n "Branch: "
+    if [ -f "$opkg_conf" ]; then
+        # shellcheck disable=SC2005
+        echo "$(get-branch)"
+    else
+        echo -e "\033[1m\e[33mUnknown\e[0m"
+    fi
+    echo -n "Model: "
+    identify-model
+    echo -n "OS: "
+    get-release-version
 }
 
 help() {
@@ -387,7 +896,7 @@ if [[ $0 = "${BASH_SOURCE[0]}" ]]; then
                 echo
 
                 if [[ $REPLY =~ ^[Nn]$ ]]; then
-                    echo "Not reloading. Use 'opkg update' to do it manually."
+                    log WARN "Not reloading. Use 'opkg update' to do it manually."
                 else
                     opkg update
                 fi
@@ -416,7 +925,13 @@ MSG
                 echo
 
                 if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-                    echo "Canceled"
+                    log WARN "Canceled"
+                    exit 1
+                fi
+            fi
+
+            if ! check-version "$target_branch"; then
+                if [[ -z $force ]]; then
                     exit 1
                 fi
             fi
@@ -433,7 +948,7 @@ MSG
                 echo
 
                 if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-                    echo "Canceled"
+                    log WARN "Canceled"
                     exit 1
                 fi
             fi
@@ -446,7 +961,7 @@ MSG
                     echo
 
                     if [[ $REPLY =~ ^[Nn]$ ]]; then
-                        echo "Not reloading. Use 'opkg update' to do it manually."
+                        log WARN "Not reloading. Use 'opkg update' to do it manually."
                         exit
                     fi
                 fi
@@ -456,6 +971,14 @@ MSG
             ;;
 
         reenable)
+            force=$({ (($# > 0)) && [[ $1 = "--force" || $1 = "-f" ]] && echo 1; } || true)
+
+            if ! check-version "$(get-branch)"; then
+                if [[ -z $force ]]; then
+                    exit 1
+                fi
+            fi
+
             reenable
             ;;
 
@@ -467,7 +990,7 @@ MSG
                 echo
 
                 if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-                    echo "Canceled"
+                    log WARN "Canceled"
                     exit 1
                 fi
             fi
@@ -479,17 +1002,21 @@ MSG
                 echo
 
                 if [[ $REPLY =~ ^[Nn]$ ]]; then
-                    echo "Please reboot your device manually to complete the uninstall process"
+                    log WARN "Please reboot your device manually to complete the uninstall process"
                     exit
                 fi
             fi
 
             if [[ ! -f $ssh_key_file ]]; then
-                echo "In case something goes wrong, your SSH password is: $(get-ssh-password)"
+                log WARN "In case something goes wrong, your SSH password is: $(get-ssh-password)"
             fi
 
-            echo "Rebooting"
+            log INFO "Rebooting"
             systemctl reboot
+            ;;
+
+        status)
+            status
             ;;
 
         help | -h | --help)
@@ -497,7 +1024,7 @@ MSG
             ;;
 
         *)
-            echo -e "Error: Invalid command '$action'\n"
+            log ERROR "Invalid command '$action'\n"
             help
             exit 1
             ;;
