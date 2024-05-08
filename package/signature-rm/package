@@ -2,17 +2,18 @@
 # Copyright (c) 2021 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
-_pkgname='signature-rm'
-pkgnames=("$_pkgname")
+archs=(rmallos2 rmallos3)
+pkgnames=("signature-rm")
 pkgdesc="Remove the signature from the bottom of emails"
 url="https://github.com/rM-self-serve/signature-rM"
-pkgver=1.0.2-1
+pkgver=1.0.2-2
 timestamp=2023-12-06T11:43:00Z
 section="utils"
 maintainer="rM-self-serve <122753594+rM-self-serve@users.noreply.github.com>"
 license=MIT
 image=rust:v3.1
-conflicts=(ddvk-hacks webinterface-onboot)
+conflicts=(webinterface-onboot)
+conflicts_rmallos2=(ddvk-hacks)
 
 source=(
     "$url"/archive/b5561af4eb6a0f5aa6e98e1a1279066f0c4bd9b7.zip
@@ -27,10 +28,10 @@ build() {
 
 package() {
     install -D -m 755 -t "$pkgdir"/opt/bin \
-        "$srcdir/target/armv7-unknown-linux-gnueabihf/release/$_pkgname"
+        "$srcdir/target/armv7-unknown-linux-gnueabihf/release/$pkgname"
 
-    touch "$srcdir"/emptyfile
-    install -D -m 666 -t "$pkgdir"/usr/share/toltec/reenable.d/"$_pkgname" "$srcdir"/emptyfile
+    mkdir -p "$pkgdir"/opt/share/toltec/reenable.d
+    touch "$pkgdir"/opt/share/toltec/reenable.d/"$pkgname"
 }
 
 configure() {
