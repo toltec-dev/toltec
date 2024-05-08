@@ -75,7 +75,7 @@ disconnect-cloud() {
 
     # Mark all files as not synced
     grep sync "$xochitl_data_dir"/*.metadata -l \
-        | xargs sed -i 's/synced\": true/synced\": false/'
+        | xargs -r sed -i 's/synced\": true/synced\": false/'
 
     # Disconnect from cloud
     sed -i '/^devicetoken=/d' "$xochitl_conf_path"

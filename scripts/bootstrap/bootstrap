@@ -89,7 +89,7 @@ wget-bootstrap() {
             exit 1
         fi
 
-        log "Fetching secure wget"
+        log INFO "Fetching secure wget"
 
         # Download and compare to hash
         mkdir -p "$(dirname "$wget_path")"
@@ -165,8 +165,7 @@ main() {
     local pkg_filename="/tmp/$pkg_basename"
     wget --no-verbose "$toltec_remote/$pkg_basename" -O "$pkg_filename"
 
-    opkg install --add-arch rmall:200 --offline-root / --force-depends \
-        "$pkg_filename" > /dev/null 2>&1
+    tar -zxvOf "$pkg_filename" ./data.tar.gz | tar -zxf - -C /
     rm "$pkg_filename"
 
     # shellcheck source=../../package/toltec-bootstrap/toltecctl
@@ -174,6 +173,12 @@ main() {
 
     # Clean up the partial install if an uncaught error happens
     trap error-cleanup ERR
+
+    if ! check-version "$toltec_branch"; then
+        if [ $# -eq 0 ] || [[ "$1" != "--force" ]]; then
+            exit 1
+        fi
+    fi
 
     log "Installing Toltec and Entware"
 
@@ -225,23 +230,12 @@ main() {
         ln -sf /etc/localtime /opt/etc/localtime
     fi
 
-    # Install base Toltec packages
-    local additional_packages=(toltec-base)
+    opkg install toltec-base
 
-    [[ ! -d /opt/etc/ssl/certs ]] && additional_packages+=(ca-certificates)
-    [[ ! -f /opt/bin/wget ]] && additional_packages+=(wget-ssl)
-
-    if [[ ${#additional_packages[@]} -gt 0 ]]; then
-        opkg install "${additional_packages[@]}"
+    if [[ $# -gt 0 ]] && ! /opt/bin/opkg install "$@"; then
+        log ERROR "The install was still successful, but the requested packages failed to install"
     fi
 
-    if [[ $# -gt 0 ]]; then
-        opkg install "$@"
-    fi
-
-    # Reinstall toltec-bootstrap to mark its files as managed,
-    # to install its dependencies, and to set the user’s PATH
-    opkg install toltec-bootstrap
     log "After each system upgrade, run 'toltecctl reenable' to re-enable Toltec"
 }
 
