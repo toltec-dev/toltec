@@ -1,0 +1,88 @@
+#!/usr/bin/env bash
+# Copyright (c) 2021 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+archs=(rmallos2 rmallos3)
+pkgnames=("webinterface-onboot")
+pkgdesc="Start the web interface without the cable, on boot."
+url="https://github.com/rM-self-serve/webinterface-onboot"
+pkgver=1.2.3-2
+timestamp=2023-12-31T11:43:00Z
+section="utils"
+maintainer="rM-self-serve <122753594+rM-self-serve@users.noreply.github.com>"
+license=MIT
+conflicts=(signature-rm)
+conflicts_rmallos2=(ddvk-hacks)
+installdepends=(libbfd)
+
+source=(
+    "$url"/archive/e184b6a37ccba0ebeacd34faf63c8f4cdfa5c448.zip
+    "webinterface-onboot-toltec.service"
+)
+sha256sums=(
+    2e3666b1875f874ef09da2bbd163295b89e9e241f1e59e77349b0e2db716b8ff
+    SKIP
+)
+
+package() {
+    install -D -m 755 -t "$pkgdir/opt/bin" "$srcdir/$pkgname"
+    install -D -m 644 "$srcdir/$pkgname-toltec.service" \
+        "$pkgdir/lib/systemd/system/$pkgname.service"
+
+    mkdir -p "$pkgdir"/opt/share/toltec/reenable.d
+    touch "$pkgdir"/opt/share/toltec/reenable.d/"$pkgname"
+}
+
+configure() {
+    systemctl daemon-reload
+
+    echo
+    echo "Applying usb0 ip persistence"
+    webinterface-onboot apply-prstip -y > /dev/null
+    echo "Success"
+    if webinterface-onboot is-hack-version > /dev/null; then
+        echo
+        echo "Applying binary modification"
+        webinterface-onboot apply-hack -y > /dev/null
+        echo "Success"
+    fi
+
+    echo
+    echo "Run the following command to use $pkgname"
+    how-to-enable "$pkgname.service"
+    echo
+    echo "Then restart xochitl or the device"
+}
+
+_restore() {
+    if webinterface-onboot is-prstip-applied > /dev/null; then
+        echo
+        echo "Reverting usb0 ip persistence"
+        webinterface-onboot revert-prstip -y > /dev/null
+        echo "Success"
+    fi
+
+    if webinterface-onboot is-hack-applied > /dev/null; then
+        echo
+        echo "Reverting binary modification"
+        if webinterface-onboot has-backup > /dev/null; then
+            webinterface-onboot revert-hack --backup -y > /dev/null
+        else
+            webinterface-onboot revert-hack --reverse -y > /dev/null
+        fi
+        echo "Success"
+    fi
+}
+
+preremove() {
+    disable-unit "$pkgname.service"
+    _restore
+}
+
+preupgrade() {
+    _restore
+}
+
+postremove() {
+    systemctl daemon-reload
+}

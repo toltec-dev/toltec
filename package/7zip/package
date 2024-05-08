@@ -1,19 +1,19 @@
 #!/usr/bin/env bash
-# Copyright (c) 2021 The Toltec Contributors
+# Copyright (c) 2023 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 pkgnames=(7zip)
 pkgdesc="A file archiver with a high compression ratio."
 url="https://www.7-zip.org/"
-section="util"
-pkgver=22.01-1
-timestamp=2022-07-15T00:00:00Z
+section="utils"
+pkgver=23.01-1
+timestamp=2023-06-20T00:00:00Z
 maintainer="Eeems <eeems@eeems.email>"
 license=LGPL-2.1-or-later
 source=(
-    https://www.7-zip.org/a/7z2201-linux-arm.tar.xz
+    https://www.7-zip.org/a/7z2301-linux-arm.tar.xz
 )
 sha256sums=(
-    428c11efd91fe1809c4750e8cd5d6eddfbed2826d8a5399ffcacb849f0d21cf8
+    9d67650982f819d7557c27dea748fa66ca6c04a3a1148d66716c463580b0550c
 )
 
 package() {
