@@ -4,7 +4,7 @@ on:
 jobs:
     lint:
         name: Check that it conforms to the style guide
-        runs-on: ubuntu-20.04
+        runs-on: ubuntu-22.04
         steps:
             - name: Checkout the Git repository
               uses: actions/checkout@v3
@@ -16,7 +16,7 @@ jobs:
               run: make lint
     pr:
         name: Check that it builds without error
-        runs-on: ubuntu-20.04
+        runs-on: ubuntu-22.04
         needs: lint
         steps:
             - name: Checkout the Git repository
@@ -24,9 +24,21 @@ jobs:
             - name: Setup Toltec dependencies
               uses: ./.github/actions/setup
             - name: Build packages
-              run: make repo-new FLAGS='--remote-repo https://toltec-dev.org/${{ github.base_ref }}'
+              run: FLAGS='--remote-repo https://toltec-dev.org/${{ github.base_ref }}' make repo-new
             - name: Save the build output
               uses: actions/upload-artifact@v3
               with:
                 name: repo
                 path: build/repo
+            - name: Build packages for experimental
+              if: ${{ contains(github.event.pull_request.labels.*.name, 'experimental') }}
+              run: make repo FLAGS='--remote-repo https://toltec-dev.org/${{ github.base_ref }}'
+            - name: Sync packages with the remote repository
+              if: ${{ contains(github.event.pull_request.labels.*.name, 'experimental') }}
+              uses: ./.github/actions/sync-repository
+              with:
+                local-path: build/repo/
+                ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
+                ssh-known-hosts: ${{ secrets.SSH_KNOWN_HOSTS }}
+                ssh-port: ${{ secrets.SSH_PORT }}
+                remote-path: ${{ secrets.REMOTE_SSH }}:/srv/toltec/experimental

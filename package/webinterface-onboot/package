@@ -2,33 +2,35 @@
 # Copyright (c) 2021 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
-_pkgname='webinterface-onboot'
-pkgnames=("$_pkgname")
+archs=(rmallos2 rmallos3)
+pkgnames=("webinterface-onboot")
 pkgdesc="Start the web interface without the cable, on boot."
-url="https://github.com/rM-self-serve/$_pkgname"
-pkgver=1.2.2-2
-timestamp=2023-12-03T11:43:00Z
+url="https://github.com/rM-self-serve/webinterface-onboot"
+pkgver=1.2.3-2
+timestamp=2023-12-31T11:43:00Z
 section="utils"
 maintainer="rM-self-serve <122753594+rM-self-serve@users.noreply.github.com>"
 license=MIT
-conflicts=(ddvk-hacks signature-rm)
+conflicts=(signature-rm)
+conflicts_rmallos2=(ddvk-hacks)
+installdepends=(libbfd)
 
 source=(
-    "$url"/archive/cdfe457435974f7ca309b1ac50f1b2ef67000813.zip
-    "$_pkgname-toltec.service"
+    "$url"/archive/e184b6a37ccba0ebeacd34faf63c8f4cdfa5c448.zip
+    "webinterface-onboot-toltec.service"
 )
 sha256sums=(
-    bad965b923fa0979e7c8b97f6a90a400300ef8461292276e6fa2107a89624c8b
+    2e3666b1875f874ef09da2bbd163295b89e9e241f1e59e77349b0e2db716b8ff
     SKIP
 )
 
 package() {
-    install -D -m 755 -t "$pkgdir/opt/bin" "$srcdir/$_pkgname"
-    install -D -m 644 "$srcdir/$_pkgname-toltec.service" \
-        "$pkgdir/lib/systemd/system/$_pkgname.service"
+    install -D -m 755 -t "$pkgdir/opt/bin" "$srcdir/$pkgname"
+    install -D -m 644 "$srcdir/$pkgname-toltec.service" \
+        "$pkgdir/lib/systemd/system/$pkgname.service"
 
-    touch "$srcdir"/emptyfile
-    install -D -m 666 -t "$pkgdir"/usr/share/toltec/reenable.d/"$_pkgname" "$srcdir"/emptyfile
+    mkdir -p "$pkgdir"/opt/share/toltec/reenable.d
+    touch "$pkgdir"/opt/share/toltec/reenable.d/"$pkgname"
 }
 
 configure() {
