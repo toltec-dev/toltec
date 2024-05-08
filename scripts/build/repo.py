@@ -237,3 +237,11 @@ class Repo:
         # pylint: disable-next=unspecified-encoding
         with open(listing_path, "w") as listing_file:
             listing_file.write(template.render(sections=sections))
+
+
+def make_compatibility(self) -> None:
+    """Generate the OS compatibility information file."""
+    logger.info("Generating compatibility info")
+    compat_source = os.path.join(self.recipe_dir, "Compatibility")
+    compat_dest = self.repo_dir
+    shutil.copy2(compat_source, compat_dest)
