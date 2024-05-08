@@ -1,19 +1,20 @@
 #!/usr/bin/env bash
-# Copyright (c) 2022 The Toltec Contributors
+# Copyright (c) 2023 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
 pkgnames=(lf)
 pkgdesc="Terminal file manager"
 url=https://github.com/gokcehan/lf
-pkgver=r27-1
-timestamp=2022-04-02T09:40Z
+pkgver=r31-2
+timestamp=2023-09-17T12:55Z
 section="utils"
 maintainer="gbyl <gbyl@users.noreply.github.com>"
 license=MIT
+installdepends=(libncurses-dev)
 
-image=golang:v2.3
-source=("https://github.com/gokcehan/lf/archive/refs/tags/r27.zip")
-sha256sums=(a4f7b3ada4aa1348b7f102374d8580b6992977f7e84053aa04ef6aadb69dc205)
+image=golang:v3.1
+source=("https://github.com/gokcehan/lf/archive/refs/tags/${pkgver%-*}.zip")
+sha256sums=(217e152f09ae0cc8ab8f12fd92f705dd12630907de2b6a78ffc2727950921f97)
 
 build() {
     export GOARCH=arm

@@ -1,19 +1,18 @@
 #!/usr/bin/env bash
 # Copyright (c) 2021 The Toltec Contributors
 # SPDX-License-Identifier: MIT
-
+archs=(rm1os2 rm2os2)
 pkgnames=(wireguard)
 pkgdesc="Fast, modern, secure VPN tunnel"
 url=https://www.wireguard.com
-pkgver=1.0.20210219-3
-_wireguardtoolsver=1.0.20210223
+pkgver=1.0.20210219-5
 timestamp=2021-02-19T14:08Z
 section=kernel
 maintainer="Jonah Weissman <jonahrweissman+toltec@gmail.com>"
 license=GPL-2.0-only
 makedepends=(build:bc build:lzop build:git)
 flags=(nostrip)
-provides=(wireguard-tools)
+installdepends=(wireguard-tools)
 
 _kernelrepo=https://github.com/remarkable/linux
 _kernelrevs=(
@@ -28,28 +27,14 @@ _defconfigs=(
 image=base:v2.1
 source=(
     "https://git.zx2c4.com/wireguard-linux-compat/snapshot/wireguard-linux-compat-${pkgver%-*}.tar.xz"
-    "https://git.zx2c4.com/wireguard-tools/snapshot/wireguard-tools-${_wireguardtoolsver}.tar.xz"
     fix-multiple-yylloc-definitions.patch
 )
-noextract=("wireguard-tools-${_wireguardtoolsver}.tar.xz")
 sha256sums=(
     99d35296b8d847a0d4db97a4dda96b464311a6354e75fe0bef6e7c4578690f00
-    1f72da217044622d79e0bab57779e136a3df795e3761a3fc1dc0941a9055877c
     SKIP
 )
 
-prepare() {
-    bsdtar -x \
-        --directory "$srcdir" \
-        --file "$srcdir/wireguard-tools-${_wireguardtoolsver}.tar.xz"
-    mv "$srcdir/wireguard-tools-${_wireguardtoolsver}" "$srcdir/wireguard-tools"
-    # the symlink at src/wg-quick/wg needs something to point to
-    touch "$srcdir/wireguard-tools/src/wg"
-}
-
 build() {
-    make -C wireguard-tools/src PLATFORM=linux "CC=${CROSS_COMPILE}cc"
-
     mkdir pkg
     git init linux
     for i in $(seq 0 1); do
@@ -81,8 +66,6 @@ build() {
 }
 
 package() {
-    make -C "$srcdir/wireguard-tools/src" DESTDIR="$pkgdir" WITH_WGQUICK=yes \
-        WITH_SYSTEMDUNITS=yes WITH_BASHCOMPLETION=no install
     mkdir -p "$pkgdir/lib/modules"
     cp -r "$srcdir/pkg"/* "$pkgdir/lib/modules"
 }

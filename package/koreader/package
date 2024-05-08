@@ -5,8 +5,8 @@
 pkgnames=(koreader)
 pkgdesc="Ebook reader supporting PDF, DjVu, EPUB, FB2 and many more formats"
 url=https://github.com/koreader/koreader
-pkgver=2023.08-2
-timestamp=2023-08-29T16:21:01Z
+pkgver=2024.01-1
+timestamp=2024-01-11T17:16:35Z
 section="readers"
 maintainer="raisjn <of.raisjn@gmail.com>"
 license=AGPL-3.0-or-later
@@ -21,7 +21,7 @@ source=(
     koreader
 )
 sha256sums=(
-    8cc9fad1cbcda5519c20afe6e33c4f80a51587daed7b959ef7284ce8b0c41ec0
+    2616c7f0c63d54810f4ec78477ecb5dac2443990c7d2c8188c577ad5d925cca1
     SKIP
     SKIP
     SKIP
@@ -62,15 +62,7 @@ MSG
 }
 
 preremove() {
-    if is-active "$pkgname"; then
-        echo "Stopping $pkgname"
-        systemctl stop "$pkgname"
-    fi
-
-    if is-enabled "$pkgname"; then
-        echo "Disabling $pkgname"
-        systemctl disable "$pkgname"
-    fi
+    disable-unit "$pkgname.service"
 }
 
 postremove() {
