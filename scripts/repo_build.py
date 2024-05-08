@@ -72,3 +72,4 @@ if args.diff:
 
 repo.make_index()
 repo.make_listing()
+repo.make_compatibility()
