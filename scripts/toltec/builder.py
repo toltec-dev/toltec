@@ -48,10 +48,13 @@ class BuildContextAdapter(logging.LoggerAdapter):
     def process(
         self, msg: str, kwargs: MutableMapping[str, Any]
     ) -> Tuple[str, MutableMapping[str, Any]]:
+        if self.extra is None:
+            return msg, kwargs
+
         prefix = ""
 
         if "recipe" in self.extra:
-            prefix += self.extra["recipe"]
+            prefix += str(self.extra["recipe"])
 
         if "arch" in self.extra:
             prefix += f" [{self.extra['arch']}]"
@@ -657,7 +660,7 @@ source file '{source.url}', got {req.status_code}"
     def _print_logs(
         self,
         logs: bash.LogGenerator,
-        function_name: str = None,
+        function_name: Optional[str] = None,
         max_lines_on_fail: int = 50,
     ) -> None:
         """
