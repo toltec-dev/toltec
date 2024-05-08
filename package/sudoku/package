@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+# Copyright (c) 2024 HookedBehemoth
+# SPDX-License-Identifier: GPL-3.0-only
+
+pkgnames=(sudoku)
+pkgdesc="Sudoku for Remarkable"
+url="https://github.com/HookedBehemoth/remarkable-sudoku"
+pkgver=0.1.2-1
+timestamp=2023-02-04T22:49Z
+section="games"
+maintainer="Luis S. <luis@scheurenbrand.me>"
+license=GPL-3.0-only
+installdepends=(display)
+flags=(patch_rm2fb)
+
+image=rust:v3.1
+source=("https://github.com/HookedBehemoth/remarkable-sudoku/archive/refs/tags/v${pkgver%-*}.tar.gz")
+sha256sums=(08a801a6ffc3f328fc92c8aebadbcc7a123b1abebf5cbe276d5f9f52058ee864)
+
+build() {
+    cargo build --release
+}
+
+package() {
+    install -D -m 755 -t "$pkgdir"/opt/bin \
+        "$srcdir"/target/armv7-unknown-linux-gnueabihf/release/sudoku
+    install -D -m 644 -t "$pkgdir"/opt/etc/draft \
+        "$srcdir"/sudoku.draft
+    install -D -m 644 -T "$srcdir"/res/702.png "$pkgdir"/opt/etc/draft/icons/sudoku.png
+    install -D -m 644 -t "$pkgdir"/opt/usr/share/applications \
+        "$srcdir"/sudoku.oxide
+    install -D -m 644 -T "$srcdir"/res/702.png "$pkgdir"/opt/usr/share/icons/oxide/702x702/sudoku.png
+    install -D -m 644 -T "$srcdir"/res/48.png "$pkgdir"/opt/usr/share/icons/oxide/48x48/apps/sudoku.png
+}
