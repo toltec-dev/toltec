@@ -101,3 +101,4 @@ if args.diff:
 
 make_index(paths.REPO_DIR)
 repo.make_listing()
+repo.make_compatibility()
