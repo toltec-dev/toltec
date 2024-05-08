@@ -5,8 +5,8 @@
 pkgnames=(toltec-bootstrap)
 pkgdesc="Manage your Toltec install"
 url=https://toltec-dev.org/
-pkgver=0.2.3-2
-timestamp=2023-09-17T17:35Z
+pkgver=0.4.0-2
+timestamp=2023-11-27T00:34Z
 section="utils"
 maintainer="Eeems <eeems@eeems.email>"
 license=MIT
@@ -53,15 +53,15 @@ configure() {
         fi
 
         create-entware-conf
-        switch-branch "$branch"
-        echo "Your Opkg configuration has been migrated"
+    fi
 
-        if generate-opkg-conf; then
-            echo
-            echo "! The upgrade is not finished! Please run \`opkg update\`"
-            echo "! and \`opkg upgrade\` once more to complete it."
-            echo
-        fi
+    switch-branch "$(get-branch)"
+    echo "Your Opkg configuration has been upgraded"
+    if generate-opkg-conf; then
+        echo
+        echo "! The upgrade is not finished! Please run \`opkg update\`"
+        echo "! and \`opkg upgrade\` once more to complete it."
+        echo
     fi
 }
 
