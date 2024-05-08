@@ -72,7 +72,12 @@ class Repo:
         self.generic_recipes = {}
 
         for name in os.listdir(self.recipe_dir):
-            if name[0] != ".":
+            path = pathlib.Path(self.recipe_dir) / name
+            if (
+                name[0] != "."
+                and os.path.isdir(path)
+                and os.path.exists(path / "package")
+            ):
                 self.generic_recipes[name] = parse_recipe(
                     os.path.join(self.recipe_dir, name)
                 )
