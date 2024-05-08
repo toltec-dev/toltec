@@ -2,7 +2,7 @@
 # Copyright (c) 2023 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
-archs=(rm1 rm2)
+archs=(rmall rmallos2 rmallos3 rm1 rm1os2 rm1os3 rm2 rm2os2 rm2os3)
 pkgnames=(toltec-base)
 pkgdesc="Metapackage defining the base set of packages in a Toltec install"
 url=https://toltec-dev.org/
@@ -11,9 +11,11 @@ timestamp=2023-12-27T08:30Z
 section="utils"
 maintainer="Eeems <eeems@eeems.email>"
 license=MIT
-installdepends=(toltec-bootstrap toltec-completion)
-installdepends_rm1=(open-remarkable-shutdown)
-installdepends_rm2=(rm2-suspend-fix)
+installdepends=(toltec-bootstrap toltec-deletions toltec-completion wget-ssl ca-certificates)
+installdepends_rm1os2=(open-remarkable-shutdown)
+installdepends_rm1os3=(open-remarkable-shutdown)
+installdepends_rm2os2=(rm2-suspend-fix)
+installdepends_rm2os3=(rm2-suspend-fix)
 
 source=(
     entware-rc@.service
@@ -38,23 +40,28 @@ configure() {
         /opt/etc/profile
     echo "Disabling automatic update"
     disable-unit update-engine.service
-    if [[ "$arch" == "rm1" ]]; then
-        echo "Disabling usb1 network device to avoid long boots"
-        if ! is-masked sys-subsystem-net-devices-usb1.device; then
-            systemctl mask sys-subsystem-net-devices-usb1.device
-        fi
-        if ! is-masked busybox-ifplugd@usb1.service; then
-            systemctl mask busybox-ifplugd@usb1.service
-        fi
-    elif [[ "$arch" == "rm2" ]]; then
-        echo "Enabling usb1 network device to ensure usb SSH works"
-        if is-masked sys-subsystem-net-devices-usb1.device; then
-            systemctl unmask sys-subsystem-net-devices-usb1.device
-        fi
-        if is-masked busybox-ifplugd@usb1.service; then
-            systemctl unmask busybox-ifplugd@usb1.service
-        fi
-    fi
+    case "$arch" in
+        rmall | rmallos2 | rmallos3)
+            echo "Warning: rmall version of toltec-base should not be installed"
+            echo "Please run opkg install --force-reinstall toltec-base"
+            ;;
+        rm1 | rm1os2 | rm1os3)
+            if ! is-masked sys-subsystem-net-devices-usb1.device; then
+                systemctl mask sys-subsystem-net-devices-usb1.device
+            fi
+            if ! is-masked busybox-ifplugd@usb1.service; then
+                systemctl mask busybox-ifplugd@usb1.service
+            fi
+            ;;
+        rm2 | rm2os2 | rm2os3)
+            if is-masked sys-subsystem-net-devices-usb1.device; then
+                systemctl unmask sys-subsystem-net-devices-usb1.device
+            fi
+            if is-masked busybox-ifplugd@usb1.service; then
+                systemctl unmask busybox-ifplugd@usb1.service
+            fi
+            ;;
+    esac
     echo ""
     echo "You can use rcctl to manage services installed by entware"
 }

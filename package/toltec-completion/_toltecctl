@@ -8,7 +8,7 @@ _toltecctl() {
     _init_completion -s || return
 
     if [[ $cword -eq 1 ]]; then
-        COMPREPLY=($(compgen -W 'help generate-opkg-conf switch-branch reenable uninstall' -- "$cur"))
+        COMPREPLY=($(compgen -W 'help generate-opkg-conf switch-branch reenable uninstall status' -- "$cur"))
         return
     fi
 
