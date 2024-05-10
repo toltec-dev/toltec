@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: MIT
 
 pkgnames=(oxide oxide-extra oxide-utils inject_evdev liboxide liboxide-dev libsentry)
-_oxidever=2.8
+_oxidever=2.8.1
 pkgver=$_oxidever-1
 _sentryver=0.7.0
 timestamp=2023-12-05T04:43:04Z
@@ -17,7 +17,7 @@ source=(
     toltec-rm2-override.conf
 )
 sha256sums=(
-    6abf6f44a3083db66aaf57474a60f1e59402009c9a6c6a5ba3fbcb74b87f7ac8
+    d18f15a5dfb9a63f4aa64374717f54cd16cd844bfe39d19b57ec8431d4845ea5
     SKIP
 )
 
