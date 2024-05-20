@@ -1,0 +1,7 @@
+[Socket]
+Description=View the web interface if running, on localhost
+ListenStream=127.0.0.1:80
+FreeBind=true
+
+[Install]
+WantedBy=sockets.target
