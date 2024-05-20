@@ -60,6 +60,7 @@ is-active() {
 #
 # List of conflicting units
 get-conflicts() {
+    {
     # Find enabled units that have a conflicting name
     for name in $(systemctl cat "$1" | awk -F'=' '/^Alias=/{print $2}'); do
         local realname
@@ -71,8 +72,11 @@ get-conflicts() {
     # Find units that are declared as conflicting
     # (systemd automatically adds a conflict with "shutdown.target" to all
     # service units see systemd.service(5), section "Automatic Dependencies")
-    systemctl show "$1" | awk -F'=' '/^Conflicts=/{print $2}' \
-        | sed 's|\bshutdown.target\b||'
+    systemctl show "$1" \
+        | awk -F'=' '/^Conflicts=/{print $2}' \
+        | sed 's|\bshutdown.target\b||' \
+        | xargs -n1
+  } | sort -u
 }
 
 # Print instructions about how to enable a given systemd service and disable
