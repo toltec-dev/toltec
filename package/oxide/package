@@ -3,10 +3,10 @@
 # SPDX-License-Identifier: MIT
 
 pkgnames=(oxide oxide-extra oxide-utils inject_evdev liboxide liboxide-dev libsentry)
-_oxidever=2.8.1
+_oxidever=2.8.2
 pkgver=$_oxidever-1
 _sentryver=0.7.0
-timestamp=2023-12-05T04:43:04Z
+timestamp=2024-05-21T20:19:05Z
 maintainer="Eeems <eeems@eeems.email>"
 url=https://oxide.eeems.codes
 license=MIT
@@ -17,12 +17,14 @@ source=(
     toltec-rm2-override.conf
 )
 sha256sums=(
-    d18f15a5dfb9a63f4aa64374717f54cd16cd844bfe39d19b57ec8431d4845ea5
+    4a2097d0f2d099be6944cb40b1ee2aa459d3c767cc067684f42cff45528a40b4
     SKIP
 )
 
 build() {
     find . -name "*.pro" -type f -print0 \
+        | xargs -r -0 sed -i 's/linux-oe-g++/linux-arm-remarkable-g++/g'
+    find . -name "*.pri" -type f -print0 \
         | xargs -r -0 sed -i 's/linux-oe-g++/linux-arm-remarkable-g++/g'
     CMAKE_TOOLCHAIN_FILE="/usr/share/cmake/$CHOST.cmake" make FEATURES=sentry release
 }
