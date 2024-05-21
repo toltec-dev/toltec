@@ -74,8 +74,8 @@ get-conflicts() {
         # service units see systemd.service(5), section "Automatic Dependencies")
         systemctl show "$1" \
             | awk -F'=' '/^Conflicts=/{print $2}' \
-            | sed 's|\bshutdown.target\b||' \
-            | xargs -n1
+            | xargs -n1 \
+            | grep -v shutdown.target
     } | sort -u
 }
 
