@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
-# Copyright (c) 2021 The Toltec Contributors
+# Copyright (c) 2024 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
+archs=(rm1 rm2)
 pkgnames=(oxide oxide-extra oxide-utils inject_evdev liboxide liboxide-dev libsentry)
 _oxidever=2.8.2
-pkgver=$_oxidever-1
+pkgver=$_oxidever-2
 _sentryver=0.7.0
 timestamp=2024-05-21T20:19:05Z
 maintainer="Eeems <eeems@eeems.email>"
@@ -32,7 +33,7 @@ build() {
 oxide() {
     pkgdesc="Launcher application"
     section="launchers"
-    installdepends=("oxide-utils=$pkgver" "liboxide=$pkgver" "libsentry=$_sentryver" "reboot-guard")
+    installdepends=("oxide-utils=$pkgver" "liboxide=$pkgver" "libsentry=$_sentryver" reboot-guard display)
     replaces=(erode tarnish decay corrupt)
     conflicts=(erode tarnish decay corrupt)
 
@@ -57,6 +58,10 @@ oxide() {
         # Task switcher
         install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/release/opt/bin/corrupt
         install -D -m 644 -t "$pkgdir"/opt/usr/share/applications "$srcdir"/release/opt/usr/share/applications/codes.eeems.corrupt.oxide
+        if [[ $arch = rm2 ]]; then
+            install -D -m 644 -t "$pkgdir"/etc/systemd/system/tarnish.service.d \
+                "$srcdir"/toltec-rm2-override.conf
+        fi
     }
 
     configure() {
