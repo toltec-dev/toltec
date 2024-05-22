@@ -95,6 +95,7 @@ configure() {
 
 preremove() {
     disable-unit manual-sync@rm-sync.service
+    disable-unit manual-sync@sync.service
 }
 
 postremove() {
