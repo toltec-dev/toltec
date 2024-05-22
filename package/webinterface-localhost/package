@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+# Copyright (c) 2020 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+_pkgname="webinterface-localhost"
+pkgnames=("$_pkgname")
+pkgdesc="View the web interface if running, on localhost. Useful for tailscale."
+url=https://toltec-dev.org/
+pkgver=0.0.0-1
+timestamp=2024-03-11T13:03:16Z
+section="utils"
+maintainer="rM-self-serve <122753594+rM-self-serve@users.noreply.github.com>"
+license=MIT
+
+source=(
+    "$_pkgname.socket"
+    "$_pkgname.service"
+)
+
+sha256sums=(
+    SKIP
+    SKIP
+)
+
+package() {
+    install -D -m 644 -t "$pkgdir/lib/systemd/system" \
+        "$srcdir/$_pkgname.socket"
+    install -D -m 644 -t "$pkgdir/lib/systemd/system" \
+        "$srcdir/$_pkgname.service"
+}
+
+configure() {
+    systemctl daemon-reload
+
+    if is-active "$pkgname".socket; then
+        echo "Restarting $pkgname"
+        systemctl restart "$pkgname".socket
+    fi
+
+    systemctl enable --now "$pkgname.socket"
+}
+
+preremove() {
+    disable-unit "$pkgname.socket"
+}
+
+postremove() {
+    systemctl daemon-reload
+}
