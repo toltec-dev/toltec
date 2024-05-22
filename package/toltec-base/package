@@ -6,33 +6,25 @@ archs=(rmall rmallos2 rmallos3 rm1 rm1os2 rm1os3 rm2 rm2os2 rm2os3)
 pkgnames=(toltec-base)
 pkgdesc="Metapackage defining the base set of packages in a Toltec install"
 url=https://toltec-dev.org/
-pkgver=1.4-1
+pkgver=1.3-2
 timestamp=2023-12-27T08:30Z
 section="utils"
 maintainer="Eeems <eeems@eeems.email>"
 license=MIT
-installdepends=(toltec-bootstrap toltec-deletions toltec-completion wget-ssl ca-certificates)
+installdepends=(toltec-bootstrap toltec-deletions toltec-completion wget-ssl ca-certificates entware-rc)
 installdepends_rm1os2=(open-remarkable-shutdown)
 installdepends_rm1os3=(open-remarkable-shutdown)
 installdepends_rm2os2=(rm2-suspend-fix)
 installdepends_rm2os3=(rm2-suspend-fix)
 
-source=(
-    entware-rc@.service
-    rcctl
-)
-sha256sums=(
-    SKIP
-    SKIP
-)
+source=()
+sha256sums=()
 
 package() {
-    install -D -m 666 -t "$pkgdir"/lib/systemd/system/entware-rc@.service "$srcdir"/entware-rc@.service
-    install -D -m 755 -t "$pkgdir"/opt/bin/rcctl "$srcdir"/rcctl
+    true
 }
 
 configure() {
-    systemctl daemon-reload
     ln -sf /opt/etc/profile /etc/profile.d/toltec.sh
     # shellcheck disable=SC2016
     sed -i \
@@ -62,8 +54,6 @@ configure() {
             fi
             ;;
     esac
-    echo ""
-    echo "You can use rcctl to manage services installed by entware"
 }
 
 postremove() {
