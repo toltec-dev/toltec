@@ -14,3 +14,6 @@ types-python-dateutil==2.8.19.14
 types-requests==2.31.0.2
 typing-extensions==4.7.1
 websocket-client==1.6.1
+
+# Pinned due to https://github.com/docker/docker-py/issues/3256
+requests==2.31.0
