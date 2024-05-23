@@ -1,0 +1,13 @@
+[Unit]
+Description=Entware %I service
+After=opt.mount
+
+[Service]
+ExecStart=/opt/etc/init.d/%I start
+ExecStop=/opt/etc/init.d/%I stop
+Type=forking
+GuessMainPID=true
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
