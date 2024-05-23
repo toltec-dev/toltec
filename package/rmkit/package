@@ -14,9 +14,11 @@ source=(
     https://github.com/rmkit-dev/rmkit/archive/7edc291646c4a72b7b8a512205646a9ad6586fd6.zip
     remux.service
     genie.service
+    launcherctl-remux
 )
 sha256sums=(
     2861ea61ef272acd0d1d9ec4c80f44ef620be3f8ce58a356fbcbdb27e01dc9e8
+    SKIP
     SKIP
     SKIP
 )
@@ -145,27 +147,33 @@ nao() {
 remux() {
     pkgdesc="Launcher that supports multi-tasking applications"
     url="https://rmkit.dev/apps/remux"
-    pkgver=0.3.0-1
+    pkgver=0.3.0-2
     section="launchers"
+
+    installdepends=(procps-ng-ps)
 
     package() {
         install -D -m 755 "$srcdir"/src/build/remux "$pkgdir"/opt/bin/remux
         install -D -m 644 "$srcdir"/remux.service "$pkgdir"/lib/systemd/system/remux.service
+        install -D -m 755 -t "$pkgdir"/opt/share/launcherctl/"$pkgname" "$srcdir"/launcherctl-remux
     }
 
     configure() {
         systemctl daemon-reload
 
-        if ! is-enabled "$pkgname.service"; then
+        if ! launcherctl is-current-launcher "$pkgname"; then
             echo ""
             echo "Run the following command(s) to use $pkgname as your launcher"
-            how-to-enable "$pkgname.service"
+            echo "launcherctl switch-launcher --start $pkgname"
             echo ""
         fi
     }
 
     preremove() {
-        disable-unit "$pkgname.service"
+        # Just in case more than one launcher is active, do individual checks
+        if launcherctl is-active-launcher "$pkgname" || launcherctl is-enabled-launcher "$pkgname"; then
+            launcherctl switch-launcher --start xochitl
+        fi
     }
 
     postremove() {
