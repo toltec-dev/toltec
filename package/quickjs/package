@@ -20,11 +20,10 @@ sha256sums=(
 )
 
 build() {
-    make qjs.arm
+    make CROSS_PREFIX=$CROSS_COMPILE qjs
 }
 
 package() {
     install -d "$pkgdir"/opt/bin
-    install -D -m 755 -t "$pkgdir"/opt/bin/ "$srcdir"/qjs.arm
-    mv "$pkgdir"/opt/bin/qjs.arm "$pkgdir"/opt/bin/qjs
+    install -D -m 755 -t "$pkgdir"/opt/bin/ "$srcdir"/qjs
 }
