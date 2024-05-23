@@ -5,7 +5,7 @@
 pkgnames=(koreader)
 pkgdesc="Ebook reader supporting PDF, DjVu, EPUB, FB2 and many more formats"
 url=https://github.com/koreader/koreader
-pkgver=2024.04-1
+pkgver=2024.04-2
 timestamp=2024-04-29T19:56:05Z
 section="readers"
 maintainer="raisjn <of.raisjn@gmail.com>"
