@@ -53,7 +53,7 @@ package() {
     install -D -m 644 -t "$pkgdir"/opt/etc/draft "$srcdir"/xochitl.draft
     install -D -m 644 -t "$pkgdir"/opt/etc/draft/icons "$srcdir"/xochitl.png
     install -D -m 644 -t "$pkgdir"/opt/usr/share/applications "$srcdir"/xochitl.oxide
-    install -T -m 755 "$srcdir"/launcherctl-xochitl "$pkgdir"/opt/usr/toltecctl/"$pkgname"
+    install -D -T -m 755 "$srcdir"/launcherctl-xochitl "$pkgdir"/opt/usr/toltecctl/"$pkgname"
 
     install -D -m 644 -t "$pkgdir"/etc/systemd/system/xochitl.service.d \
         "$srcdir"/toltec-wrapper.conf
