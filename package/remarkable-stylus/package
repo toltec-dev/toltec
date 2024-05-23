@@ -2,6 +2,7 @@
 # Copyright (c) 2021 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
+archs=(rmallos2)
 pkgnames=(remarkable-stylus)
 pkgver=0.0.3-2
 pkgdesc="Generate a key press upon pressing the button of a Lamy AL-star EMR pen"
