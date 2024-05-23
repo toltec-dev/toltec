@@ -2,11 +2,11 @@
 # Copyright (c) 2021 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
-archs=(rm2)
+archs=(rm2os2)
 pkgnames=(linux-mainline)
 pkgdesc="reMarkable 2 kernel based on the mainline kernel"
 url=https://www.kernel.org
-pkgver=6.2.0-2
+pkgver=6.2.0-3
 timestamp=2022-05-22T21:50:09Z
 section=kernel
 maintainer="Alistair Francis <alistair@alistair23.me>"
