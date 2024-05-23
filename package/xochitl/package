@@ -5,7 +5,7 @@
 pkgnames=(xochitl)
 pkgdesc="Read documents and take notes"
 url=https://remarkable.com
-pkgver=0.0.0-18
+pkgver=0.0.0-19
 timestamp=2022-11-07T20:19:57Z
 section="readers"
 maintainer="Mattéo Delabre <spam@delab.re>"
@@ -24,7 +24,7 @@ source=(
     toltec-after-launcher.conf
     toltec-wrapper.conf
     env-readme
-    manual-sync.service
+    manual-sync@.service
     launcherctl-xochitl
 )
 sha256sums=(
@@ -62,19 +62,30 @@ package() {
     install -D -m 644 -t "$pkgdir"/etc/systemd/system/remarkable-reboot.service.d \
         "$srcdir"/toltec-after-launcher.conf
     install -D -m 644 -t "$pkgdir"/etc/systemd/system \
-        "$srcdir"/manual-sync.service
+        "$srcdir"/manual-sync@.service
 }
 
 configure() {
     systemctl daemon-reload
 
-    # sync.service interferes with launchers
-    # we use manual-sync.service instead
-    if [[ "x$(systemctl is-enabled sync.service)" != "xmasked" ]]; then
+    # sync.service and rm-sync.service interfere with launchers
+    # we use manual-sync@.service instead
+    if [ -f /usr/bin/sync ] && ! is-masked sync.service; then
         systemctl mask sync.service
     fi
-    if ! is-active manual-sync.service; then
-        systemctl enable --now manual-sync.service
+
+    if [ -f /usr/bin/rm-sync ] && ! is-masked rm-sync.service; then
+        systemctl mask rm-sync.service
+    fi
+
+    # manual-sync.service has been changed to manual-sync@.service
+    # Make sure to disable and stop the old version
+    disable-unit manual-sync.service
+
+    if [ -f /usr/bin/rm-sync ] && ! is-active manual-sync@rm-sync.service; then
+        systemctl enable --now manual-sync@rm-sync.service
+    elif [ -f /usr/bin/sync ] && ! is-active manual-sync@sync.service; then
+        systemctl enable --now manual-sync@sync.service
     fi
 
     if is-enabled xochitl.service && ! is-enabled launcher.service; then
@@ -86,14 +97,18 @@ configure() {
 }
 
 preremove() {
-    disable-unit manual-sync.service
+    disable-unit manual-sync@rm-sync.service
+    disable-unit manual-sync@sync.service
 }
 
 postremove() {
     systemctl daemon-reload
 
-    if [[ "x$(systemctl is-enabled sync.service)" == "xmasked" ]]; then
-        systemctl unmask sync.service 2> /dev/null
+    if [ -f /usr/bin/sync ] && is-masked sync.service; then
+        systemctl unmask sync.service
+    fi
+    if [ -f /usr/bin/rm-sync ] && is-masked rm-sync.service; then
+        systemctl unmask rm-sync.service
     fi
 
     if is-enabled xochitl.service && is-enabled launcher.service; then
