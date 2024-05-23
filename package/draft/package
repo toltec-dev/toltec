@@ -48,7 +48,7 @@ package() {
     mv "$pkgdir"/opt/etc/draft/{99-,}shutdown
 
     install -D -m 644 -t "$pkgdir"/lib/systemd/system "$srcdir"/draft.service
-    install -D -T -m 755 "$srcdir"/launcherctl-draft "$pkgdir"/opt/usr/toltecctl/"$pkgname"
+    install -D -T -m 755 "$srcdir"/launcherctl-draft "$pkgdir"/opt/share/toltecctl/"$pkgname"
 }
 
 configure() {
