@@ -1012,7 +1012,7 @@ MSG
             fi
 
             log INFO "Rebooting"
-            reboot
+            systemctl reboot
             ;;
 
         status)
