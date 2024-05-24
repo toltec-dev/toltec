@@ -16,7 +16,7 @@ section="devel"
 source=(
     ../rm2fb-original/rm2fb-client
     ../rm2fb-original/rm2fb-preload.conf
-    ../rm2fb-original/rm2fb-preload.env
+    rm2fb-preload.env
     rm2fb-swtfb.conf
 )
 sha256sums=(
@@ -78,7 +78,6 @@ rm2fb-server() {
             ln -s "$libname" "$pkgdir"/opt/lib/"${libname%.*.*}"
             ln -s "$libname" "$pkgdir"/opt/lib/"${libname%.*}"
             install -D -m 644 -t "$pkgdir"/lib/systemd/system "$srcdir"/install/lib/systemd/system/rm2fb.service
-            install -D -m 644 -t "$pkgdir"/lib/systemd/system "$srcdir"/install/lib/systemd/system/rm2fb.socket
             install -D -m 644 -t "$pkgdir"/etc/systemd/system/rm2fb.service.d "$srcdir"/rm2fb-swtfb.conf
         fi
     }
@@ -86,7 +85,7 @@ rm2fb-server() {
     configure() {
         if [[ $arch = rm2os3v5 ]]; then
             systemctl daemon-reload
-            if systemctl enable rm2fb.socket --now; then
+            if systemctl enable rm2fb.service --now; then
                 # Restart xochitl if it's running
                 if is-active xochitl; then
                     # Reset the crash count so we don't trigger remarkable-fail
@@ -94,7 +93,6 @@ rm2fb-server() {
                     systemctl restart xochitl
                 fi
             else
-                disable-unit rm2fb.socket
                 disable-unit rm2fb.service
                 echo "Failed to start rm2fb. Keeping it disabled for now."
                 echo "Please check the logs and open an issue:"
@@ -106,7 +104,6 @@ rm2fb-server() {
 
     preremove() {
         if [[ $arch = rm2os3v5 ]]; then
-            disable-unit rm2fb.socket
             disable-unit rm2fb.service
             echo -n "make sure "
             if ! is-enabled xochitl.service; then
