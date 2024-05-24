@@ -72,6 +72,7 @@ rm2fb-server() {
         if [[ $arch = rm2os3v5 ]]; then
             libname="librm2fb_server.so.$_libver"
             install -D -m 644 -t "$pkgdir"/opt/lib "$srcdir"/install/opt/lib/"$libname"
+            ln -s "$libname" "$pkgdir"/opt/lib/"${libname%.*.*.*}"
             ln -s "$libname" "$pkgdir"/opt/lib/"${libname%.*.*}"
             ln -s "$libname" "$pkgdir"/opt/lib/"${libname%.*}"
             install -D -m 644 -t "$pkgdir"/lib/systemd/system "$srcdir"/install/lib/systemd/system/rm2fb.service
@@ -125,6 +126,7 @@ rm2fb-client() {
         ln -s /opt/lib/"$libname" "$pkgdir"/usr/lib/"$libname"
 
         for dest in opt/lib usr/lib; do
+            ln -s "$libname" "$pkgdir/$dest/${libname%.*.*.*}"
             ln -s "$libname" "$pkgdir/$dest/${libname%.*.*}"
             ln -s "$libname" "$pkgdir/$dest/${libname%.*}"
         done
