@@ -62,7 +62,7 @@ rm2fb-server() {
                 ln -s "$libname" "$pkgdir"/opt/lib/"${libname%.*.*}"
                 ln -s "$libname" "$pkgdir"/opt/lib/"${libname%.*}"
                 install -D -m 644 -t "$pkgdir"/lib/systemd/system "$srcdir"/rm2fb.service
-            ;;
+                ;;
         esac
     }
 
