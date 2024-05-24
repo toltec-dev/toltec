@@ -2,7 +2,6 @@
 # Copyright (c) 2024 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
-archs=(rmallos2 rmallos3 rmallos3v5)
 pkgnames=(display)
 pkgdesc="Metapackage for allowing applications to display to the screen"
 timestamp=2024-05-24T06:12:38Z
@@ -11,9 +10,7 @@ license=MIT
 url="https://toltec-dev.org"
 pkgver=2:0.0.1-1
 section="devel"
-installdepends_rmallos2=(rm2fb-server rm2fb-client)
-installdepends_rmallos3=(rm2fb-server rm2fb-client)
-installdepends_rmallos3v5=(rm2fb-server-timower rm2fb-client-timower)
+installdepends=(rm2fb-server rm2fb-client)
 
 package() {
     true
