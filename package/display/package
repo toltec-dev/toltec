@@ -1,124 +1,20 @@
 #!/usr/bin/env bash
-# Copyright (c) 2021 The Toltec Contributors
+# Copyright (c) 2024 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
-archs=(rm1 rm2)
-pkgnames=(display rm2fb-client)
-timestamp=2023-08-27T02:39:10Z
-maintainer="raisjn <of.raisjn@gmail.com>"
+archs=(rmallos2 rmallos3 rmallos3v5)
+pkgnames=(display)
+pkgdesc="Metapackage for allowing applications to display to the screen"
+timestamp=2024-05-24T06:12:38Z
+maintainer="Eeems <eeems@eeems.email>"
 license=MIT
-url="https://github.com/ddvk/remarkable2-framebuffer"
-pkgver=1:0.0.33-1
-_release="${pkgver%-*}"
-_release="v${_release#*:}"
-_libver=1.0.1
+url="https://toltec-dev.org"
+pkgver=2:0.0.1-1
 section="devel"
+installdepends_rmallos2=(rm2fb-server rm2fb-client)
+installdepends_rmallos3=(rm2fb-server rm2fb-client)
+installdepends_rmallos3v5=(rm2fb-server-timower rm2fb-client-timower)
 
-image=qt:v2.3
-source=(
-    "https://github.com/ddvk/remarkable2-framebuffer/archive/$_release.zip"
-    rm2fb.service
-    rm2fb-client
-    rm2fb-preload.conf
-    rm2fb-preload.env
-)
-sha256sums=(
-    dd57f1ba31f08a28d801989e9a705bd93cc637cd8f4dffa160412119e69329ff
-    SKIP
-    SKIP
-    SKIP
-    SKIP
-)
-
-build() {
-    if [[ $arch = rm1 ]]; then
-        # Create an empty client library for rM1
-        pushd src/client
-        echo | "${CROSS_COMPILE}gcc" \
-            -fPIC -fvisibility=hidden -shared \
-            -o "librm2fb_client.so.$_libver" \
-            -xc -
-        popd
-    else
-        qmake
-        make
-    fi
-}
-
-display() {
-    pkgdesc="Interface to the reMarkable framebuffer"
-    installdepends=(xochitl "rm2fb-client=$pkgver")
-    conflicts=(rm2fb)
-    replaces=(rm2fb)
-
-    package() {
-        if [[ $arch = rm2 ]]; then
-            libname="librm2fb_server.so.$_libver"
-            install -D -m 644 -t "$pkgdir"/opt/lib "$srcdir"/src/server/"$libname"
-            ln -s "$libname" "$pkgdir"/opt/lib/"${libname%.*.*}"
-            ln -s "$libname" "$pkgdir"/opt/lib/"${libname%.*}"
-            install -D -m 644 -t "$pkgdir"/lib/systemd/system "$srcdir"/rm2fb.service
-        fi
-    }
-
-    configure() {
-        if [[ $arch = rm2 ]]; then
-            systemctl daemon-reload
-            if systemctl enable rm2fb --now; then
-                # Restart xochitl if it's running
-                if is-active xochitl; then
-                    # Reset the crash count so we don't trigger remarkable-fail
-                    echo "0" > /tmp/crashnum
-                    systemctl restart xochitl
-                fi
-            else
-                disable-unit rm2fb.service
-                echo "Failed to start rm2fb. Keeping it disabled for now."
-                echo "Please check the logs and open an issue:"
-                echo "  https://github.com/toltec-dev/toltec/issues/new"
-                exit 1
-            fi
-        fi
-    }
-
-    preremove() {
-        if [[ $arch = rm2 ]]; then
-            disable-unit rm2fb.service
-            echo -n "make sure "
-            if ! is-enabled xochitl.service; then
-                echo "to re-enable xochitl with 'systemctl enable xochitl --now'"
-                echo -n "and "
-            fi
-            echo "to disable / uninstall any launchers like draft, oxide or remux before"
-            echo "rebooting your tablet to complete the uninstallation"
-        fi
-    }
-}
-
-rm2fb-client() {
-    pkgdesc="Shim to make reMarkable 1 apps work on reMarkable 2"
-    installdepends=("display=$pkgver")
-    conflicts=(rm2fb)
-    replaces=(rm2fb)
-
-    package() {
-        libname="librm2fb_client.so.$_libver"
-        install -D -m 644 -t "$pkgdir"/opt/lib "$srcdir"/src/client/"$libname"
-        install -d "$pkgdir"/usr/lib
-        ln -s /opt/lib/"$libname" "$pkgdir"/usr/lib/"$libname"
-
-        for dest in opt/lib usr/lib; do
-            ln -s "$libname" "$pkgdir/$dest/${libname%.*.*}"
-            ln -s "$libname" "$pkgdir/$dest/${libname%.*}"
-        done
-
-        install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/rm2fb-client
-
-        if [[ $arch = rm2 ]]; then
-            install -D -m 644 -t "$pkgdir"/opt/etc/xochitl.env.d "$srcdir"/rm2fb-preload.env
-            install -D -m 644 -t "$pkgdir"/etc/systemd/system/draft.service.d "$srcdir"/rm2fb-preload.conf
-            install -D -m 644 -t "$pkgdir"/etc/systemd/system/remux.service.d "$srcdir"/rm2fb-preload.conf
-            install -D -m 644 -t "$pkgdir"/etc/systemd/system/tarnish.service.d "$srcdir"/rm2fb-preload.conf
-        fi
-    }
+package() {
+    true
 }

@@ -2,7 +2,7 @@
 # Copyright (c) 2023 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
-archs=(rmall rmallos2 rmallos3 rm1 rm1os2 rm1os3 rm2 rm2os2 rm2os3)
+archs=(rmall rmallos2 rmallos3 rmallos3v5 rm1 rm1os2 rm1os3 rm1os3v5 rm2 rm2os2 rm2os3 rm2os3v5)
 pkgnames=(toltec-base)
 pkgdesc="Metapackage defining the base set of packages in a Toltec install"
 url=https://toltec-dev.org/
@@ -14,8 +14,10 @@ license=MIT
 installdepends=(toltec-bootstrap toltec-deletions toltec-completion launcherctl wget-ssl ca-certificates entware-rc)
 installdepends_rm1os2=(open-remarkable-shutdown)
 installdepends_rm1os3=(open-remarkable-shutdown)
+installdepends_rm1os3v5=(open-remarkable-shutdown)
 installdepends_rm2os2=(rm2-suspend-fix)
 installdepends_rm2os3=(rm2-suspend-fix)
+installdepends_rm2os3v5=(rm2-suspend-fix)
 
 source=()
 sha256sums=()
@@ -33,11 +35,11 @@ configure() {
     echo "Disabling automatic update"
     disable-unit update-engine.service
     case "$arch" in
-        rmall | rmallos2 | rmallos3)
+        rmall | rmallos2 | rmallos3 | rmallos3v5)
             echo "Warning: rmall version of toltec-base should not be installed"
             echo "Please run opkg install --force-reinstall toltec-base"
             ;;
-        rm1 | rm1os2 | rm1os3)
+        rm1 | rm1os2 | rm1os3 | rm1os3v5)
             if ! is-masked sys-subsystem-net-devices-usb1.device; then
                 systemctl mask sys-subsystem-net-devices-usb1.device
             fi
@@ -45,7 +47,7 @@ configure() {
                 systemctl mask busybox-ifplugd@usb1.service
             fi
             ;;
-        rm2 | rm2os2 | rm2os3)
+        rm2 | rm2os2 | rm2os3 | rm2os3v5)
             if is-masked sys-subsystem-net-devices-usb1.device; then
                 systemctl unmask sys-subsystem-net-devices-usb1.device
             fi

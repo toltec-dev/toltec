@@ -1,0 +1,129 @@
+#!/usr/bin/env bash
+# Copyright (c) 2024 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+archs=(rm1os3v5 rm2os3v5)
+pkgnames=(rm2fb-server-timower rm2fb-client-timower)
+timestamp=2023-08-27T02:39:10Z
+maintainer="Eeems <eeems@eeems.email>"
+license=MIT
+url="https://github.com/timower/rM2-stuff/tree/master/libs/rm2fb"
+_tag=0.1.1
+pkgver=${_tag}-1
+_libver=1.1.0
+section="devel"
+
+source=(
+    ../rm2fb-original/rm2fb-client
+    ../rm2fb-original/rm2fb-preload.conf
+    ../rm2fb-original/rm2fb-preload.env
+)
+sha256sums=(
+    SKIP
+    SKIP
+    SKIP
+)
+
+image=base:v3.1
+
+prepare() {
+    cd "$srcdir"
+    mkdir -p rm2fb
+    cd rm2fb
+    git init
+    git lfs install
+    git remote add origin https://github.com/timower/rM2-stuff.git
+    git fetch --depth 1 origin tag v${_tag} --no-tags
+    git checkout v${_tag}
+    git lfs fetch
+    git lfs checkout
+}
+
+build() {
+    mkdir build
+    mkdir install
+    cd build
+    cmake -DCMAKE_TOOLCHAIN_FILE="/usr/share/cmake/$CHOST.cmake" \
+        -DCMAKE_INSTALL_PREFIX="../install" -DCMAKE_BUILD_TYPE=Release ../rm2fb
+    cd libs/rm2fb
+    make
+    make install
+}
+
+rm2fb-server-timower() {
+    pkgdesc="Interface to the reMarkable framebuffer"
+    installdepends=(xochitl "rm2fb-client=$pkgver")
+    conflicts=(rm2fb)
+    replaces=(rm2fb)
+
+    package() {
+        if [[ $arch = rm2 ]]; then
+            libname="librm2fb_server.so.$_libver"
+            install -D -m 644 -t "$pkgdir"/opt/lib "$srcdir"/install/opt/lib/"$libname"
+            ln -s "$libname" "$pkgdir"/opt/lib/"${libname%.*.*}"
+            ln -s "$libname" "$pkgdir"/opt/lib/"${libname%.*}"
+            install -D -m 644 -t "$pkgdir"/lib/systemd/system "$srcdir"/rm2fb.service
+        fi
+    }
+
+    configure() {
+        if [[ $arch = rm2 ]]; then
+            systemctl daemon-reload
+            if systemctl enable rm2fb --now; then
+                # Restart xochitl if it's running
+                if is-active xochitl; then
+                    # Reset the crash count so we don't trigger remarkable-fail
+                    echo "0" > /tmp/crashnum
+                    systemctl restart xochitl
+                fi
+            else
+                disable-unit rm2fb.service
+                echo "Failed to start rm2fb. Keeping it disabled for now."
+                echo "Please check the logs and open an issue:"
+                echo "  https://github.com/toltec-dev/toltec/issues/new"
+                exit 1
+            fi
+        fi
+    }
+
+    preremove() {
+        if [[ $arch = rm2 ]]; then
+            disable-unit rm2fb.service
+            echo -n "make sure "
+            if ! is-enabled xochitl.service; then
+                echo "to re-enable xochitl with 'systemctl enable xochitl --now'"
+                echo -n "and "
+            fi
+            echo "to disable / uninstall any launchers like draft, oxide or remux before"
+            echo "rebooting your tablet to complete the uninstallation"
+        fi
+    }
+}
+
+rm2fb-client-timower() {
+    pkgdesc="Shim to make reMarkable 1 apps work on reMarkable 2"
+    installdepends=("display=$pkgver")
+    conflicts=(rm2fb rm2fb-client)
+    replaces=(rm2fb rm2fb-client)
+
+    package() {
+        libname="librm2fb_client.so.$_libver"
+        install -D -m 644 -t "$pkgdir"/opt/lib "$srcdir"/install/opt/lib/"$libname"
+        install -d "$pkgdir"/usr/lib
+        ln -s /opt/lib/"$libname" "$pkgdir"/usr/lib/"$libname"
+
+        for dest in opt/lib usr/lib; do
+            ln -s "$libname" "$pkgdir/$dest/${libname%.*.*}"
+            ln -s "$libname" "$pkgdir/$dest/${libname%.*}"
+        done
+
+        install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/rm2fb-client
+
+        if [[ $arch = rm2 ]]; then
+            install -D -m 644 -t "$pkgdir"/opt/etc/xochitl.env.d "$srcdir"/rm2fb-preload.env
+            install -D -m 644 -t "$pkgdir"/etc/systemd/system/draft.service.d "$srcdir"/rm2fb-preload.conf
+            install -D -m 644 -t "$pkgdir"/etc/systemd/system/remux.service.d "$srcdir"/rm2fb-preload.conf
+            install -D -m 644 -t "$pkgdir"/etc/systemd/system/tarnish.service.d "$srcdir"/rm2fb-preload.conf
+        fi
+    }
+}
