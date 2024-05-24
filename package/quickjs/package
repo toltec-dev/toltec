@@ -20,7 +20,7 @@ sha256sums=(
 )
 
 build() {
-    make CROSS_PREFIX=$CROSS_COMPILE qjs qjscalc
+    make CROSS_PREFIX="$CROSS_COMPILE" qjs qjscalc
 }
 
 package() {
