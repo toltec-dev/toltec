@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: MIT
 
 archs=(rm1os3v5 rm2os3v5)
-pkgnames=(rm2fb-server-timower rm2fb-client-timower)
+pkgnames=(rm2fb-server rm2fb-client)
 timestamp=2023-08-27T02:39:10Z
 maintainer="Eeems <eeems@eeems.email>"
 license=MIT
@@ -50,7 +50,7 @@ build() {
     make install
 }
 
-rm2fb-server-timower() {
+rm2fb-server() {
     pkgdesc="Interface to the reMarkable framebuffer"
     installdepends=(xochitl "rm2fb-client=$pkgver")
     conflicts=(rm2fb)
@@ -100,11 +100,11 @@ rm2fb-server-timower() {
     }
 }
 
-rm2fb-client-timower() {
+rm2fb-client() {
     pkgdesc="Shim to make reMarkable 1 apps work on reMarkable 2"
     installdepends=("display=$pkgver")
-    conflicts=(rm2fb rm2fb-client)
-    replaces=(rm2fb rm2fb-client)
+    conflicts=(rm2fb)
+    replaces=(rm2fb)
 
     package() {
         libname="librm2fb_client.so.$_libver"
