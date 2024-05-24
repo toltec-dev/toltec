@@ -5,8 +5,8 @@
 pkgnames=(koreader)
 pkgdesc="Ebook reader supporting PDF, DjVu, EPUB, FB2 and many more formats"
 url=https://github.com/koreader/koreader
-pkgver=2024.01-1
-timestamp=2024-01-11T17:16:35Z
+pkgver=2024.04-3
+timestamp=2024-04-29T19:56:05Z
 section="readers"
 maintainer="raisjn <of.raisjn@gmail.com>"
 license=AGPL-3.0-or-later
@@ -19,9 +19,11 @@ source=(
     KOReader.oxide
     koreader-toltec.service
     koreader
+    launcherctl-koreader
 )
 sha256sums=(
-    2616c7f0c63d54810f4ec78477ecb5dac2443990c7d2c8188c577ad5d925cca1
+    e6b3a5a2c8cde8ca0c469fe542d6e170502fcf39b9a55e4447a7acd02b4a12c0
+    SKIP
     SKIP
     SKIP
     SKIP
@@ -41,6 +43,7 @@ package() {
     install -D -m 644 "$srcdir"/koreader-toltec.service "$pkgdir"/lib/systemd/system/koreader.service
     install -D -m 644 -t "$pkgdir"/opt/etc/draft/icons/ "$srcdir"/resources/koreader.png
     install -D -m 755 -t "$pkgdir"/opt/bin/ "$srcdir"/koreader
+    install -D -T -m 755 "$srcdir"/launcherctl-koreader "$pkgdir"/opt/share/toltecctl/"$pkgname"
 }
 
 configure() {
@@ -51,18 +54,19 @@ configure() {
 
     systemctl daemon-reload
 
-    if ! is-enabled "$pkgname.service"; then
-        cat << MSG
-
-Run the following command(s) to use $pkgname as your launcher
-$(how-to-enable "$pkgname.service")
-
-MSG
+    if ! launcherctl is-current-launcher "$pkgname"; then
+        echo ""
+        echo "Run the following command(s) to use $pkgname as your launcher"
+        echo "launcherctl switch-launcher --start $pkgname"
+        echo ""
     fi
 }
 
 preremove() {
-    disable-unit "$pkgname.service"
+    # Just in case more than one launcher is active, do individual checks
+    if launcherctl is-active-launcher "$pkgname" || launcherctl is-enabled-launcher "$pkgname"; then
+        launcherctl switch-launcher --start xochitl
+    fi
 }
 
 postremove() {

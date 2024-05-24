@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+# Copyright (c) 2024 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+archs=(rmall)
+pkgnames=(entware-rc)
+pkgdesc="Manage entware installed services"
+url=https://toltec-dev.org/
+pkgver=0.1-1
+timestamp=2024-05-22T22:59:03Z
+section="utils"
+maintainer="Eeems <eeems@eeems.email>"
+license=MIT
+installdepends=()
+
+source=(
+    entware-rc@.service
+    rcctl
+)
+sha256sums=(
+    SKIP
+    SKIP
+)
+
+package() {
+    install -D -m 666 -t "$pkgdir"/lib/systemd/system/ "$srcdir"/entware-rc@.service
+    install -D -m 755 -t "$pkgdir"/opt/bin/ "$srcdir"/rcctl
+}
+
+configure() {
+    systemctl daemon-reload
+    echo ""
+    echo "You can use rcctl to manage services installed by entware"
+}
+
+preremove() {
+    rcctl list | xargs -I {} systemctl disable --now entware-rc@{}
+}
