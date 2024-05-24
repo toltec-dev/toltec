@@ -9,7 +9,7 @@ maintainer="Eeems <eeems@eeems.email>"
 license=MIT
 url="https://github.com/timower/rM2-stuff/tree/master/libs/rm2fb"
 _tag=0.1.1
-pkgver=${_tag}-1
+pkgver=2:${_tag}-1
 _libver=1.1.0
 section="devel"
 
@@ -40,14 +40,26 @@ prepare() {
 }
 
 build() {
-    mkdir build
-    mkdir install
-    cd build
-    cmake -DCMAKE_TOOLCHAIN_FILE="/usr/share/cmake/$CHOST.cmake" \
-        -DCMAKE_INSTALL_PREFIX="../install" -DCMAKE_BUILD_TYPE=Release ../rm2fb
-    cd libs/rm2fb
-    make
-    make install
+    if [[ $arch = rm1os3v5 ]]; then
+        # Create an empty client library for rM1
+        mkdir -p install/opt/lib
+        pushd install/opt/lib
+        echo | "${CROSS_COMPILE}gcc" \
+            -fPIC -fvisibility=hidden -shared \
+            -o "librm2fb_client.so.$_libver" \
+            -xc -
+        popd
+    else
+        mkdir build
+        mkdir install
+        cd build
+        cmake -DCMAKE_TOOLCHAIN_FILE="/usr/share/cmake/$CHOST.cmake" \
+            -DCMAKE_INSTALL_PREFIX="../install" -DCMAKE_BUILD_TYPE=Release ../rm2fb
+        cd libs/rm2fb
+        make
+        make install
+        mv "$srcdir"/install/opt/lib/librm2fb_server.so{,.$_libver}
+    fi
 }
 
 rm2fb-server() {
@@ -57,17 +69,17 @@ rm2fb-server() {
     replaces=(rm2fb)
 
     package() {
-        if [[ $arch = rm2 ]]; then
+        if [[ $arch = rm2os3v5 ]]; then
             libname="librm2fb_server.so.$_libver"
             install -D -m 644 -t "$pkgdir"/opt/lib "$srcdir"/install/opt/lib/"$libname"
             ln -s "$libname" "$pkgdir"/opt/lib/"${libname%.*.*}"
             ln -s "$libname" "$pkgdir"/opt/lib/"${libname%.*}"
-            install -D -m 644 -t "$pkgdir"/lib/systemd/system "$srcdir"/rm2fb.service
+            install -D -m 644 -t "$pkgdir"/lib/systemd/system "$srcdir"/install/lib/systemd/system/rm2fb.service
         fi
     }
 
     configure() {
-        if [[ $arch = rm2 ]]; then
+        if [[ $arch = rm2os3v5 ]]; then
             systemctl daemon-reload
             if systemctl enable rm2fb --now; then
                 # Restart xochitl if it's running
@@ -87,7 +99,7 @@ rm2fb-server() {
     }
 
     preremove() {
-        if [[ $arch = rm2 ]]; then
+        if [[ $arch = rm2os3v5 ]]; then
             disable-unit rm2fb.service
             echo -n "make sure "
             if ! is-enabled xochitl.service; then
@@ -119,7 +131,7 @@ rm2fb-client() {
 
         install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/rm2fb-client
 
-        if [[ $arch = rm2 ]]; then
+        if [[ $arch = rm2os3v5 ]]; then
             install -D -m 644 -t "$pkgdir"/opt/etc/xochitl.env.d "$srcdir"/rm2fb-preload.env
             install -D -m 644 -t "$pkgdir"/etc/systemd/system/draft.service.d "$srcdir"/rm2fb-preload.conf
             install -D -m 644 -t "$pkgdir"/etc/systemd/system/remux.service.d "$srcdir"/rm2fb-preload.conf
