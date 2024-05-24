@@ -6,7 +6,7 @@ archs=(rmallos2 rmallos3 rmallos3v5)
 pkgnames=(toltec-deletions)
 pkgdesc="Metapackage to handle package deletions between OS versions"
 url=https://toltec-dev.org/
-pkgver=0.1-4
+pkgver=0.1-3
 timestamp=2023-12-03T04:51:58Z
 section="utils"
 maintainer="Eeems <eeems@eeems.email>"
@@ -40,8 +40,6 @@ conflicts_rmallos3v5=(
     gocryptfs
     linux-mainline
     remarkable-stylus
-    rm2fb-server
-    rm2fb-client
 )
 replaces_rmallos3v5=(
     ddvk-hacks
@@ -51,8 +49,6 @@ replaces_rmallos3v5=(
     gocryptfs
     linux-mainline
     remarkable-stylus
-    rm2fb-server
-    rm2fb-client
 )
 
 source=()
