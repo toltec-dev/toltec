@@ -11,7 +11,7 @@ timestamp=2024-01-13T00:00Z
 maintainer="khanhas <xuankhanh963@gmail.com>"
 license=MIT
 
-image=base:v2.1
+image=base:v3.1
 source=(
     https://bellard.org/quickjs/quickjs-2024-01-13.tar.xz
 )
@@ -20,10 +20,11 @@ sha256sums=(
 )
 
 build() {
-    make CROSS_PREFIX=$CROSS_COMPILE qjs
+    make CROSS_PREFIX=$CROSS_COMPILE qjs qjscalc
 }
 
 package() {
     install -d "$pkgdir"/opt/bin
     install -D -m 755 -t "$pkgdir"/opt/bin/ "$srcdir"/qjs
+    ln -s qjs "$pkgdir"/opt/bin/qjscalc
 }
