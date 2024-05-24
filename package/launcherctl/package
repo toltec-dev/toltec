@@ -5,7 +5,7 @@
 pkgnames=(launcherctl)
 pkgdesc="Manage your installed launcher"
 url=https://toltec-dev.org/
-pkgver=0.0.1-1
+pkgver=0.0.1-2
 timestamp=2023-12-18T03:32Z
 section="launcher"
 maintainer="Eeems <eeems@eeems.email>"
@@ -20,6 +20,7 @@ sha256sums=(
 
 package() {
     install -D -m 744 -t "$pkgdir"/opt/bin "$srcdir"/launcherctl
+    install -d "$pkgdir"/opt/share/launcherctl
 }
 
 configure() {
