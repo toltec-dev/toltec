@@ -106,7 +106,7 @@ rm2fb-server() {
 
 rm2fb-client() {
     pkgdesc="Shim to make reMarkable 1 apps work on reMarkable 2"
-    installdepends=("display=$pkgver")
+    installdepends=("rm2fb-server=$pkgver")
     conflicts=(rm2fb)
     replaces=(rm2fb)
 
