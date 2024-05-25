@@ -23,9 +23,17 @@ A clear and concise description of what you expected to happen.
 **Screenshots**
 If applicable, add screenshots to help explain your problem.
 
-**Device information (please complete the following information):**
- - Device: [e.g. reMarkable 2]
- - OS version: [e.g. 2.15]
+**System information:**
+`toltecctl status` output:
+```
+EXAMPLE:
+reMarkable: ~/ toltecctl status
+Enabled: Yes
+Supported: Yes
+Branch: testing
+Model: rm2
+OS: 3.3.2.166
+```
 
 **Additional context**
 Add any other context about the problem here.
