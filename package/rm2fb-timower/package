@@ -14,8 +14,8 @@ _libver=1.1.0
 section="devel"
 
 source=(
-    ../rm2fb-original/rm2fb-client
-    ../rm2fb-original/rm2fb-preload.conf
+    rm2fb-client
+    rm2fb-preload.conf
     rm2fb-preload.env
     rm2fb.service
 )
