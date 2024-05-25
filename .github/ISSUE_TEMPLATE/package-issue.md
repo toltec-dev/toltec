@@ -26,9 +26,17 @@ If applicable, add the link to the upstream issue here.
 **Screenshots**
 If applicable, add screenshots to help explain your problem.
 
-**Device/Package information (please complete the following information):**
- - Device: [e.g. reMarkable 2]
- - OS version: [e.g. 2.15]
+**System information:**
+ - `toltecctl status` output:
+    ```
+    EXAMPLE:
+    reMarkable: ~/ toltecctl status
+    Enabled: Yes
+    Supported: Yes
+    Branch: testing
+    Model: rm2
+    OS: 3.3.2.166
+    ```
  - Package: [e.g. toltec-base 0.0.1-1]
 
 **Additional context**
