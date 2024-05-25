@@ -17,7 +17,7 @@ source=(
     ../rm2fb-original/rm2fb-client
     ../rm2fb-original/rm2fb-preload.conf
     rm2fb-preload.env
-    rm2fb-swtfb.conf
+    rm2fb.service
 )
 sha256sums=(
     SKIP
@@ -77,8 +77,7 @@ rm2fb-server() {
             ln -s "$libname" "$pkgdir"/opt/lib/"${libname%.*.*.*}"
             ln -s "$libname" "$pkgdir"/opt/lib/"${libname%.*.*}"
             ln -s "$libname" "$pkgdir"/opt/lib/"${libname%.*}"
-            install -D -m 644 -t "$pkgdir"/lib/systemd/system "$srcdir"/install/lib/systemd/system/rm2fb.service
-            install -D -m 644 -t "$pkgdir"/etc/systemd/system/rm2fb.service.d "$srcdir"/rm2fb-swtfb.conf
+            install -D -m 644 -t "$pkgdir"/lib/systemd/system "$srcdir"/rm2fb.service
         fi
     }
 
