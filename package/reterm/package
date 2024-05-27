@@ -47,5 +47,5 @@ package() {
     sed -i 's|/home/root/ReTerm/ReTerm.sh|/opt/bin/ReTerm|' "$pkgdir"/opt/etc/draft/reterm.draft
     sed -i 's|killall -9 dotnet|killall ReTerm|' "$pkgdir"/opt/etc/draft/reterm.draft
     install -D -m 644 -t "$pkgdir"/opt/etc/draft/icons "$srcdir"/draft/reterm.png
-    install -D -m 644 -t "$pkgdir"/opt/usr/share/applications "$srcdir"/oxide/reterm.oxide
+    install -D -m 644 -t "$pkgdir"/opt/usr/share/applications "$srcdir"/oxide/ReTerm.oxide
 }
