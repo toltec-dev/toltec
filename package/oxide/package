@@ -4,7 +4,7 @@
 
 pkgnames=(oxide oxide-extra oxide-utils inject_evdev liboxide liboxide-dev libsentry)
 _oxidever=2.7
-pkgver=$_oxidever-6
+pkgver=$_oxidever-7
 _sentryver=0.5.0
 timestamp=2023-12-05T04:43:04Z
 maintainer="Eeems <eeems@eeems.email>"
@@ -32,7 +32,7 @@ build() {
 oxide() {
     pkgdesc="Launcher application"
     section="launchers"
-    installdepends=("oxide-utils=$pkgver" "liboxide=$pkgver" "libsentry=$_sentryver" "reboot-guard")
+    installdepends=("oxide-utils=$pkgver" "liboxide=$pkgver" "libsentry=$_sentryver" "reboot-guard" "jq")
     replaces=(erode tarnish decay corrupt)
     conflicts=(erode tarnish decay corrupt)
 
