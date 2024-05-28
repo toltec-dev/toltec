@@ -9,6 +9,7 @@ import gzip
 from enum import Enum, auto
 import logging
 import os
+import shutil
 import textwrap
 from typing import Dict, Iterable, List, Optional, Set
 import requests
@@ -55,10 +56,10 @@ class Repo:
         self.repo_dir = repo_dir
         self.generic_recipes = {}
 
-        for name in os.listdir(self.recipe_dir):
-            if name[0] != ".":
-                self.generic_recipes[name] = GenericRecipe.from_file(
-                    os.path.join(self.recipe_dir, name)
+        for entry in os.scandir(self.recipe_dir):
+            if entry.is_dir():
+                self.generic_recipes[entry.name] = GenericRecipe.from_file(
+                    entry.path
                 )
 
     def fetch_packages(self, remote: Optional[str]) -> GroupedPackages:
@@ -266,3 +267,10 @@ class Repo:
         # pylint: disable-next=unspecified-encoding
         with open(listing_path, "w") as listing_file:
             listing_file.write(template.render(sections=sections))
+
+    def make_compatibility(self) -> None:
+        """Generate the OS compatibility information file."""
+        logger.info("Generating compatibility info")
+        compat_source = os.path.join(self.recipe_dir, "Compatibility")
+        compat_dest = self.repo_dir
+        shutil.copy2(compat_source, compat_dest)

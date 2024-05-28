@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+# Copyright (c) 2023 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+# shellcheck disable=SC2016,SC2199,SC2207
+
+_launcherctl() {
+    local cur prev words cword split
+    _init_completion -s || return
+    if [[ $cword -eq 1 ]]; then
+        COMPREPLY=($(compgen -W 'help status logs list-launchers switch-launcher start-launcher stop-launcher list-apps list-running-apps list-paused-apps start-app stop-app pause-app resume-app is-current-launcher is-enabled-launcher is-active-launcher' -- "$cur"))
+        return
+    fi
+    case ${words[1]} in
+        logs)
+            if [[ $cword -eq 2 ]]; then
+                COMPREPLY+=($(compgen -W "--follow" -- "$cur"))
+            fi
+            return
+            ;;
+        switch-launcher)
+            if [[ $cword -eq 2 ]]; then
+                COMPREPLY+=($(compgen -W "--start $(launcherctl list-launchers)" -- "$cur"))
+            elif [[ $cword -eq 3 ]]; then
+                COMPREPLY+=($(compgen -W "$(launcherctl list-launchers)" -- "$cur"))
+            fi
+            return
+            ;;
+        start-app)
+            if [[ $cword -eq 2 ]]; then
+                COMPREPLY+=($(compgen -W "$(launcherctl list-apps)" -- "$cur"))
+            fi
+            ;;
+        stop-app | pause-app)
+            if [[ $cword -eq 2 ]]; then
+                COMPREPLY+=($(compgen -W "$(launcherctl list-running-apps)" -- "$cur"))
+            fi
+            ;;
+        resume-app)
+            if [[ $cword -eq 2 ]]; then
+                COMPREPLY+=($(compgen -W "$(launcherctl list-paused-apps)" -- "$cur"))
+            fi
+            ;;
+    esac
+}
+
+complete -F _launcherctl launcherctl
