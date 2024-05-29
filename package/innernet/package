@@ -43,9 +43,6 @@ package() {
     install -D -m 700 -t "$pkgdir"/opt/bin "$srcdir"/target/armv7-unknown-linux-gnueabihf/release/innernet
     install -D -m 644 -t "$pkgdir"/lib/systemd/system "$srcdir/client/innernet@.service"
     install -D -m 644 -t "$pkgdir"/lib/systemd/system "$srcdir/client/innernet.target"
-
-    # Link /opt/bin/innernet to /opt/bin/inn
-    ln -s /opt/bin/innernet "$pkgdir"/opt/bin/inn
 }
 
 configure() {
