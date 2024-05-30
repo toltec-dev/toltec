@@ -76,7 +76,7 @@ runs:
           id: cache-python
           with:
             path: ${{ env.pythonLocation }}
-            key: ${{ env.pythonLocation }}-${{ hashFiles('requirements.txt') }}
+            key: ${{ env.pythonLocation }}-${{ hashFiles('requirements.txt') }}-micro
         - name: Install Python dependencies
           shell: bash
           env:
