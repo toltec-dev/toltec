@@ -54,14 +54,19 @@ build() {
     else
         mkdir build
         mkdir install
-        cd build
+        pushd build
         cmake -DCMAKE_TOOLCHAIN_FILE="/usr/share/cmake/$CHOST.cmake" \
-            -DCMAKE_INSTALL_PREFIX="../install" -DCMAKE_BUILD_TYPE=Release ../rm2fb
-        cd libs/rm2fb
+            -DCMAKE_INSTALL_PREFIX="$srcdir/install" -DCMAKE_BUILD_TYPE=Release ../rm2fb
+        pushd libs/rm2fb
         make
         make install
-        mv "$srcdir"/install/opt/lib/librm2fb_server.so{,.$_libver}
+        popd
+        popd
+        mv install/opt/lib/librm2fb_server.so{,.$_libver}
     fi
+    # Work around current post-processing not handling symlinks that are not currently valid
+    rm -f install/usr/lib/librm2fb_client.so.1
+    rm -f build/librm2fb_client.so.1
 }
 
 rm2fb-server() {
