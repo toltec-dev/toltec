@@ -1,7 +1,0 @@
-# Copyright (c) 2021 The Toltec Contributors
-# SPDX-License-Identifier: MIT
-
-name=keywriter
-desc=Markdown-enabled free writing app
-call=/opt/bin/keywriter
-term=:

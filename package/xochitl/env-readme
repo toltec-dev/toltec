@@ -1,5 +1,0 @@
-# Files in this directory are sourced before running Xochitl.
-# See also the /opt/bin/xochitl wrapper script.
-#
-# Please do not modify files shipped by Toltec, or they risk being
-# overwritten with updates. Instead create your own files in this directory.

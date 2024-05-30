@@ -1,8 +1,0 @@
-# Copyright (c) 2020 The Toltec Contributors
-# SPDX-License-Identifier: MIT
-
-name=recrossable
-desc=Solve crossword puzzles
-call=/opt/bin/recrossable
-term=:
-imgFile=recrossable

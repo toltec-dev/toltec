@@ -1,5 +1,0 @@
-# Copyright (c) 2020 The Toltec Contributors
-# SPDX-License-Identifier: MIT
-name=folly
-desc=Z-machine interpreter for interactive fiction
-call=/opt/bin/folly

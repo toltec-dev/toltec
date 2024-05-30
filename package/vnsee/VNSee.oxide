@@ -1,7 +1,0 @@
-{
-  "displayName": "VNSee",
-  "description": "VNC client allowing you to use the device as a second screen",
-  "bin": "/opt/bin/vnsee-gui",
-  "icon": "/opt/etc/draft/icons/vnsee.png",
-  "type": "foreground"
-}

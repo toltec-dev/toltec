@@ -1,8 +1,0 @@
-# Copyright (c) 2020 The Toltec Contributors
-# SPDX-License-Identifier: MIT
-
-name=calculator
-desc=Touch-based calculator
-call=/opt/bin/calculator
-term=:
-imgFile=calculator

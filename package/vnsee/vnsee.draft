@@ -1,8 +1,0 @@
-# Copyright (c) 2021 The Toltec Contributors
-# SPDX-License-Identifier: MIT
-
-name=VNSee
-desc=VNC client allowing you to use the device as a second screen
-imgFile=vnsee
-call=/opt/bin/vnsee-gui
-term=:

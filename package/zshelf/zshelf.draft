@@ -1,5 +1,0 @@
-name=ZShelf
-desc=Z-Library browser and downloader
-call=/opt/bin/zshelf
-imgFile=zshelf
-term=killall zshelf
