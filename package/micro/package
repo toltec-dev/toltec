@@ -16,7 +16,7 @@ sha256sums=(cbbed4e69567871462464049646dc11fdad8b8c75fde5d75856068c2cfbd2d38)
 noextract=("micro-2.0.13-linux-arm.tar.gz")
 
 prepare() {
-    sha256sum micro-2.0.13-linux-arm.tar.gz
+    sha256sum "$srcdir"/*
     exit 1
 }
 
