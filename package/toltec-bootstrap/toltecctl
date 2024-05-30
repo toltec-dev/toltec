@@ -156,8 +156,8 @@ check-version() {
     cd "$cwd"
 
     if ! grep -q "${current_model}=${current_version}" "${toltec_share}/Compatibility"; then
-        LOG ERROR "You’re running an unsupported OS version: $current_version"
-        LOG ERROR "Please monitor Toltec releases for upcoming support"
+        log ERROR "You’re running an unsupported OS version: $current_version"
+        log ERROR "Please monitor Toltec releases for upcoming support"
         return 1
     fi
 
