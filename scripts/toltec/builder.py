@@ -216,6 +216,10 @@ source file '{source.url}', got {req.status_code}"
 
             # Verify checksum
             file_sha = util.file_sha256(local_path)
+            print()
+            print(f"{file_sha}  {local_path}")
+            print(f"{source.checksum}  {local_path}")
+            print()
             if source.checksum not in ("SKIP", source.checksum):
                 raise BuildError(
                     f"Invalid checksum for source file {source.url}:\n"
