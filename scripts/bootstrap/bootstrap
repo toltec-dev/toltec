@@ -72,6 +72,8 @@ already-installed-message() {
 check-installed() {
     local unit_path
     local unit
+    # This should mimic get-bind-mount-path as close as possible to ensure it's always
+    # the path that an install or reenable would generate.
     unit_path="/lib/systemd/system/$(systemd-escape --path /opt).mount"
     unit="$(basename "$unit_path")"
     if [[ -f $unit_path ]] && systemctl --quiet is-active "$unit" 2> /dev/null; then
