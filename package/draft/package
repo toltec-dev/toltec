@@ -5,21 +5,23 @@
 pkgnames=(draft)
 pkgdesc="Launcher which wraps around the standard interface"
 url=https://github.com/dixonary/draft-reMarkable
-pkgver=0.2.0-22
+pkgver=0.2.0-25
 timestamp=2020-07-20T10:23Z
 section="launchers"
 maintainer="Mattéo Delabre <spam@delab.re>"
 license=Apache-2.0
-installdepends=(xochitl display)
+installdepends=(xochitl display procps-ng-ps)
 flags=(patch_rm2fb)
 
 image=qt:v2.1
 source=(
     https://github.com/dixonary/draft-reMarkable/archive/5bd660a2fd07eba166c6110d2b48cfc58ee67e58.zip
     draft.service
+    launcherctl-draft
 )
 sha256sums=(
     c41d7a4fd537c54d787018fd764421dbf7dd64306ca800875283e05eef99173e
+    SKIP
     SKIP
 )
 
@@ -46,21 +48,25 @@ package() {
     mv "$pkgdir"/opt/etc/draft/{99-,}shutdown
 
     install -D -m 644 -t "$pkgdir"/lib/systemd/system "$srcdir"/draft.service
+    install -D -T -m 755 "$srcdir"/launcherctl-draft "$pkgdir"/opt/share/launcherctl/"$pkgname"
 }
 
 configure() {
     systemctl daemon-reload
 
-    if ! is-enabled "$pkgname.service"; then
+    if ! launcherctl is-current-launcher "$pkgname"; then
         echo ""
         echo "Run the following command(s) to use $pkgname as your launcher"
-        how-to-enable "$pkgname.service"
+        echo "launcherctl switch-launcher --start $pkgname"
         echo ""
     fi
 }
 
 preremove() {
-    disable-unit "$pkgname.service"
+    # Just in case more than one launcher is active, do individual checks
+    if launcherctl is-active-launcher "$pkgname" || launcherctl is-enabled-launcher "$pkgname"; then
+        launcherctl switch-launcher --start xochitl
+    fi
 }
 
 postremove() {
