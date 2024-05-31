@@ -2,10 +2,11 @@
 # Copyright (c) 2021 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
+archs=(rmallos2)
 pkgnames=(innernet-client)
 pkgdesc="A private network system that uses WireGuard under the hood."
 url="https://github.com/tonarino/innernet"
-pkgver=1.5.3-2
+pkgver=1.5.3-3
 timestamp=2022-01-31T20:08:43Z
 section="utils"
 maintainer="plan5 <30434574+plan5@users.noreply.github.com>"
