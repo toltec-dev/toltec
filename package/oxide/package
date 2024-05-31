@@ -4,7 +4,7 @@
 
 pkgnames=(oxide oxide-extra oxide-utils inject_evdev liboxide liboxide-dev libsentry)
 _oxidever=2.7
-pkgver=$_oxidever-3
+pkgver=$_oxidever-7
 _sentryver=0.5.0
 timestamp=2023-12-05T04:43:04Z
 maintainer="Eeems <eeems@eeems.email>"
@@ -15,9 +15,11 @@ image=qt:v3.1
 source=(
     "https://github.com/Eeems-Org/oxide/archive/refs/tags/v$_oxidever.zip"
     toltec-rm2-override.conf
+    launcherctl-oxide
 )
 sha256sums=(
     e1f20fc60ae8edccb941e09c0e61cbfb58f1f8a5f64be98870eb2d079f83316f
+    SKIP
     SKIP
 )
 
@@ -30,7 +32,7 @@ build() {
 oxide() {
     pkgdesc="Launcher application"
     section="launchers"
-    installdepends=("oxide-utils=$pkgver" "liboxide=$pkgver" "libsentry=$_sentryver" "reboot-guard")
+    installdepends=("oxide-utils=$pkgver" "liboxide=$pkgver" "libsentry=$_sentryver" "reboot-guard" "jq")
     replaces=(erode tarnish decay corrupt)
     conflicts=(erode tarnish decay corrupt)
 
@@ -55,20 +57,26 @@ oxide() {
         # Task switcher
         install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/release/opt/bin/corrupt
         install -D -m 644 -t "$pkgdir"/opt/usr/share/applications "$srcdir"/release/opt/usr/share/applications/codes.eeems.corrupt.oxide
+        # launcherctl registration
+        install -D -T -m 755 "$srcdir"/launcherctl-oxide "$pkgdir"/opt/share/launcherctl/oxide
     }
 
     configure() {
         systemctl daemon-reload
-        if ! is-enabled "tarnish.service"; then
+
+        if ! launcherctl is-current-launcher oxide; then
             echo ""
-            echo "Run the following command(s) to use $pkgname as your launcher"
-            how-to-enable "tarnish.service"
+            echo "Run the following command(s) to use oxide as your launcher"
+            echo "launcherctl switch-launcher --start oxide"
             echo ""
         fi
     }
 
     preremove() {
-        disable-unit tarnish.service
+        # Just in case more than one launcher is active, do individual checks
+        if launcherctl is-active-launcher oxide || launcherctl is-enabled-launcher oxide; then
+            launcherctl switch-launcher --start xochitl
+        fi
     }
 
     postremove() {
