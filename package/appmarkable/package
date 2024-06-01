@@ -5,8 +5,8 @@
 pkgnames=(appmarkable)
 pkgdesc="Front-end for apps that do not have a graphical user interface"
 url="https://github.com/LinusCDE/appmarkable"
-pkgver=0.1.2-1
-timestamp=2024-05-30T22:19Z
+pkgver=0.1.3-1
+timestamp=2024-06-01T21:00Z
 section="devel"
 maintainer="Linus K. <linus@cosmos-ink.net>"
 license=MIT
@@ -14,8 +14,8 @@ installdepends=(display)
 flags=(patch_rm2fb)
 
 image=rust:v3.1
-source=(https://github.com/LinusCDE/appmarkable/archive/ab02a4d3c29a8308b99e8b5ac1184f4d4ea5468a.zip)
-sha256sums=(2ee2e95ee93c07fdbf8d7d553fc73c0545f64d2e6c78e2cb1045f78227364062)
+source=(https://github.com/LinusCDE/appmarkable/archive/0463ffc5bdaf29ff0a0e92fb15a90b06e310c417.zip)
+sha256sums=(bb45ed03a360f1a58e58e5a8e3176008e8e63053fc46925d20be92b532a02822)
 
 build() {
     # Fall back to system-wide config
