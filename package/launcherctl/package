@@ -10,7 +10,7 @@ timestamp=2023-12-18T03:32Z
 section="launcher"
 maintainer="Eeems <eeems@eeems.email>"
 license=MIT
-installdepends=('findutils')
+installdepends=('findutils' 'xochitl')
 
 source=(
     launcherctl
