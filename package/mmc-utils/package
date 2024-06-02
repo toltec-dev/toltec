@@ -32,16 +32,14 @@ prepare() {
 }
 
 build() {
-    cd "$srcdir"/mmc-utils
     # Use our toolchain
     export AR=arm-linux-gnueabihf-ar
     export CC=arm-linux-gnueabihf-gcc
     export STRIP=arm-linux-gnueabihf-strip
 
-    make -j4
+    make -C "$srcdir"/mmc-utils -j4
 }
 
 package() {
-    cd "$srcdir"/mmc-utils
-    DESTDIR="$pkgdir" make -C "$srcdir" install
+    DESTDIR="$pkgdir" make -C "$srcdir"/mmc-utils install
 }
