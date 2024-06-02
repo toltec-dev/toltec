@@ -15,7 +15,7 @@
 # <http://bin.entware.net/armv7sf-k3.2/installer/generic.sh>
 #
 
-if [ -z "$BASH" ] || [[ "$(ps | grep $(echo $$) | awk '{print $5}' | grep -v grep)" != "bash" ]]; then
+if [ -z "$BASH" ] || [[ "$(ps | awk '$1=='$$' { n=split($5,a,"/"); print a[n] }')" != "bash" ]]; then
     echo "bootstrap must be run with bash"
     exit 1
 fi
