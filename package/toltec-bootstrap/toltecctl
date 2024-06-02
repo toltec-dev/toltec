@@ -246,6 +246,7 @@ remove-bind-mount() {
     # Don't error, as umount -l will handle the failure
     systemctl stop "$unit_name" || true
     if mountpoint -q "$1"; then
+        log WARN "Failed to unmount '$1', lazy unmount instead"
         umount -l "$1"
     fi
     rm "$unit_path"
@@ -789,9 +790,9 @@ uninstall() {
     if ! install-standalone-opkg; then
         return 1
     fi
-    local clean=true
-    local success=true
-    local complete=false
+    local clean=true     # did package uninstall complete without issue?
+    local success=true   # did uninstall complete without issue?
+    local complete=false # did we actually complete the uninstall, or exit early?
 
     broken-state() {
         echo "  Your system may be in a broken state. Please review the logs"
