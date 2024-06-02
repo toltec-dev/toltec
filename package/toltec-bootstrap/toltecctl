@@ -797,14 +797,15 @@ uninstall() {
         echo "  get help on the community discord channel."
     }
 
-    cleanup() {
+    handle-error() {
         local error_code=$?
-        log ERROR "$BASH_LINENO: $BASH_COMMAND"
+        log ERROR "line $1: $BASH_COMMAND"
         log ERROR "Uninstall did not complete properly"
         broken-state
         exit $error_code
     }
-    trap cleanup ERR
+    set -o functrace
+    trap 'handle-error ${LINENO}' ERR
 
     if [[ "$toltecctl_path" != *_backup ]]; then
         log INFO "Creating backup of toltecctl at ${toltecctl_path}_backup"
