@@ -15,6 +15,11 @@
 # <http://bin.entware.net/armv7sf-k3.2/installer/generic.sh>
 #
 
+if [ -z "$BASH" ] || [[ "$(ps | grep $(echo $$) | awk '{print $5}' | grep -v grep)" != "bash" ]]; then
+    echo "bootstrap must be run with bash"
+    exit 1
+fi
+
 set -eEuo pipefail
 
 # Path to the temporary local wget and Opkg binaries
