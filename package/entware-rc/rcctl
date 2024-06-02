@@ -55,7 +55,7 @@ elif [[ $1 == "logs" ]]; then
         journalctl --no-pager -all --unit "entware-rc@${2}.service"
     fi
 elif [[ $1 == "list" ]]; then
-    /opt/bin/find /opt/etc/init.d/ -perm '-u+x' -name 'S*' | xargs -rn1 basename
+    /opt/libexec/find-gnu /opt/etc/init.d/ -perm '-u+x' -name 'S*' | xargs -rn1 basename
 else
     help
     exit 1
