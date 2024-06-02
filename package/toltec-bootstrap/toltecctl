@@ -243,7 +243,8 @@ remove-bind-mount() {
 
     log INFO "Removing mount over '$1'"
     systemctl disable "$unit_name"
-    systemctl stop "$unit_name"
+    # Don't error, as umount -l will handle the failure
+    systemctl stop "$unit_name" || true
     if mountpoint -q "$1"; then
         umount -l "$1"
     fi
@@ -790,6 +791,7 @@ uninstall() {
     fi
     local clean=true
     local success=true
+    local complete=false
 
     broken-state() {
         echo "  Your system may be in a broken state. Please review the logs"
@@ -806,6 +808,14 @@ uninstall() {
     }
     set -o functrace
     trap 'handle-error ${LINENO}' ERR
+    handle-exit() {
+        if ! $completed && $success && $clean; then
+            log ERROR "Uninstall did not complete properly"
+            broken-state
+            exit 1
+        fi
+    }
+    trap 'handle-exit' EXIT
 
     if [[ "$toltecctl_path" != *_backup ]]; then
         log INFO "Creating backup of toltecctl at ${toltecctl_path}_backup"
@@ -820,6 +830,7 @@ uninstall() {
         fi
         log ERROR "Current install seems to be partially removed, unable to automatically removed."
         broken-state
+        complete=true
         exit 1
     fi
 
@@ -839,8 +850,9 @@ EOF
     fi
     rm -f "$opkg_path"
 
-    # Remove mount point
+    set +e # Don't exit on error, next check will validate if it worked
     remove-bind-mount "$toltec_dest"
+    set -e
 
     case "$(install-state)" in
         no) ;;
@@ -876,12 +888,14 @@ EOF
     if ! $success; then
         log ERROR "Uninstall failed"
         broken-state
+        complete=true
         exit 1
     fi
     if [[ "$toltecctl_path" != *_backup ]]; then
         rm -f "$toltecctl_path"
     fi
     rm -f "${toltecctl_path}_backup"
+    complete=true
 }
 
 # The current toltec install state
