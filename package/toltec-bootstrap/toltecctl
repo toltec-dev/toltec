@@ -810,7 +810,7 @@ uninstall() {
     set -o functrace
     trap 'handle-error ${LINENO}' ERR
     handle-exit() {
-        if ! $completed && $success && $clean; then
+        if ! $complete && $success && $clean; then
             log ERROR "Uninstall did not complete properly"
             broken-state
             exit 1
