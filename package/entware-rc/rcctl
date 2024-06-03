@@ -1,0 +1,62 @@
+#!/bin/bash
+help() {
+    echo "Usage: rcctl <command>"
+    echo "  commands:"
+    echo "    help: Display this message and exit"
+    echo "    start <name>: Start a service"
+    echo "    stop <name>: Stop a service"
+    echo "    restart <name>: Restart a service"
+    echo "    enable <name>: Enable service startup on boot"
+    echo "    disable <name>: Disable service startup on boot"
+    echo "    status [<name>]: View the current status of services"
+    echo "    logs [-f|--follow] <name>: View logs for a service"
+    echo "    list: List available services"
+}
+if [[ $1 == "help" ]] || [[ $1 == "--help" ]]; then
+    help
+elif [[ $1 == "start" ]] \
+    || [[ $1 == "stop" ]] \
+    || [[ $1 == "restart" ]] \
+    || [[ $1 == "enable" ]] \
+    || [[ $1 == "disable" ]]; then
+    if [ $# -ge 3 ]; then
+        echo "Too many arguments"
+        exit 1
+    elif [ $# -lt 2 ]; then
+        echo "Too few arguments"
+        exit 1
+    fi
+    systemctl "$1" "entware-rc@$2.service"
+elif [[ $1 == "status" ]]; then
+    if [ $# -ge 3 ]; then
+        echo "Too many arguments"
+        exit 1
+    elif [ $# -eq 1 ]; then
+        "$0" list | xargs -rn1 "$0" status
+    else
+        s="entware-rc@${2}.service"
+        echo "${2}" "$(systemctl is-active "${s}")" "$(systemctl is-enabled "${s}")" \
+            | grep --color=always '\(disabled\|inactive\|$\)'
+    fi
+elif [[ $1 == "logs" ]]; then
+    if [ $# -ge 4 ]; then
+        echo "Too many arguments"
+        exit 1
+    elif [ $# -lt 2 ]; then
+        echo "Too few arguments"
+        exit 1
+    elif [ $# -eq 3 ] && [[ "$2" != "-f" ]] && [[ "$2" != "--follow" ]]; then
+        echo "Invalid arguments"
+        exit 1
+    fi
+    if [ $# -eq 3 ]; then
+        journalctl --no-pager -all --follow --unit "entware-rc@${3}.service"
+    else
+        journalctl --no-pager -all --unit "entware-rc@${2}.service"
+    fi
+elif [[ $1 == "list" ]]; then
+    /opt/bin/find /opt/etc/init.d/ -perm '-u+x' -name 'S*' | xargs -rn1 basename
+else
+    help
+    exit 1
+fi
