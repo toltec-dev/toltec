@@ -70,20 +70,18 @@ runs:
         - name: Setup Python
           uses: actions/setup-python@v4
           with:
-            python-version: '3.11'
+            python-version: '3.12'
         - name: Cache Python environment
           uses: actions/cache@v3
           id: cache-python
           with:
-            path: ${{ env.pythonLocation }}
-            key: ${{ env.pythonLocation }}-${{ hashFiles('requirements.txt') }}
+            path: .venv
+            key: .venv-${{ hashFiles('requirements.txt') }}
         - name: Install Python dependencies
           shell: bash
           env:
             CACHE_HIT: ${{ steps.cache-python.outputs.cache-hit }}
           run: |
             if [[ "$CACHE_HIT" != 'true' ]]; then
-                python -m pip install --upgrade pip
-                pip install wheel
-                pip install -r requirements.txt
+                make .venv/bin/activate
             fi
