@@ -5,8 +5,8 @@
 pkgnames=(toltec-bootstrap)
 pkgdesc="Manage your Toltec install"
 url=https://toltec-dev.org/
-pkgver=0.4.1-1
-timestamp=2023-11-27T00:34Z
+pkgver=0.4.4-1
+timestamp=2024-05-31T19:13Z
 section="utils"
 maintainer="Eeems <eeems@eeems.email>"
 license=MIT
@@ -63,4 +63,9 @@ configure() {
         echo "! and \`opkg upgrade\` once more to complete it."
         echo
     fi
+}
+
+postremove() {
+    # Reload rules without the input udev rule
+    udevadm control --reload-rules && udevadm trigger
 }
