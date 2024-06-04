@@ -6,7 +6,7 @@ archs=(rmallos2)
 pkgnames=(innernet-client)
 pkgdesc="A private network system that uses WireGuard under the hood."
 url="https://github.com/tonarino/innernet"
-pkgver=1.5.3-3
+pkgver=1.5.3-4
 timestamp=2022-01-31T20:08:43Z
 section="utils"
 maintainer="plan5 <30434574+plan5@users.noreply.github.com>"
@@ -52,4 +52,13 @@ configure() {
     if ! [ -d /opt/var/lib/innernet ]; then
         mkdir -p /opt/var/lib/innernet
     fi
+}
+
+preremove() {
+    disable-unit innernet.target
+    disable-unit innernet@.service
+}
+
+postremove() {
+    systemctl daemon-reload
 }
