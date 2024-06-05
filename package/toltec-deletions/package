@@ -6,7 +6,7 @@ archs=(rmallos2 rm1os3 rm2os3)
 pkgnames=(toltec-deletions)
 pkgdesc="Metapackage to handle package deletions between OS versions"
 url=https://toltec-dev.org/
-pkgver=0.1-5
+pkgver=0.1-6
 timestamp=2023-12-03T04:51:58Z
 section="utils"
 maintainer="Eeems <eeems@eeems.email>"
@@ -20,7 +20,6 @@ conflicts_rm1os3=(
     wireguard
     innernet-client
     gocryptfs
-    linux-mainline
     remarkable-stylus
 )
 replaces_rm1os3=(
@@ -29,7 +28,6 @@ replaces_rm1os3=(
     wireguard
     innernet-client
     gocryptfs
-    linux-mainline
     remarkable-stylus
 )
 conflicts_rm2os3=(
@@ -38,7 +36,6 @@ conflicts_rm2os3=(
     wireguard
     innernet-client
     gocryptfs
-    linux-mainline
     remarkable-stylus
     open-remarkable-shutdown
 )
@@ -48,7 +45,6 @@ replaces_rm2os3=(
     wireguard
     innernet-client
     gocryptfs
-    linux-mainline
     remarkable-stylus
     open-remarkable-shutdown
 )
