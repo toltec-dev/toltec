@@ -147,7 +147,7 @@ nao() {
 remux() {
     pkgdesc="Launcher that supports multi-tasking applications"
     url="https://rmkit.dev/apps/remux"
-    pkgver=0.3.0-4
+    pkgver=0.3.0-5
     section="launchers"
 
     installdepends=(procps-ng-ps)
