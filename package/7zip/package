@@ -11,4 +11,4 @@ maintainer="Eeems <eeems@eeems.email>"
 license=LGPL-2.1-or-later
 installdepends=(7-zip)
 
-package() {}
+package() { ;; }
