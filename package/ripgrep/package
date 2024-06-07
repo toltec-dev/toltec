@@ -17,7 +17,7 @@ source=("https://github.com/BurntSushi/ripgrep/archive/refs/tags/${pkgver%-*}.zi
 sha256sums=(821cb40ecddb6d539f6d8ea2490acc6b5e2a45723f884f5e14a0c115d1523b4d)
 
 build() {
-    cargo install --features 'pcre2'
+    cargo build --release --features 'pcre2'
 }
 
 package() {
