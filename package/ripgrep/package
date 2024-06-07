@@ -1,22 +1,23 @@
 #!/usr/bin/env bash
-# Copyright (c) 2023 The Toltec Contributors
+# Copyright (c) 2024 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
 pkgnames=(ripgrep)
 pkgdesc="Modern grep for recursive regex pattern searching"
 url=https://github.com/BurntSushi/ripgrep
-pkgver=14.0.3-1
-timestamp=2023-11-28T21:22Z
+pkgver=14.1.0-1
+timestamp=2024-01-06T18:41Z
 section="utils"
 maintainer="gbyl <gbyl@users.noreply.github.com>"
 license=MIT
+installdepends=(libpcre2)
 
 image=rust:v3.1
 source=("https://github.com/BurntSushi/ripgrep/archive/refs/tags/${pkgver%-*}.zip")
-sha256sums=(eb91f202fc25d51755390736775a7e7f8e146eb97e584aaa01fb0c45aa5de654)
+sha256sums=(821cb40ecddb6d539f6d8ea2490acc6b5e2a45723f884f5e14a0c115d1523b4d)
 
 build() {
-    cargo build --release
+    cargo install --features 'pcre2'
 }
 
 package() {
