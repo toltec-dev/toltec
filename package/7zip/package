@@ -2,7 +2,7 @@
 # Copyright (c) 2024 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 pkgnames=(7zip)
-pkgdesc="A file archiver with a high compression ratio"
+pkgdesc="Metapackage for 7-zip"
 url="https://www.7-zip.org/"
 section="utils"
 pkgver=23.01-2
@@ -11,9 +11,6 @@ maintainer="Eeems <eeems@eeems.email>"
 license=LGPL-2.1-or-later
 installdepends=(7-zip)
 
-source=()
-sha256sums=()
-
 package() {
-    echo
+    true
 }
