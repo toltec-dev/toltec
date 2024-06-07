@@ -12,7 +12,7 @@ maintainer="gbyl <gbyl@users.noreply.github.com>"
 license=MIT
 
 image=rust:v3.1
-source=("https://github.com/imsnif/bandwhich/archive/refs/tags/${pkgver%-*}.zip")
+source=("https://github.com/imsnif/bandwhich/archive/refs/tags/v${pkgver%-*}.zip")
 sha256sums=(5d1eaa1796ec3c16f349cb6b00bd9dba6d425e9323d63af648a41cd68c5d456b)
 
 build() {
