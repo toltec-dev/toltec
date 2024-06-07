@@ -15,5 +15,4 @@ source=()
 sha256sums=()
 
 package() {
-    
 }
