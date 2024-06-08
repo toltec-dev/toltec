@@ -8,7 +8,7 @@ runs:
             sudo apt-get update -yq
             echo "aptVersion=libarchive-tools-$(apt-cache policy libarchive-tools | grep -oP '(?<=Candidate:\s)(.+)')" >> $GITHUB_ENV
         - name: Cache Apt packages
-          uses: actions/cache@v3
+          uses: actions/cache@v4
           id: cache-apt
           with:
             path: ~/.aptcache
@@ -26,7 +26,7 @@ runs:
                 sudo cp --verbose --force --recursive ~/.aptcache/* /
             fi
         - name: Cache shfmt
-          uses: actions/cache@v3
+          uses: actions/cache@v4
           with:
             path: /usr/local/bin/shfmt
             key: 43439b996942b53dfafa9b6ff084f394555d049c98fb7ec37978f7668b43e1be
@@ -44,7 +44,7 @@ runs:
                 sudo chmod a+x "$install_dir"/shfmt
             fi
         - name: Cache Shellcheck
-          uses: actions/cache@v3
+          uses: actions/cache@v4
           with:
             path: /usr/local/bin/shellcheck
             key: 64f17152d96d7ec261ad3086ed42d18232fcb65148b44571b564d688269d36c8
@@ -68,11 +68,11 @@ runs:
                 sudo mv shellcheck "$install_dir"
             fi
         - name: Setup Python
-          uses: actions/setup-python@v4
+          uses: actions/setup-python@v5
           with:
             python-version: '3.12'
         - name: Cache Python environment
-          uses: actions/cache@v3
+          uses: actions/cache@v4
           id: cache-python
           with:
             path: .venv
