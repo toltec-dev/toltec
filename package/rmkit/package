@@ -120,7 +120,7 @@ lamp() {
 mines() {
     pkgdesc="Mine detection game"
     url="https://rmkit.dev/apps/minesweeper"
-    pkgver=0.1.4-3
+    pkgver=0.1.4-4
     section="games"
 
     package() {
@@ -147,7 +147,7 @@ nao() {
 remux() {
     pkgdesc="Launcher that supports multi-tasking applications"
     url="https://rmkit.dev/apps/remux"
-    pkgver=0.3.0-5
+    pkgver=0.3.0-6
     section="launchers"
 
     installdepends=(procps-ng-ps)
@@ -208,7 +208,7 @@ simple() {
 wordlet() {
     pkgdesc="Wordle clone"
     url="https://rmkit.dev/apps/wordlet"
-    pkgver=0.0.2-3
+    pkgver=0.0.2-4
     section="games"
 
     package() {
