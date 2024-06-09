@@ -7,7 +7,7 @@ timestamp=2024-01-11T20:03:10Z
 maintainer="raisjn <of.raisjn@gmail.com>"
 license=MIT
 installdepends=(display)
-flags=(patch_rm2fb)
+flags=()
 
 image=python:v2.1
 source=(
