@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+# Copyright (c) 2024 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgnames=(bandwhich)
+pkgdesc="CLI network utilization tool"
+url=https://github.com/imsnif/bandwhich
+pkgver=0.22.2-1
+timestamp=2024-01-27T19:33Z
+section="utils"
+maintainer="gbyl <gbyl@users.noreply.github.com>"
+license=MIT
+
+image=rust:v3.1
+source=("https://github.com/imsnif/bandwhich/archive/refs/tags/v${pkgver%-*}.zip")
+sha256sums=(5d1eaa1796ec3c16f349cb6b00bd9dba6d425e9323d63af648a41cd68c5d456b)
+
+build() {
+    cargo build --release
+}
+
+package() {
+    install -D -m 755 "$srcdir"/target/armv7-unknown-linux-gnueabihf/release/bandwhich "$pkgdir"/opt/bin/bandwhich
+}

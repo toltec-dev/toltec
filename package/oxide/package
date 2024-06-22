@@ -5,7 +5,7 @@
 archs=(rm1 rm2)
 pkgnames=(oxide oxide-extra oxide-utils inject_evdev liboxide liboxide-dev libsentry)
 _oxidever=2.8.2
-pkgver=$_oxidever-2
+pkgver=$_oxidever-1
 _sentryver=0.7.0
 timestamp=2024-05-21T20:19:05Z
 maintainer="Eeems <eeems@eeems.email>"
@@ -16,9 +16,11 @@ image=qt:v3.1
 source=(
     "https://github.com/Eeems-Org/oxide/archive/refs/tags/v$_oxidever.zip"
     toltec-rm2-override.conf
+    launcherctl-oxide
 )
 sha256sums=(
     4a2097d0f2d099be6944cb40b1ee2aa459d3c767cc067684f42cff45528a40b4
+    SKIP
     SKIP
 )
 
@@ -33,7 +35,7 @@ build() {
 oxide() {
     pkgdesc="Launcher application"
     section="launchers"
-    installdepends=("oxide-utils=$pkgver" "liboxide=$pkgver" "libsentry=$_sentryver" reboot-guard display)
+    installdepends=("oxide-utils=$pkgver" "liboxide=$pkgver" "libsentry=$_sentryver" reboot-guard jq display)
     replaces=(erode tarnish decay corrupt)
     conflicts=(erode tarnish decay corrupt)
 
@@ -58,6 +60,8 @@ oxide() {
         # Task switcher
         install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/release/opt/bin/corrupt
         install -D -m 644 -t "$pkgdir"/opt/usr/share/applications "$srcdir"/release/opt/usr/share/applications/codes.eeems.corrupt.oxide
+        # launcherctl registration
+        install -D -T -m 755 "$srcdir"/launcherctl-oxide "$pkgdir"/opt/share/launcherctl/oxide
         if [[ $arch = rm2 ]]; then
             install -D -m 644 -t "$pkgdir"/etc/systemd/system/tarnish.service.d \
                 "$srcdir"/toltec-rm2-override.conf
@@ -66,16 +70,20 @@ oxide() {
 
     configure() {
         systemctl daemon-reload
-        if ! is-enabled "tarnish.service"; then
+
+        if ! launcherctl is-current-launcher oxide; then
             echo ""
-            echo "Run the following command(s) to use $pkgname as your launcher"
-            how-to-enable "tarnish.service"
+            echo "Run the following command(s) to use oxide as your launcher"
+            echo "launcherctl switch-launcher --start oxide"
             echo ""
         fi
     }
 
     preremove() {
-        disable-unit tarnish.service
+        # Just in case more than one launcher is active, do individual checks
+        if launcherctl is-active-launcher oxide || launcherctl is-enabled-launcher oxide; then
+            launcherctl switch-launcher --start xochitl
+        fi
     }
 
     postremove() {
