@@ -15,6 +15,11 @@
 # <http://bin.entware.net/armv7sf-k3.2/installer/generic.sh>
 #
 
+if [ -z "$BASH" ] || [[ "$(ps | awk '$1=='$$' { n=split($5,a,"/"); print a[n] }')" != "bash" ]]; then
+    echo "bootstrap must be run with bash"
+    exit 1
+fi
+
 set -eEuo pipefail
 
 # Path to the temporary local wget and Opkg binaries
@@ -61,17 +66,39 @@ exists-non-empty() {
     [[ -d $1 ]] && files="$(ls -A -- "$1")" && [[ -n $files ]]
 }
 
+already-installed-message() {
+    log "Toltec is already installed or partially installed"
+    log "To re-enable Toltec after a system upgrade, run 'toltecctl reenable'"
+    log "To reinstall Toltec, run 'toltecctl uninstall' first"
+}
+
 # Check whether a Toltec install already exists or if conflicting files
 # remain from previous installs
 check-installed() {
-    if [[ ! -f $toltecctl_path ]]; then
-        return
+    local unit_path
+    local unit
+    # This should mimic get-bind-mount-path as close as possible to ensure it's always
+    # the path that an install or reenable would generate.
+    unit_path="/lib/systemd/system/$(systemd-escape --path /opt).mount"
+    unit="$(basename "$unit_path")"
+    if [[ -f $unit_path ]] && systemctl --quiet is-active "$unit" 2> /dev/null; then
+        log ERROR "opt.mount is currently active"
+        already-installed-message
+        exit 1
     fi
-
-    if exists-non-empty /opt || exists-non-empty /home/root/.entware; then
-        log "Toltec is already installed or partially installed"
-        log "To re-enable Toltec after a system upgrade, run 'toltecctl reenable'"
-        log "To reinstall Toltec, run 'toltecctl uninstall' first"
+    if [[ "$(grep ' /opt ' /proc/mounts)" != "" ]]; then
+        log ERROR "/opt is currently mounted"
+        already-installed-message
+        exit 1
+    fi
+    if exists-non-empty /opt; then
+        log ERROR "/opt exists and is not empty"
+        already-installed-message
+        exit 1
+    fi
+    if exists-non-empty /home/root/.entware; then
+        log ERROR "/home/root/.entware exists and is not empty"
+        already-installed-message
         exit 1
     fi
 }
@@ -79,8 +106,8 @@ check-installed() {
 # Install a local wget binary which supports TLS (the original one
 # installed on the reMarkable does not) in the PATH
 wget-bootstrap() {
-    local wget_remote=http://toltec-dev.org/thirdparty/bin/wget-v1.21.1
-    local wget_checksum=8798fcdabbe560722a02f95b30385926e4452e2c98c15c2c217583eaa0db30fc
+    local wget_remote=http://toltec-dev.org/thirdparty/bin/wget-v1.21.1-1
+    local wget_checksum=c258140f059d16d24503c62c1fdf747ca843fe4ba8fcd464a6e6bda8c3bbb6b5
 
     if [[ ! -x $wget_path ]]; then
         if [[ -e $wget_path ]]; then

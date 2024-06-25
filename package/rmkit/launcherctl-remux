@@ -1,0 +1,167 @@
+#!/bin/bash
+set -e
+remux_pid() {
+    systemctl show --no-pager --property MainPID remux.service | sed 's|MainPID=||'
+}
+remux_ppid() {
+    grep "PPid:" "/proc/$(remux_pid)/status" | awk '{print $2}'
+}
+draft_apps() {
+    find {/opt,}/etc/draft -maxdepth 1 -type f 2> /dev/null | while read -r file; do
+        name="$(grep 'name=' "$file" | sed 's|^name=||')"
+        call="$(grep 'call=' "$file" | sed 's|^call=||')"
+        echo -e "${name}\t${call}"
+    done
+}
+running_remux_apps() {
+    /opt/libexec/ps-procps-ng --ppid "$(remux_ppid)" -o pid,state,args | tail -n +2 | while read -r info; do
+        if [[ "$(echo "$info" | awk '{print $2}')" != "$1" ]]; then
+            continue
+        fi
+        pid="$(echo "$info" | awk '{print $1}')"
+        cmdline="$(echo "$info" | awk '{for (i=3; i<=NF; i++) print $i}')"
+        draft_apps | while read -r info; do
+            name="$(echo "$info" | cut -f1)"
+            if [[ "$name" == "xochitl" ]]; then
+                if [[ "$(realpath "/proc/${pid}/exe")" == "/usr/bin/xochitl" ]]; then
+                    echo "$name"
+                    break
+                fi
+            fi
+            call="$(echo "$info" | cut -f2)"
+            if [[ "$cmdline" == "$call" ]]; then
+                echo "$name"
+                break
+            fi
+            if ! [ -f "$call" ]; then
+                continue
+            fi
+            if [[ "$(realpath "/proc/${pid}/exe")" == "$(realpath "$call")" ]]; then
+                echo "$name"
+                break
+            fi
+        done
+    done
+}
+kill_pid() {
+    pid="$1"
+    if [[ "$(awk '{print $3}' "/proc/${pid}/stat")" == "T" ]]; then
+        kill -CONT "$pid"
+    fi
+    kill -TERM "$pid"
+    # Wait 5s for process to exit
+    start="$(date +'%s')"
+    while kill -0 "$pid" 2> /dev/null; do
+        sleep 0.5
+        if [ "$(date +'%s')" -gt $((start + 5)) ]; then
+            break
+        fi
+    done
+    if kill -0 "$pid" 2> /dev/null; then
+        # If process is still running, force kill it
+        kill -KILL "$pid"
+    fi
+}
+case "$1" in
+    is-active)
+        systemctl is-active --quiet remux.service
+        ;;
+    is-enabled)
+        systemctl is-enabled --quiet remux.service
+        ;;
+    logs)
+        if [ $# -eq 2 ] && [[ "$2" == "-f" ]] || [[ "$2" == "--follow" ]]; then
+            journalctl --follow --all --unit remux.service
+        else
+            journalctl --no-pager --all --unit remux.service
+        fi
+        ;;
+    start)
+        systemctl start remux.service
+        ;;
+    stop)
+        systemctl stop remux.service
+        ;;
+    enable)
+        systemctl enable remux.service
+        ;;
+    disable)
+        systemctl disable remux.service
+        ;;
+    apps)
+        find {/opt,}/etc/draft -maxdepth 1 -type f 2> /dev/null | while read -r file; do
+            grep 'name=' "$file" | sed 's|^name=||'
+        done
+        ;;
+    running)
+        running_remux_apps S
+        ;;
+    paused)
+        running_remux_apps T
+        ;;
+    launch | resume)
+        echo "launch $2" > /run/remux.api
+        ;;
+    close)
+        draft_apps | while read -r info; do
+            name="$(echo "$info" | cut -f1)"
+            if [[ "$name" != "$2" ]]; then
+                continue
+            fi
+            call="$(echo "$info" | cut -f2)"
+            /opt/libexec/ps-procps-ng --ppid "$(remux_ppid)" -o pid,args | tail -n +2 | while read -r info; do
+                pid="$(echo "$info" | awk '{print $1}')"
+                if [[ "$name" == "xochitl" ]]; then
+                    if [[ "$(realpath "/proc/${pid}/exe")" == "/usr/bin/xochitl" ]]; then
+                        kill_pid "$pid"
+                        continue
+                    fi
+                fi
+                cmdline="$(echo "$info" | awk '{for (i=2; i<=NF; i++) print $i}')"
+                if [[ "$cmdline" == "$call" ]]; then
+                    kill_pid "$pid"
+                    continue
+                fi
+                if ! [ -f "$call" ]; then
+                    continue
+                fi
+                if [[ "$(realpath "/proc/${pid}/exe")" == "$(realpath "$call")" ]]; then
+                    kill_pid "$pid"
+                fi
+            done
+        done
+        ;;
+    pause)
+        draft_apps | while read -r info; do
+            name="$(echo "$info" | cut -f1)"
+            if [[ "$name" != "$2" ]]; then
+                continue
+            fi
+            call="$(echo "$info" | cut -f2)"
+            /opt/libexec/ps-procps-ng --ppid "$(remux_ppid)" -o pid,args | tail -n +2 | while read -r info; do
+                pid="$(echo "$info" | awk '{print $1}')"
+                if [[ "$name" == "xochitl" ]]; then
+                    if [[ "$(realpath "/proc/${pid}/exe")" == "/usr/bin/xochitl" ]]; then
+                        kill -STOP "$pid"
+                        continue
+                    fi
+                fi
+                cmdline="$(echo "$info" | awk '{for (i=2; i<=NF; i++) print $i}')"
+                if [[ "$cmdline" == "$call" ]]; then
+                    kill -STOP "$pid"
+                    continue
+                fi
+                if ! [ -f "$call" ]; then
+                    continue
+                fi
+                if [[ "$(realpath "/proc/${pid}/exe")" == "$(realpath "$call")" ]]; then
+                    kill -STOP "$pid"
+                fi
+            done
+        done
+        ;;
+    *)
+        echo "Remux does not support this method"
+        exit 1
+        ;;
+esac
