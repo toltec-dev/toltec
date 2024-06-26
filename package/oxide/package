@@ -4,10 +4,10 @@
 
 archs=(rm1 rm2)
 pkgnames=(oxide oxide-extra oxide-utils inject_evdev liboxide liboxide-dev libsentry)
-_oxidever=2.8.2
+_oxidever=2.8.4
 pkgver=$_oxidever-1
-_sentryver=0.7.0
-timestamp=2024-05-21T20:19:05Z
+_sentryver=0.7.6
+timestamp=2024-06-26T22:31:46Z
 maintainer="Eeems <eeems@eeems.email>"
 url=https://oxide.eeems.codes
 license=MIT
@@ -19,7 +19,7 @@ source=(
     launcherctl-oxide
 )
 sha256sums=(
-    4a2097d0f2d099be6944cb40b1ee2aa459d3c767cc067684f42cff45528a40b4
+    bfcb26c0493544fabc472bebc1eb372e49e58774163533ae937b6e814222f03e
     SKIP
     SKIP
 )
