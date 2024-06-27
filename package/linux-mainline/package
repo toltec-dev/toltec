@@ -10,12 +10,12 @@ pkgver=6.3.0-2
 timestamp=2023-08-23T21:50:09Z
 section=kernel
 maintainer="Alistair Francis <alistair@alistair23.me>"
-makedepends=(build:flex build:bison build:libssl-dev build:bc build:lzop build:libgmp-dev build:libmpc-dev)
+makedepends=(build:usrmerge build:flex build:bison build:libssl-dev build:bc build:lzop build:libgmp-dev build:libmpc-dev)
 installdepends=(kernelctl)
 license=GPL-2.0-only
 flags=(nostrip)
 
-image=base:v3.1
+image=base:v2.3
 source=(
     https://github.com/alistair23/linux/archive/1698a3bdd8d66e58873c5bb3ce370b7d48b004cf.tar.gz
     remarkable_defconfig
