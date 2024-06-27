@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+# Copyright (c) 2023 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgnames=(sysfs_preload)
+pkgdesc="A simple preload that forces any calls to /sys/power/state to use systemd instead."
+url="https://github.com/Eeems-Org/sysfs_preload"
+pkgver=1.0.1-1
+timestamp=2024-06-22T05:19Z
+section=util
+maintainer="Eeems <eeems@eeems.email>"
+license=MIT
+
+image=qt:v3.1
+source=(https://github.com/Eeems-Org/sysfs_preload/archive/refs/tags/1.0.1.tar.gz)
+sha256sums=(73627b68e3b2454efcc2d83e6ebdc2eb473f9cc2616ed1b9dd2acae159c54b3d)
+
+build() {
+    find . -name "*.pro" -type f -print0 \
+        | xargs -r -0 sed -i 's/linux-oe-g++/linux-arm-remarkable-g++/g'
+    qmake
+    make -j"$(nproc)"
+    INSTALL_ROOT="dist" make install
+}
+
+package() {
+    cp -ar "${srcdir}/dist/." "${pkgdir}"
+}
