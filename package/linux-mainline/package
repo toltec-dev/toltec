@@ -6,7 +6,7 @@ archs=(rm2)
 pkgnames=(linux-mainline)
 pkgdesc="reMarkable 2 kernel based on the mainline kernel"
 url=https://www.kernel.org
-pkgver=6.3.0-1
+pkgver=6.3.0-2
 timestamp=2023-08-23T21:50:09Z
 section=kernel
 maintainer="Alistair Francis <alistair@alistair23.me>"
@@ -15,7 +15,7 @@ installdepends=(kernelctl)
 license=GPL-2.0-only
 flags=(nostrip)
 
-image=base:v2.3
+image=base:v3.1
 source=(
     https://github.com/alistair23/linux/archive/1698a3bdd8d66e58873c5bb3ce370b7d48b004cf.tar.gz
     remarkable_defconfig
@@ -28,7 +28,7 @@ sha256sums=(
 build() {
     cp remarkable_defconfig arch/arm/configs/
     ARCH=arm make remarkable_defconfig
-    ARCH=arm make -j8
+    ARCH=arm PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig/ PKG_CONFIG_SYSROOT_DIR="" make -j8
 }
 
 package() {
@@ -40,7 +40,7 @@ package() {
     cp --no-dereference "$srcdir"/arch/arm/boot/dts/imx7d-remarkable2.dtb \
         "$staging"/boot/zero-sugar.dtb
 
-    ARCH=arm make -C "$srcdir" modules_install INSTALL_MOD_PATH="$staging"
+    ARCH=arm PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig/ PKG_CONFIG_SYSROOT_DIR="" make -C "$srcdir" modules_install INSTALL_MOD_PATH="$staging"
     rm "$staging"/lib/modules/*/{source,build}
 
     # Create the kernel archive
