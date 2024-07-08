@@ -15,7 +15,7 @@ bl="\033[1;34m" # blue
 cd /
 
 # find current os version
-os_version=`grep ^REMARKABLE_RELEASE_VERSION /usr/share/remarkable/update.conf | awk -F= '{print $2}'`
+os_version=`awk -F= '/RELEASE_VERSION/{print $2}' /usr/share/remarkable/update.conf`
 
 
 help() {
