@@ -26,7 +26,7 @@ package() {
 }
 
 configure() {
-    os_version=`awk -F= '/RELEASE_VERSION/{print $2}' /usr/share/remarkable/update.conf`
+    os_version=$(awk -F= '/RELEASE_VERSION/{print $2}' /usr/share/remarkable/update.conf)
     if [[ "$(kernelctl list | tail -n +2 | awk '{print $2}' | grep "vanilla-$os_version")" == "" ]]; then
         echo "Creating a backup of the currently running kernel."
         kernelctl backup vanilla
@@ -34,7 +34,7 @@ configure() {
 }
 
 preremove() {
-    os_version=`awk -F= '/RELEASE_VERSION/{print $2}' /usr/share/remarkable/update.conf`
+    os_version=$(awk -F= '/RELEASE_VERSION/{print $2}' /usr/share/remarkable/update.conf)
     if [[ "$(kernelctl show | tail -n 1 | grep "vanilla-$os_version")" == "" ]]; then
         if [[ "$(kernelctl list | tail -n +2 | awk '{print $2}' | grep "vanilla-$os_version")" == "" ]]; then
             echo "Unable to restore default kernel."
