@@ -6,7 +6,7 @@ archs=(rmall rmallos2 rmallos3 rm1 rm1os2 rm1os3 rm2 rm2os2 rm2os3)
 pkgnames=(toltec-base)
 pkgdesc="Metapackage defining the base set of packages in a Toltec install"
 url=https://toltec-dev.org/
-pkgver=1.3-4
+pkgver=1.4-1
 timestamp=2023-12-27T08:30Z
 section="utils"
 maintainer="Eeems <eeems@eeems.email>"
@@ -17,11 +17,11 @@ installdepends_rm1os3=(open-remarkable-shutdown)
 installdepends_rm2os2=(rm2-suspend-fix)
 installdepends_rm2os3=(rm2-suspend-fix)
 
-source=()
-sha256sums=()
+source=(opt-usr-bin.sh)
+sha256sums=(SKIP)
 
 package() {
-    true
+    install -D -m 755 -t "$pkgdir"/etc/profile.d/ "$srcdir"/opt-usr-bin.sh
 }
 
 configure() {

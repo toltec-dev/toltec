@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
-# Copyright (c) 2021 The Toltec Contributors
+# Copyright (c) 2024 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
 pkgnames=(koreader)
 pkgdesc="Ebook reader supporting PDF, DjVu, EPUB, FB2 and many more formats"
 url=https://github.com/koreader/koreader
-pkgver=2024.04-4
+pkgver=2024.04-5
 timestamp=2024-04-29T19:56:05Z
 section="readers"
 maintainer="raisjn <of.raisjn@gmail.com>"
@@ -37,6 +37,7 @@ package() {
     rm "$pkgdir"/opt/koreader/{fbink,fbdepth}
     ln -s /opt/bin/fbink "$pkgdir"/opt/koreader/fbink
     ln -s /opt/bin/fbdepth "$pkgdir"/opt/koreader/fbdepth
+    sed -i 's/hasOTAUpdates = yes/hasOTAUpdates = no/' "$pkgdir"/opt/koreader/frontend/device/remarkable/device.lua
 
     install -D -m 644 -t "$pkgdir"/opt/etc/draft/ "$srcdir"/koreader.draft
     install -D -m 644 -t "$pkgdir"/opt/usr/share/applications/ "$srcdir"/KOReader.oxide
