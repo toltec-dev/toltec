@@ -689,8 +689,8 @@ reenable() {
     reinstall-base
     log INFO "Reinstalling packages with files on the root partition"
     reinstall-root
-    if [ -d $toltec_dest/share/toltec/reenable.d ]; then
-        find $toltec_dest/share/toltec/reenable.d -maxdepth 1 -mindepth 1 -print0 \
+    if [ -d "$toltec_dest"/share/toltec/reenable.d ]; then
+        find "$toltec_dest"/share/toltec/reenable.d -maxdepth 1 -mindepth 1 -print0 \
             | xargs -0rn1 basename \
             | while read -r pkg; do
                 local script
