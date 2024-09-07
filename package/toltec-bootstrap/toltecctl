@@ -465,7 +465,7 @@ reinstall-root() {
         if [[ -v "on_root_packages[$pkgname]" ]]; then
             reinstall_packages[$pkgname]=1
         fi
-    done < <(gunzip -c $toltec_dest/var/opkg-lists/* | grep "^Package:" | awk '{print $2}')
+    done < <(gunzip -c "$toltec_dest"/var/opkg-lists/* | grep "^Package:" | awk '{print $2}')
 
     # Workaround: Checking the size of an empty array when the nounset option
     # is active may throw an error on some Bash versions, so we disable it
