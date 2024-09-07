@@ -2,18 +2,20 @@
 # Copyright (c) 2023 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
-archs=(rmallos2 rm1os3 rm2os3)
+archs=(rm1os2 rm1os3 rm2os2 rm2os3)
 pkgnames=(toltec-deletions)
 pkgdesc="Metapackage to handle package deletions between OS versions"
 url=https://toltec-dev.org/
-pkgver=0.1-6
+pkgver=0.1-8
 timestamp=2023-12-03T04:51:58Z
 section="utils"
 maintainer="Eeems <eeems@eeems.email>"
 license=MIT
 installdepends=(toltec-bootstrap)
-conflicts_rmallos2=()
-replaces_rmallos2=()
+conflicts_rm1os2=()
+replaces_rm1os2=()
+conflicts_rm2os2=()
+replaces_rm2os2=()
 conflicts_rm1os3=(
     ddvk-hacks
     fuse

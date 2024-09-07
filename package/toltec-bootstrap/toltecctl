@@ -685,7 +685,7 @@ reenable() {
     generate-opkg-conf || true
     log INFO "Opkg update"
     opkg update
-    log INFO "Reinsalling base packages"
+    log INFO "Reinstalling base packages"
     reinstall-base
     log INFO "Reinstalling packages with files on the root partition"
     reinstall-root
