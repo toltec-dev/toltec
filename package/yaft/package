@@ -13,6 +13,7 @@ license=GPL-3.0
 section="admin"
 image=base:v3.1
 installdepends=(display terminfo)
+flags=(nostrip)
 
 source=()
 sha256sums=()
@@ -31,15 +32,18 @@ prepare() {
 }
 
 build() {
-    mkdir build
+    cd "$srcdir"
     mkdir install
-    cd build
-    cmake -DCMAKE_TOOLCHAIN_FILE="/usr/share/cmake/$CHOST.cmake" \
-        -DCMAKE_INSTALL_PREFIX="../install" -DCMAKE_BUILD_TYPE=Release ../yaft
-    cd apps/yaft
-    make
-    make install
-    rm build/src/librm2fb_client.so*
+    cd yaft
+    cmake --preset release-toltec
+    cmake \
+        --build build/release-toltec \
+        --target yaft
+    cmake \
+        --install build/release-toltec \
+        --prefix ../install \
+        --component yaft \
+        --strip
 }
 
 package() {

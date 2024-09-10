@@ -13,6 +13,7 @@ license=GPL-3.0
 section="utils"
 image=base:v3.1
 installdepends=(display)
+flags=(nostrip)
 
 source=()
 sha256sums=()
@@ -31,14 +32,18 @@ prepare() {
 }
 
 build() {
-    mkdir build
+    cd "$srcdir"
     mkdir install
-    cd build
-    cmake -DCMAKE_TOOLCHAIN_FILE="/usr/share/cmake/$CHOST.cmake" \
-        -DCMAKE_INSTALL_PREFIX="../install" -DCMAKE_BUILD_TYPE=Release ../tilem
-    cd apps/tilem
-    make
-    make install
+    cd tilem
+    cmake --preset release-toltec
+    cmake \
+        --build build/release-toltec \
+        --target tilem
+    cmake \
+        --install build/release-toltec \
+        --prefix ../install \
+        --component tilem \
+        --strip
 }
 
 package() {
