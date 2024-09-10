@@ -39,6 +39,7 @@ build() {
     cd apps/yaft
     make
     make install
+    rm build/src/librm2fb_client.so*
 }
 
 package() {
