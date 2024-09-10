@@ -15,11 +15,11 @@ flags=(patch_rm2fb)
 
 image=rust:v3.1
 source=(
-    https://github.com/fenollp/reMarkable-tools/archive/v0.3.7.zip
+    https://github.com/fenollp/reMarkable-tools/archive/refs/tags/v0.4.0.zip
     whiteboard-hypercard.draft
 )
 sha256sums=(
-    642fd954ec4f9a1d132b10cc7f7dfbee3467e9c08b1253cc32d1e372178d168b
+    3184125c71b4d0a628280b0c49bb368a254dd582b951f5a62ca451c3dc465e65
     SKIP
 )
 
