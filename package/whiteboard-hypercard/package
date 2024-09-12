@@ -5,8 +5,8 @@
 pkgnames=(whiteboard-hypercard)
 pkgdesc="Real-time collaboration, drawing or whiteboarding"
 url=https://github.com/fenollp/reMarkable-tools
-pkgver=0.4.0-1
-timestamp=2024-05-14T23:01:16Z
+pkgver=0.5.0-1
+timestamp=2024-09-12T19:00:22Z
 section="drawing"
 maintainer="Pierre Fenoll <pierrefenoll@gmail.com>"
 license=CC-BY-NC-ND
@@ -15,11 +15,11 @@ flags=(patch_rm2fb)
 
 image=rust:v3.2
 source=(
-    https://github.com/fenollp/reMarkable-tools/archive/refs/tags/v0.4.0.zip
+    https://github.com/fenollp/reMarkable-tools/archive/refs/tags/v0.5.0.zip
     whiteboard-hypercard.draft
 )
 sha256sums=(
-    3184125c71b4d0a628280b0c49bb368a254dd582b951f5a62ca451c3dc465e65
+    668f0b1dbc6027f6f6b8ab69f65c844a718f38115f79b9ce79e060a1cef3edfb
     SKIP
 )
 
@@ -27,11 +27,11 @@ build() {
     pushd marauder
     rustup component add rustfmt
     cargo fetch
-    cargo build --release --bin whiteboard --locked --frozen --offline
+    cargo build --release --package=marauder --bin=whiteboard --locked --frozen --offline --target=armv7-unknown-linux-gnueabihf
     popd
 }
 
 package() {
-    install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/marauder/target/armv7-unknown-linux-gnueabihf/release/whiteboard
+    install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/target/armv7-unknown-linux-gnueabihf/release/whiteboard
     install -D -m 644 -t "$pkgdir"/opt/etc/draft "$srcdir"/whiteboard-hypercard.draft
 }
