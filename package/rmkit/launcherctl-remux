@@ -7,7 +7,7 @@ remux_ppid() {
     grep "PPid:" "/proc/$(remux_pid)/status" | awk '{print $2}'
 }
 draft_apps() {
-    find {/opt,}/etc/draft -maxdepth 1 -type f | while read -r file; do
+    find {/opt,}/etc/draft -maxdepth 1 -type f 2> /dev/null | while read -r file; do
         name="$(grep 'name=' "$file" | sed 's|^name=||')"
         call="$(grep 'call=' "$file" | sed 's|^call=||')"
         echo -e "${name}\t${call}"
@@ -89,7 +89,7 @@ case "$1" in
         systemctl disable remux.service
         ;;
     apps)
-        find {/opt,}/etc/draft -maxdepth 1 -type f | while read -r file; do
+        find {/opt,}/etc/draft -maxdepth 1 -type f 2> /dev/null | while read -r file; do
             grep 'name=' "$file" | sed 's|^name=||'
         done
         ;;
