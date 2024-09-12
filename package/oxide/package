@@ -1,12 +1,13 @@
 #!/usr/bin/env bash
-# Copyright (c) 2021 The Toltec Contributors
+# Copyright (c) 2024 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
+archs=(rm1 rm2)
 pkgnames=(oxide oxide-extra oxide-utils inject_evdev liboxide liboxide-dev libsentry)
-_oxidever=2.7
-pkgver=$_oxidever-7
-_sentryver=0.5.0
-timestamp=2023-12-05T04:43:04Z
+_oxidever=2.8.4
+pkgver=$_oxidever-2
+_sentryver=0.7.6
+timestamp=2024-06-26T22:31:46Z
 maintainer="Eeems <eeems@eeems.email>"
 url=https://oxide.eeems.codes
 license=MIT
@@ -18,7 +19,7 @@ source=(
     launcherctl-oxide
 )
 sha256sums=(
-    e1f20fc60ae8edccb941e09c0e61cbfb58f1f8a5f64be98870eb2d079f83316f
+    bfcb26c0493544fabc472bebc1eb372e49e58774163533ae937b6e814222f03e
     SKIP
     SKIP
 )
@@ -26,13 +27,15 @@ sha256sums=(
 build() {
     find . -name "*.pro" -type f -print0 \
         | xargs -r -0 sed -i 's/linux-oe-g++/linux-arm-remarkable-g++/g'
+    find . -name "*.pri" -type f -print0 \
+        | xargs -r -0 sed -i 's/linux-oe-g++/linux-arm-remarkable-g++/g'
     CMAKE_TOOLCHAIN_FILE="/usr/share/cmake/$CHOST.cmake" make FEATURES=sentry release
 }
 
 oxide() {
     pkgdesc="Launcher application"
     section="launchers"
-    installdepends=("oxide-utils=$pkgver" "liboxide=$pkgver" "libsentry=$_sentryver" "reboot-guard" "jq")
+    installdepends=("oxide-utils=$pkgver" "liboxide=$pkgver" "libsentry=$_sentryver" reboot-guard jq display launcherctl)
     replaces=(erode tarnish decay corrupt)
     conflicts=(erode tarnish decay corrupt)
 
@@ -59,6 +62,10 @@ oxide() {
         install -D -m 644 -t "$pkgdir"/opt/usr/share/applications "$srcdir"/release/opt/usr/share/applications/codes.eeems.corrupt.oxide
         # launcherctl registration
         install -D -T -m 755 "$srcdir"/launcherctl-oxide "$pkgdir"/opt/share/launcherctl/oxide
+        if [[ $arch = rm2 ]]; then
+            install -D -m 644 -t "$pkgdir"/etc/systemd/system/tarnish.service.d \
+                "$srcdir"/toltec-rm2-override.conf
+        fi
     }
 
     configure() {
@@ -138,7 +145,8 @@ liboxide() {
     section="devel"
 
     package() {
-        install -D -m 755 -t "$pkgdir"/opt/lib "$srcdir"/release/opt/lib/libliboxide.so*
+        install -D -m 755 -t "$pkgdir"/opt/lib "$srcdir"/release/opt/lib/liboxide.so*
+        install -D -m 755 -t "$pkgdir"/opt/lib "$srcdir"/release/opt/lib/libqsgepaper.so*
     }
 }
 
@@ -148,7 +156,7 @@ liboxide-dev() {
     installdepends=("liboxide=$pkgver")
 
     package() {
-        install -D -m 755 -t "$pkgdir"/opt/lib/pkgconfig "$srcdir"/release/opt/lib/pkgconfig/liboxide.pc
+        install -D -m 755 -t "$pkgdir"/opt/lib/pkgconfig "$srcdir"/release/opt/lib/pkgconfig/oxide.pc
         install -D -m 755 -t "$pkgdir"/opt/include "$srcdir"/release/opt/include/epframebuffer.h
         install -D -m 755 -t "$pkgdir"/opt/include "$srcdir"/release/opt/include/liboxide.h
         cp -ar "$srcdir"/release/opt/include/liboxide/ "$pkgdir"/opt/include/
@@ -160,7 +168,7 @@ libsentry() {
     section="devel"
     url=https://github.com/getsentry/sentry-native
     pkgver="$_sentryver"
-    timestamp="2021-12-20T14:25:11Z"
+    timestamp="2024-06-12T08:04:15Z"
 
     package() {
         install -D -m 755 -t "$pkgdir"/opt/lib "$srcdir"/release/opt/lib/libsentry.so
