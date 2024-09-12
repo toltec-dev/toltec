@@ -13,7 +13,7 @@ license=CC-BY-NC-ND
 installdepends=(display)
 flags=(patch_rm2fb)
 
-image=rust:v3.1
+image=rust:v3.2
 source=(
     https://github.com/fenollp/reMarkable-tools/archive/refs/tags/v0.4.0.zip
     whiteboard-hypercard.draft
