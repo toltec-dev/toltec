@@ -24,7 +24,7 @@ _defconfigs=(
     arch/arm/configs/zero-sugar_defconfig
 )
 
-image=base:v2.3
+image=base:v3.1
 source=(
     "https://git.zx2c4.com/wireguard-linux-compat/snapshot/wireguard-linux-compat-${pkgver%-*}.tar.xz"
     fix-multiple-yylloc-definitions.patch
