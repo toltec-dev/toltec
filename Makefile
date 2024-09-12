@@ -8,6 +8,10 @@ RECIPES_CLEAN=$(foreach app, $(RECIPES), $(app)-clean)
 
 ifeq ($(RUNNER_DEBUG), 1)
 FLAGS+= --verbose
+else
+ifeq ($(VERBOSE), 1)
+FLAGS+= --verbose
+endif
 endif
 
 define USAGE

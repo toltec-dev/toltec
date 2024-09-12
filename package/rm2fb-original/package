@@ -112,12 +112,12 @@ rm2fb-client() {
     replaces=(rm2fb)
 
     package() {
+        set -x
         libname="librm2fb_client.so"
         libnamever="$libname.$_libver"
         install -D -m 644 -t "$pkgdir"/opt/lib "$srcdir"/src/client/"$libnamever"
         install -d "$pkgdir"/usr/lib
         ln -s /opt/lib/"$libnamever" "$pkgdir"/usr/lib/"$libnamever"
-        ln -s /opt/lib/"$libnamever" "$pkgdir"/opt/lib/"$libname"
 
         for dest in opt/lib usr/lib; do
             ln -s "$libnamever" "$pkgdir/$dest/${libnamever%.*.*.*}"
