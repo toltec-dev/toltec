@@ -19,7 +19,7 @@ sha256sums=(
     cba3cea3ae4cd345a4d7a787a47e20b35af00859b7089de5aab4796df406fe00
     SKIP
 )
-image=base:v3.1
+image=base:v3.2
 makedepends=(
     build:gtk-doc-tools
     build:libglib2.0
