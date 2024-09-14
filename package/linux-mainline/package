@@ -15,7 +15,7 @@ installdepends=(kernelctl)
 license=GPL-2.0-only
 flags=(nostrip)
 
-image=base:v2.3
+image=base:v3.2
 source=(
     https://github.com/alistair23/linux/archive/1698a3bdd8d66e58873c5bb3ce370b7d48b004cf.tar.gz
     remarkable_defconfig
