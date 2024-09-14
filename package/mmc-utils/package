@@ -6,7 +6,7 @@ archs=(rmall)
 pkgnames=(mmc-utils)
 pkgdesc="A tool for monitoring the eMMC protocol"
 url=https://git.kernel.org/pub/scm/utils/mmc/mmc-utils.git/
-pkgver=1.0-0
+pkgver=1.0-1
 timestamp=2021-08-12T19:41:07Z
 section="devel"
 maintainer="Alistair Francis <alistair@alistair23.me>"
@@ -14,13 +14,22 @@ license=GPL-2.0-only
 
 image=base:v2.2
 source=(
-    "https://git.kernel.org/pub/scm/utils/mmc/mmc-utils.git/snapshot/mmc-utils-7769a4d7abe339ce273c13a203394a79a11fcff9.tar.gz"
     0001-Makefile-Remove-Werror.patch
 )
 sha256sums=(
-    0578e546d8893b6207180def7966e7314cae54c237a931b8f94779ce5c7d0668
     SKIP
 )
+_commit=7769a4d7abe339ce273c13a203394a79a11fcff9
+
+prepare() {
+    cd "$srcdir"
+    mkdir mmc-utils
+    cd mmc-utils
+    git init
+    git fetch --depth=1 "https://git.kernel.org/pub/scm/utils/mmc/mmc-utils.git" "$_commit"
+    git checkout -f "$_commit"
+    patch < "$srcdir"/0001-Makefile-Remove-Werror.patch
+}
 
 build() {
     # Use our toolchain
@@ -28,10 +37,9 @@ build() {
     export CC=arm-linux-gnueabihf-gcc
     export STRIP=arm-linux-gnueabihf-strip
 
-    patch < "$srcdir"/0001-Makefile-Remove-Werror.patch
-    make -j4
+    make -C "$srcdir"/mmc-utils -j4
 }
 
 package() {
-    DESTDIR="$pkgdir" make -C "$srcdir" install
+    DESTDIR="$pkgdir" make -C "$srcdir"/mmc-utils install
 }
