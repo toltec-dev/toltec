@@ -5,29 +5,26 @@
 pkgnames=(quickjs)
 pkgdesc="A small and embeddable Javascript engine"
 url=https://bellard.org/quickjs/
-pkgver=2020.11.08-2
+pkgver=2024.01.13-1
 section="devel"
-timestamp=2020-11-08T13:44Z
+timestamp=2024-01-13T00:00Z
 maintainer="khanhas <xuankhanh963@gmail.com>"
 license=MIT
 
-image=base:v2.1
+image=base:v3.1
 source=(
-    https://bellard.org/quickjs/quickjs-2020-11-08.tar.xz
-    quickjs.patch
+    https://bellard.org/quickjs/quickjs-2024-01-13.tar.xz
 )
 sha256sums=(
-    2e9d63dab390a95ed365238f21d8e9069187f7ed195782027f0ab311bb64187b
-    SKIP
+    3c4bf8f895bfa54beb486c8d1218112771ecfc5ac3be1036851ef41568212e03
 )
 
 build() {
-    patch -u Makefile -i quickjs.patch
-    make qjs.arm
+    make CROSS_PREFIX="$CROSS_COMPILE" qjs qjscalc
 }
 
 package() {
     install -d "$pkgdir"/opt/bin
-    install -D -m 755 -t "$pkgdir"/opt/bin/ "$srcdir"/qjs.arm
-    mv "$pkgdir"/opt/bin/qjs.arm "$pkgdir"/opt/bin/qjs
+    install -D -m 755 -t "$pkgdir"/opt/bin/ "$srcdir"/qjs
+    ln -s qjs "$pkgdir"/opt/bin/qjscalc
 }
