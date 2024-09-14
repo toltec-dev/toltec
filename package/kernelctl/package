@@ -5,7 +5,7 @@
 pkgnames=(kernelctl)
 pkgdesc="Manage aftermarket kernels"
 url=https://toltec-dev.org/
-pkgver=0.1-7
+pkgver=0.2-1
 timestamp=2022-11-12T00:00Z
 section="utils"
 maintainer="Salvatore Stella <etn45p4m@gmail.com>"
@@ -26,15 +26,17 @@ package() {
 }
 
 configure() {
-    if [[ "$(kernelctl list | tail -n +2 | awk '{print $2}' | grep "vanilla-$(< /etc/version)")" == "" ]]; then
+    os_version=$(awk -F= '/RELEASE_VERSION/{print $2}' /usr/share/remarkable/update.conf)
+    if [[ "$(kernelctl list | tail -n +2 | awk '{print $2}' | grep "vanilla-$os_version")" == "" ]]; then
         echo "Creating a backup of the currently running kernel."
         kernelctl backup vanilla
     fi
 }
 
 preremove() {
-    if [[ "$(kernelctl show | tail -n 1 | grep "vanilla-$(< /etc/version)")" == "" ]]; then
-        if [[ "$(kernelctl list | tail -n +2 | awk '{print $2}' | grep "vanilla-$(< /etc/version)")" == "" ]]; then
+    os_version=$(awk -F= '/RELEASE_VERSION/{print $2}' /usr/share/remarkable/update.conf)
+    if [[ "$(kernelctl show | tail -n 1 | grep "vanilla-$os_version")" == "" ]]; then
+        if [[ "$(kernelctl list | tail -n +2 | awk '{print $2}' | grep "vanilla-$os_version")" == "" ]]; then
             echo "Unable to restore default kernel."
             echo "To force removal, you can run the following:"
             echo "  opkg remove --force-remove kernelctl"
