@@ -5,9 +5,9 @@
 pkgnames=(sysfs_preload)
 pkgdesc="A simple preload that forces any calls to /sys/power/state to use systemd instead."
 url="https://github.com/Eeems-Org/sysfs_preload"
-pkgver=1.0.1-1
+pkgver=1.0.1-2
 timestamp=2024-06-22T05:19Z
-section=util
+section=utils
 maintainer="Eeems <eeems@eeems.email>"
 license=MIT
 
