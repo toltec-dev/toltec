@@ -1,0 +1,26 @@
+# vim: set ft=sh:
+# Copyright (c) 2021 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgnames=(1bitpaint)
+pkgdesc="Paint tool for reMarkable tablet"
+url=https://github.com/HiroshiTamura/1bitpaint_for_reMarkable
+pkgver=0.0.0-1
+timestamp=2018-04-11T09:01Z
+section=drawing
+maintainer="Eeems <eeems@eeems.email>"
+license=MIT
+
+source=(https://github.com/HiroshiTamura/1bitpaint_for_reMarkable/archive/2014bdef9359164a398316775b16e95c4dfe5446.zip)
+sha256sums=(4acdc2034dca91b3cc2da4ae22ac4bf8c48d25b3e83b171c7617cdee81bb59a6)
+image=qt:v1.2
+
+build() {
+    sed -i 's/linux-oe-g++/linux-arm-gnueabihf-g++/' 1bitpaint.pro
+    qmake
+    make
+}
+
+package() {
+    install -D -m 755 "$srcdir"/1bitpaint "$pkgdir"/opt/bin/1bitpaint
+}
