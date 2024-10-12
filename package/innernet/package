@@ -50,3 +50,12 @@ configure() {
         mkdir -p /opt/var/lib/innernet
     fi
 }
+
+preremove() {
+    disable-unit innernet.target
+    disable-unit innernet@.service
+}
+
+postremove() {
+    systemctl daemon-reload
+}
