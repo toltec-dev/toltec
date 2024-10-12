@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+# Copyright (c) 2023 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgnames=(libgudev)
+pkgdesc="Library providing GObject bindings for libudev."
+url=https://gitlab.gnome.org/GNOME/libgudev
+timestamp=2023-07-06T12:30:00Z
+section=util
+maintainer="Eeems <eeems@eeems.email>"
+license=GPL-2.0-or-later
+_libgudev_ver=237
+pkgver=${_libgudev_ver}-1
+source=("https://download.gnome.org/sources/libgudev/${_libgudev_ver}/libgudev-${_libgudev_ver}.tar.xz")
+sha256sums=(0d06b21170d20c93e4f0534dbb9b0a8b4f1119ffb00b4031aaeb5b9148b686aa)
+image=base:v3.2
+makedepends=(
+    build:libglib2.0
+    host:libglib
+)
+installdepends=(libglib)
+
+build() {
+    export PKG_CONFIG_LIBDIR="$PKG_CONFIG_LIBDIR:$PKG_CONFIG_SYSROOT_DIR/opt/usr/lib/libglib/lib/pkgconfig"
+    meson setup \
+        --cross-file /usr/share/meson/cross/arm-linux-gnueabihf \
+        --prefix /opt/usr/lib/libgudev \
+        "${srcdir}/builddir"
+    meson compile -C "${srcdir}/builddir"
+    DESTDIR="${srcdir}/installdir" meson install -C "${srcdir}/builddir"
+}
+
+package() {
+    cp -al "${srcdir}/installdir/." "${pkgdir}"
+}

@@ -1,0 +1,71 @@
+#!/usr/bin/env bash
+# Copyright (c) 2023 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgnames=(upower)
+pkgdesc="Power management support for DeviceKit"
+url=https://gitlab.freedesktop.org/upower/upower
+timestamp=2023-07-06T09:03:00Z
+section=util
+maintainer="Eeems <eeems@eeems.email>"
+license=GPL-2.0-or-later
+_upower_ver=1.90.1
+pkgver=${_upower_ver}-1
+source=(
+    "https://gitlab.freedesktop.org/upower/upower/-/archive/v${_upower_ver}/upower-v${_upower_ver}.zip"
+    upower-toltec.conf
+)
+sha256sums=(
+    cba3cea3ae4cd345a4d7a787a47e20b35af00859b7089de5aab4796df406fe00
+    SKIP
+)
+image=base:v3.2
+makedepends=(
+    build:gtk-doc-tools
+    build:libglib2.0
+    build:libglib2.0-dev-bin
+    host:libglib
+    host:libgudev
+)
+installdepends=(libgudev)
+
+build() {
+    # Workaround https://github.com/toltec-dev/toolchain/issues/33
+    export PKG_CONFIG_LIBDIR="$PKG_CONFIG_LIBDIR:$PKG_CONFIG_SYSROOT_DIR/usr/share/pkgconfig"
+    export PKG_CONFIG_LIBDIR="$PKG_CONFIG_LIBDIR:$PKG_CONFIG_SYSROOT_DIR/opt/usr/lib/libglib/lib/pkgconfig"
+    export PKG_CONFIG_LIBDIR="$PKG_CONFIG_LIBDIR:$PKG_CONFIG_SYSROOT_DIR/opt/usr/lib/libgudev/lib/pkgconfig"
+    meson setup \
+        --cross-file /usr/share/meson/cross/arm-linux-gnueabihf \
+        --prefix /opt \
+        -Dgtk-doc=false \
+        -Dman=false \
+        -Dsysconfdir=/opt/etc \
+        -Dudevrulesdir=/lib/udev/hwdb.d \
+        -Dudevhwdbdir=/lib/udev/rules.d \
+        -Dos_backend=linux \
+        "${srcdir}/builddir"
+    meson compile -C "${srcdir}/builddir"
+    DESTDIR="${srcdir}/installdir" meson install -C "${srcdir}/builddir"
+}
+
+package() {
+    cp -al "${srcdir}/installdir/." "${pkgdir}"
+    mkdir -p "${pkgdir}/etc/systemd/system/upower.service.d"
+    cp "${srcdir}/upower-toltec.conf" "${pkgdir}/etc/systemd/system/upower.service.d/"
+    patchelf \
+        --set-rpath '/lib:/usr/lib:/opt/lib:/opt/usr/lib:/opt/usr/lib/libglib/lib:/opt/usr/lib/libgudev/lib' \
+        "${pkgdir}/opt/bin/upower" \
+        "${pkgdir}/opt/libexec/upowerd"
+}
+
+configure() {
+    systemctl daemon-reload
+    systemctl reload dbus
+    systemctl enable --now upower
+}
+
+postremove() {
+    systemctl daemon-reload
+    disable-unit upower
+    systemctl reload dbus
+}
