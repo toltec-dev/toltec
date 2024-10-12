@@ -393,11 +393,11 @@ update-package-arch() {
         return 3
     fi
     case "$arch" in
-        rmallos2 | rmallos3)
+        rmallos2 | rmallos3 | rmallos3v5)
             version="$(identify-support-version)"
             new_status="$(echo "$status" | replace-string "Architecture: ${arch}" "Architecture: rmall${version}")"
             ;;
-        rm1os2 | rm1os3 | rm2os2 | rm2os3)
+        rm1os2 | rm1os3 | rm1os3v5 | rm2os2 | rm2os3 | rm2os3v5)
             model="$(identify-model)"
             version="$(identify-support-version)"
             new_status="$(echo "$status" | replace-string "Architecture: ${arch}" "Architecture: ${model}${version}")"
@@ -611,7 +611,8 @@ compare-versions() {
 # Output: One of the following strings
 #
 # os2 - 2.x OS version
-# os3 - 3.x OS version
+# os3 - 3.0 to 3.8 OS version
+# os3v5 - 3.8+ OS version
 # unknown
 identify-support-version() {
     local current_version
@@ -621,8 +622,10 @@ identify-support-version() {
         echo "unknown"
     elif compare-versions "3.0" "$current_version"; then
         echo "os2"
-    elif compare-versions "4.0" "$current_version"; then
+    elif compare-versions "3.8" "$current_version"; then
         echo "os3"
+    elif compare-versions "4.0" "$current_version"; then
+        echo "os3v5"
     else
         echo "unknown"
     fi
@@ -664,8 +667,7 @@ arch ${model} 250
 src/gz toltec-${model} ${toltec_srv_root}/${branch}/${model}
 arch rmall${version} 260
 src/gz toltec-rmall$version ${toltec_srv_root}/${branch}/rmall${version}
-arch ${model}os2 270
-arch ${model}os3 270
+arch ${model}${version} 270
 src/gz toltec-${model}${version} ${toltec_srv_root}/${branch}/${model}${version}
 CONF
 }

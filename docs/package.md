@@ -46,9 +46,12 @@ Name        | Meaning
 `rmallos2` | Packages which work on all reMarkable devices without modification, but only on the 2.x series of operating system.
 `rm1os2`   | Packages requiring reMarkable 1-specific resources or compilation flags, but only on the 2.x series of operating system.
 `rm2os2`   | Packages requiring reMarkable 2-specific resources or compilation flags, but only on the 2.x series of operating system.
-`rmallos3` | Packages which work on all reMarkable devices without modification, but only on the 3.x series of operating system.
-`rm1os3`   | Packages requiring reMarkable 1-specific resources or compilation flags, but only on the 3.x series of operating system.
-`rm2os3`   | Packages requiring reMarkable 2-specific resources or compilation flags, but only on the 3.x series of operating system.
+`rmallos3` | Packages which work on all reMarkable devices without modification, but only on 3.0 to 3.3.2 versions of the operating system.
+`rm1os3`   | Packages requiring reMarkable 1-specific resources or compilation flags, but only on 3.0 to 3.3.2 versions of the operating system.
+`rm2os3`   | Packages requiring reMarkable 2-specific resources or compilation flags, but only on 3.0 to 3.3.2 versions of the operating system.
+`rmallos3v5` | Packages which work on all reMarkable devices without modification, but only on 3.5.2 or newer operating system versions.
+`rm1os3v5`   | Packages requiring reMarkable 1-specific resources or compilation flags, but only on 3.5.2 or newer operating system versions.
+`rm2os3v5`   | Packages requiring reMarkable 2-specific resources or compilation flags, but only on 3.5.2 or newer operating system versions.
 
 For example, use `archs=(rm1)` for a package that only works on reMarkable 1, or `archs=(rm1 rm2)` for a package that works both on reMarkable 1 and reMarkable 2 but needs different dependencies or compilation flags for each of those.
 

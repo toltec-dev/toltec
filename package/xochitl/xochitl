@@ -10,14 +10,22 @@ for file in /opt/etc/xochitl.env.d/*.env; do
     fi
 done
 
+is-active() {
+    systemctl --quiet is-active "$1" 2> /dev/null
+}
+
+is-masked() {
+    [[ "$(systemctl is-enabled "$1" 2> /dev/null)" == "masked" ]]
+}
+
 # If for some reason, sync.service is no longer masked, re-mask it
 # The package install should have handled this, but something may
 # have changed it.
-if [[ "x$(systemctl is-enabled sync.service)" != "xmasked" ]]; then
+if ! is-masked sync.service; then
     systemctl mask sync.service
 fi
 
-if [[ "x$(systemctl is-enabled rm-sync.service)" != "xmasked" ]]; then
+if ! is-masked rm-sync.service; then
     systemctl mask rm-sync.service
 fi
 
