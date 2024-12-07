@@ -254,6 +254,10 @@ DNS.3 = internal.cloud.remarkable.com
 DNS.4 = ping.remarkable.com
 DNS.5 = *.remarkable.com
 DNS.6 = webapp-legacy-dev.cloud.remarkable.engineering
+DNS.7 = dev.tectonic.remarkable.com
+DNS.8 = *.dev.tectonic.remarkable.com
+DNS.9 = dev.internal.cloud.remarkable.com
+DNS.10 = *.dev.internal.cloud.remarkable.com
 CSR
 
         openssl req -new -config "$csr" \
@@ -294,6 +298,8 @@ $proxy_listen my.remarkable.com
 $proxy_listen internal.cloud.remarkable.com
 $proxy_listen ping.remarkable.com
 $proxy_listen webapp-legacy-dev.cloud.remarkable.engineering
+$proxy_listen dev.tectonic.remarkable.com
+$proxy_listen dev.internal.cloud.remarkable.com
 EOF
 }
 
@@ -306,6 +312,8 @@ uninstall-hosts() {
     sed -i '/ internal.cloud.remarkable.com$/d' "$hosts_path"
     sed -i '/ ping.remarkable.com$/d' "$hosts_path"
     sed -i '/ webapp-legacy-dev.cloud.remarkable.engineering$/d' "$hosts_path"
+    sed -i '/ dev.tectonic.remarkable.com$/d' "$hosts_path"
+    sed -i '/ dev.internal.cloud.remarkable.com$/d' "$hosts_path"
 }
 
 # Try to make a full install of rmfakecloud-proxy
