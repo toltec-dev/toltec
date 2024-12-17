@@ -46,32 +46,12 @@ debian-chroot() {
             echo "Error: debian-chroot has running processes"
             exit 1
         fi
-        if ! grep -q /opt/lib/debian-chroot /proc/mounts; then
-            echo "debian-chroot is not mounted"
-            exit 0
-        fi
-        do_umount() {
-            mp=$1
-            shift
-            if mountpoint -q $mp; then
-                /bin/umount "$@" $mp
-            fi
-        }
-        echo "Unmounting debian-chroot"
-        do_umount /opt/lib/debian-chroot/mnt/remarkable/opt
-        do_umount /opt/lib/debian-chroot/mnt/remarkable/home
-        do_umount /opt/lib/debian-chroot/mnt/remarkable/var/lib/uboot
-        do_umount /opt/lib/debian-chroot/mnt/remarkable
-        do_umount /opt/lib/debian-chroot/var/volatile
-        do_umount /opt/lib/debian-chroot/tmp
-        do_umount /opt/lib/debian-chroot/run
-        do_umount /opt/lib/debian-chroot/sys -l
-        do_umount /opt/lib/debian-chroot/proc
-        do_umount /opt/lib/debian-chroot/dev -l
-        do_umount /opt/lib/debian-chroot
+        umount -Rl /opt/lib/debian-chroot
+        umount -Rl /home/root/.entware/lib/debian-chroot
     }
     postremove() {
         rm -rf /opt/lib/debian-chroot
+        echo "Please reboot your system"
     }
 }
 
