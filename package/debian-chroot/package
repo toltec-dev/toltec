@@ -48,7 +48,7 @@ debian-chroot() {
     }
     preremove() {
         source /home/root/.config/debian-chroot.conf
-        if lsof "$chroot_path" 2>/dev/null | grep "$chroot_path"; then
+        if lsof "$chroot_path" 2> /dev/null | grep "$chroot_path"; then
             echo "Error: debian-chroot has running processes"
             exit 1
         fi
