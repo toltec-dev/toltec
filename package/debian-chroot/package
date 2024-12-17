@@ -50,7 +50,7 @@ debian-chroot() {
             echo "debian-chroot is not mounted"
             exit 0
         fi
-        do_umount(){
+        do_umount() {
             mp=$1
             shift
             if mountpoint -q $mp; then
