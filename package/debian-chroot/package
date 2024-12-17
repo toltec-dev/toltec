@@ -11,12 +11,12 @@ installdepends=(display)
 flags=(nostrip)
 
 source=(
-    https://github.com/Eeems-org/remarkable-debian-chroot/archive/f37d03b52309e8f6434d311784a157bd7cdf0877.zip
+    https://github.com/Eeems-org/remarkable-debian-chroot/archive/3ea18ec34cd5e720ec3959c68dcb10a390f6f864.zip
     https://salsa.debian.org/installer-team/debootstrap/-/archive/1.0.133/debootstrap-1.0.133.tar.gz
     debian-chroot.conf
 )
 sha256sums=(
-    4fe6861bd15e4cecd036c547d749fc9b1b7a8c97f589b535f35fa0d49961e94f
+    7ba890b00af5f2d8b15aec395acf8db0ca591794303d5e49e19455039b808a9f
     734af3492eea99de940853e2c00e1a9ebd65c463362155f613aa24b9cc3336a0
     SKIP
 )
@@ -27,7 +27,7 @@ debian-chroot() {
     pkgver=0.0.0-1
     timestamp=2023-12-22T19:37Z
     license=MIT
-    installdepends=(debootstrap)
+    installdepends=(debootstrap lsof)
     package() {
         install -D -m 755 \
             "$srcdir"/bin/debian-chroot \
@@ -42,17 +42,33 @@ debian-chroot() {
         debian-chroot true
     }
     preremove() {
-        if find /proc -mindepth 2 -maxdepth 2 -name root \
-            | grep -q /opt/lib/debian-chroot; then
+        if lsof /opt/lib/debian-chroot; then
             echo "Error: debian-chroot has running processes"
             exit 1
         fi
-        while grep -q /opt/lib/debian-chroot /proc/mounts; do
-            grep /opt/lib/debian-chroot /proc/mounts \
-                | sort -r \
-                | cut -d' ' -f2 \
-                | xargs -rn1 /bin/umount -lqR
-        done
+        if ! grep -q /opt/lib/debian-chroot /proc/mounts; then
+            echo "debian-chroot is not mounted"
+            exit 0
+        fi
+        do_umount(){
+            mp=$1
+            shift
+            if mountpoint -q $mp; then
+                /bin/umount "$@" $mp
+            fi
+        }
+        echo "Unmounting debian-chroot"
+        do_umount /opt/lib/debian-chroot/mnt/remarkable/opt
+        do_umount /opt/lib/debian-chroot/mnt/remarkable/home
+        do_umount /opt/lib/debian-chroot/mnt/remarkable/var/lib/uboot
+        do_umount /opt/lib/debian-chroot/mnt/remarkable
+        do_umount /opt/lib/debian-chroot/var/volatile
+        do_umount /opt/lib/debian-chroot/tmp
+        do_umount /opt/lib/debian-chroot/run
+        do_umount /opt/lib/debian-chroot/sys -l
+        do_umount /opt/lib/debian-chroot/proc
+        do_umount /opt/lib/debian-chroot/dev -l
+        do_umount /opt/lib/debian-chroot
     }
     postremove() {
         rm -rf /opt/lib/debian-chroot
