@@ -41,7 +41,6 @@ debian-chroot() {
         source "$srcdir"/debian-chroot.conf
         mkdir -p "$pkgdir"/opt/lib/
         ln -s "$chroot_path" "$pkgdir"/opt/lib/debian-chroot
-        mkdir -p "${pkgdir}/opt/lib/debian-chroot"
     }
     configure() {
         # Force debian chroot to install iteself
