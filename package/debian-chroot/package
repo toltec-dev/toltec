@@ -55,11 +55,12 @@ debian-chroot() {
         if grep -q "$chroot_path " /proc/mounts; then
             /bin/umount -R "$chroot_path"
         fi
+        cp /home/root/.config/debian-chroot.conf /tmp/_debian-chroot.conf
     }
     postremove() {
-        source /home/root/.config/debian-chroot.conf
+        source /tmp/_debian-chroot.conf
         rm -rf "$chroot_path"
-        echo "Please reboot your system"
+        rm /tmp/_debian-chroot.conf
     }
 }
 
