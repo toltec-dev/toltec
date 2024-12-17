@@ -35,9 +35,11 @@ debian-chroot() {
         install -D -m 655 \
             "$srcdir"/debian-chroot.conf \
             "$pkgdir"/home/root/.config/debian-chroot.conf
+        mkdir -p "$pkgdir"/opt/etc/
         ln -s /home/root/.config/debian-chroot.conf \
             "$pkgdir"/opt/etc/debian-chroot.conf
         source "$srcdir"/debian-chroot.conf
+        mkdir -p "$pkgdir"/opt/lib/
         ln -s "$chroot_path" "$pkgdir"/opt/lib/debian-chroot
         mkdir -p "${pkgdir}/opt/lib/debian-chroot"
     }
