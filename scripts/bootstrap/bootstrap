@@ -20,6 +20,20 @@ if [ -z "$BASH" ] || [[ "$(ps | awk '$1=='$$' { n=split($5,a,"/"); print a[n] }'
     exit 1
 fi
 
+arch=""
+case "$(uname -m)" in
+    "armv7l")
+        arch="armv7sf-k3.2"
+        ;;
+    #"aarch64)
+    #    arch="aarch64-k3.10"
+    #    ;;
+    *)
+        echo "Unsupported device architecture"
+        exit 1
+        ;;
+esac
+
 set -eEuo pipefail
 
 # Path to the temporary local wget and Opkg binaries
@@ -33,7 +47,7 @@ toltecctl_path="${toltecctl_path:-/home/root/.local/bin/toltecctl}"
 toltec_branch="${toltec_branch:-stable}"
 
 # Base URLs for bootstrapping from the Entware and Toltec repositories
-entware_remote="${entware_remote:-https://bin.entware.net/armv7sf-k3.2/installer}"
+entware_remote="${entware_remote:-https://bin.entware.net/$arch/installer}"
 toltec_remote="${toltec_remote:-https://toltec-dev.org/$toltec_branch/rmall}"
 
 # Remove all temporary files
