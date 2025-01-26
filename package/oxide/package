@@ -35,7 +35,7 @@ build() {
 oxide() {
     pkgdesc="Launcher application"
     section="launchers"
-    installdepends=("oxide-utils=$pkgver" "liboxide=$pkgver" "libsentry=$_sentryver" reboot-guard jq display launcherctl)
+    installdepends=("oxide-utils=$pkgver" "liboxide=$pkgver" "libsentry=$_sentryver" reboot-guard jq display launcherctl sysfs_preload)
     replaces=(erode tarnish decay corrupt)
     conflicts=(erode tarnish decay corrupt)
 
