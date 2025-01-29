@@ -5,15 +5,15 @@
 pkgnames=(sysfs_preload)
 pkgdesc="A simple preload that forces any calls to /sys/power/state to use systemd instead."
 url="https://github.com/Eeems-Org/sysfs_preload"
-pkgver=1.0.1-2
-timestamp=2024-06-22T05:19Z
+pkgver=1.0.3-1
+timestamp=2024-10-11T04:33:10Z
 section=utils
 maintainer="Eeems <eeems@eeems.email>"
 license=MIT
 
 image=qt:v3.1
-source=(https://github.com/Eeems-Org/sysfs_preload/archive/refs/tags/1.0.1.tar.gz)
-sha256sums=(73627b68e3b2454efcc2d83e6ebdc2eb473f9cc2616ed1b9dd2acae159c54b3d)
+source=(https://github.com/Eeems-Org/sysfs_preload/archive/refs/tags/1.0.3.tar.gz)
+sha256sums=(06a4c356e583614880c24afc2205caa3db445e3e6bd4414091545540d841a095)
 
 build() {
     find . -name "*.pro" -type f -print0 \
