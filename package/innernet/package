@@ -1,26 +1,26 @@
 #!/usr/bin/env bash
-# Copyright (c) 2021 The Toltec Contributors
+# Copyright (c) 2024 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
 archs=(rmallos2)
 pkgnames=(innernet-client)
 pkgdesc="A private network system that uses WireGuard under the hood."
 url="https://github.com/tonarino/innernet"
-pkgver=1.5.3-3
-timestamp=2022-01-31T20:08:43Z
+pkgver=1.6.1-1
+timestamp=2024-01-19T14:24:40Z
 section="utils"
 maintainer="plan5 <30434574+plan5@users.noreply.github.com>"
 license=MIT
 installdepends=(wireguard)
 makedepends=(build:librust-clang-sys-dev build:libclang-dev build:libc6 build:libc6-dev build:clang)
 
-image=rust:v2.2.2
+image=rust:v3.1
 _srcver="v${pkgver%-*}"
 source=(
     "https://github.com/tonarino/innernet/archive/refs/tags/$_srcver.zip"
 )
 sha256sums=(
-    2f7ca1d802d898b1c4fd090cba9e0562a1e80d617b55f23ba596e81c99441a1c
+    fd9ec6eb75dcc46c818696e7fcb87eb772dc024e0c326360f0f8c473c937c37c
 )
 
 prepare() {
@@ -43,13 +43,19 @@ package() {
     install -D -m 700 -t "$pkgdir"/opt/bin "$srcdir"/target/armv7-unknown-linux-gnueabihf/release/innernet
     install -D -m 644 -t "$pkgdir"/lib/systemd/system "$srcdir/client/innernet@.service"
     install -D -m 644 -t "$pkgdir"/lib/systemd/system "$srcdir/client/innernet.target"
-
-    # Link /opt/bin/innernet to /opt/bin/inn
-    ln -s /opt/bin/innernet "$pkgdir"/opt/bin/inn
 }
 
 configure() {
     if ! [ -d /opt/var/lib/innernet ]; then
         mkdir -p /opt/var/lib/innernet
     fi
+}
+
+preremove() {
+    disable-unit innernet.target
+    disable-unit innernet@.service
+}
+
+postremove() {
+    systemctl daemon-reload
 }

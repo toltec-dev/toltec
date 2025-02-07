@@ -1,0 +1,59 @@
+#!/usr/bin/env bash
+# Copyright (c) 2020 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+archs=(rmallos3)
+pkgnames=(keyd)
+pkgdesc="A key remapping daemon for linux"
+url="https://github.com/rvaiya/keyd"
+pkgver=2.4.3-1
+timestamp=2023-05-16T10:11Z
+section=utils
+maintainer="Kai <z@kwi.li>"
+license=MIT
+
+image=base:v3.1
+source=(
+    https://github.com/rvaiya/keyd/archive/refs/tags/v2.4.3.zip
+    default.conf
+)
+sha256sums=(
+    cdfcc2cf0518b9a2d292ebac17b18f78548b92803e2a9deeb9f18c9641bf80e5
+    SKIP
+)
+
+build() {
+    make PREFIX=/opt CONFIG_DIR=/opt/etc/keyd "CC=${CROSS_COMPILE}cc"
+    sed -i 's|ExecStart=/usr/bin/keyd|ExecStart=/opt/bin/keyd|' keyd.service
+}
+
+package() {
+    cd "$srcdir"
+    make PREFIX=/opt CONFIG_DIR=/opt/etc/keyd DESTDIR="$pkgdir" install
+    rmdir "$pkgdir"/etc/keyd
+    install -D -m 644 -t "$pkgdir"/etc/systemd/system "$srcdir"/keyd.service
+    install -D -m 644 -t "$pkgdir"/opt/etc/keyd "$srcdir"/default.conf
+}
+
+configure() {
+    addgroup keyd
+    systemctl daemon-reload
+    if is-active keyd; then
+        systemctl restart keyd
+    elif ! is-enabled "$pkgname.service"; then
+        echo ""
+        echo "Run the following command(s) to enable the keyd service"
+        how-to-enable "$pkgname.service"
+        echo ""
+        echo "You will need to modify /opt/etc/keyd/default.conf before starting the service"
+    fi
+}
+
+preremove() {
+    disable-unit keyd
+    delgroup keyd
+}
+
+postremove() {
+    systemctl daemon-reload
+}

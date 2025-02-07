@@ -7,7 +7,7 @@ jobs:
         runs-on: ubuntu-22.04
         steps:
             - name: Checkout the Git repository
-              uses: actions/checkout@v3
+              uses: actions/checkout@v4
             - name: Setup Toltec dependencies
               uses: ./.github/actions/setup
             - name: Check formatting
@@ -20,13 +20,13 @@ jobs:
         needs: lint
         steps:
             - name: Checkout the Git repository
-              uses: actions/checkout@v3
+              uses: actions/checkout@v4
             - name: Setup Toltec dependencies
               uses: ./.github/actions/setup
             - name: Build packages
               run: FLAGS='--remote-repo https://toltec-dev.org/${{ github.base_ref }}' make repo-new
             - name: Save the build output
-              uses: actions/upload-artifact@v3
+              uses: actions/upload-artifact@v4
               with:
                 name: repo
                 path: build/repo
