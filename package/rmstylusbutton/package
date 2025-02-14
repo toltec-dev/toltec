@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+# Copyright (c) 2025 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+archs=(rm2)
+pkgnames=(rmstylusbutton)
+_pkgver=3.0
+pkgver=$_pkgver-1
+pkgdesc="Use a stylus button with the reMarkable 2"
+timestamp=2024-03-04T04:30:52Z
+maintainer="Moritz <github@moritzboeh.me>"
+license=GPL-3.0
+url=https://github.com/rschroll/RMStylusButton
+section="utils"
+installdepends=(xochitl)
+conflicts=(remarkable-stylus)
+
+image=base:v3.2
+source=(
+    "$url/archive/refs/tags/v$_pkgver.tar.gz"
+    rmstylusbutton.service
+)
+sha256sums=(
+    5f468b9f78b705ca67ea3288ae923b10fb70193c236b31507a4e6148ebb4e60e
+    SKIP
+)
+
+build() {
+    export CC=arm-linux-gnueabihf-gcc
+    make
+}
+
+package() {
+    install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/RMStylusButton/RMStylusButton
+    install -D -m 644 -t "$pkgdir"/lib/systemd/system/ "$srcdir"/rmstylusbutton.service
+}
+
+configure() {
+    systemctl daemon-reload
+    systemctl enable --now rmstylusbutton.service
+}
+
+preremove() {
+    disable-unit rmstylusbutton.service
+}
+
+postremove() {
+    systemctl daemon-reload
+}
