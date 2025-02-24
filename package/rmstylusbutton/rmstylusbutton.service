@@ -1,0 +1,10 @@
+[Unit]
+Description=Stylus Button Input
+After=xochitl.service
+
+[Service]
+ExecStart=/opt/bin/RMStylusButton
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
