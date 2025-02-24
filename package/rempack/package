@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+# Copyright (c) 2020 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgnames=(rempack)
+pkgdesc="A user friendly package manager frontend for opkg"
+archs=(rm2)
+url="https://github.com/rempack-b/rempack"
+pkgver=1.0.5
+timestamp=2025-02-24T04:41:34-05:00
+section=admin
+maintainer="Brant Martin <toltec@brantmartin.com>"
+license=MIT
+image=base:v3.1
+installdepends=(display)
+source=(
+    http://gitlab.onionstorm.net/rolenthedeep/rempack/-/archive/1.0.5/rempack-1.0.5.zip
+)
+sha256sums=(
+    754c34ad4b4e5e208da4e27f3c7b9c7a33fdf6617263aa22a67e31e82a22dffe
+)
+build() {
+    cd $srcdir
+    mkdir output
+    cmake -S . -B output --preset "Release Native"
+    cmake --build output --target rempack
+}
+
+package() {
+    ## Commands to copy the build artifacts into a package structure
+    # Use the `install` command when possible
+    # (see `man install` or <https://linux.die.net/man/1/install>)
+
+    # The following variables are available:
+    # "$srcdir" - The directory where build() was run
+    # "$pkgdir" - The final folder containing the root where your files should go
+
+    # Examples:
+    # Add a single config file or non-executable resource
+    # install -D -m 644 "$srcdir"/default_config "$pkgdir"/opt/etc/your_package.conf
+    #
+    # Add a empty directory
+    # install -d "$pkgdir"/opt/etc/draft/icons
+    #
+    # Add a executable (binary/script)
+    # install -D -m 755 "$srcdir"/build/programname "$pkgdir"/opt/bin/programname    
+    install -D -m 755 "$srcdir"/output/rempack "$pkgdir"/opt/bin/rempack
+    #touch ~/rempack
+}
