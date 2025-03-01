@@ -6,7 +6,7 @@ pkgnames=(rempack)
 pkgdesc="A user friendly package manager frontend for opkg"
 archs=(rm2)
 url="https://github.com/rempack-b/rempack"
-pkgver=1.1.2
+pkgver=1.1.3
 timestamp=2025-03-01T04:26:09-05:00
 section=admin
 maintainer="Brant Martin <toltec@brantmartin.com>"
@@ -14,7 +14,7 @@ license=MIT
 image=base:v3.1
 installdepends=(display)
 source=(
-    http://gitlab.onionstorm.net/rolenthedeep/rempack/-/archive/1.1.2/rempack-1.1.2.zip
+    http://gitlab.onionstorm.net/rolenthedeep/rempack/-/archive/1.1.3/rempack-1.1.3.zip
     rempack.draft
     rempack.oxide
 )
