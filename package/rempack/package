@@ -30,7 +30,7 @@ build() {
     cmake --build output --target rempack
 }
 
-package() {    
+package() {
     install -D -m 755 "$srcdir"/output/rempack "$pkgdir"/opt/bin/rempack
     install -D -m 644 "$srcdir"/rempack.draft "$pkgdir"/opt/etc/draft/rempack.draft
     install -D -m 644 "$srcdir"/rempack.oxide "$pkgdir"/opt/usr/share/applications/rempack.oxide
