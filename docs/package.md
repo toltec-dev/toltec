@@ -336,6 +336,7 @@ screensharing   | Apps for streaming the display between the PC and tablet.
 templates       | Templates for xochitl notebooks.
 splashscreens   | Splashscreens for device startup, poweroff, suspend, etc.
 utils           | System tools and various apps.
+writing         | Apps for writing text.
 
 If the package does not fit into one of the existing sections, you are free to create a new one and document it here.
 

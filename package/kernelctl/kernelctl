@@ -14,6 +14,9 @@ bl="\033[1;34m" # blue
 # change our working directory to / to ease filesystem operations
 cd /
 
+# find current os version
+os_version=$(awk -F= '/RELEASE_VERSION/{print $2}' /usr/share/remarkable/update.conf)
+
 help() {
     read -r -d '' msg <<- EOM
 		Usage: $(basename "$0") COMMAND
@@ -36,7 +39,7 @@ help() {
 # backup current kernel
 backup() {
     if [[ "$1" = "vanilla" ]]; then
-        kernel_name="vanilla-$(< /etc/version)"
+        kernel_name="vanilla-$os_version"
     else
         kernel_name=$1
     fi
@@ -82,7 +85,7 @@ to_kernel_name() {
         echo "${kernel_names[$(($1 - 1))]}"
         return
     elif [[ "$1" = "default" ]]; then
-        ker="vanilla-$(< /etc/version)"
+        ker="vanilla-$os_version"
     else
         ker="$1"
     fi
@@ -185,7 +188,7 @@ prune() {
     echo -n "Do you want to proceed? [N/y]: "
     read -r ans
     if [[ "$ans" = "y" || "$ans" = "Y" ]]; then
-        mapfile -t filenames < <(find "$kernelctl_dir" -path "*vanilla-*.tar.bz2" ! -name vanilla-"$(< /etc/version)".tar.bz2)
+        mapfile -t filenames < <(find "$kernelctl_dir" -path "*vanilla-*.tar.bz2" ! -name vanilla-"$os_version".tar.bz2)
         for filename in "${filenames[@]}"; do
             rm "$filename"
         done

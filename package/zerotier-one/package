@@ -4,16 +4,16 @@
 
 pkgnames=(zerotier zerotier-one zerotier-one-doc zerotier-selftest)
 url=https://github.com/zerotier/ZeroTierOne
-_upver=1.12.2
+_upver=1.14.2
 pkgver=${_upver}-1
-timestamp=2023-03-23T17:39:31Z
+timestamp=2024-10-29T16:17:48Z
 maintainer="Eeems <eeems@eeems.email>"
 license=BUSL-1.1
 section="utils"
 image=base:v3.0
 
 source=("https://github.com/zerotier/ZeroTierOne/archive/refs/tags/${_upver}.zip")
-sha256sums=(2089fc824c84985610f0bd60186c72e94e2592d8f38259a1c80ea8f696edd16b)
+sha256sums=(529dd6d246f51ca7cb0b14794ba68560c0134409f94fcc61a3ee7f5c173c301f)
 
 build() {
     sed -i \
