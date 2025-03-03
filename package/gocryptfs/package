@@ -2,11 +2,12 @@
 # Copyright (c) 2020 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
+archs=(rmallos2)
 pkgnames=(gocryptfs)
 pkgdesc="An encrypted overlay filesystem written in Go."
 url="https://nuetzlich.net/gocryptfs/"
 _srcver=2.0-beta2
-pkgver="$_srcver"-2
+pkgver="$_srcver"-3
 timestamp=2021-03-22
 section=utils
 maintainer="plan5 <30434574+plan5@users.noreply.github.com>"

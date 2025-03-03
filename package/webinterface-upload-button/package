@@ -5,7 +5,7 @@
 pkgnames=("webinterface-upload-button")
 pkgdesc="A simple upload button for the web interface"
 url="https://github.com/rM-self-serve/webinterface-upload-button"
-pkgver=1.1.1-2
+pkgver=1.1.1-3
 timestamp=2023-12-16T15:35:49Z
 section="utils"
 maintainer="rM-self-serve <122753594+rM-self-serve@users.noreply.github.com>"
@@ -15,7 +15,7 @@ source=(
     "$url"/archive/1d28b2d91c0179059017696ae5a33aa49e1e7c7d.zip
 )
 sha256sums=(
-    99ac382e665b55c43876e8991c9dfa7f11a625d4f3ed4f35d3bc58762e04db39
+    f967cad7607da6458cb0e307b662db66026747922f98ad19f7e2265b9cab1f47
 )
 
 package() {

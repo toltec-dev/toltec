@@ -5,18 +5,18 @@
 pkgnames=(neofetch)
 pkgdesc="A command-line system information tool"
 url="https://github.com/rM-self-serve/neofetch-rM"
-pkgver=1.1.0-1
-timestamp=2023-12-06T11:43:00Z
+pkgver=1.1.1-1
+timestamp=2024-03-14T11:43:00Z
 section="utils"
 maintainer="rM-self-serve <122753594+rM-self-serve@users.noreply.github.com>"
 license=MIT
 
 source=(
-    https://github.com/rM-self-serve/neofetch-rM/archive/955997e4e3b8be682f40ee54366e44337df68959.zip
+    "$url"/archive/6dfc7a7b0c10f451bdd8a09813ab6dea01ef6be2.zip
 )
 
 sha256sums=(
-    451017bd2517cf8c124af772e77b316ad784507709219e5831b28f613830f7e5
+    798ddbcb196b382e6bb70b3da08bc0e745c8b6da0bfe4ea5cd66653d383e5b1d
 )
 
 package() {

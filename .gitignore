@@ -1,4 +1,6 @@
 private
-build
+build/
+!scripts/build/
 __pycache__
-.venv
+.venv/
+repo/

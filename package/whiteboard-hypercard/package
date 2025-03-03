@@ -1,25 +1,25 @@
 #!/usr/bin/env bash
-# Copyright (c) 2023 The Toltec Contributors
+# Copyright (c) 2024 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
 pkgnames=(whiteboard-hypercard)
 pkgdesc="Real-time collaboration, drawing or whiteboarding"
 url=https://github.com/fenollp/reMarkable-tools
-pkgver=0.3.7-2
-timestamp=2023-10-11T12:57Z
+pkgver=0.5.0-1
+timestamp=2024-09-12T19:00:22Z
 section="drawing"
 maintainer="Pierre Fenoll <pierrefenoll@gmail.com>"
 license=CC-BY-NC-ND
 installdepends=(display)
 flags=(patch_rm2fb)
 
-image=rust:v3.1
+image=rust:v3.2
 source=(
-    https://github.com/fenollp/reMarkable-tools/archive/v0.3.7.zip
+    https://github.com/fenollp/reMarkable-tools/archive/refs/tags/v0.5.0.zip
     whiteboard-hypercard.draft
 )
 sha256sums=(
-    642fd954ec4f9a1d132b10cc7f7dfbee3467e9c08b1253cc32d1e372178d168b
+    668f0b1dbc6027f6f6b8ab69f65c844a718f38115f79b9ce79e060a1cef3edfb
     SKIP
 )
 
@@ -27,11 +27,11 @@ build() {
     pushd marauder
     rustup component add rustfmt
     cargo fetch
-    cargo build --release --bin whiteboard --locked --frozen --offline
+    cargo build --release --package=marauder --bin=whiteboard --locked --frozen --offline --target=armv7-unknown-linux-gnueabihf
     popd
 }
 
 package() {
-    install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/marauder/target/armv7-unknown-linux-gnueabihf/release/whiteboard
+    install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/target/armv7-unknown-linux-gnueabihf/release/whiteboard
     install -D -m 644 -t "$pkgdir"/opt/etc/draft "$srcdir"/whiteboard-hypercard.draft
 }

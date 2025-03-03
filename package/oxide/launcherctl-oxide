@@ -1,0 +1,57 @@
+#!/bin/bash
+set -e
+case "$1" in
+    is-active)
+        systemctl is-active --quiet tarnish.service
+        ;;
+    is-enabled)
+        systemctl is-enabled --quiet tarnish.service
+        ;;
+    logs)
+        if [ $# -eq 2 ] && [[ "$2" == "-f" ]] || [[ "$2" == "--follow" ]]; then
+            journalctl --follow --all --unit tarnish.service
+        else
+            journalctl --no-pager --all --unit tarnish.service
+        fi
+        ;;
+    start)
+        systemctl start tarnish.service
+        ;;
+    stop)
+        systemctl stop tarnish.service
+        ;;
+    enable)
+        systemctl enable tarnish.service
+        ;;
+    disable)
+        systemctl disable tarnish.service
+        ;;
+    apps)
+        rot apps get applications | jq -r 'keys | .[]'
+        ;;
+    running)
+        rot apps get runningApplications | jq -r 'keys | .[]'
+        ;;
+    paused)
+        rot apps get pausedApplications | jq -r 'keys | .[]'
+        ;;
+    launch | resume)
+        rot apps get applications \
+            | jq -cr ".$2" | sed 's|/codes/eeems/oxide1/||' \
+            | xargs -I {} rot --object Application:{} apps call launch
+        ;;
+    close)
+        rot apps get applications \
+            | jq -cr ".$2" | sed 's|/codes/eeems/oxide1/||' \
+            | xargs -I {} rot --object Application:{} apps call stop
+        ;;
+    pause)
+        rot apps get applications \
+            | jq -cr ".$2" | sed 's|/codes/eeems/oxide1/||' \
+            | xargs -I {} rot --object Application:{} apps call pause
+        ;;
+    *)
+        echo "Oxide does not support this method"
+        exit 1
+        ;;
+esac

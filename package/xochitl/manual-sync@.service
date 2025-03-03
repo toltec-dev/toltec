@@ -6,14 +6,14 @@ Description=reMarkable Document Sync without the xochitl.service dependency
 After=dbus.socket
 StartLimitIntervalSec=60
 StartLimitBurst=4
-Conflicts=sync.service
+Conflicts=%i.service
 
 [Service]
 # Do NOT make this dbus, systemd will kill the service when it should be
 # running otherwise.
 Type=simple
 BusName=no.remarkable.sync
-ExecStart=/usr/bin/sync --service
+ExecStart=/usr/bin/%i --service
 Restart=on-failure
 RestartForceExitStatus=SIGHUP SIGINT SIGTERM SIGPIPE
 

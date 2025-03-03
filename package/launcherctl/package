@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+# Copyright (c) 2023 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgnames=(launcherctl)
+pkgdesc="Manage your installed launcher"
+url=https://toltec-dev.org/
+pkgver=0.0.1-3
+timestamp=2023-12-18T03:32Z
+section="launchers"
+maintainer="Eeems <eeems@eeems.email>"
+license=MIT
+
+source=(
+    launcherctl
+)
+sha256sums=(
+    SKIP
+)
+
+package() {
+    install -D -m 744 -t "$pkgdir"/opt/bin "$srcdir"/launcherctl
+    install -d "$pkgdir"/opt/share/launcherctl
+}
+
+configure() {
+    echo ""
+    echo "You can use launcherctl to manage your active launcher"
+    echo ""
+}
+
+preremove() {
+    launcherctl switch-launcher --start xochitl
+}

@@ -2,10 +2,11 @@
 # Copyright (c) 2021 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
+archs=(rmallos2 rm1os3)
 pkgnames=(open-remarkable-shutdown)
 pkgdesc="Use remarkable-splash to display shutdown and reboot images"
 url=https://github.com/ddvk/remarkable-splash
-pkgver=1.0-1
+pkgver=1.0-3
 timestamp=2022-02-28T00:12Z
 section="utils"
 maintainer="Eeems <eeems@eeems.email>"

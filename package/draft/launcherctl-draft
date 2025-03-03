@@ -1,0 +1,93 @@
+#!/bin/bash
+set -e
+draft_pid() {
+    systemctl show --no-pager --property MainPID draft.service | sed 's|MainPID=||'
+}
+kill_pid() {
+    pid="$1"
+    if [[ "$(awk '{print $3}' "/proc/${pid}/stat")" == "T" ]]; then
+        kill -CONT "$pid"
+    fi
+    kill -TERM "$pid"
+    # Wait 5s for process to exit
+    start="$(date +'%s')"
+    while kill -0 "$pid" 2> /dev/null; do
+        sleep 0.5
+        if [ "$(date +'%s')" -gt $((start + 5)) ]; then
+            break
+        fi
+    done
+    if kill -0 "$pid" 2> /dev/null; then
+        # If process is still running, force kill it
+        kill -KILL "$pid"
+    fi
+}
+case "$1" in
+    is-active)
+        systemctl is-active --quiet draft.service
+        ;;
+    is-enabled)
+        systemctl is-enabled --quiet draft.service
+        ;;
+    logs)
+        if [ $# -eq 2 ] && [[ "$2" == "-f" ]] || [[ "$2" == "--follow" ]]; then
+            journalctl --follow --all --unit draft.service
+        else
+            journalctl --no-pager --all --unit draft.service
+        fi
+        ;;
+    start)
+        systemctl start draft.service
+        ;;
+    stop)
+        systemctl stop draft.service
+        ;;
+    enable)
+        systemctl enable draft.service
+        ;;
+    disable)
+        systemctl disable draft.service
+        ;;
+    apps)
+        find {/opt,}/etc/draft -maxdepth 1 -type f | while read -r file; do
+            grep 'name=' "$file" | sed 's|^name=||'
+        done
+        ;;
+    close)
+        find {/opt,}/etc/draft -maxdepth 1 -type f | while read -r file; do
+            if [[ "$(grep 'name=' "$file" | sed 's|^name=||')" == "$2" ]]; then
+                term="$(grep 'term=' "$file" | sed 's|^term=||')"
+                if [ -z "$term" ]; then
+                    echo "No term= configuration specified for ${2}"
+                    exit 1
+                fi
+                $term
+                call="$(grep 'call=' "$file" | sed 's|^call=||')"
+                name="$(grep 'name=' "$file" | sed 's|^name=||')"
+                /opt/libexec/ps-procps-ng --ppid "$(draft_pid)" -o pid | tail -n +2 | while read -r pid; do
+                    if [[ "$(tr -d '\0' < "/proc/${pid}/cmdline")" == "$call" ]]; then
+                        kill_pid "$pid"
+                        break
+                    fi
+                done
+            fi
+        done
+        ;;
+    running)
+        pid=$(draft_pid)
+        find {/opt,}/etc/draft -maxdepth 1 -type f | while read -r file; do
+            call="$(grep 'call=' "$file" | sed 's|^call=||')"
+            name="$(grep 'name=' "$file" | sed 's|^name=||')"
+            /opt/libexec/ps-procps-ng --ppid "$(draft_pid)" -o pid | tail -n +2 | while read -r pid; do
+                if [[ "$(tr -d '\0' < "/proc/${pid}/cmdline")" == "$call" ]]; then
+                    echo "$name"
+                    break
+                fi
+            done
+        done
+        ;;
+    *)
+        echo "Draft does not support this method"
+        exit 1
+        ;;
+esac

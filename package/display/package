@@ -8,7 +8,7 @@ timestamp=2023-08-27T02:39:10Z
 maintainer="raisjn <of.raisjn@gmail.com>"
 license=MIT
 url="https://github.com/ddvk/remarkable2-framebuffer"
-pkgver=1:0.0.32-2
+pkgver=1:0.0.33-3
 _release="${pkgver%-*}"
 _release="v${_release#*:}"
 _libver=1.0.1
@@ -23,7 +23,7 @@ source=(
     rm2fb-preload.env
 )
 sha256sums=(
-    603eef1688a8c3adb1df23f4f00fe12b80938fe99801b515cd74f84c8cede5b1
+    dd57f1ba31f08a28d801989e9a705bd93cc637cd8f4dffa160412119e69329ff
     SKIP
     SKIP
     SKIP
@@ -102,14 +102,16 @@ rm2fb-client() {
     replaces=(rm2fb)
 
     package() {
-        libname="librm2fb_client.so.$_libver"
-        install -D -m 644 -t "$pkgdir"/opt/lib "$srcdir"/src/client/"$libname"
+        libname="librm2fb_client.so"
+        libnamever="$libname.$_libver"
+        install -D -m 644 -t "$pkgdir"/opt/lib "$srcdir"/src/client/"$libnamever"
         install -d "$pkgdir"/usr/lib
-        ln -s /opt/lib/"$libname" "$pkgdir"/usr/lib/"$libname"
+        ln -s /opt/lib/"$libnamever" "$pkgdir"/usr/lib/"$libnamever"
+        ln -s /opt/lib/"$libnamever" "$pkgdir"/opt/lib/"$libname"
 
         for dest in opt/lib usr/lib; do
-            ln -s "$libname" "$pkgdir/$dest/${libname%.*.*}"
-            ln -s "$libname" "$pkgdir/$dest/${libname%.*}"
+            ln -s "$libnamever" "$pkgdir/$dest/${libnamever%.*.*}"
+            ln -s "$libnamever" "$pkgdir/$dest/${libnamever%.*}"
         done
 
         install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/rm2fb-client

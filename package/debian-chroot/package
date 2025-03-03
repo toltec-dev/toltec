@@ -1,0 +1,80 @@
+#!/usr/bin/env bash
+# Copyright (c) 2023 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgnames=(debian-chroot debootstrap)
+section="utils"
+# Each package has it's own timestamp override below
+timestamp=2023-12-22T19:37Z
+maintainer="Eeems <eeems@eeems.email>"
+installdepends=(display)
+flags=(nostrip)
+
+source=(
+    https://github.com/Eeems-org/remarkable-debian-chroot/archive/ea12a1bf851f412e8df4b59fe072bce26bb72571.zip
+    https://salsa.debian.org/installer-team/debootstrap/-/archive/1.0.133/debootstrap-1.0.133.tar.gz
+    debian-chroot.conf
+)
+sha256sums=(
+    3fcd571ba1aa1a5c55a32767c34e6939e0c0e8ad9213425c6d66d25300fe24b8
+    734af3492eea99de940853e2c00e1a9ebd65c463362155f613aa24b9cc3336a0
+    SKIP
+)
+
+debian-chroot() {
+    pkgdesc="A minimal Debian chroot for the reMarkable tablet"
+    url=https://github.com/Eeems-Org/remarkable-debian-chroot
+    pkgver=0.0.0-1
+    timestamp=2023-12-22T19:37Z
+    license=MIT
+    installdepends=(debootstrap lsof)
+    package() {
+        install -D -m 755 \
+            "$srcdir"/bin/debian-chroot \
+            "$pkgdir"/opt/bin/debian-chroot
+        install -D -m 655 \
+            "$srcdir"/debian-chroot.conf \
+            "$pkgdir"/home/root/.config/debian-chroot.conf
+        mkdir -p "$pkgdir"/opt/etc/
+        ln -s /home/root/.config/debian-chroot.conf \
+            "$pkgdir"/opt/etc/debian-chroot.conf
+        source "$srcdir"/debian-chroot.conf
+        mkdir -p "$pkgdir"/opt/lib/
+        ln -s "$chroot_path" "$pkgdir"/opt/lib/debian-chroot
+    }
+    configure() {
+        # Force debian chroot to install iteself
+        debian-chroot true
+    }
+    preremove() {
+        source /home/root/.config/debian-chroot.conf
+        if lsof "$chroot_path" 2> /dev/null | grep "$chroot_path"; then
+            echo "Error: debian-chroot has running processes"
+            exit 1
+        fi
+        if grep -q "$chroot_path " /proc/mounts; then
+            /bin/umount -R "$chroot_path"
+        fi
+        cp /home/root/.config/debian-chroot.conf /tmp/_debian-chroot.conf
+    }
+    postremove() {
+        source /tmp/_debian-chroot.conf
+        rm -rf "$chroot_path"
+        rm /tmp/_debian-chroot.conf
+    }
+}
+
+debootstrap() {
+    pkgdesc="debootstrap is a tool which will install a Debian base system into a subdirectory of another, already installed system."
+    installdepends=(perl ar)
+    url=https://wiki.debian.org/Debootstrap
+    pkgver=1.0.133-1
+    timestamp=2023-10-21T11:38Z
+    license=MIT
+    package() {
+        cd "$srcdir"
+        sed -i 's|/usr/sbin|/sbin|' Makefile
+        make DESTDIR="$pkgdir"/opt install
+        sed -i 's|DEBOOTSTRAP_DIR=/usr/share/debootstrap|DEBOOTSTRAP_DIR=/opt/usr/share/debootstrap|' "$pkgdir"/opt/sbin/debootstrap
+    }
+}

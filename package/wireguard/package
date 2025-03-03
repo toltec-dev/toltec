@@ -5,32 +5,32 @@ archs=(rm1os2 rm2os2)
 pkgnames=(wireguard)
 pkgdesc="Fast, modern, secure VPN tunnel"
 url=https://www.wireguard.com
-pkgver=1.0.20210219-5
+pkgver=1.0.20220627-1
 timestamp=2021-02-19T14:08Z
 section=kernel
 maintainer="Jonah Weissman <jonahrweissman+toltec@gmail.com>"
 license=GPL-2.0-only
-makedepends=(build:bc build:lzop build:git)
+makedepends=(build:bc build:lzop build:git build:flex build:bison build:libssl-dev)
 flags=(nostrip)
 installdepends=(wireguard-tools)
 
 _kernelrepo=https://github.com/remarkable/linux
 _kernelrevs=(
-    1774e2a6a091fdc081324e966d3db0aa9df75c0b
-    d4e7e07a390f8b2544ca09d69142d18114149004
+    bb6be69d6f71fced2fc63c61372bf96e5f7da565
+    bb6be69d6f71fced2fc63c61372bf96e5f7da565
 )
 _defconfigs=(
     arch/arm/configs/zero-gravitas_defconfig
     arch/arm/configs/zero-sugar_defconfig
 )
 
-image=base:v2.1
+image=base:v3.2
 source=(
     "https://git.zx2c4.com/wireguard-linux-compat/snapshot/wireguard-linux-compat-${pkgver%-*}.tar.xz"
     fix-multiple-yylloc-definitions.patch
 )
 sha256sums=(
-    99d35296b8d847a0d4db97a4dda96b464311a6354e75fe0bef6e7c4578690f00
+    362d412693c8fe82de00283435818d5c5def7f15e2433a07a9fe99d0518f63c0
     SKIP
 )
 

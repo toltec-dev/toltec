@@ -1,0 +1,199 @@
+#!/bin/bash
+set -e
+help() {
+    echo "Usage: launcherctl <command>"
+    echo "  commands:"
+    echo "    help: Display this message and exit"
+    echo "    status: Current launcher status"
+    echo "    logs [-f|--follow]: View current launcher logs"
+    echo "    list-launchers: List installed launchers"
+    echo "    switch-launcher [--start] <launcher>: Switch which launcher is active"
+    echo "    start-launcher: Start the current launcher"
+    echo "    stop-launcher: Stop the current launcher"
+    echo "    list-apps: List all application for current launcher"
+    echo "    list-running-apps: List all application for current launcher"
+    echo "    start-app <app>: Start an application with the current launcher"
+    echo "    stop-app <app>: Stop an application with the current launcher"
+    echo "    pause-app <app>: Pause an application with the current launcher"
+    echo "    resume-app <app>: Resume an application with the current launcher"
+    echo "    is-current-launcher <launcher>: Check if the launcher is the current launcher"
+    echo "    is-enabled-launcher <launcher>: Check if the launcher is enabled"
+    echo "    is-active-launcher <launcher>: Check if the launcher is active"
+}
+data_dir="/opt/share/launcherctl"
+launchers() {
+    /opt/bin/find "$data_dir" -type f -perm '-u+x' | xargs -rn1 basename
+}
+active_launchers() {
+    launchers | while read -r launcher; do
+        if query "$launcher" is-active; then
+            echo "$launcher"
+        fi
+    done
+}
+enabled_launchers() {
+    launchers | while read -r launcher; do
+        if query "$launcher" is-enabled; then
+            echo "$launcher"
+        fi
+    done
+}
+query() {
+    launcher="$1"
+    shift
+    "${data_dir}/${launcher}" "$@"
+}
+check_enabled_launchers() {
+    if [ "$(enabled_launchers | wc -l)" -lt 1 ]; then
+        echo "More than one launcher is currently enabled!"
+        echo "Enabled launchers: ${current_launcher}"
+        exit 1
+    fi
+}
+check_launcher_has_app() {
+    if ! query "$1" apps | grep -q "$2"; then
+        echo "Unknown application: ${2}"
+        exit 1
+    fi
+}
+case "$1" in
+    help | --help)
+        help
+        ;;
+    logs)
+        if [ $# -gt 2 ]; then
+            echo "Too many arguments"
+            exit 1
+        elif [ $# -eq 2 ] && [[ "$2" != "-f" ]] && [[ "$2" != "--follow" ]]; then
+            echo "Invalid arguments"
+            exit 1
+        fi
+        check_enabled_launchers
+        query "$(enabled_launchers)" "$@"
+        ;;
+    status)
+        if [ $# -gt 1 ]; then
+            echo "Too many arguments"
+            exit 1
+        fi
+        check_enabled_launchers
+        current_launcher="$(enabled_launchers)"
+        echo -e "Launcher: \033[1m${current_launcher}\e[0m"
+        echo -ne "Status: \033[1m"
+        if query "$current_launcher" is-active; then
+            echo -ne "\e[32mrunning"
+        else
+            echo -ne "\e[31minactive"
+        fi
+        echo -e "\e[0m"
+        echo -n "Apps: $(query "$current_launcher" running | wc -l) running "
+        echo "$(query "$current_launcher" apps | wc -l) installed"
+        ;;
+    list-launchers)
+        launchers
+        ;;
+    switch-launcher)
+        if [ $# -lt 2 ]; then
+            echo "Too few arguments"
+            exit 1
+        elif [ $# -gt 3 ]; then
+            echo "Too many arguments"
+            exit 1
+        elif [ $# -eq 3 ] && [[ "$2" != "--start" ]]; then
+            echo "Invalid arguments"
+            exit 1
+        fi
+        if [ $# -eq 3 ]; then
+            start=true
+            shift
+        else
+            start=false
+        fi
+        if ! [ -f "${data_dir}/${2}" ]; then
+            echo "${2} is not installed"
+            exit 1
+        fi
+        enabled_launchers | while read -r launcher; do
+            if [[ "$launcher" != "$2" ]]; then
+                query "$launcher" disable
+            fi
+        done
+        if ! query "$2" is-enabled; then
+            query "$2" enable
+        fi
+        if $start; then
+            "$0" start-launcher
+        fi
+        ;;
+    start-launcher)
+        check_enabled_launchers
+        current_launcher="$(enabled_launchers)"
+        active_launchers | while read -r launcher; do
+            if [[ "$launcher" != "$current_launcher" ]]; then
+                query "$launcher" stop
+            fi
+        done
+        if query "$current_launcher" is-active; then
+            echo "Already started!"
+            exit
+        fi
+        query "$current_launcher" start
+        ;;
+    stop-launcher)
+        active_launchers | while read -r launcher; do
+            query "$launcher" stop
+        done
+        ;;
+    list-apps)
+        check_enabled_launchers
+        query "$(enabled_launchers)" apps
+        ;;
+    list-running-apps)
+        check_enabled_launchers
+        query "$(enabled_launchers)" running
+        ;;
+    list-paused-apps)
+        check_enabled_launchers
+        query "$(enabled_launchers)" paused
+        ;;
+    start-app)
+        check_enabled_launchers
+        launcher="$(enabled_launchers)"
+        check_launcher_has_app "$launcher" "$2"
+        query "$launcher" launch "$2"
+        ;;
+    stop-app)
+        check_enabled_launchers
+        launcher="$(enabled_launchers)"
+        check_launcher_has_app "$launcher" "$2"
+        query "$launcher" close "$2"
+        ;;
+    pause-app)
+        check_enabled_launchers
+        launcher="$(enabled_launchers)"
+        check_launcher_has_app "$launcher" "$2"
+        query "$launcher" pause "$2"
+        ;;
+    resume-app)
+        check_enabled_launchers
+        launcher="$(enabled_launchers)"
+        check_launcher_has_app "$launcher" "$2"
+        query "$launcher" resume "$2"
+        ;;
+    is-current-launcher)
+        check_enabled_launchers
+        if [[ "$(enabled_launchers)" != "$2" ]]; then
+            exit 1
+        fi
+        ;;
+    is-enabled-launcher)
+        query "$2" is-enabled
+        ;;
+    is-active-launcher)
+        query "$2" is-active
+        ;;
+    *)
+        help
+        exit 1
+        ;;
+esac

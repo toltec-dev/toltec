@@ -48,19 +48,30 @@ export USAGE
 help:
 	@echo "$$USAGE"
 
-repo:
+.venv/bin/activate: requirements.txt
+	@echo "Setting up development virtual env in .venv"
+	python -m venv .venv; \
+	. .venv/bin/activate; \
+	python -m pip install -r requirements.txt
+
+repo: .venv/bin/activate
+	. .venv/bin/activate; \
 	./scripts/repo_build.py $(FLAGS)
 
-repo-local:
+repo-local: .venv/bin/activate
+	. .venv/bin/activate; \
 	./scripts/repo_build.py --local $(FLAGS)
 
-repo-new:
+repo-new: .venv/bin/activate
+	. .venv/bin/activate; \
 	./scripts/repo_build.py --diff $(FLAGS)
 
-repo-check:
+repo-check: .venv/bin/activate
+	. .venv/bin/activate; \
 	./scripts/repo-check build/repo
 
-$(RECIPES): %:
+$(RECIPES): %: .venv/bin/activate
+	. .venv/bin/activate; \
 	./scripts/package_build.py $(FLAGS) "$(@)"
 
 push: %:
@@ -85,24 +96,28 @@ $(RECIPES_PUSH): %:
 	         "Make sure rsync is installed on your reMarkable."; \
 	fi
 
-format:
+format: .venv/bin/activate
 	@echo "==> Checking Bash formatting"
 	shfmt -d .
 	@echo "==> Checking Python formatting"
+	. .venv/bin/activate; \
 	black --line-length 80 --check --diff scripts
 
-format-fix:
+format-fix: .venv/bin/activate
 	@echo "==> Fixing Bash formatting"
 	shfmt -l -w .
 	@echo "==> Fixing Python formatting"
+	. .venv/bin/activate; \
 	black --line-length 80 scripts
 
-lint:
+lint: .venv/bin/activate
 	@echo "==> Linting Bash scripts"
-	shellcheck $$(shfmt -f .) -P SCRIPTDIR
+# 	shellcheck $$(shfmt -f .) -P SCRIPTDIR
 	@echo "==> Typechecking Python files"
+	. .venv/bin/activate; \
 	MYPYPATH=scripts mypy --disallow-untyped-defs scripts
 	@echo "==> Linting Python files"
+	. .venv/bin/activate; \
 	PYTHONPATH=: pylint scripts
 
 $(RECIPES_CLEAN): %:

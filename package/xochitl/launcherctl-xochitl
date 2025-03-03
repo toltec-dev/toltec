@@ -1,0 +1,41 @@
+#!/bin/bash
+set -e
+case "$1" in
+    is-active)
+        systemctl is-active --quiet xochitl.service
+        ;;
+    is-enabled)
+        systemctl is-enabled --quiet xochitl.service
+        ;;
+    logs)
+        if [ $# -eq 2 ] && [[ "$2" == "-f" ]] || [[ "$2" == "--follow" ]]; then
+            journalctl --follow --all --unit xochitl.service
+        else
+            journalctl --no-pager --all --unit xochitl.service
+        fi
+        ;;
+    start | launch)
+        systemctl start xochitl.service
+        ;;
+    stop | close)
+        systemctl stop xochitl.service
+        ;;
+    enable)
+        systemctl enable xochitl.service
+        ;;
+    disable)
+        systemctl disable xochitl.service
+        ;;
+    apps)
+        echo "xochitl"
+        ;;
+    running)
+        if "$0" is-active; then
+            echo "xochitl"
+        fi
+        ;;
+    *)
+        echo "Xochitl does not support this method"
+        exit 1
+        ;;
+esac
