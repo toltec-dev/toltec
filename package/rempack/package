@@ -6,20 +6,20 @@ pkgnames=(rempack)
 pkgdesc="A user friendly package manager frontend for opkg"
 archs=(rmall)
 url="https://github.com/rexxar-tc/rempack"
-pkgver=1.1.3
-timestamp=2025-03-01T04:26:09-05:00
+pkgver=1.1.4
+timestamp=2025-03-09T21:13:27
 section=admin
 maintainer="Brant Martin <toltec@brantmartin.com>"
 license=MIT
 image=base:v3.1
 installdepends=(display)
 source=(
-    http://gitlab.onionstorm.net/rolenthedeep/rempack/-/archive/1.1.3/rempack-1.1.3.zip
+    https://github.com/rexxar-tc/rempack/archive/refs/tags/1.1.4.zip
     rempack.draft
     rempack.oxide
 )
 sha256sums=(
-    2a82d3d8f9db9d0d8a784c8560c582f5e7513e293be1c07fdd86352f3d3b3edc
+    b8d8c1f75269f9091b39e1e20afbcdc6e4c1f12d811682f36b759aa4f9955696
     SKIP
     SKIP
 )
