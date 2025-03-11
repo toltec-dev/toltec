@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+# Copyright (c) 2020 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgnames=(rempack)
+pkgdesc="A user friendly package manager frontend for opkg"
+archs=(rmall)
+url="https://github.com/rexxar-tc/rempack"
+pkgver=1.1.4
+timestamp=2025-03-09T21:13:27
+section=admin
+maintainer="Brant Martin <toltec@brantmartin.com>"
+license=MIT
+image=base:v3.1
+installdepends=(display)
+source=(
+    https://github.com/rexxar-tc/rempack/archive/refs/tags/1.1.4.zip
+    rempack.draft
+    rempack.oxide
+)
+sha256sums=(
+    b8d8c1f75269f9091b39e1e20afbcdc6e4c1f12d811682f36b759aa4f9955696
+    SKIP
+    SKIP
+)
+build() {
+    cd $srcdir
+    mkdir output
+    cmake -S . -B output --preset "Release Native"
+    cmake --build output --target rempack
+}
+
+package() {
+    install -D -m 755 "$srcdir"/output/rempack "$pkgdir"/opt/bin/rempack
+    install -D -m 644 "$srcdir"/rempack.draft "$pkgdir"/opt/etc/draft/rempack.draft
+    install -D -m 644 "$srcdir"/rempack.oxide "$pkgdir"/opt/usr/share/applications/rempack.oxide
+}
