@@ -1,0 +1,4 @@
+name=rempack
+desc=User firendly package manager
+call=/opt/bin/rempack
+term=killall rempack
