@@ -1,0 +1,7 @@
+{
+  "displayName": "rempack",
+  "description": "A friendly package manager",
+  "bin": "/opt/bin/rempack",
+  "type": "foreground",
+  "permissions": ["permissions", "apps", "system"]
+}
