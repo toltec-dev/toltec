@@ -5,8 +5,8 @@
 pkgnames=(launcherctl)
 pkgdesc="Manage your installed launcher"
 url=https://toltec-dev.org/
-pkgver=0.0.1-3
-timestamp=2023-12-18T03:32Z
+pkgver=0.0.2-1
+timestamp=2025-05-20T21:30Z
 section="launchers"
 maintainer="Eeems <eeems@eeems.email>"
 license=MIT
