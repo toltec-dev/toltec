@@ -4,7 +4,7 @@ Toltec packages are meant to be used with [Opkg](https://git.yoctoproject.org/cg
 Opkg is developed by the [Yocto Project](https://git.yoctoproject.org/cgit/cgit.cgi/opkg/).
 The Toltec distribution is built on top of [Entware](https://github.com/Entware/Entware) which provides device-agnostic Opkg-compatible packages.
 
-> Opkg is a fork of [ipkg](https://en.wikipedia.org/wiki/Ipkg), the package manager used in NSLU2's [Optware](http://www.nslu2-linux.org/wiki/Optware/), which is designed to add software to stock firmware of embedded devices
+> Opkg is a fork of [ipkg](https://en.wikipedia.org/wiki/Ipkg), the package manager used in NSLU2's [Optware](http://www.nslu2-linux.org/wiki/Optware/), which is designed to add software to stock firmware of embedded devices.
 > — [OpenWrt's documentation](https://openwrt.org/docs/guide-user/additional-software/opkg) (This may be outdated)
 
 ### What is the `.ipk` Format?
