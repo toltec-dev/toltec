@@ -120,7 +120,7 @@ check-installed() {
 # Install a local wget binary which supports TLS (the original one
 # installed on the reMarkable does not) in the PATH
 wget-bootstrap() {
-    local wget_remote=https://toltec-dev.org/thirdparty/bin/wget-v1.21.1-2
+    local wget_remote=http://toltec-dev.org/thirdparty/bin/wget-v1.21.1-2
     local wget_checksum=3130886a020a56b7471ed60f3742db26acdced4b27fed5be22f9892b77589bc5
 
     if [[ ! -x $wget_path ]]; then
