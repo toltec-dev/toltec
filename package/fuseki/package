@@ -34,19 +34,19 @@ image=rust:v3.1
 # directories, and made available during the build step below
 source=(
     https://github.com/palfrey/gnugo/archive/51f99b7a00b7acf295475b56c349c857a9aa2d0e.zip
-    https://github.com/palfrey/fuseki/archive/0aeb0f200e90bdde34a34797171d525f1626594f.zip
+    https://github.com/palfrey/fuseki/archive/638191be13be06a8d7428e7739ed947904ef3e56.zip
 )
 ## SHA-256 checksums of the source archives above
 sha256sums=(
     2624c57641c7cb28699df693c6da65f6d192f9867554fcfcf830b17db851a702
-    87e6add3fc5fe894d629c367cf8940f320362e82ae51f7be83cff5b4505c5dd9
+    37e4ff419a5a697039e9aa9e5b156248fcf6ed7a97867aae13aa623a7ee6a6ea
 )
 
-noextract=(0aeb0f200e90bdde34a34797171d525f1626594f.zip 51f99b7a00b7acf295475b56c349c857a9aa2d0e.zip)
+noextract=(638191be13be06a8d7428e7739ed947904ef3e56.zip 51f99b7a00b7acf295475b56c349c857a9aa2d0e.zip)
 
 prepare() {
     cd build/package/fuseki/rm1/src
-    unzip -o 0aeb0f200e90bdde34a34797171d525f1626594f.zip
+    unzip -o 638191be13be06a8d7428e7739ed947904ef3e56.zip
     unzip -o 51f99b7a00b7acf295475b56c349c857a9aa2d0e.zip
 }
 
@@ -59,13 +59,14 @@ build() {
     autoreconf
     CFLAGS="-O2 -flto=auto" LDFLAGS="-O2 -flto=auto" ./configure --host arm-remarkable-linux-gnueabihf --build x86_64-linux-gnu --without-curses --without-docs
     make
-    cd ../fuseki-0aeb0f200e90bdde34a34797171d525f1626594f
+    cd ../fuseki-638191be13be06a8d7428e7739ed947904ef3e56
     cargo build --release
 }
 
 package() {
     install -D -m 755 "$srcdir"/gnugo-51f99b7a00b7acf295475b56c349c857a9aa2d0e/interface/gnugo "$pkgdir"/opt/bin/gnugo
-    install -D -m 755 "$srcdir"/fuseki-0aeb0f200e90bdde34a34797171d525f1626594f/target/armv7-unknown-linux-gnueabihf/release/fuseki "$pkgdir"/opt/bin/fuseki
-    install -D "$srcdir"/fuseki-0aeb0f200e90bdde34a34797171d525f1626594f/fuseki.draft "$pkgdir"/etc/draft/fuseki.draft
-    sed -i -e 's#/home/root/fuseki#/opt/bin/fuseki#g' "$pkgdir"/etc/draft/fuseki.draft
+    install -D -m 755 "$srcdir"/fuseki-638191be13be06a8d7428e7739ed947904ef3e56/target/armv7-unknown-linux-gnueabihf/release/fuseki "$pkgdir"/opt/bin/fuseki
+    install -D "$srcdir"/fuseki-638191be13be06a8d7428e7739ed947904ef3e56/fuseki.draft "$pkgdir"/etc/draft/fuseki.draft
+    sed -i -e 's#/home/root/fuseki#env GNUGO_BINARY=/opt/bin/gnugo /opt/bin/fuseki#g' "$pkgdir"/etc/draft/fuseki.draft
+    install -D "$srcdir"/fuseki-638191be13be06a8d7428e7739ed947904ef3e56/fuseki.png "$pkgdir"/etc/draft/icons/fuseki.png
 }
