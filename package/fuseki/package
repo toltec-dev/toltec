@@ -3,70 +3,34 @@
 # SPDX-License-Identifier: MIT
 
 pkgnames=(fuseki)
-## This should be a short description targeted at users of your package
-# Start directly with a noun or a verb, do not include “for the reMarkable”
 pkgdesc="Go frontend using GnuGo"
-## URL to where the project can be found on the Internet
 url="https://github.com/palfrey/fuseki"
-## Version of the package (see below)
 pkgver=0.0.1-1
-## ISO-8601 timestamp at which the source of this version was released
 timestamp=2025-08-25T16:56+0100
-## Section that best matches this package
-# See <https://github.com/toltec-dev/toltec/blob/stable/docs/package.md#section>
-# for available sections
 section=games
-## This should be your contact information
 maintainer="Tom Parker-Shemilt <palfrey@tevps.net>"
-## A license under which the upstream source is available
-# Choose among the list of valid SPDX license identifiers
-# <https://spdx.org/licenses/>
 license=AGPL-3.0-or-later
-archs=(rm1)
-
-## Which Docker image to use for building the package
-# See <https://github.com/toltec-dev/toolchain> for available images
-# The images are debian based and allow you to install additional packages with apt.
-# Examples (version may be out of date): base:v1.1, qt:v1.1, python:v1.1, rust:v1.1
 image=rust:v3.1
-## Whitespace-separated list of source archives that are needed to build the package
-# Archives will be automatically extracted, stripping any useless containing
-# directories, and made available during the build step below
 source=(
-    https://github.com/palfrey/gnugo/archive/51f99b7a00b7acf295475b56c349c857a9aa2d0e.zip
     https://github.com/palfrey/fuseki/archive/638191be13be06a8d7428e7739ed947904ef3e56.zip
+    fuseki.draft
+    fuseki-runner
 )
-## SHA-256 checksums of the source archives above
 sha256sums=(
-    2624c57641c7cb28699df693c6da65f6d192f9867554fcfcf830b17db851a702
     37e4ff419a5a697039e9aa9e5b156248fcf6ed7a97867aae13aa623a7ee6a6ea
+    SKIP
+    SKIP
 )
 
-noextract=(638191be13be06a8d7428e7739ed947904ef3e56.zip 51f99b7a00b7acf295475b56c349c857a9aa2d0e.zip)
-
-prepare() {
-    cd build/package/fuseki/rm1/src
-    unzip -o 638191be13be06a8d7428e7739ed947904ef3e56.zip
-    unzip -o 51f99b7a00b7acf295475b56c349c857a9aa2d0e.zip
-}
-
-makedepends=("build:autoconf" "build:automake")
+installdepends=("gnugo")
 
 build() {
-    cd gnugo-51f99b7a00b7acf295475b56c349c857a9aa2d0e
-    autoreconf || true
-    automake --add-missing --copy
-    autoreconf
-    CFLAGS="-O2 -flto=auto" LDFLAGS="-O2 -flto=auto" ./configure --host arm-remarkable-linux-gnueabihf --build x86_64-linux-gnu --without-curses --without-docs
-    make
-    cd ../fuseki-638191be13be06a8d7428e7739ed947904ef3e56
     cargo build --release
 }
 
 package() {
-    install -D -m 755 "$srcdir"/gnugo-51f99b7a00b7acf295475b56c349c857a9aa2d0e/interface/gnugo "$pkgdir"/opt/bin/gnugo
-    install -D -m 755 "$srcdir"/fuseki-638191be13be06a8d7428e7739ed947904ef3e56/target/armv7-unknown-linux-gnueabihf/release/fuseki "$pkgdir"/opt/bin/fuseki
-    install -D "$srcdir"/fuseki-638191be13be06a8d7428e7739ed947904ef3e56/fuseki.draft "$pkgdir"/etc/draft/fuseki.draft
-    sed -i -e 's#/home/root/fuseki#env GNUGO_BINARY=/opt/bin/gnugo /opt/bin/fuseki#g' "$pkgdir"/etc/draft/fuseki.draft
-    install -D "$srcdir"/fuseki-638191be13be06a8d7428e7739ed947904ef3e56/fuseki.png "$pkgdir"/etc/draft/icons/fuseki.png
+    install -D -m 755 "$srcdir"/target/armv7-unknown-linux-gnueabihf/release/fuseki "$pkgdir"/opt/bin/fuseki
+    install -D -m 644 -t "$pkgdir"/opt/etc/draft "$srcdir"/fuseki.draft
+    install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/fuseki-runner
+    install -D "$srcdir"/fuseki.png "$pkgdir"/etc/draft/icons/fuseki.png
 }

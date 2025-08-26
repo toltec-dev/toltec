@@ -1,0 +1,5 @@
+name=fuseki
+desc=Play go
+call=/opt/bin/fuseki-runner
+term=killall fuseki
+imgFile=fuseki
