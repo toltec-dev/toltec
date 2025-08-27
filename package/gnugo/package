@@ -21,7 +21,8 @@ sha256sums=(
 makedepends=("build:autoconf" "build:automake")
 
 build() {
-    autoreconf || true
+    aclocal
+    autoheader
     automake --add-missing --copy
     autoreconf
     CFLAGS="-O2 -flto=auto" LDFLAGS="-O2 -flto=auto" ./configure --host arm-remarkable-linux-gnueabihf --build x86_64-linux-gnu --without-curses --without-docs
