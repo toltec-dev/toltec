@@ -3,14 +3,14 @@
 # SPDX-License-Identifier: MIT
 
 archs=(rm1 rm2)
-pkgnames=(linux-stracciatella)
+pkgnames=(linux-stracciatella linux-stracciatella-perf)
 pkgdesc="RemarkableAS's vanilla kernel with a few extra flakes"
 url=https://github.com/Etn40ff/linux-remarkable
 pkgver=5.4.70.4-1
 timestamp=2023-12-28T22:42:42Z
 section="kernel"
 maintainer="Salvatore Stella <etn45p4m@gmail.com>"
-makedepends=(build:flex build:bison build:libssl-dev build:bc build:lzop build:libgmp-dev build:libmpc-dev build:kmod)
+makedepends=(build:flex build:bison build:libssl-dev build:bc build:lzop build:libgmp-dev build:libmpc-dev build:kmod build:python-is-python3)
 license=GPL-2.0-only
 flags=(nostrip)
 installdepends=(kernelctl)
@@ -45,35 +45,56 @@ build() {
         ARCH=arm make zero-sugar_defconfig
     fi
     ARCH=arm make -j8
+    WERROR=0 ARCH=arm make -j8 tools/perf
 }
 
-package() {
-    # Prepare files for the kernel archive
-    local staging="$srcdir"/staging
-    mkdir -p "$staging/boot"
+linux-stracciatella() {
+    pkgdesc="RemarkableAS's vanilla kernel with a few extra flakes"
+    url=https://github.com/Etn40ff/linux-remarkable
+    section="kernel"
+    installdepends=(kernelctl)
 
-    cp --no-dereference {"$srcdir"/arch/arm,"$staging"}/boot/zImage
-    if [[ $arch = rm1 ]]; then
-        cp --no-dereference "$srcdir"/arch/arm/boot/dts/zero-gravitas.dtb "$staging"/boot/zero-gravitas.dtb
-    elif [[ $arch = rm2 ]]; then
-        cp --no-dereference "$srcdir"/arch/arm/boot/dts/zero-sugar.dtb "$staging"/boot/zero-sugar.dtb
-    fi
+    package() {
+        # Prepare files for the kernel archive
+        local staging="$srcdir"/staging
+        mkdir -p "$staging/boot"
 
-    ARCH=arm make -C "$srcdir" modules_install INSTALL_MOD_PATH="$staging"
-    rm "$staging"/lib/modules/*/{source,build}
+        cp --no-dereference {"$srcdir"/arch/arm,"$staging"}/boot/zImage
+        if [[ $arch = rm1 ]]; then
+            cp --no-dereference "$srcdir"/arch/arm/boot/dts/zero-gravitas.dtb "$staging"/boot/zero-gravitas.dtb
+        elif [[ $arch = rm2 ]]; then
+            cp --no-dereference "$srcdir"/arch/arm/boot/dts/zero-sugar.dtb "$staging"/boot/zero-sugar.dtb
+        fi
 
-    # Create the kernel archive
-    local archive="stracciatella-${pkgver%-*}.tar.bz2"
-    install -d "$pkgdir"/opt/usr/share/kernelctl
-    (cd "$staging" && tar --owner root:0 --group root:0 --mtime=$timestamp \
-        -cjf "$pkgdir"/opt/usr/share/kernelctl/"$archive" boot/* lib/modules/*)
+        ARCH=arm make -C "$srcdir" modules_install INSTALL_MOD_PATH="$staging"
+        rm "$staging"/lib/modules/*/{source,build}
+
+        # Create the kernel archive
+        local archive="stracciatella-${pkgver%-*}.tar.bz2"
+        install -d "$pkgdir"/opt/usr/share/kernelctl
+        (cd "$staging" && tar --owner root:0 --group root:0 --mtime=$timestamp \
+            -cjf "$pkgdir"/opt/usr/share/kernelctl/"$archive" boot/* lib/modules/*)
+    }
+
+    configure() {
+        if [[ $(< /etc/version) -le 20210709090000 ]]; then
+            echo "WARNING: Your system is too old; this kernel will most likely not work unless you add the appropriate firmware blobs to /lib/firmware."
+            echo "Please consider updating your system instead."
+        fi
+        echo "The new kernel files have been copied, but not installed."
+        echo "Please use kernelctl to select the kernel to boot."
+    }
 }
 
-configure() {
-    if [[ $(< /etc/version) -le 20210709090000 ]]; then
-        echo "WARNING: Your system is too old; this kernel will most likely not work unless you add the appropriate firmware blobs to /lib/firmware."
-        echo "Please consider updating your system instead."
-    fi
-    echo "The new kernel files have been copied, but not installed."
-    echo "Please use kernelctl to select the kernel to boot."
+linux-stracciatella-perf() {
+    pkgdesc="Linux profiling with performance counters"
+    url=https://perf.wiki.kernel.org
+    section=devel
+    provides=(perf)
+    conflicts=(perf)
+
+    package() {
+        install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/tools/perf/perf
+        ln -s /opt/bin/perf "$pkgdir"/opt/bin/trace
+    }
 }
