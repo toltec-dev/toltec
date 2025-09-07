@@ -401,7 +401,7 @@ package-id() {
 #
 # Arguments:
 #
-# $1 - Name and version of the image (e.g. qt:v1.0)
+# $1 - Name and version of the image (e.g. qt:v3.1)
 image-name() {
     echo "ghcr.io/toltec-dev/$1"
 }
