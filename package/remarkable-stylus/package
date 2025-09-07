@@ -13,7 +13,7 @@ url=https://github.com/ddvk/remarkable-stylus
 section="utils"
 installdepends=(xochitl ddvk-hacks)
 
-image=qt:v2.1
+image=qt:v3.1
 source=(
     "https://github.com/ddvk/remarkable-stylus/archive/refs/tags/0.0.3.tar.gz"
     remarkable-stylus.env

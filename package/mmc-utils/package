@@ -12,7 +12,7 @@ section="devel"
 maintainer="Alistair Francis <alistair@alistair23.me>"
 license=GPL-2.0-only
 
-image=base:v2.2
+image=base:v3.1
 source=(
     0001-Makefile-Remove-Werror.patch
 )

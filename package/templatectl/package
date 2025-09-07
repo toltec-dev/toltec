@@ -11,7 +11,7 @@ section="templates"
 maintainer="Peter Grace <pete.grace@gmail.com>"
 license=MIT
 
-image=rust:v2.1
+image=rust:v3.1
 source=("https://github.com/PeterGrace/templatectl/archive/v${pkgver%-*}.zip")
 sha256sums=(1ac1049c7db4f87c113dbc96372f8f4e2b8bd4c60252e3c4f7c1fafb5ee61ae4)
 

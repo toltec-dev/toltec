@@ -11,7 +11,7 @@ section="devel"
 maintainer="Mattéo Delabre <spam@delab.re>"
 license=BSL-1.0
 
-image=base:v2.1
+image=base:v3.1
 source=("https://github.com/davisking/dlib/archive/v${pkgver%-*}.tar.gz")
 sha256sums=(116f52e58be04b47dab52057eaad4b5c4d5c3032d927fe23d55b0741fc4107a0)
 

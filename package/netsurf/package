@@ -32,7 +32,7 @@ installdepends=(
     dejavu-fonts-ttf-DejaVuSansMono
     dejavu-fonts-ttf-DejaVuSansMono-Bold
 )
-image=base:v2.1
+image=base:v3.1
 flags=(patch_rm2fb)
 
 source=(

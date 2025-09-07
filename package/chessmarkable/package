@@ -13,7 +13,7 @@ license=MIT
 installdepends=(display)
 flags=(patch_rm2fb)
 
-image=rust:v2.1
+image=rust:v3.1
 source=(https://github.com/LinusCDE/chessmarkable/archive/0.8.0-1.zip)
 sha256sums=(17675d30bb45050c1db5bc81d3d76b99a1b18e497c9a331177b853a5f9aa12af)
 

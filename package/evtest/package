@@ -12,7 +12,7 @@ maintainer="Linus K. <linus@cosmos-ink.net>"
 license=GPL-2.0-only
 makedepends=(build:automake)
 
-image=base:v2.1
+image=base:v3.1
 source=("https://gitlab.freedesktop.org/libevdev/evtest/-/archive/evtest-${pkgver%-*}/evtest-evtest-${pkgver%-*}.zip")
 sha256sums=(62f7e34c5bab91b5015de5b056d79051c677c5bd5702facb2885f8e4ba0df84c)
 

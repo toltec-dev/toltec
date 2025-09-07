@@ -14,7 +14,7 @@ installdepends=(node display)
 makedepends=(build:imagemagick build:librsvg2-bin)
 flags=(patch_rm2fb)
 
-image=qt:v2.1
+image=qt:v3.1
 source=(
     https://github.com/khanhas/zshelf/archive/v0.3.1.zip
     zshelf.draft

@@ -13,7 +13,7 @@ license=MIT
 installdepends=(display)
 makedepends=(build:libclang-14-dev build:clang-14 build:llvm-14-dev)
 
-image=rust:v2.3
+image=rust:v3.1
 
 # Whitespace-separated list of source archives that are needed to build the package
 source=(
