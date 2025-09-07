@@ -12,7 +12,7 @@ maintainer="Linus K. <linus@cosmos-ink.net>"
 license=MIT
 installdepends=(appmarkable)
 
-image=base:v3.1
+image=base:v3.2
 source=(
     https://github.com/LinusCDE/rmWacomToMouse/archive/fd1c5454b65f456f6e890b99109e50a8f576dad1.zip
     rmservewacominput.draft

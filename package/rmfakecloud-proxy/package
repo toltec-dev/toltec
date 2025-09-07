@@ -14,7 +14,7 @@ maintainer="Mattéo Delabre <spam@delab.re>"
 license=MIT
 installdepends=(procps-ng-pgrep findutils)
 
-image=golang:v3.1
+image=golang:v3.2
 source=(
     "https://github.com/ddvk/rmfakecloud-proxy/archive/v$_upver.zip"
     rmfakecloudctl

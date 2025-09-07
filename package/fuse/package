@@ -14,7 +14,7 @@ license=GPL-2.0-only
 makedepends=(build:bc build:lzop build:git)
 flags=(nostrip)
 
-image=base:v3.1
+image=base:v3.2
 source=(fix-multiple-yylloc-definitions.patch)
 sha256sums=(SKIP)
 

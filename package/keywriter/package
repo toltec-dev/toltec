@@ -13,7 +13,7 @@ license=MIT
 installdepends=(display)
 flags=(patch_rm2fb)
 
-image=qt:v3.1
+image=qt:v3.2
 _sundown=37728fb2d7137ff7c37d0a474cb827a8d6d846d8
 source=(
     https://github.com/dps/remarkable-keywriter/archive/ddc9e7321e0a57a014f19b891dc8104e67d2e447.zip

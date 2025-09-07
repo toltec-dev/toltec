@@ -13,7 +13,7 @@ license=MIT
 installdepends=(display)
 flags=(patch_rm2fb)
 
-image=qt:v3.1
+image=qt:v3.2
 source=(
     https://github.com/dps/remarkable-wikipedia/archive/eb00876ef49e7deedc127bc6c1486e3ed13aedcc.zip
     wikipedia.draft

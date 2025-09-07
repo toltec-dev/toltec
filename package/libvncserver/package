@@ -11,7 +11,7 @@ section="devel"
 maintainer="Mattéo Delabre <spam@delab.re>"
 license=GPL-2.0-or-later
 
-image=base:v3.1
+image=base:v3.2
 source=("https://github.com/LibVNC/libvncserver/archive/LibVNCServer-${pkgver%-*}.zip")
 sha256sums=(d209d70998a9b98f9120eeb82df7a17767796c477eaa8297e0a55856a977c54f)
 

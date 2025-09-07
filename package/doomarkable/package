@@ -13,7 +13,7 @@ license=MIT
 installdepends=(display)
 flags=(patch_rm2fb)
 
-image=rust:v3.1
+image=rust:v3.2
 source=(https://github.com/LinusCDE/doomarkable/archive/0.4.1.tar.gz)
 sha256sums=(d1cc2a37e769039e6e7a2f3090f77657693591a2c28ac55e51f89607d06e8b02)
 

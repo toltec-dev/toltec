@@ -67,7 +67,7 @@ license=<project license>
 ## Which Docker image to use for building the package
 # See <https://github.com/toltec-dev/toolchain> for available images
 # The images are debian based and allow you to install additional packages with apt.
-# Examples (version may be out of date): base:v3.1, qt:v3.1, python:v3.1, rust:v3.1
+# Examples (version may be out of date): base:v3.2, qt:v3.2, python:v3.2, rust:v3.2
 image=<build image>
 ## Whitespace-separated list of source archives that are needed to build the package
 # Archives will be automatically extracted, stripping any useless containing

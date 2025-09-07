@@ -9,7 +9,7 @@ license=MIT
 installdepends=(display)
 flags=()
 
-image=python:v3.1
+image=python:v3.2
 source=(
     https://github.com/rmkit-dev/rmkit/archive/7edc291646c4a72b7b8a512205646a9ad6586fd6.zip
     remux.service

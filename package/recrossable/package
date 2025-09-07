@@ -14,7 +14,7 @@ installdepends=(libdlib display)
 makedepends=(build:imagemagick build:librsvg2-bin host:libdlib host:libdlib-dev)
 flags=(patch_rm2fb)
 
-image=qt:v3.1
+image=qt:v3.2
 source=(
     https://github.com/sandsmark/recrossable/archive/234d5744c0b20087a588d0ecead0a9f58c1f323d.zip
     recrossable.draft

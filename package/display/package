@@ -14,7 +14,7 @@ _release="v${_release#*:}"
 _libver=1.0.1
 section="devel"
 
-image=qt:v3.1
+image=qt:v3.2
 source=(
     "https://github.com/ddvk/remarkable2-framebuffer/archive/$_release.zip"
     rm2fb.service
