@@ -5,7 +5,7 @@
 pkgnames=(netevent)
 pkgdesc="Input-Event device cloning utility"
 url="https://github.com/Blub/netevent"
-pkgver=2.2.2-1
+pkgver=2.2.2-2
 timestamp=2023-04-29T14:21:02Z
 section=utils
 maintainer="Salvatore Stella <etn45p4m@gmail.com>"

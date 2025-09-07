@@ -5,7 +5,7 @@
 pkgnames=(restream)
 pkgdesc="Binary framebuffer capture tool for the reStream script"
 url=https://github.com/rien/reStream
-pkgver=1.2.0-1
+pkgver=1.2.0-2
 timestamp=2021-11-04T19:09:14Z
 section="screensharing"
 maintainer="Dan Shick <dan.shick@gmail.com>"
