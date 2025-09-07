@@ -14,7 +14,7 @@ section="games"
 makedepends=(build:git)
 flags=(patch_rm2fb)
 
-image=python:v3.1.2
+image=python:v3.1
 source=(
     "https://github.com/mrichards42/remarkable_puzzles/releases/download/v${pkgver%-*}/puzzles-source.tar.gz"
     puzzles.draft
@@ -25,7 +25,7 @@ sha256sums=(
 )
 
 build() {
-    pip3 install okp
+    pip3 install --break-system-packages okp
 
     # do the build
     make puzzles ARCH=rm BUILD=release RMP_VERSION="${_ver}"

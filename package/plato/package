@@ -11,10 +11,10 @@ section="readers"
 maintainer="Linus K. <linus@cosmos-ink.net>"
 license=AGPL-3.0-or-later
 installdepends=(display jq)
-makedepends=(build:jq build:unzip build:wget build:patchelf)
+makedepends=(build:jq build:unzip build:wget build:patchelf build:git)
 flags=(patch_rm2fb)
 
-image=rust:v3.1.1
+image=rust:v3.1
 source=("https://github.com/LinusCDE/plato/archive/${pkgver%-*}-rm-release-13.zip")
 sha256sums=(82ef5786704ecdb4fe11ce16e7e4ae10b518a592965c292977bb33962c891d48)
 
