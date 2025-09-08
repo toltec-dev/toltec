@@ -24,7 +24,7 @@ sha256sums=(
 )
 
 build() {
-    pip3 install --break-system-packages okp
+    pip3 install okp
     ARCH="rm" make
 }
 
