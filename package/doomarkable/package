@@ -14,8 +14,8 @@ installdepends=(display)
 flags=(patch_rm2fb)
 
 image=rust:v3.2
-source=(https://github.com/LinusCDE/doomarkable/archive/0.4.1.tar.gz)
-sha256sums=(d1cc2a37e769039e6e7a2f3090f77657693591a2c28ac55e51f89607d06e8b02)
+source=(https://github.com/LinusCDE/doomarkable/archive/7d10769d625fbe733768e39cf5006cde341d2fef.zip)
+sha256sums=(df86cc87d2dde7993f47f809faaab8568abe4dd2987e5ab4e00e337caef03706)
 
 build() {
     # Fall back to system-wide config
