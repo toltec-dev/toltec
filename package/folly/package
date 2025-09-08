@@ -2,18 +2,21 @@
 # Copyright (c) 2020 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
+# FIXME: rust 2.3 no longer builds (see https://github.com/toltec-dev/toltec/issues/950) and
+# folly doesn't build with more recent Rust (see https://github.com/bkirwi/folly/issues/2#issuecomment-3268162055)
+
 pkgnames=(folly)
 pkgdesc="Z-machine interpreter for interactive fiction"
 url="https://github.com/bkirwi/folly"
-pkgver=0.0.1-5
+pkgver=0.0.1-4
 timestamp=2022-04-18T17:50:16Z
 section=games
 maintainer="Ben Kirwin <ben@kirw.in>"
 license=MIT
 installdepends=(display)
-makedepends=(build:libclang-16-dev build:clang-16 build:llvm-16-dev)
+makedepends=(build:libclang-14-dev build:clang-14 build:llvm-14-dev)
 
-image=rust:v3.2
+image=rust:v2.3
 
 # Whitespace-separated list of source archives that are needed to build the package
 source=(
