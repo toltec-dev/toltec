@@ -14,8 +14,8 @@ installdepends=(display)
 flags=(patch_rm2fb)
 
 image=rust:v3.2
-source=(https://github.com/LinusCDE/chessmarkable/archive/0.8.0-1.zip)
-sha256sums=(17675d30bb45050c1db5bc81d3d76b99a1b18e497c9a331177b853a5f9aa12af)
+source=(https://github.com/LinusCDE/chessmarkable/archive/f2360f32adc06fb4a292fa004375d63938888562.zip)
+sha256sums=(e922b017cee6b23511ff607e3c804e786978830cc6bcfdbe015c3a8917039f6a)
 
 build() {
     # Fall back to system-wide config
