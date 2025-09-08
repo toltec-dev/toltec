@@ -19,6 +19,8 @@ from toltec.builder import Builder  # type: ignore
 from toltec.repo import make_index  # type: ignore
 from toltec.util import argparse_add_verbose, LOGGING_FORMAT  # type: ignore
 
+logger = logging.getLogger(__name__)
+
 parser = argparse.ArgumentParser(description=__doc__)
 
 parser.add_argument(
@@ -87,6 +89,7 @@ for generic_recipe in ordered_missing:
                         recipe_bundle[arch].packages[pkg_name]
                         for pkg_name in recipe_bundle[arch].packages
                     ]
+            logger.info("Building %s", name)
             builder.make(recipe_bundle, build_matrix, False)
 
         make_index(paths.REPO_DIR)
