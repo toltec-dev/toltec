@@ -8,7 +8,7 @@ _upver=1.16.0
 pkgver=${_upver}-1
 timestamp=2025-09-11T18:01:57Z
 maintainer="Eeems <eeems@eeems.email>"
-license=BUSL-1.1
+license=MPL-2.0
 section="utils"
 image=base:v3.0
 
