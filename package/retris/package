@@ -2,13 +2,10 @@
 # Copyright (c) 2021 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
-# FIXME: rust 2.1 no longer builds (see https://github.com/toltec-dev/toltec/issues/950) and
-# retris doesn't build with more recent Rust (see https://github.com/LinusCDE/retris/issues/3)
-
 pkgnames=(retris)
 pkgdesc="Tetris game"
 url=https://github.com/LinusCDE/retris
-pkgver=0.6.3-4
+pkgver=0.6.4-1
 timestamp=2021-01-30T02:41Z
 section="games"
 maintainer="Linus K. <linus@cosmos-ink.net>"
@@ -16,13 +13,11 @@ license=MIT
 installdepends=(display)
 flags=(patch_rm2fb)
 
-image=rust:v2.1
-source=(https://github.com/LinusCDE/retris/archive/0.6.3-1.zip)
-sha256sums=(ecc7215098c03e79cd92b1835626e6739a5a932d5aa709899d183347e2a4108e)
+image=rust:v3.3
+source=(https://github.com/LinusCDE/retris/archive/0.6.4-1.zip)
+sha256sums=(934fa07c962f5b35d4e0c4d40631aa954c72a9d147b40a6bb49c5d3dc0a3684e)
 
 build() {
-    # Fall back to system-wide config
-    rm .cargo/config
     cargo build --release
 }
 
