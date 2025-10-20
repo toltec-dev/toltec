@@ -5,19 +5,19 @@
 pkgnames=(fuseki)
 pkgdesc="Go frontend using GnuGo"
 url="https://github.com/palfrey/fuseki"
-pkgver=0.0.1-1
+pkgver=0.1.0-1
 timestamp=2025-08-25T16:56+0100
 section=games
 maintainer="Tom Parker-Shemilt <palfrey@tevps.net>"
 license=AGPL-3.0-or-later
-image=rust:v3.1
+image=rust:v3.3
 source=(
-    https://github.com/palfrey/fuseki/archive/638191be13be06a8d7428e7739ed947904ef3e56.zip
+    https://github.com/palfrey/fuseki/archive/refs/tags/${pkgver%-*}.zip
     fuseki.draft
     fuseki-runner
 )
 sha256sums=(
-    37e4ff419a5a697039e9aa9e5b156248fcf6ed7a97867aae13aa623a7ee6a6ea
+    df80c15531ac5bcd18e1af684443454ba29dddacc157c24e0db0eb88e37176d0
     SKIP
     SKIP
 )
