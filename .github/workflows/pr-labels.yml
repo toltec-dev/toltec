@@ -5,9 +5,9 @@ on:
 jobs:
     check-labels:
         name: Check that PRs against the stable branch are labelled correctly
-        runs-on: ubuntu-22.04
+        runs-on: ubuntu-latest
         steps:
             - name: Check labels
               run: |
-                [[ '${{ github.base_ref }}' != stable ]] \
-                || [[ '${{ contains(github.event.pull_request.labels.*.name, 'merge') }}' == true ]]
+                  [[ '${{ github.base_ref }}' != stable ]] \
+                  || [[ '${{ contains(github.event.pull_request.labels.*.name, 'merge') }}' == true ]]
