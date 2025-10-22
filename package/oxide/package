@@ -12,7 +12,7 @@ maintainer="Eeems <eeems@eeems.email>"
 url=https://oxide.eeems.codes
 license=MIT
 flags=(patch_rm2fb)
-image=qt:v3.1
+image=qt:v3.2
 source=(
     "https://github.com/Eeems-Org/oxide/archive/refs/tags/v$_oxidever.zip"
     toltec-rm2-override.conf
