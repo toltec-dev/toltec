@@ -29,6 +29,8 @@ build() {
         | xargs -r -0 sed -i 's/linux-oe-g++/linux-arm-remarkable-g++/g'
     find . -name "*.pri" -type f -print0 \
         | xargs -r -0 sed -i 's/linux-oe-g++/linux-arm-remarkable-g++/g'
+    sed -i 's|https://a0136a12d63048c5a353c4a1c2d38914@sentry.eeems.codes/2|https://001cfae777374b0a8ffaf8a1e66c85b3@glitchtip.eeems.codes/1|g' \
+        shared/liboxide/oxide_sentry.cpp
     CMAKE_TOOLCHAIN_FILE="/usr/share/cmake/$CHOST.cmake" make FEATURES=sentry release
 }
 
