@@ -32,5 +32,5 @@ package() {
     install -D -m 755 "$srcdir"/target/armv7-unknown-linux-gnueabihf/release/fuseki "$pkgdir"/opt/bin/fuseki
     install -D -m 644 "$srcdir"/fuseki-runner.draft "$pkgdir"/opt/etc/draft/fuseki.draft
     install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/fuseki-runner
-    install -D "$srcdir"/fuseki.png "$pkgdir"/opt/etc/draft/icons/fuseki.png
+    install -D -m 644 "$srcdir"/fuseki.png "$pkgdir"/opt/etc/draft/icons/fuseki.png
 }
