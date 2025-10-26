@@ -1,0 +1,3 @@
+#!/bin/bash
+export GNUGO_BINARY=/opt/bin/gnugo
+/opt/bin/fuseki
