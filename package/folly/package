@@ -5,15 +5,15 @@
 pkgnames=(folly)
 pkgdesc="Z-machine interpreter for interactive fiction"
 url="https://github.com/bkirwi/folly"
-pkgver=0.0.1-4
+pkgver=0.0.1-5
 timestamp=2022-04-18T17:50:16Z
 section=games
 maintainer="Ben Kirwin <ben@kirw.in>"
 license=MIT
 installdepends=(display)
-makedepends=(build:libclang-14-dev build:clang-14 build:llvm-14-dev)
+makedepends=(build:libclang-13-dev build:clang-13 build:llvm-13-dev)
 
-image=rust:v2.3
+image=rust:v3.3
 
 # Whitespace-separated list of source archives that are needed to build the package
 source=(
