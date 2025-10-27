@@ -7,14 +7,14 @@ pkgdesc="Connect Xochitl to a rmfakecloud server"
 _url=https://github.com/ddvk/rmfakecloud-proxy
 url="$_url"
 _upver=0.0.3
-pkgver="$_upver-5"
+pkgver="$_upver-6"
 timestamp=2022-02-26T22:59Z
 section="utils"
 maintainer="Mattéo Delabre <spam@delab.re>"
 license=MIT
 installdepends=(procps-ng-pgrep findutils)
 
-image=golang:v2.2
+image=golang:v3.2
 source=(
     "https://github.com/ddvk/rmfakecloud-proxy/archive/v$_upver.zip"
     rmfakecloudctl

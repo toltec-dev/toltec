@@ -5,21 +5,19 @@
 pkgnames=(chessmarkable)
 pkgdesc="Chess game"
 url=https://github.com/LinusCDE/chessmarkable
-pkgver=0.8.0-2
-timestamp=2021-07-22T12:04Z
+pkgver=0.8.1-1
+timestamp=2025-09-11T12:04Z
 section="games"
 maintainer="Linus K. <linus@cosmos-ink.net>"
 license=MIT
 installdepends=(display)
 flags=(patch_rm2fb)
 
-image=rust:v2.1
-source=(https://github.com/LinusCDE/chessmarkable/archive/0.8.0-1.zip)
-sha256sums=(17675d30bb45050c1db5bc81d3d76b99a1b18e497c9a331177b853a5f9aa12af)
+image=rust:v3.3
+source=(https://github.com/LinusCDE/chessmarkable/archive/refs/tags/0.8.1-1.zip)
+sha256sums=(9d136e7e96f287b7d5afa96176e934a6922bbced7cf3bdd3b767aa9181874b17)
 
 build() {
-    # Fall back to system-wide config
-    rm .cargo/config
     cargo build --release --bin chessmarkable
 }
 
