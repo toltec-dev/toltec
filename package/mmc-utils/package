@@ -13,6 +13,7 @@ maintainer="Alistair Francis <alistair@alistair23.me>"
 license=GPL-2.0-only
 
 image=base:v3.2
+preparedepends=(build:git)
 source=(
     0001-Makefile-Remove-Werror.patch
 )
@@ -22,10 +23,6 @@ sha256sums=(
 _commit=7769a4d7abe339ce273c13a203394a79a11fcff9
 
 prepare() {
-    export DEBIAN_FRONTEND=noninteractive \
-        && apt-get update -y \
-        && apt-get install -y --no-install-recommends \
-            git
     cd "$srcdir"
     mkdir mmc-utils
     cd mmc-utils

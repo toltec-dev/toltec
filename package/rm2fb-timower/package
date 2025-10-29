@@ -31,13 +31,9 @@ image=base:v4.0
 
 makedepends=()
 makedepends_rm2os3v22=(build:xxd)
+preparedepends=(build:git build:git-lfs)
 
 prepare() {
-    export DEBIAN_FRONTEND=noninteractive \
-        && apt-get update -y \
-        && apt-get install -y --no-install-recommends \
-            git \
-            git-lfs
     cd "$srcdir"
     mkdir -p rm2fb
     cd rm2fb

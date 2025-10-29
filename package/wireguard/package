@@ -11,6 +11,7 @@ section=kernel
 maintainer="Jonah Weissman <jonahrweissman+toltec@gmail.com>"
 license=GPL-2.0-only
 makedepends=(build:bc build:lzop build:git build:flex build:bison build:libssl-dev)
+preparedepends=(build:git)
 flags=(nostrip)
 installdepends=(wireguard-tools)
 
@@ -35,10 +36,6 @@ sha256sums=(
 )
 
 build() {
-    export DEBIAN_FRONTEND=noninteractive \
-        && apt-get update -y \
-        && apt-get install -y --no-install-recommends \
-            git
     mkdir pkg
     git init linux
     for i in $(seq 0 1); do

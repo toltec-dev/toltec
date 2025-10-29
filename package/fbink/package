@@ -11,14 +11,11 @@ maintainer="Mattéo Delabre <spam@delab.re>"
 license=GPL-3.0
 installdepends=(display)
 flags=(patch_rm2fb)
+preparedepends=(build:git)
 
 image=base:v3.2
 
 prepare() {
-    export DEBIAN_FRONTEND=noninteractive \
-        && apt-get update -y \
-        && apt-get install -y --no-install-recommends \
-            git
     git clone --depth=1 --recurse-submodules --branch v${pkgver%-*} https://github.com/NiLuJe/FBInk.git "$srcdir"/FBInk
 }
 
