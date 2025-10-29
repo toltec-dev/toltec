@@ -2,7 +2,16 @@
 # Copyright (c) 2023 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
-archs=(rm1os2 rm1os3 rm2os2 rm2os3)
+archs=(
+    rm1os2
+    rm1os3
+    rm1os3v22
+    rm2os2
+    rm2os3
+    rm2os3v22
+    rmppos3v22
+    rmppmos3v22
+)
 pkgnames=(toltec-deletions)
 pkgdesc="Metapackage to handle package deletions between OS versions"
 url=https://toltec-dev.org/
@@ -32,6 +41,22 @@ replaces_rm1os3=(
     gocryptfs
     remarkable-stylus
 )
+conflicts_rm1os3v22=(
+    ddvk-hacks
+    fuse
+    wireguard
+    innernet-client
+    gocryptfs
+    remarkable-stylus
+)
+replaces_rm1os3v22=(
+    ddvk-hacks
+    fuse
+    wireguard
+    innernet-client
+    gocryptfs
+    remarkable-stylus
+)
 conflicts_rm2os3=(
     ddvk-hacks
     fuse
@@ -50,6 +75,28 @@ replaces_rm2os3=(
     remarkable-stylus
     open-remarkable-shutdown
 )
+conflicts_rm2os3v22=(
+    ddvk-hacks
+    fuse
+    wireguard
+    innernet-client
+    gocryptfs
+    remarkable-stylus
+    open-remarkable-shutdown
+)
+replaces_rm2os3v22=(
+    ddvk-hacks
+    fuse
+    wireguard
+    innernet-client
+    gocryptfs
+    remarkable-stylus
+    open-remarkable-shutdown
+)
+conflicts_rmppos3v22=()
+replaces_rmppos3v22=()
+conflicts_rmppmos3v22=()
+replaces_rmppmos3v22=()
 
 source=()
 sha256sums=()
