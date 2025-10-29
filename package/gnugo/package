@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+# Copyright (c) 2025 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgnames=(gnugo)
+pkgdesc="Program that plays the game of Go"
+url="https://www.gnu.org/software/gnugo/"
+pkgver=3.8.0-1
+timestamp=2025-08-25T16:56+0100
+section=games
+maintainer="Tom Parker-Shemilt <palfrey@tevps.net>"
+license=GPL-3.0-only
+image=base:v3.1
+source=(
+    https://github.com/palfrey/gnugo/archive/51f99b7a00b7acf295475b56c349c857a9aa2d0e.zip
+)
+sha256sums=(
+    2624c57641c7cb28699df693c6da65f6d192f9867554fcfcf830b17db851a702
+)
+
+makedepends=("build:autoconf" "build:automake")
+
+build() {
+    aclocal
+    autoheader
+    automake --add-missing --copy
+    autoreconf
+    CFLAGS="-O2 -flto=auto" LDFLAGS="-O2 -flto=auto" ./configure --host arm-remarkable-linux-gnueabihf --build x86_64-linux-gnu --without-curses --without-docs
+    make
+}
+
+package() {
+    install -D -m 755 "$srcdir"/interface/gnugo "$pkgdir"/opt/bin/gnugo
+}

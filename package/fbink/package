@@ -4,14 +4,14 @@
 
 pkgnames=(fbink fbdepth fbink-doom)
 url=https://github.com/NiLuJe/FBInk
-pkgver=1.25.0-1
+pkgver=1.25.0-2
 timestamp=2022-12-05T02:50:38Z
 maintainer="Mattéo Delabre <spam@delab.re>"
 license=GPL-3.0
 installdepends=(display)
 flags=(patch_rm2fb)
 
-image=base:v2.1
+image=base:v3.2
 
 prepare() {
     git clone --depth=1 --recurse-submodules --branch v${pkgver%-*} https://github.com/NiLuJe/FBInk.git "$srcdir"/FBInk
