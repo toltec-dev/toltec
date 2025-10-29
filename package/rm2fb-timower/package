@@ -29,6 +29,9 @@ sha256sums=(
 
 image=base:v4.0
 
+makedepends=()
+makedepends_rm2os3v22=(build:xxd)
+
 prepare() {
     export DEBIAN_FRONTEND=noninteractive \
         && apt-get update -y \
