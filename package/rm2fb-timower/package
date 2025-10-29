@@ -59,6 +59,10 @@ build() {
             -fPIC -fvisibility=hidden -shared \
             -o "librm2fb_client.so.$_libver" \
             -xc -
+        echo | "${CROSS_COMPILE}gcc" \
+            -fPIC -fvisibility=hidden -shared \
+            -o "librm2fb_client_no_hook.so" \
+            -xc -
         popd
     else
         mkdir build
@@ -71,7 +75,6 @@ build() {
         make install
         popd
         popd
-        mv install/lib/librm2fb_server.so{,.$_libver}
     fi
     # Work around current post-processing not handling symlinks that are not currently valid
     rm -f install/usr/lib/librm2fb_client.so.1
@@ -87,7 +90,7 @@ rm2fb-server() {
     package() {
         if [[ $arch = rm2os3v22 ]]; then
             libname="librm2fb_server.so.$_libver"
-            install -D -m 644 -t "$pkgdir"/opt/lib "$srcdir"/install/lib/"$libname"
+            install -D -m 644 "$srcdir"/install/lib/librm2fb_server.so "$pkgdir"/opt/lib/"$libname"
             ln -s "$libname" "$pkgdir"/opt/lib/"${libname%.*.*.*}"
             ln -s "$libname" "$pkgdir"/opt/lib/"${libname%.*.*}"
             ln -s "$libname" "$pkgdir"/opt/lib/"${libname%.*}"
