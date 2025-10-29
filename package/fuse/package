@@ -6,7 +6,7 @@ archs=(rm1os2 rm2os2)
 pkgnames=(fuse)
 pkgdesc="FUSE (Filesystem in Userspace) Kernel Module"
 url=https://github.com/libfuse/libfuse
-pkgver=1.0.0-6
+pkgver=1.0.0-7
 timestamp=2021-04-06T22:16Z
 section=kernel
 maintainer="plan5 <30434574+plan5@users.noreply.github.com>"
@@ -23,6 +23,10 @@ _kernelrev=1774e2a6a091fdc081324e966d3db0aa9df75c0b
 _defconfig=arch/arm/configs/zero-gravitas_defconfig
 
 prepare() {
+    export DEBIAN_FRONTEND=noninteractive \
+        && apt-get update -y \
+        && apt-get install -y --no-install-recommends \
+            git
     cd "$srcdir"
     mkdir pkg
     git init linux

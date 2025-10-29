@@ -5,7 +5,7 @@ archs=(rm1os2 rm2os2)
 pkgnames=(wireguard)
 pkgdesc="Fast, modern, secure VPN tunnel"
 url=https://www.wireguard.com
-pkgver=1.0.20220627-1
+pkgver=1.0.20220627-2
 timestamp=2021-02-19T14:08Z
 section=kernel
 maintainer="Jonah Weissman <jonahrweissman+toltec@gmail.com>"
@@ -35,6 +35,10 @@ sha256sums=(
 )
 
 build() {
+    export DEBIAN_FRONTEND=noninteractive \
+        && apt-get update -y \
+        && apt-get install -y --no-install-recommends \
+            git
     mkdir pkg
     git init linux
     for i in $(seq 0 1); do

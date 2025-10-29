@@ -20,6 +20,10 @@ source=()
 sha256sums=()
 
 prepare() {
+    export DEBIAN_FRONTEND=noninteractive \
+        && apt-get update -y \
+        && apt-get install -y --no-install-recommends \
+            git
     cd "$srcdir"
     mkdir -p yaft
     cd yaft

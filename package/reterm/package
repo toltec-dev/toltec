@@ -22,6 +22,10 @@ image=dotnet6:latest
 makedepends=(build:gawk build:git)
 
 prepare() {
+    export DEBIAN_FRONTEND=noninteractive \
+        && apt-get update -y \
+        && apt-get install -y --no-install-recommends \
+            git
     cd "$srcdir"
     git config --global --add safe.directory /src
     git init
