@@ -17,6 +17,7 @@ license=MIT
 url="https://toltec-dev.org"
 pkgver=2:0.0.1-1
 section="devel"
+installdepends=()
 installdepends_rmallos2=(rm2fb-server rm2fb-client)
 installdepends_rmallos3=(rm2fb-server rm2fb-client)
 installdepends_rm1os3v22=(rm2fb-server rm2fb-client)
