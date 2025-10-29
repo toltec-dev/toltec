@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Copyright (c) 2025 The Toltec Contributors
 # SPDX-License-Identifier: MIT
-arch=(
+archs=(
     rmallos2
     rmallos3
     rm1os3v22
