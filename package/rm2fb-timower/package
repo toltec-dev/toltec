@@ -32,7 +32,9 @@ image=base:v4.0
 prepare() {
     export DEBIAN_FRONTEND=noninteractive \
         && apt-get update -y \
-        && apt-get install -y --no-install-recommends git
+        && apt-get install -y --no-install-recommends \
+            git \
+            git-lfs
     cd "$srcdir"
     mkdir -p rm2fb
     cd rm2fb
