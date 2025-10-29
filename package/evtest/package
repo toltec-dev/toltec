@@ -2,6 +2,7 @@
 # Copyright (c) 2020 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
+archs=(rm1 rm2 rmpp rmppm)
 pkgnames=(evtest)
 pkgdesc="Kernel evdev device information and monitor"
 url=https://gitlab.freedesktop.org/libevdev/evtest
@@ -12,12 +13,12 @@ maintainer="Linus K. <linus@cosmos-ink.net>"
 license=GPL-2.0-only
 makedepends=(build:automake)
 
-image=base:v3.2
+image=base:v4.0
 source=("https://gitlab.freedesktop.org/libevdev/evtest/-/archive/evtest-${pkgver%-*}/evtest-evtest-${pkgver%-*}.zip")
 sha256sums=(62f7e34c5bab91b5015de5b056d79051c677c5bd5702facb2885f8e4ba0df84c)
 
 build() {
-    export CC=arm-linux-gnueabihf-gcc
+    export CC="${CROSS_COMPILE}gcc"
     ./autogen.sh --host armv7
     ./configure --host armv7
     make

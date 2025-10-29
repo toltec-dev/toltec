@@ -2,10 +2,11 @@
 # Copyright (c) 2025 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
+archs=(rm1 rm2)
 pkgnames=(gnugo)
 pkgdesc="Program that plays the game of Go"
 url="https://www.gnu.org/software/gnugo/"
-pkgver=3.8.0-1
+pkgver=3.8.0-2
 timestamp=2025-08-25T16:56+0100
 section=games
 maintainer="Tom Parker-Shemilt <palfrey@tevps.net>"

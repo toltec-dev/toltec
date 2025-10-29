@@ -2,10 +2,11 @@
 # Copyright (c) 2021 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
+archs=(rm1 rm2)
 pkgnames=("webinterface-upload-button")
 pkgdesc="A simple upload button for the web interface"
 url="https://github.com/rM-self-serve/webinterface-upload-button"
-pkgver=1.1.1-3
+pkgver=1.1.1-4
 timestamp=2023-12-16T15:35:49Z
 section="utils"
 maintainer="rM-self-serve <122753594+rM-self-serve@users.noreply.github.com>"

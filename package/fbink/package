@@ -2,9 +2,10 @@
 # Copyright (c) 2020 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
+archs=(rm1 rm2)
 pkgnames=(fbink fbdepth fbink-doom)
 url=https://github.com/NiLuJe/FBInk
-pkgver=1.25.0-2
+pkgver=1.25.0-3
 timestamp=2022-12-05T02:50:38Z
 maintainer="Mattéo Delabre <spam@delab.re>"
 license=GPL-3.0

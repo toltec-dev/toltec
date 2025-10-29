@@ -1,10 +1,16 @@
 #!/usr/bin/env bash
 # Copyright (c) 2021 The Toltec Contributors
 # SPDX-License-Identifier: MIT
+archs=(
+    rm1os2
+    rm1os3
+    rm2os2
+    rm2os3
+)
 pkgnames=(reterm)
 pkgdesc="Landscape terminal support for the Remarkable 2 + type cover"
 section="admin"
-pkgver="20230628.1927-2"
+pkgver="20230628.1927-3"
 timestamp="2023-06-28T19:28:06Z"
 maintainer="Eeems <eeems@eeems.email>"
 url="https://github.com/i-am-shodan/ReTerm"

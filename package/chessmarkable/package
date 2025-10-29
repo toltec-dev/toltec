@@ -2,10 +2,11 @@
 # Copyright (c) 2021 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
+archs=(rm1 rm2)
 pkgnames=(chessmarkable)
 pkgdesc="Chess game"
 url=https://github.com/LinusCDE/chessmarkable
-pkgver=0.8.1-1
+pkgver=0.8.1-2
 timestamp=2025-09-11T12:04Z
 section="games"
 maintainer="Linus K. <linus@cosmos-ink.net>"

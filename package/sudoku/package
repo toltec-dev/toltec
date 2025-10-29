@@ -2,10 +2,11 @@
 # Copyright (c) 2024 HookedBehemoth
 # SPDX-License-Identifier: GPL-3.0-only
 
+archs=(rm1 rm2)
 pkgnames=(sudoku)
 pkgdesc="Sudoku for Remarkable"
 url="https://github.com/HookedBehemoth/remarkable-sudoku"
-pkgver=0.1.2-1
+pkgver=0.1.2-2
 timestamp=2023-02-04T22:49Z
 section="games"
 maintainer="Luis S. <luis@scheurenbrand.me>"

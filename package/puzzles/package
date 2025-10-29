@@ -2,11 +2,12 @@
 # Copyright (c) 2020 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
+archs=(rm1 rm2)
 pkgnames=(puzzles)
 timestamp=2021-03-04T14:03-08:00
 maintainer="Mattéo Delabre <spam@delab.re>"
 _ver=0.2.4
-pkgver=${_ver}-5
+pkgver=${_ver}-6
 license=MIT
 pkgdesc="Simon Tatham's Puzzle Package"
 url="https://github.com/mrichards42/remarkable_puzzles"

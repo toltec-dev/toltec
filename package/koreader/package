@@ -2,10 +2,11 @@
 # Copyright (c) 2024 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
+archs=(rm1 rm2)
 pkgnames=(koreader)
 pkgdesc="Ebook reader supporting PDF, DjVu, EPUB, FB2 and many more formats"
 url=https://github.com/koreader/koreader
-pkgver=2025.08-1
+pkgver=2025.08-2
 timestamp=2025-08-16T20:20:24Z
 section="readers"
 maintainer="raisjn <of.raisjn@gmail.com>"

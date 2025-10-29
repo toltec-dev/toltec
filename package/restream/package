@@ -2,16 +2,17 @@
 # Copyright (c) 2020 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
+archs=(rm1 rm2 rmpp rmppm)
 pkgnames=(restream)
 pkgdesc="Binary framebuffer capture tool for the reStream script"
 url=https://github.com/rien/reStream
-pkgver=1.2.0-2
+pkgver=1.2.0-3
 timestamp=2021-11-04T19:09:14Z
 section="screensharing"
 maintainer="Dan Shick <dan.shick@gmail.com>"
 license=MIT
 
-image=rust:v3.2
+image=rust:v4.0
 source=("https://github.com/rien/reStream/archive/refs/tags/${pkgver%-*}.tar.gz")
 sha256sums=(4166142b15e1e7363dac302aa92aad5b44e0514cab233abecb51414952c1d5a1)
 

@@ -2,11 +2,12 @@
 # Copyright (c) 2020 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
+archs=(rm1 rm2)
 pkgnames=(tilem)
 pkgdesc="TI-84+ calculator emulator"
 url=https://github.com/timower/rM2-stuff/tree/master/apps/tilem
 _tag=0.1.2
-pkgver=${_tag}-1
+pkgver=${_tag}-2
 timestamp=2024-05-29T17:05:56Z
 maintainer="Mattéo Delabre <spam@delab.re>"
 license=GPL-3.0

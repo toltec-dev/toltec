@@ -2,10 +2,11 @@
 # Copyright (c) 2021 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
+archs=(rm1 rm2)
 pkgnames=(doomarkable)
 pkgdesc="DOOM game"
 url=https://github.com/LinusCDE/doomarkable
-pkgver=0.4.1-3
+pkgver=0.4.1-4
 timestamp=2021-10-31T16:15Z
 section="games"
 maintainer="Linus K. <linus@cosmos-ink.net>"

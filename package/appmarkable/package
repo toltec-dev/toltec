@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Copyright (c) 2021 The Toltec Contributors
 # SPDX-License-Identifier: MIT
-
+archs=(rm1 rm2)
 pkgnames=(appmarkable)
 pkgdesc="Front-end for apps that do not have a graphical user interface"
 url="https://github.com/LinusCDE/appmarkable"

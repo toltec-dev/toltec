@@ -2,10 +2,11 @@
 # Copyright (c) 2021 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
+archs=(rm1 rm2)
 pkgnames=(retris)
 pkgdesc="Tetris game"
 url=https://github.com/LinusCDE/retris
-pkgver=0.6.4-1
+pkgver=0.6.4-2
 timestamp=2021-01-30T02:41Z
 section="games"
 maintainer="Linus K. <linus@cosmos-ink.net>"

@@ -2,6 +2,7 @@
 # Copyright (c) 2020 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
+archs=(rm1 rm2 rmpp rmppm)
 pkgnames=(quickjs)
 pkgdesc="A small and embeddable Javascript engine"
 url=https://bellard.org/quickjs/

@@ -2,10 +2,11 @@
 # Copyright (c) 2021 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
+archs=(rm1 rm2)
 pkgnames=(recrossable)
 pkgdesc="Solve crossword puzzles"
 url=https://github.com/sandsmark/recrossable
-pkgver=0.0.0-9
+pkgver=0.0.0-10
 timestamp=2021-01-15T12:58:22Z
 section="games"
 maintainer="Mattéo Delabre <spam@delab.re>"

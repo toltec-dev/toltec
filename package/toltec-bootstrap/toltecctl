@@ -96,8 +96,39 @@ identify-model() {
         "reMarkable 2.0")
             echo "rm2"
             ;;
+        "reMarkable Ferrari")
+            echo "rmpp"
+            ;;
+        "reMarkable Chiappa")
+            echo "rmppm"
+            ;;
         *)
             echo "unknown"
+            ;;
+    esac
+}
+
+# Get the human readable name for the device
+#
+# Output: The human readable device name
+get-model-human-readable-name() {
+    local device
+    device="$(identify-model)"
+    case $device in
+        "rm1")
+            echo "reMarkable 1"
+            ;;
+        "rm2")
+            echo "reMarkable 2"
+            ;;
+        "rmpp")
+            echo "reMarkable Paper Pro"
+            ;;
+        "rmppm")
+            echo "reMarkable Paper Pro Move"
+            ;;
+        *)
+            echo "Unknown"
             ;;
     esac
 }
@@ -106,7 +137,11 @@ identify-model() {
 #
 # Output: Current version in the X.Y.Z.P format
 get-release-version() {
-    awk -F= '/RELEASE_VERSION/{print $2}' /usr/share/remarkable/update.conf
+    if [ -f /usr/share/remarkable/update.conf ]; then
+        awk -F= '/RELEASE_VERSION/{print $2}' /usr/share/remarkable/update.conf
+    elif [ -f /etc/os-release ]; then
+        awk -F= '/IMG_VERSION=".+"/{print $2}' /etc/os-release | cut -d'"' -f2
+    fi
 }
 
 # Check to see if the version is supported and error if it isn't supported
@@ -208,6 +243,7 @@ Description=Bind mount $1 over $2
 DefaultDependencies=no
 Conflicts=umount.target
 Before=local-fs.target umount.target
+After=home.mount
 [Mount]
 What=$1
 Where=$2
@@ -674,6 +710,15 @@ CONF
 
 # Re-enable Toltec install after system update
 reenable() {
+    # Make sure root partition and /etc are editable, and that changes will persist
+    if ! [ -w / ]; then
+        log INFO "Remounting / as rw"
+        mount -o remount,rw /
+    fi
+    if mountpoint -q /etc && grep ' /etc ' /proc/mounts | grep -q overlay; then
+        log INFO "Unmounting overlay on /etc"
+        umount -R /etc
+    fi
     log INFO "Mounting /opt"
     add-bind-mount "$toltec_src" "$toltec_dest"
     switch-branch "$(get-branch)"
@@ -844,6 +889,12 @@ status() {
             ;;
     esac
     echo -e "\e[0m"
+    if ! [ -w / ]; then
+        echo -e "  \e[33mWarning:\e[0m / is ro"
+    fi
+    if mountpoint -q /etc && grep ' /etc ' /proc/mounts | grep -q overlay; then
+        echo -e "  \e[33mWarning:\e[0m /etc is overlay"
+    fi
     echo -ne "Supported: \033[1m"
     local rc
     rc=0
@@ -864,7 +915,7 @@ status() {
         echo -e "\033[1m\e[33mUnknown\e[0m"
     fi
     echo -n "Model: "
-    identify-model
+    get-model-human-readable-name
     echo -n "OS: "
     get-release-version
 }

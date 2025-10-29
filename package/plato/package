@@ -2,10 +2,11 @@
 # Copyright (c) 2021 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
+archs=(rm1 rm2)
 pkgnames=(plato)
 pkgdesc="Document reader"
 url=https://github.com/LinusCDE/plato
-pkgver=0.9.44-1
+pkgver=0.9.44-2
 timestamp=2025-09-16T17:58Z
 section="readers"
 maintainer="Linus K. <linus@cosmos-ink.net>"

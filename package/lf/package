@@ -2,10 +2,11 @@
 # Copyright (c) 2024 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
+archs=(rm1 rm2)
 pkgnames=(lf)
 pkgdesc="Terminal file manager"
 url=https://github.com/gokcehan/lf
-pkgver=r32-1
+pkgver=r32-2
 timestamp=2024-03-31T20:04Z
 section="utils"
 maintainer="gbyl <gbyl@users.noreply.github.com>"

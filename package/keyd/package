@@ -2,17 +2,24 @@
 # Copyright (c) 2020 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
-archs=(rmallos3)
+archs=(
+    rm1os3
+    rm1os3v22
+    rm2os3
+    rm2os3v22
+    rmppos3v22
+    rmppmos3v22
+)
 pkgnames=(keyd)
 pkgdesc="A key remapping daemon for linux"
 url="https://github.com/rvaiya/keyd"
-pkgver=2.4.3-1
+pkgver=2.4.3-2
 timestamp=2023-05-16T10:11Z
 section=utils
 maintainer="Kai <z@kwi.li>"
 license=MIT
 
-image=base:v3.1
+image=base:v4.0
 source=(
     https://github.com/rvaiya/keyd/archive/refs/tags/v2.4.3.zip
     default.conf

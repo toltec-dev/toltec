@@ -2,10 +2,11 @@
 # Copyright (c) 2023 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
+archs=(rm1 rm2)
 pkgnames=(regenda)
 pkgdesc="Caldav agenda app"
 url=https://github.com/tenJirka/reGenda
-pkgver=0.0.2-2
+pkgver=0.0.2-3
 timestamp=2023-09-06T06:45Z
 section="utils"
 maintainer="tenJirka <jirka.steh@gmail.com>"
@@ -15,7 +16,7 @@ installdepends=(python3 python3-lxml python3-pytz python3-yaml python3-requests 
 flags=(patch_rm2fb)
 source=(https://github.com/tenJirka/reGenda/archive/refs/tags/0.0.2.zip)
 sha256sums=(4f51de514945f9cfc6a1852181baab4bb0f4daadb222e8ddb05929f17e2044d9)
-image=python
+image=python:v3.2
 
 build() {
     python3 -m venv venv

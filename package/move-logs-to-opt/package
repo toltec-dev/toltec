@@ -2,10 +2,11 @@
 # Copyright (c) 2023 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
+archs=(rm1 rm2)
 pkgnames=(move-logs-to-opt)
 pkgdesc="Move log files to /opt to save space on the root partition"
 url=https://github.com/toltec-dev/toltec
-pkgver=0.0.1-1
+pkgver=0.0.1-2
 timestamp=2024-01-07T23:55Z
 section="utils"
 maintainer="Eeems <eeems@eeems.email>"

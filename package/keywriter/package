@@ -2,10 +2,11 @@
 # Copyright (c) 2021 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
+archs=(rm1 rm2)
 pkgnames=(keywriter)
 pkgdesc="Markdown-enabled free writing app"
 url=https://github.com/dps/remarkable-keywriter
-pkgver=0.2~20-gddc9e73-3
+pkgver=0.2~20-gddc9e73-4
 timestamp=2022-02-09T07:05:03Z
 section="writing"
 maintainer="Mattéo Delabre <spam@delab.re>"

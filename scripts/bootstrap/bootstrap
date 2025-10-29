@@ -25,9 +25,9 @@ case "$(uname -m)" in
     "armv7l")
         arch="armv7sf-k3.2"
         ;;
-    #"aarch64)
-    #    arch="aarch64-k3.10"
-    #    ;;
+    "aarch64")
+        arch="aarch64-k3.10"
+        ;;
     *)
         echo "Unsupported device architecture"
         exit 1
@@ -195,6 +195,16 @@ main() {
 
     # Remove those binaries in any case when the script exits
     trap cleanup EXIT
+
+    # Make sure root partition and /etc are editable, and that changes will persist
+    if ! [ -w / ]; then
+        log "Remounting / as rw"
+        mount -o remount,rw /
+    fi
+    if mountpoint -q /etc && grep ' /etc ' /proc/mounts | grep -q overlay; then
+        log "Unmounting overlay on /etc"
+        umount -R /etc
+    fi
 
     # Download and install the latest toltec-bootstrap package (without
     # its dependencies) to use toltecctl definitions

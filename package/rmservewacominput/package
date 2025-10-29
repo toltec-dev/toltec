@@ -2,10 +2,11 @@
 # Copyright (c) 2021 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
+archs=(rm1 rm2)
 pkgnames=(rmservewacominput)
 pkgdesc="Serve pen input on port 33333"
 url=https://github.com/LinusCDE/rmWacomToMouse
-pkgver=0.3.0-3
+pkgver=0.3.0-4
 timestamp=2021-03-10T18:36Z
 section="utils"
 maintainer="Linus K. <linus@cosmos-ink.net>"
@@ -26,7 +27,7 @@ sha256sums=(
 
 build() {
     cd c_implementation
-    CC=arm-linux-gnueabihf-gcc make
+    CC=${CROSS_COMPILE}gcc make
 }
 
 package() {

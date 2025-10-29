@@ -2,11 +2,12 @@
 # Copyright (c) 2020 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
+archs=(rm1 rm2)
 _pkgname="webinterface-wifi"
 pkgnames=("$_pkgname")
 pkgdesc="View the web interface if running, over wifi"
 url="https://github.com/rM-self-serve/$_pkgname"
-pkgver=2.0.0-2
+pkgver=2.0.0-3
 timestamp=2023-11-26T00:02:11Z
 section="utils"
 maintainer="rM-self-serve <122753594+rM-self-serve@users.noreply.github.com>"

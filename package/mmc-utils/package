@@ -2,11 +2,11 @@
 # Copyright (c) 2021 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
-archs=(rmall)
+archs=(rm1 rm2 rmpp rmppm)
 pkgnames=(mmc-utils)
 pkgdesc="A tool for monitoring the eMMC protocol"
 url=https://git.kernel.org/pub/scm/utils/mmc/mmc-utils.git/
-pkgver=1.0-2
+pkgver=1.0-3
 timestamp=2021-08-12T19:41:07Z
 section="devel"
 maintainer="Alistair Francis <alistair@alistair23.me>"
@@ -22,6 +22,10 @@ sha256sums=(
 _commit=7769a4d7abe339ce273c13a203394a79a11fcff9
 
 prepare() {
+    export DEBIAN_FRONTEND=noninteractive \
+        && apt-get update -y \
+        && apt-get install -y --no-install-recommends \
+            git
     cd "$srcdir"
     mkdir mmc-utils
     cd mmc-utils
@@ -33,9 +37,9 @@ prepare() {
 
 build() {
     # Use our toolchain
-    export AR=arm-linux-gnueabihf-ar
-    export CC=arm-linux-gnueabihf-gcc
-    export STRIP=arm-linux-gnueabihf-strip
+    export AR="${CROSS_COMPILE}ar"
+    export CC="${CROSS_COMPILE}gcc"
+    export STRIP="${CROSS_COMPILE}strip"
 
     make -C "$srcdir"/mmc-utils -j4
 }

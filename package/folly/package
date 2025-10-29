@@ -2,10 +2,11 @@
 # Copyright (c) 2020 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
+archs=(rm1 rm2)
 pkgnames=(folly)
 pkgdesc="Z-machine interpreter for interactive fiction"
 url="https://github.com/bkirwi/folly"
-pkgver=0.0.1-5
+pkgver=0.0.1-6
 timestamp=2022-04-18T17:50:16Z
 section=games
 maintainer="Ben Kirwin <ben@kirw.in>"

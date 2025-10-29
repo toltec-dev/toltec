@@ -2,18 +2,19 @@
 # Copyright (c) 2024 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
+archs=(rm1 rm2)
 pkgnames=(bandwhich)
 pkgdesc="CLI network utilization tool"
 url=https://github.com/imsnif/bandwhich
-pkgver=0.22.2-1
+pkgver=0.23.1-1
 timestamp=2024-01-27T19:33Z
 section="utils"
 maintainer="gbyl <gbyl@users.noreply.github.com>"
 license=MIT
 
-image=rust:v3.1
+image=rust:v4.0
 source=("https://github.com/imsnif/bandwhich/archive/refs/tags/v${pkgver%-*}.zip")
-sha256sums=(5d1eaa1796ec3c16f349cb6b00bd9dba6d425e9323d63af648a41cd68c5d456b)
+sha256sums=(92f33ddac849161d0d10aef23b027a531c6604f1b96078ed59f0baeed9f91ae5)
 
 build() {
     cargo build --release

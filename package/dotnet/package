@@ -2,6 +2,7 @@
 # Copyright (c) 2020 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
+archs=(rm1 rm2)
 pkgnames=(
     dotnet-profile
     dotnet-host
@@ -12,7 +13,7 @@ pkgnames=(
     aspnet-targeting-pack
     netstandard-targeting-pack
 )
-pkgver=3.1.20-1
+pkgver=3.1.20-2
 timestamp=2020-12-27T18:48Z
 maintainer="Eeems <eeems@eeems.email>"
 url=https://www.microsoft.com/net/core

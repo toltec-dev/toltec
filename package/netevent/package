@@ -2,16 +2,17 @@
 # Copyright (c) 2021 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
+archs=(rm1 rm2 rmpp rmppm)
 pkgnames=(netevent)
 pkgdesc="Input-Event device cloning utility"
 url="https://github.com/Blub/netevent"
-pkgver=2.2.2-2
+pkgver=2.2.2-3
 timestamp=2023-04-29T14:21:02Z
 section=utils
 maintainer="Salvatore Stella <etn45p4m@gmail.com>"
 license=GPL-2.0-only
 
-image=base:v3.2
+image=base:v4.0
 source=(
     "https://github.com/Blub/netevent/archive/refs/tags/${pkgver%-*}.tar.gz"
 )

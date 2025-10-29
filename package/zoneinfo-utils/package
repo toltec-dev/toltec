@@ -4,11 +4,12 @@
 
 # Inspired by https://github.com/archlinux/svntogit-packages/blob/packages/tzdata/trunk/PKGBUILD
 
+archs=(rm1 rm2 rmpp rmppm)
 pkgnames=(zoneinfo-utils)
 pkgdesc="Utilities for interacting with zoneinfo files"
 url=https://www.iana.org/time-zones
 _tzver=2023c
-pkgver="$_tzver"-1
+pkgver="$_tzver"-2
 timestamp=2023-03-28T00:00Z
 section=utils
 maintainer="Eeems <eeems@eeems.email>"
@@ -17,7 +18,7 @@ installdepends=(zoneinfo-core)
 makedepends=(build:gawk)
 flags=(nostrip)
 
-image=base:v3.0
+image=base:v4.0
 source=(
     "https://www.iana.org/time-zones/repository/releases/tzcode${_tzver}.tar.gz"
     "https://www.iana.org/time-zones/repository/releases/tzdata${_tzver}.tar.gz"
@@ -42,7 +43,7 @@ build() {
 
     popd > /dev/null
     rm -r .x86
-    make VERSION="$_tzver" CC=arm-linux-gnueabihf-cc
+    make VERSION="$_tzver" CC=${CROSS_COMPILE}cc
     "${CROSS_COMPILE}strip" --strip-all zic zdump
 }
 

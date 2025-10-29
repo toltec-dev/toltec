@@ -2,10 +2,11 @@
 # Copyright (c) 2021 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
+archs=(rm1 rm2)
 pkgnames=(libdlib libdlib-dev)
 pkgdesc="Toolkit for making machine learning and data analysis applications in C++"
 url=http://dlib.net
-pkgver=19.21-3
+pkgver=19.21-4
 timestamp=2020-08-08T19:41:07Z
 section="devel"
 maintainer="Mattéo Delabre <spam@delab.re>"

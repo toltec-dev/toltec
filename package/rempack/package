@@ -2,6 +2,7 @@
 # Copyright (c) 2020 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
+archs=(rm1 rm2)
 pkgnames=(rempack)
 pkgdesc="A user friendly package manager frontend for opkg"
 archs=(rmall)

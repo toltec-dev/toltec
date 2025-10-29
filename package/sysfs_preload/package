@@ -2,10 +2,11 @@
 # Copyright (c) 2023 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
+archs=(rm1 rm2)
 pkgnames=(sysfs_preload)
 pkgdesc="A simple preload that forces any calls to /sys/power/state to use systemd instead."
 url="https://github.com/Eeems-Org/sysfs_preload"
-pkgver=1.0.3-1
+pkgver=1.0.3-2
 timestamp=2024-10-11T04:33:10Z
 section=utils
 maintainer="Eeems <eeems@eeems.email>"

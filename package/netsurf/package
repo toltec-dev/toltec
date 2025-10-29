@@ -2,10 +2,11 @@
 # Copyright (c) 2021 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
+archs=(rm1 rm2)
 pkgnames=(netsurf)
 pkgdesc="Lightweight web browser"
 url=https://github.com/alex0809/netsurf-reMarkable
-pkgver=0.4.0-4
+pkgver=0.4.0-5
 timestamp=2024-09-04T21:14+00:00
 maintainer="Alex Friesenhahn <rm-dev@alexfriesenhahn.de>"
 archs=(rmall)
