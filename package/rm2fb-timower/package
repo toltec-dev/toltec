@@ -92,6 +92,8 @@ rm2fb-server() {
             ln -s "$libname" "$pkgdir"/opt/lib/"${libname%.*.*}"
             ln -s "$libname" "$pkgdir"/opt/lib/"${libname%.*}"
             install -D -m 644 -t "$pkgdir"/lib/systemd/system "$srcdir"/rm2fb.service
+            install -D -m 644 -t "$pkgdir"/lib/systemd/system "$srcdir"/install/lib/systemd/system/rm2fb.socket
+            install -D -m 755 "$srcdir"/install/bin/rm2fb_server "$pkgdir"/opt/bin/rm2fb-server
         fi
     }
 
@@ -138,6 +140,7 @@ rm2fb-client() {
     package() {
         libname="librm2fb_client.so.$_libver"
         install -D -m 644 -t "$pkgdir"/opt/lib "$srcdir"/install/lib/"$libname"
+        install -D -m 644 -t "$pkgdir"/opt/lib "$srcdir"/install/lib/"librm2fb_client_no_hook.so"
         install -d "$pkgdir"/usr/lib
         ln -s /opt/lib/"$libname" "$pkgdir"/usr/lib/"$libname"
 
