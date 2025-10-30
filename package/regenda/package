@@ -39,8 +39,6 @@ package() {
     cp -r "$srcdir"/python_modules/icalendar* "$pkgdir"/opt/usr/lib/reGenda/
     cp -r "$srcdir"/python_modules/rm_pySAS* "$pkgdir"/opt/usr/lib/reGenda/
     cp -r "$srcdir"/python_modules/recurring_ical_events* "$pkgdir"/opt/usr/lib/reGenda/
-    cp -r "$srcdir"/python_modules/tzlocal* "$pkgdir"/opt/usr/lib/reGenda/
-    cp -r "$srcdir"/python_modules/vobject* "$pkgdir"/opt/usr/lib/reGenda/
     cp -r "$srcdir"/python_modules/x_wr_timezone* "$pkgdir"/opt/usr/lib/reGenda/
 }
 
