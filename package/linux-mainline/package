@@ -6,7 +6,7 @@ archs=(rm2)
 pkgnames=(linux-mainline)
 pkgdesc="reMarkable 2 kernel based on the mainline kernel"
 url=https://www.kernel.org
-pkgver=6.3.0-3
+pkgver=6.3.0-4
 timestamp=2023-08-23T21:50:09Z
 section=kernel
 maintainer="Alistair Francis <alistair@alistair23.me>"
@@ -28,7 +28,9 @@ sha256sums=(
 build() {
     cp remarkable_defconfig arch/arm/configs/
     ARCH=arm make remarkable_defconfig
-    ARCH=arm PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig/ PKG_CONFIG_SYSROOT_DIR="" make -j8
+    local threads
+    threads="$(echo "8\n$(nproc)" | sort -n | tail -n-1)"
+    ARCH=arm PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig/ PKG_CONFIG_SYSROOT_DIR="" make -j$threads
 }
 
 package() {
