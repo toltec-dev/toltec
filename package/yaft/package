@@ -14,7 +14,7 @@ license=GPL-3.0
 section="admin"
 image=base:v3.1
 installdepends=(display terminfo)
-preparedepends=(build:git)
+preparedepends=(build:git build:git-lfs)
 flags=(nostrip)
 
 source=()

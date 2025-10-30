@@ -27,6 +27,7 @@ sha256sums=(
     3c594d8219b17acd140b7011b44ebc69ab9d68910da827494f8c9cc2f5b12ecf
     SKIP
 )
+preparedepends=(build:libarchive-tools)
 
 prepare() {
     bsdtar -x \
