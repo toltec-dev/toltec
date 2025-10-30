@@ -16,18 +16,24 @@ jobs:
   dependencies:
     name: Generate dependency chains
     runs-on: ubuntu-24.04
+    outputs:
+      recipes-matrix: ${{ steps.recipes-matrix.outputs.JSON_CONTENT }}
     steps:
       - name: Checkout the Git repository
         uses: actions/checkout@v4
       - name: Setup Toltec dependencies
         uses: ./.github/actions/setup
+      - name: Cache repo
+        uses: actions/cache@v4
+        with:
+          path: build/repo
+          key: ${{ github.base_ref }}-${{ hashFiles('package/*/package') }}
       - name: Get recipe lists
         id: recipes-matrix
         run: |
           echo 'JSON_CONTENT<<EOF' >> $GITHUB_OUTPUT
           make dependency-chain >> $GITHUB_OUTPUT
           echo 'EOF' >> $GITHUB_OUTPUT
-          cat $GITHUB_OUTPUT
         env:
           FLAGS: --remote-repo https://toltec-dev.org/${{ github.base_ref }}
   pr:
@@ -42,6 +48,11 @@ jobs:
         uses: actions/checkout@v4
       - name: Setup Toltec dependencies
         uses: ./.github/actions/setup
+      - name: Cache repo
+        uses: actions/cache@v4
+        with:
+          path: build/repo
+          key: ${{ github.base_ref }}-${{ hashFiles('package/*/package') }}
       - name: Build packages
         run: make repo-new
         env:
