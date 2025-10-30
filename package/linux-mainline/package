@@ -30,7 +30,7 @@ build() {
     ARCH=arm make remarkable_defconfig
     local threads
     threads="$(echo "8\n$(nproc)" | sort -n | tail -n-1)"
-    ARCH=arm PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig/ PKG_CONFIG_SYSROOT_DIR="" make -j$threads
+    ARCH=arm PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig/ PKG_CONFIG_SYSROOT_DIR="" make -j${threads:-8}
 }
 
 package() {
