@@ -20,6 +20,17 @@ from toltec.builder import Builder  # type: ignore
 from toltec.repo import make_index  # type: ignore
 from toltec.util import argparse_add_verbose, LOGGING_FORMAT  # type: ignore
 
+
+def sizeof_fmt(num: float, suffix: str = "B") -> str:
+    """Output human readable string for size in bytes"""
+    for unit in ("", "Ki", "Mi", "Gi", "Ti", "Pi", "Ei", "Zi"):
+        if abs(num) < 1024.0:
+            return f"{num:3.1f}{unit}{suffix}"
+
+        num /= 1024.0
+    return f"{num:.1f}Yi{suffix}"
+
+
 logger = logging.getLogger(__name__)
 
 parser = argparse.ArgumentParser(description=__doc__)
@@ -91,9 +102,22 @@ for generic_recipe in ordered_missing:
                         for pkg_name in recipe_bundle[arch].packages
                     ]
             logger.info("Building %s", name)
-            logger.info(disk_usage(builder.work_dir))
-            logger.info(disk_usage(builder.dist_dir))
-            builder.make(recipe_bundle, build_matrix, False)
+            try:
+                builder.make(recipe_bundle, build_matrix, False)
+
+            finally:
+                usage = disk_usage(paths.WORK_DIR)
+                logger.info(
+                    "work_dir: %s/%s",
+                    sizeof_fmt(usage.used),
+                    sizeof_fmt(usage.total),
+                )
+                usage = disk_usage(paths.REPO_DIR)
+                logger.info(
+                    "repo_dir: %s/%s",
+                    sizeof_fmt(usage.used),
+                    sizeof_fmt(usage.total),
+                )
 
         make_index(paths.REPO_DIR)
 

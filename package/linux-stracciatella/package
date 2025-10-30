@@ -6,7 +6,7 @@ archs=(rm1 rm2)
 pkgnames=(linux-stracciatella)
 pkgdesc="RemarkableAS's vanilla kernel with a few extra flakes"
 url=https://github.com/Etn40ff/linux-remarkable
-pkgver=5.4.70.4-1
+pkgver=5.4.70.4-2
 timestamp=2023-12-28T22:42:42Z
 section="kernel"
 maintainer="Salvatore Stella <etn45p4m@gmail.com>"
@@ -25,6 +25,7 @@ sha256sums=(
     362d412693c8fe82de00283435818d5c5def7f15e2433a07a9fe99d0518f63c0
 )
 noextract=("wireguard-linux-compat-$_wireguard_version.tar.xz")
+preparedepends=(build:libarchive-tools)
 
 prepare() {
     # Jury-rig the wireguard module into sources and enable it
