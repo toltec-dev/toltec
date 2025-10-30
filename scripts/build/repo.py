@@ -253,29 +253,26 @@ class Repo:
         compat_dest = self.repo_dir
         _ = shutil.copy2(compat_source, compat_dest)
 
-    def dependency_chains(  # pylint:disable=R0914, R0912
+    def dependency_chains(  # pylint:disable=R0914, R0912, R0915
         self,
         recipes: list[str],
     ) -> list[list[str]]:
         """
         Generate dependency chains where each chain contains recipes in build order.
-        Recipes that share dependencies (via provided packages) are grouped into the same chain.
+        Recipes that share dependencies are grouped into the same chain.
         """
-
-        # === Step 1: Build package -> recipe mapping (what provides what) ===
         package_to_recipe: dict[str, str] = {}
-        for name in recipes:
-            recipe = self.generic_recipes[name]
+        for recipe_name in recipes:
+            recipe = self.generic_recipes[recipe_name]
             for arch_recipe in recipe.values():
-                for pkg in arch_recipe.packages.keys():
-                    if pkg in package_to_recipe:
-                        # Conflict? Multiple recipes provide same package? Rare, but warn?
-                        pass  # Or raise/log
-                    package_to_recipe[pkg] = name
+                for package_name in arch_recipe.packages.keys():
+                    if package_name in package_to_recipe:
+                        logger.warning("Duplicate %s package found", package_name)
 
-        # === Step 2: Build graphs ===
-        reverse_graph: dict[str, set[str]] = defaultdict(set)  # dep -> [dependents]
-        forward_graph: dict[str, set[str]] = defaultdict(set)  # recipe -> [recipe deps]
+                    package_to_recipe[package_name] = recipe_name
+
+        reverse_graph: dict[str, set[str]] = defaultdict(set)
+        forward_graph: dict[str, set[str]] = defaultdict(set)
         indegree: dict[str, int] = defaultdict(int)
 
         for name in recipes:
@@ -288,11 +285,13 @@ class Repo:
             }
 
             recipe_deps: set[str] = set()
-            for pkg in host_dep_packages:
-                if pkg in package_to_recipe:
-                    dep_recipe = package_to_recipe[pkg]
-                    if dep_recipe in recipes:
-                        recipe_deps.add(dep_recipe)
+            for package_name in host_dep_packages:
+                if package_name not in package_to_recipe:
+                    continue
+
+                dep_recipe = package_to_recipe[package_name]
+                if dep_recipe in recipes:
+                    recipe_deps.add(dep_recipe)
 
             forward_graph[name] = recipe_deps
             for dep_recipe in recipe_deps:
@@ -302,7 +301,6 @@ class Repo:
             if name not in indegree:
                 indegree[name] = 0
 
-        # === Step 3: Find connected components via DFS (undirected graph) ===
         visited: set[str] = set()
         components: list[list[str]] = []
 
@@ -314,23 +312,24 @@ class Repo:
 
             for neighbor in reverse_graph[node]:
                 dfs(neighbor, component)
+
             for neighbor in forward_graph[node]:
                 dfs(neighbor, component)
 
         for name in recipes:
-            if name not in visited:
-                component: list[str] = []
-                dfs(name, component)
-                components.append(component)
+            if name in visited:
+                continue
 
-        # === Step 4: Topological sort per component ===
+            component: list[str] = []
+            dfs(name, component)
+            components.append(component)
+
         result_chains: list[list[str]] = []
 
         for component in components:
             if not component:
                 continue
 
-            # Subgraph indegree
             local_indegree = {node: 0 for node in component}
             for node in component:
                 for dep in forward_graph[node]:
@@ -346,13 +345,14 @@ class Repo:
                 curr = queue.popleft()
                 order.append(curr)
                 for dependent in reverse_graph[curr]:
-                    if dependent in component:
-                        local_indegree[dependent] -= 1
-                        if local_indegree[dependent] == 0:
-                            queue.append(dependent)
+                    if dependent not in component:
+                        continue
+
+                    local_indegree[dependent] -= 1
+                    if local_indegree[dependent] == 0:
+                        queue.append(dependent)
 
             if len(order) != len(component):
-                # Cycle fallback
                 order = component[:]
 
             result_chains.append(order)

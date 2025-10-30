@@ -18,11 +18,13 @@ image=base:v3.1
 _wireguard_version=1.0.20220627
 source=(
     "https://github.com/Etn40ff/linux-remarkable/archive/refs/tags/${pkgver%-*}.tar.gz"
-    "https://git.zx2c4.com/wireguard-linux-compat/snapshot/wireguard-linux-compat-$_wireguard_version.tar.xz"
+    # "https://git.zx2c4.com/wireguard-linux-compat/snapshot/wireguard-linux-compat-$_wireguard_version.tar.xz"
+    "https://github.com/WireGuard/wireguard-linux-compat/archive/refs/tags/v$_wireguard_version.tar.gz"
 )
 sha256sums=(
     29fd9d7adcb243b841d3577088dd2aec6106eaaa3bc51440411f49ea50658c01
-    362d412693c8fe82de00283435818d5c5def7f15e2433a07a9fe99d0518f63c0
+    # 362d412693c8fe82de00283435818d5c5def7f15e2433a07a9fe99d0518f63c0
+    7bd8ea9407804faad721a66affab1c9e5f190151420b807a8259bd24db9836d0
 )
 noextract=("wireguard-linux-compat-$_wireguard_version.tar.xz")
 preparedepends=(build:libarchive-tools)
