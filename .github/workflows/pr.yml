@@ -13,10 +13,29 @@ jobs:
         run: make format
       - name: Check for erroneous constructs
         run: make lint
-  pr:
-    name: Check that it builds without error
+  dependencies:
+    name: Generate dependency chains
     runs-on: ubuntu-24.04
-    needs: lint
+    steps:
+      - name: Checkout the Git repository
+        uses: actions/checkout@v4
+      - name: Setup Toltec dependencies
+        uses: ./.github/actions/setup
+      - name: Get package list
+        id: recipes-matrix
+        run: |
+          echo 'JSON_CONTENT<<EOF' >> $GITHUB_OUTPUT
+          make dependency-chain >> $GITHUB_OUTPUT
+          echo 'EOF' >> $GITHUB_OUTPUT
+        env:
+          FLAGS: --remote-repo https://toltec-dev.org/${{ github.base_ref }}
+  pr:
+    name: Build ${{ matrix.recipes }}
+    runs-on: ubuntu-24.04
+    needs: [lint, dependencies]
+    strategy:
+      matrix: ${{ fromJson(needs.dependencies.outputs.recipes-matrix) }}
+      fail-fast: false
     steps:
       - name: Checkout the Git repository
         uses: actions/checkout@v4
@@ -27,6 +46,7 @@ jobs:
         env:
           FLAGS: --remote-repo https://toltec-dev.org/${{ github.base_ref }}
           CLEANUP: 1
+          RECIPES: ${{ matrix.recipes }}
       - name: Save the build output
         uses: actions/upload-artifact@v4
         with:

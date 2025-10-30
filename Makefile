@@ -69,6 +69,10 @@ repo-local: .venv/bin/activate
 	. .venv/bin/activate; \
 	./scripts/repo_build.py --local $(FLAGS)
 
+dependency-chain: .venv/bin/activate
+	@. .venv/bin/activate; \
+	./scripts/dependency_chain.py $(FLAGS)
+
 repo-new: .venv/bin/activate
 	. .venv/bin/activate; \
 	./scripts/repo_build.py --diff $(FLAGS)

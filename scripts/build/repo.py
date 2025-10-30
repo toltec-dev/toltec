@@ -3,6 +3,7 @@
 """
 Build the package repository.
 """
+
 import logging
 import os
 import pathlib
@@ -11,12 +12,8 @@ import shutil
 from datetime import datetime
 from enum import auto
 from enum import Enum
-from typing import (
-    Dict,
-    Iterable,
-    List,
-    Optional,
-)
+from typing import Iterable
+from collections import defaultdict, deque
 
 import requests
 from jinja2 import (
@@ -54,7 +51,7 @@ class PackageStatus(Enum):
     # pylint: enable=invalid-name
 
 
-GroupedPackages = Dict[PackageStatus, Dict[str, Dict[str, List[Package]]]]
+GroupedPackages = dict[PackageStatus, dict[str, dict[str, list[Package]]]]
 
 
 class Repo:
@@ -67,9 +64,9 @@ class Repo:
         :param recipe_dir: directory where recipe definitions are stored
         :param repo_dir: directory where built packages are stored
         """
-        self.recipe_dir = recipe_dir
-        self.repo_dir = repo_dir
-        self.generic_recipes = {}
+        self.recipe_dir: str = recipe_dir
+        self.repo_dir: str = repo_dir
+        self.generic_recipes: dict[str, dict[str, Recipe]] = {}
 
         for name in os.listdir(self.recipe_dir):
             path = pathlib.Path(self.recipe_dir) / name
@@ -82,7 +79,7 @@ class Repo:
                     os.path.join(self.recipe_dir, name)
                 )
 
-    def fetch_packages(self, remote: Optional[str]) -> GroupedPackages:
+    def fetch_packages(self, remote: str | None) -> GroupedPackages:
         """
         Fetch locally missing packages from a remote server and report which
         packages are missing from the remote and need to be built locally.
@@ -135,7 +132,7 @@ class Repo:
 
         return results
 
-    def fetch_package(self, package: Package, remote: Optional[str]) -> PackageStatus:
+    def fetch_package(self, package: Package, remote: str | None) -> PackageStatus:
         """
         Check if a package exists locally and fetch it otherwise.
 
@@ -178,7 +175,7 @@ class Repo:
 
     def order_dependencies(
         self,
-        generic_recipes: List[Dict[str, Recipe]],
+        generic_recipes: list[dict[str, Recipe]],
     ) -> Iterable[dict[str, Recipe]]:
         """
         Order a list of recipes so that all recipes that a recipe needs
@@ -250,3 +247,105 @@ class Repo:
         compat_source = os.path.join(self.recipe_dir, "Compatibility")
         compat_dest = self.repo_dir
         shutil.copy2(compat_source, compat_dest)
+
+    def dependency_chains(  # pylint:disable=R0914, R0912
+        self,
+        recipes: list[str],
+    ) -> list[list[str]]:
+        """
+        Generate dependency chains where each chain contains recipes in build order.
+        Recipes that share dependencies are grouped into the same chain.
+        """
+
+        # Build graph: recipe_name -> set of recipes that depend on it (reverse dependencies)
+        reverse_graph: dict[str, set[str]] = defaultdict(set)
+        # Forward graph: recipe_name -> set of host dependencies it needs
+        forward_graph: dict[str, set[str]] = defaultdict(set)
+        # Indegree for topological sorting within components
+        indegree: dict[str, int] = defaultdict(int)
+
+        # Build the graphs
+        for name in recipes:
+            recipe = self.generic_recipes[name]
+            host_deps: set[str] = {
+                dep.package
+                for dep in {d for a in recipe.values() for d in a.makedepends}
+                if dep.kind == DependencyKind.HOST and dep.package in recipes
+            }
+            forward_graph[name] = host_deps
+            for dep in host_deps:
+                reverse_graph[dep].add(name)
+                indegree[name] += 1
+
+            # Initialize indegree for recipes with no dependencies
+            if name not in indegree:
+                indegree[name] = 0
+
+        # Perform DFS to find connected components (undirected sense)
+        visited: set[str] = set()
+        components: list[list[str]] = []
+
+        def dfs(node: str, component: list[str]) -> None:
+            if node in visited:
+                return
+
+            visited.add(node)
+            component.append(node)
+            # Visit dependents (reverse edges)
+            for dependent in reverse_graph[node]:
+                dfs(dependent, component)
+
+            # Visit dependencies (forward edges)
+            for dependency in forward_graph[node]:
+                dfs(dependency, component)
+
+        # Find all connected components
+        for name in recipes:
+            if name not in visited:
+                component: list[str] = []
+                dfs(name, component)
+                components.append(component)
+
+        # For each component, perform topological sort
+        result_chains: list[list[str]] = []
+
+        for component in components:
+            if not component:
+                continue
+
+            # Build subgraph for this component
+            local_indegree = {name: 0 for name in component}
+            local_queue: deque[str] = deque()
+            local_order: list[str] = []
+
+            # Recompute indegree within component
+            for name in component:
+                for dep in forward_graph[name]:
+                    if dep in component:
+                        local_indegree[name] += 1
+
+            # Initialize queue with nodes of indegree 0 in this component
+            for name in component:
+                if local_indegree[name] == 0:
+                    local_queue.append(name)
+
+            # Kahn's algorithm
+            while local_queue:
+                current = local_queue.popleft()
+                local_order.append(current)
+
+                # Reduce indegree of neighbors
+                for dependent in reverse_graph[current]:
+                    if dependent in component:
+                        local_indegree[dependent] -= 1
+                        if local_indegree[dependent] == 0:
+                            local_queue.append(dependent)
+
+            # Check for cycles (should not happen in valid build graph, but be safe)
+            if len(local_order) != len(component):
+                # Cycle detected - for robustness, fall back to any order
+                local_order = component[:]
+
+            result_chains.append(local_order)
+
+        return result_chains

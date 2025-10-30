@@ -13,7 +13,7 @@ from typing import (
 )
 from shutil import disk_usage, rmtree
 from build import paths
-from build.repo import Repo, PackageStatus
+from build.repo import GroupedPackages, Repo, PackageStatus
 from toltec.recipe import Package, RecipeBundle  # type: ignore
 from toltec import parse_recipe  # type: ignore
 from toltec.builder import Builder  # type: ignore
@@ -57,12 +57,41 @@ def print_disk_usage() -> None:
 
 
 def argparse_add_cleanup(parser: argparse.ArgumentParser) -> None:
-    """Add the cleanup argument"""
+    """Add --cleanup flag"""
     _ = parser.add_argument(
         "--cleanup",
         action="store_true",
         help="Remove the work folder after finishing building the recipe",
     )
+
+
+def parse_args_and_fetch_packages(
+    parser: argparse.ArgumentParser,
+) -> tuple[argparse.Namespace, Repo, GroupedPackages]:
+    """Handle local/remote arguments, fetch packages, and return args, repo, and results"""
+    group = parser.add_mutually_exclusive_group()
+    _ = group.add_argument(
+        "-l",
+        "--local",
+        action="store_true",
+        help="""by default, packages missing from the local repository are not
+        rebuilt if they already exist on the remote repository — pass this flag to
+        disable this behavior""",
+    )
+    _ = group.add_argument(
+        "-r",
+        "--remote-repo",
+        default="https://toltec-dev.org/testing",
+        metavar="URL",
+        help="""root of a remote repository used to know which packages
+        are already built (default: %(default)s)""",
+    )
+    args = parser.parse_args()
+    remote = args.remote_repo if not args.local else None
+    logging.basicConfig(format=LOGGING_FORMAT, level=args.verbose)
+    repo = Repo(paths.RECIPE_DIR, paths.REPO_DIR)
+    results = repo.fetch_packages(remote)
+    return args, repo, results
 
 
 def main() -> None:  # pylint: disable=R0914
@@ -80,31 +109,7 @@ def main() -> None:  # pylint: disable=R0914
     argparse_add_verbose(parser)
     argparse_add_cleanup(parser)
 
-    group = parser.add_mutually_exclusive_group()
-
-    _ = group.add_argument(
-        "-l",
-        "--local",
-        action="store_true",
-        help="""by default, packages missing from the local repository are not
-        rebuilt if they already exist on the remote repository — pass this flag to
-        disable this behavior""",
-    )
-
-    _ = group.add_argument(
-        "-r",
-        "--remote-repo",
-        default="https://toltec-dev.org/testing",
-        metavar="URL",
-        help="""root of a remote repository used to know which packages
-        are already built (default: %(default)s)""",
-    )
-    args = parser.parse_args()
-    remote = args.remote_repo if not args.local else None
-    logging.basicConfig(format=LOGGING_FORMAT, level=args.verbose)
-
-    repo = Repo(paths.RECIPE_DIR, paths.REPO_DIR)
-    results = repo.fetch_packages(remote)
+    args, repo, results = parse_args_and_fetch_packages(parser)
 
     os.makedirs(paths.REPO_DIR, exist_ok=True)
     make_index(paths.REPO_DIR)
