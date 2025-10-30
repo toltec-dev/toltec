@@ -25,7 +25,9 @@ sha256sums=(
 
 build() {
     pip3 install okp
-    ARCH="rm" make
+    local threads
+    threads="$(echo -e "8\n$(nproc)" | sort -n | tail -n1)"
+    ARCH="rm" make -j${threads:-8}
 }
 
 bufshot() {
