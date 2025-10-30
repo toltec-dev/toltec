@@ -35,6 +35,7 @@ sha256sums=(
 noextract=(
     "$_boost_pp_ver.zip"
 )
+preparedepends=(build:libarchive-tools)
 
 prepare() {
     patch -d "$srcdir" -p1 < "$srcdir"/vnsee-gui-set-path.patch
