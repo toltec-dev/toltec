@@ -36,7 +36,7 @@ def sizeof_fmt(num: float, suffix: str = "B") -> str:
 def cleanup(builder: Builder, recipe_bundle: RecipeBundle) -> None:
     """Perform cleanup to reduce space usage"""
     rmtree(builder.work_dir, ignore_errors=True)
-    for image in set([x.image for x in recipe_bundle.values()]):
+    for image in {x.image for x in recipe_bundle.values()}:
         builder.docker.images.remove(builder.IMAGE_PREFIX + image)
 
 
