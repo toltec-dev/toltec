@@ -14,7 +14,7 @@ license=GPL-3.0-only
 installdepends=(display)
 flags=(patch_rm2fb)
 
-image=rust:v3.1
+image=rust:v3.2
 source=("https://github.com/HookedBehemoth/remarkable-sudoku/archive/refs/tags/v${pkgver%-*}.tar.gz")
 sha256sums=(08a801a6ffc3f328fc92c8aebadbcc7a123b1abebf5cbe276d5f9f52058ee864)
 

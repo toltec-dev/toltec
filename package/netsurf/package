@@ -9,7 +9,6 @@ url=https://github.com/alex0809/netsurf-reMarkable
 pkgver=0.4.0-5
 timestamp=2024-09-04T21:14+00:00
 maintainer="Alex Friesenhahn <rm-dev@alexfriesenhahn.de>"
-archs=(rmall)
 license=GPL-2.0-or-later
 section="readers"
 makedepends=(
@@ -53,8 +52,8 @@ prepare() {
 
 build() {
     ln -s /usr/bin/which /bin
-    scripts/install_dependencies.sh
-    TARGET_WORKSPACE=$(pwd)/build scripts/build.sh
+    MAKEFLAGS="-j$(nproc)" scripts/install_dependencies.sh
+    MAKEFLAGS="-j$(nproc)" TARGET_WORKSPACE=$(pwd)/build scripts/build.sh
 }
 
 package() {
