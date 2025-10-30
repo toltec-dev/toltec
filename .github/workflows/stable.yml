@@ -13,8 +13,10 @@ jobs:
       - name: Setup Toltec dependencies
         uses: ./.github/actions/setup
       - name: Build packages
-        run: |
-          make repo FLAGS='--remote-repo ${{ secrets.REMOTE_HTTP }}/stable'
+        run: make repo
+        env:
+          FLAGS: --remote-repo ${{ secrets.REMOTE_HTTP }}/stable
+          CLEANUP: 1
       - name: Sync packages with the remote repository
         uses: ./.github/actions/sync-repository
         with:

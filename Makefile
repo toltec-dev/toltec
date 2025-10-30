@@ -13,6 +13,9 @@ ifeq ($(VERBOSE), 1)
 FLAGS+= --verbose
 endif
 endif
+ifeq ($(CLEANUP), 1)
+FLAGS+= --cleanup
+endif
 
 define USAGE
 Building packages:

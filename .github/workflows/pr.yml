@@ -23,7 +23,10 @@ jobs:
       - name: Setup Toltec dependencies
         uses: ./.github/actions/setup
       - name: Build packages
-        run: FLAGS='--remote-repo https://toltec-dev.org/${{ github.base_ref }}' make repo-new
+        run: make repo-new
+        env:
+          FLAGS: --remote-repo https://toltec-dev.org/${{ github.base_ref }}
+          CLEANUP: 1
       - name: Save the build output
         uses: actions/upload-artifact@v4
         with:
@@ -31,7 +34,10 @@ jobs:
           path: build/repo
       - name: Build packages for experimental
         if: ${{ contains(github.event.pull_request.labels.*.name, 'experimental') }}
-        run: make repo FLAGS='--remote-repo https://toltec-dev.org/${{ github.base_ref }}'
+        run: make repo
+        env:
+          FLAGS: --remote-repo https://toltec-dev.org/${{ github.base_ref }}
+          CLEANUP: 1
       - name: Sync packages with the remote repository
         if: ${{ contains(github.event.pull_request.labels.*.name, 'experimental') }}
         uses: ./.github/actions/sync-repository

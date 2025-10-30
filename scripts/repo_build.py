@@ -35,7 +35,7 @@ logger = logging.getLogger(__name__)
 
 parser = argparse.ArgumentParser(description=__doc__)
 
-parser.add_argument(
+_ = parser.add_argument(
     "-d",
     "--diff",
     action="store_true",
@@ -43,10 +43,15 @@ parser.add_argument(
 )
 
 argparse_add_verbose(parser)
+_ = parser.add_argument(
+    "--cleanup",
+    action="store_true",
+    help="Remove the work folder after finishing building the recipe",
+)
 
 group = parser.add_mutually_exclusive_group()
 
-group.add_argument(
+_ = group.add_argument(
     "-l",
     "--local",
     action="store_true",
@@ -55,7 +60,7 @@ group.add_argument(
     disable this behavior""",
 )
 
-group.add_argument(
+_ = group.add_argument(
     "-r",
     "--remote-repo",
     default="https://toltec-dev.org/testing",
@@ -87,9 +92,7 @@ for generic_recipe in ordered_missing:
     # recipe we are actually building.
     name = os.path.basename(next(iter(generic_recipe.values())).path)
     if missing[name]:
-        with Builder(
-            os.path.join(paths.WORK_DIR, name), paths.REPO_DIR
-        ) as builder:
+        with Builder(os.path.join(paths.WORK_DIR, name), paths.REPO_DIR) as builder:
             rmtree(builder.work_dir, ignore_errors=True)
             recipe_bundle = parse_recipe(os.path.join(paths.RECIPE_DIR, name))
             build_matrix: Optional[Dict[str, Optional[List[Package]]]] = None
@@ -119,6 +122,11 @@ for generic_recipe in ordered_missing:
                     sizeof_fmt(usage.used),
                     sizeof_fmt(usage.total),
                 )
+
+            if args.cleanup:
+                rmtree(builder.work_dir, ignore_errors=True)
+                for recipe in recipe_bundle:
+                    builder.docker.images.remove(builder.IMAGE_PREFIX + recipe.image)
 
         make_index(paths.REPO_DIR)
 

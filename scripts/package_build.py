@@ -12,6 +12,8 @@ from typing import (
     List,
     Optional,
 )
+from shutil import disk_usage, rmtree
+from repo_build import sizeof_fmt
 from build import paths
 from build.repo import Repo
 from toltec import parse_recipe  # type: ignore
@@ -20,15 +22,17 @@ from toltec.recipe import Package  # type: ignore
 from toltec.repo import make_index  # type: ignore
 from toltec.util import argparse_add_verbose, LOGGING_FORMAT  # type: ignore
 
+logger = logging.getLogger(__name__)
+
 parser = argparse.ArgumentParser(description=__doc__)
 
-parser.add_argument(
+_ = parser.add_argument(
     "recipe_name",
     metavar="RECIPENAME",
     help="name of the recipe to build",
 )
 
-parser.add_argument(
+_ = parser.add_argument(
     "-a",
     "--arch-name",
     metavar="ARCHNAME",
@@ -37,7 +41,7 @@ parser.add_argument(
     be repeated)""",
 )
 
-parser.add_argument(
+_ = parser.add_argument(
     "packages_names",
     nargs="*",
     metavar="PACKAGENAME",
@@ -45,6 +49,11 @@ parser.add_argument(
 )
 
 argparse_add_verbose(parser)
+_ = parser.add_argument(
+    "--cleanup",
+    action="store_true",
+    help="Remove the work folder after finishing building the recipe",
+)
 
 args = parser.parse_args()
 logging.basicConfig(format=LOGGING_FORMAT, level=args.verbose)
@@ -52,9 +61,7 @@ repo = Repo(paths.RECIPE_DIR, paths.REPO_DIR)
 builder = Builder(paths.WORK_DIR, paths.REPO_DIR)
 arch_packages: Optional[Dict[str, Optional[List[Package]]]] = None
 
-with Builder(
-    os.path.join(paths.WORK_DIR, args.recipe_name), paths.REPO_DIR
-) as builder:
+with Builder(os.path.join(paths.WORK_DIR, args.recipe_name), paths.REPO_DIR) as builder:
     recipe_bundle = parse_recipe(f"package/{args.recipe_name}")
     build_matrix: Optional[Dict[str, Optional[List[Package]]]] = None
     if args.arch_name or args.packages_names:
@@ -67,7 +74,30 @@ with Builder(
             else:
                 build_matrix[arch] = None
 
-    if not builder.make(recipe_bundle, build_matrix, False):
+    rmtree(builder.work_dir, ignore_errors=True)
+    try:
+        success: bool = builder.make(recipe_bundle, build_matrix, False)
+
+    finally:
+        usage = disk_usage(paths.WORK_DIR)
+        logger.info(
+            "work_dir: %s/%s",
+            sizeof_fmt(usage.used),
+            sizeof_fmt(usage.total),
+        )
+        usage = disk_usage(paths.REPO_DIR)
+        logger.info(
+            "repo_dir: %s/%s",
+            sizeof_fmt(usage.used),
+            sizeof_fmt(usage.total),
+        )
+
+    if args.cleanup:
+        rmtree(builder.work_dir, ignore_errors=True)
+        for recipe in recipe_bundle:
+            builder.docker.images.remove(builder.IMAGE_PREFIX + recipe.image)
+
+    if not success:
         sys.exit(1)
 
     make_index(paths.REPO_DIR)
