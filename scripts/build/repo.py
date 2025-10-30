@@ -79,7 +79,9 @@ class Repo:
                     os.path.join(self.recipe_dir, name)
                 )
 
-    def fetch_packages(self, remote: str | None) -> GroupedPackages:
+    def fetch_packages(
+        self, remote: str | None, recipe_filter: list[str] | None = None
+    ) -> GroupedPackages:
         """
         Fetch locally missing packages from a remote server and report which
         packages are missing from the remote and need to be built locally.
@@ -98,6 +100,9 @@ class Repo:
         }
 
         for name, generic_recipe in self.generic_recipes.items():
+            if recipe_filter is not None and name not in recipe_filter:
+                continue
+
             fetched_generic = {}
             missing_generic = {}
 

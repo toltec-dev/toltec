@@ -90,7 +90,12 @@ def parse_args_and_fetch_packages(
     remote = args.remote_repo if not args.local else None
     logging.basicConfig(format=LOGGING_FORMAT, level=args.verbose)
     repo = Repo(paths.RECIPE_DIR, paths.REPO_DIR)
-    results = repo.fetch_packages(remote)
+    env_packages: str | None | list[str] = os.environ.get("PACKAGES", None)
+    if env_packages is not None:
+        assert isinstance(env_packages, str)
+        env_packages = env_packages.split(" ")
+
+    results = repo.fetch_packages(remote, recipe_filter=env_packages)
     return args, repo, results
 
 
@@ -116,12 +121,6 @@ def main() -> None:  # pylint: disable=R0914,R0912
 
     fetched = results[PackageStatus.Fetched]
     missing = results[PackageStatus.Missing]
-    if os.environ.get("PACKAGES", None):
-        env_packages = os.environ["PACKAGES"].split(" ")
-        for name in missing.keys():
-            if name not in env_packages:
-                del missing[name]
-
     ordered_missing = repo.order_dependencies(
         [repo.generic_recipes[name] for name in missing]
     )
