@@ -31,6 +31,7 @@ jobs:
       - name: Get recipe lists
         id: recipes-matrix
         run: |
+          make .venv/bin/activate
           echo 'JSON_CONTENT<<EOF' >> $GITHUB_OUTPUT
           make dependency-chain >> $GITHUB_OUTPUT
           echo 'EOF' >> $GITHUB_OUTPUT
