@@ -90,7 +90,7 @@ def parse_args_and_fetch_packages(
     remote = args.remote_repo if not args.local else None
     logging.basicConfig(format=LOGGING_FORMAT, level=args.verbose)
     repo = Repo(paths.RECIPE_DIR, paths.REPO_DIR)
-    env_packages: str | None | list[str] = os.environ.get("PACKAGES", None)
+    env_packages: str | None | list[str] = os.environ.get("RECIPES", None)
     if env_packages is not None:
         assert isinstance(env_packages, str)
         env_packages = env_packages.split(" ")
