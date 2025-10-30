@@ -4,18 +4,83 @@ on:
     branches:
       - stable
 jobs:
-  stable:
-    name: Build and publish the stable channel
+  dependencies:
+    name: Generate dependency chains
     runs-on: ubuntu-24.04
+    outputs:
+      recipes-matrix: ${{ steps.recipes-matrix.outputs.JSON_CONTENT }}
     steps:
       - name: Checkout the Git repository
         uses: actions/checkout@v4
       - name: Setup Toltec dependencies
         uses: ./.github/actions/setup
-      - name: Build packages
-        run: make repo
+      - name: Cache repo
+        uses: actions/cache@v4
+        with:
+          path: build/repo
+          key: stable-${{ hashFiles('package/*/package') }}
+      - name: Get recipe lists
+        id: recipes-matrix
+        run: |
+          make .venv/bin/activate
+          echo 'JSON_CONTENT<<EOF' >> $GITHUB_OUTPUT
+          echo '{"include":' >> $GITHUB_OUTPUT
+          make dependency-chain >> $GITHUB_OUTPUT
+          echo "}" >> $GITHUB_OUTPUT
+          echo 'EOF' >> $GITHUB_OUTPUT
         env:
           FLAGS: --remote-repo ${{ secrets.REMOTE_HTTP }}/stable
+  build:
+    name: Build ${{ matrix.recipes }}
+    runs-on: ubuntu-24.04
+    needs: [dependencies]
+    strategy:
+      matrix: ${{ fromJson(needs.dependencies.outputs.recipes-matrix) }}
+      fail-fast: false
+    steps:
+      - name: Checkout the Git repository
+        uses: actions/checkout@v4
+      - name: Setup Toltec dependencies
+        uses: ./.github/actions/setup
+      - name: Cache repo
+        uses: actions/cache@v4
+        with:
+          path: build/repo
+          key: stable-${{ hashFiles('package/*/package') }}
+      - name: Build packages
+        run: make repo-new
+        env:
+          FLAGS: --remote-repo ${{ secrets.REMOTE_HTTP }}/stable --filter "${{ matrix.recipes }}"
+          CLEANUP: 1
+      - name: Upload all ipk
+        uses: actions/upload-artifact@v4
+        with:
+          name: recipes-${{ matrix.recipes }}
+          path: build/repo/**/*.ipk
+  deploy:
+    name: Deploy stable branch
+    runs-on: ubuntu-24.04
+    needs: [build]
+    steps:
+      - name: Checkout the Git repository
+        uses: actions/checkout@v4
+      - name: Setup Toltec dependencies
+        uses: ./.github/actions/setup
+      - name: Cache repo
+        uses: actions/cache@v4
+        with:
+          path: build/repo
+          key: stable-${{ hashFiles('package/*/package') }}
+      - name: Download all packages
+        uses: actions/download-artifact@v5
+        with:
+          path: build/repo
+          pattern: recipes-*
+          merge-multiple: true
+      - name: Build packages for stable
+        run: make repo
+        env:
+          FLAGS: --remote-repo ${{ secrets.REMOTE_HTTP }}//stable
           CLEANUP: 1
       - name: Sync packages with the remote repository
         uses: ./.github/actions/sync-repository

@@ -38,8 +38,8 @@ jobs:
           echo "}" >> $GITHUB_OUTPUT
           echo 'EOF' >> $GITHUB_OUTPUT
         env:
-          FLAGS: --remote-repo https://toltec-dev.org/${{ github.base_ref }}
-  pr:
+          FLAGS: --remote-repo ${{ secrets.REMOTE_HTTP }}//${{ github.base_ref }}
+  build:
     name: Build ${{ matrix.recipes }}
     runs-on: ubuntu-24.04
     needs: [lint, dependencies]
@@ -59,17 +59,17 @@ jobs:
       - name: Build packages
         run: make repo-new
         env:
-          FLAGS: --remote-repo https://toltec-dev.org/${{ github.base_ref }} --filter "${{ matrix.recipes }}"
+          FLAGS: --remote-repo ${{ secrets.REMOTE_HTTP }}//${{ github.base_ref }} --filter "${{ matrix.recipes }}"
           CLEANUP: 1
       - name: Upload all ipk
         uses: actions/upload-artifact@v4
         with:
           name: recipes-${{ matrix.recipes }}
           path: build/repo/**/*.ipk
-  experimental:
-    name: Generate dependency chains
+  deploy:
+    name: Deploy experimental branch
     runs-on: ubuntu-24.04
-    needs: [pr]
+    needs: [build]
     if: ${{ contains(github.event.pull_request.labels.*.name, 'experimental') }}
     steps:
       - name: Checkout the Git repository
@@ -90,7 +90,7 @@ jobs:
       - name: Build packages for experimental
         run: make repo
         env:
-          FLAGS: --remote-repo https://toltec-dev.org/${{ github.base_ref }}
+          FLAGS: --remote-repo ${{ secrets.REMOTE_HTTP }}//${{ github.base_ref }}
           CLEANUP: 1
       - name: Sync packages with the remote repository
         uses: ./.github/actions/sync-repository
