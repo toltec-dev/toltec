@@ -26,14 +26,14 @@ sha256sums=(
     # 362d412693c8fe82de00283435818d5c5def7f15e2433a07a9fe99d0518f63c0
     7bd8ea9407804faad721a66affab1c9e5f190151420b807a8259bd24db9836d0
 )
-noextract=("wireguard-linux-compat-$_wireguard_version.tar.xz")
+noextract=("v$_wireguard_version.tar.gz")
 preparedepends=(build:libarchive-tools)
 
 prepare() {
     # Jury-rig the wireguard module into sources and enable it
     mkdir "$srcdir/net/wireguard"
     bsdtar --strip-components 2 -xJ -C "$srcdir/net/wireguard" \
-        -f "$srcdir/wireguard-linux-compat-$_wireguard_version.tar.xz" \
+        -f "$srcdir/v$_wireguard_version.tar.gz" \
         "wireguard-linux-compat-$_wireguard_version/src"
     sed -i "/^obj-\\\$(CONFIG_NETFILTER).*+=/a obj-\$(CONFIG_WIREGUARD) += wireguard/" "$srcdir/net/Makefile"
     sed -i "/^if INET\$/a source \"net/wireguard/Kconfig\"" "$srcdir/net/Kconfig"
