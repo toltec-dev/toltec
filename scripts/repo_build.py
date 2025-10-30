@@ -11,6 +11,7 @@ from typing import (
     List,
     Optional,
 )
+from shutil import disk_usage
 from build import paths
 from build.repo import Repo, PackageStatus
 from toltec.recipe import Package  # type: ignore
@@ -90,6 +91,8 @@ for generic_recipe in ordered_missing:
                         for pkg_name in recipe_bundle[arch].packages
                     ]
             logger.info("Building %s", name)
+            logger.info(disk_usage(builder.work_dir))
+            logger.info(disk_usage(builder.dist_dir))
             builder.make(recipe_bundle, build_matrix, False)
 
         make_index(paths.REPO_DIR)
