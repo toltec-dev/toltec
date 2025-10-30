@@ -21,12 +21,13 @@ jobs:
         uses: actions/checkout@v4
       - name: Setup Toltec dependencies
         uses: ./.github/actions/setup
-      - name: Get package list
+      - name: Get recipe lists
         id: recipes-matrix
         run: |
           echo 'JSON_CONTENT<<EOF' >> $GITHUB_OUTPUT
           make dependency-chain >> $GITHUB_OUTPUT
           echo 'EOF' >> $GITHUB_OUTPUT
+          cat $GITHUB_OUTPUT
         env:
           FLAGS: --remote-repo https://toltec-dev.org/${{ github.base_ref }}
   pr:
