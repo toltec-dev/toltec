@@ -11,7 +11,7 @@ from typing import (
     List,
     Optional,
 )
-from shutil import disk_usage
+from shutil import disk_usage, rmtree
 from build import paths
 from build.repo import Repo, PackageStatus
 from toltec.recipe import Package  # type: ignore
@@ -90,6 +90,7 @@ for generic_recipe in ordered_missing:
         with Builder(
             os.path.join(paths.WORK_DIR, name), paths.REPO_DIR
         ) as builder:
+            rmtree(builder.work_dir, ignore_errors=True)
             recipe_bundle = parse_recipe(os.path.join(paths.RECIPE_DIR, name))
             build_matrix: Optional[Dict[str, Optional[List[Package]]]] = None
             old_build_matrix = missing[name]
