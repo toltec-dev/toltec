@@ -27,7 +27,6 @@ def main() -> None:  # pylint: disable=R0914
     )
     argparse_add_cleanup(parser)
     _, repo, results = parse_args_and_fetch_packages(parser)
-
     missing = list(results[PackageStatus.Missing].keys())
 
     print(
