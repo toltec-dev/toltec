@@ -18,9 +18,22 @@ source=("https://gitlab.freedesktop.org/libevdev/evtest/-/archive/evtest-${pkgve
 sha256sums=(62f7e34c5bab91b5015de5b056d79051c677c5bd5702facb2885f8e4ba0df84c)
 
 build() {
+    local host
+    case $arch in
+        rm1 | rm2)
+            host=armv7
+            ;;
+        rmpp | rmppm)
+            host=aarch64
+            ;;
+        *)
+            echo "Unhandled arch: $arch"
+            exit 1
+            ;;
+    esac
     export CC="${CROSS_COMPILE}gcc"
-    ./autogen.sh --host armv7
-    ./configure --host armv7
+    ./autogen.sh --host $host
+    ./configure --host $host
     make
 }
 
