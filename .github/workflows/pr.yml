@@ -33,7 +33,9 @@ jobs:
         run: |
           make .venv/bin/activate
           echo 'JSON_CONTENT<<EOF' >> $GITHUB_OUTPUT
+          echo '{"include":' >> $GITHUB_OUTPUT
           make dependency-chain >> $GITHUB_OUTPUT
+          echo "}" >> $GITHUB_OUTPUT
           echo 'EOF' >> $GITHUB_OUTPUT
         env:
           FLAGS: --remote-repo https://toltec-dev.org/${{ github.base_ref }}
