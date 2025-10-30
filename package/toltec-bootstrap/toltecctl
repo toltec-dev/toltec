@@ -243,6 +243,7 @@ Description=Bind mount $1 over $2
 DefaultDependencies=no
 Conflicts=umount.target
 Before=local-fs.target umount.target
+BindsTo=home.mount
 After=home.mount
 [Mount]
 What=$1
@@ -250,7 +251,7 @@ Where=$2
 Type=none
 Options=bind
 [Install]
-WantedBy=local-fs.target
+WantedBy=multi-user.target
 UNIT
 
     systemctl daemon-reload
