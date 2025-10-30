@@ -61,7 +61,7 @@ jobs:
         env:
           FLAGS: --remote-repo https://toltec-dev.org/${{ github.base_ref }}
           CLEANUP: 1
-          RECIPES: ${{ matrix.recipes }}
+          RECIPE_FILTER: ${{ matrix.recipes }}
       - name: Save the build output
         uses: actions/upload-artifact@v4
         with:
