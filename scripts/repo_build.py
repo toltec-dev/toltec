@@ -94,7 +94,7 @@ def parse_args_and_fetch_packages(
     return args, repo, results
 
 
-def main() -> None:  # pylint: disable=R0914
+def main() -> None:  # pylint: disable=R0914,R0912
     """Build the repo"""
 
     parser = argparse.ArgumentParser(description=__doc__)
@@ -116,6 +116,12 @@ def main() -> None:  # pylint: disable=R0914
 
     fetched = results[PackageStatus.Fetched]
     missing = results[PackageStatus.Missing]
+    if os.environ.get("PACKAGES", None):
+        env_packages = os.environ["PACKAGES"].split(" ")
+        for name in missing.keys():
+            if name not in env_packages:
+                del missing[name]
+
     ordered_missing = repo.order_dependencies(
         [repo.generic_recipes[name] for name in missing]
     )

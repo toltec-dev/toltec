@@ -141,6 +141,8 @@ clean:
     help \
     repo \
     repo-local \
+    dependency-chain \
+    repo-new \
     repo-check \
     $(RECIPES) \
     $(RECIPES_PUSH) \
