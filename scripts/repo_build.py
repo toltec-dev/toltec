@@ -69,6 +69,12 @@ def parse_args_and_fetch_packages(
     parser: argparse.ArgumentParser,
 ) -> tuple[argparse.Namespace, Repo, GroupedPackages]:
     """Handle local/remote arguments, fetch packages, and return args, repo, and results"""
+    _ = parser.add_argument(
+        "--filter",
+        default=None,
+        metavar="RECIPE...",
+        help="List of recipe names to limit build to",
+    )
     group = parser.add_mutually_exclusive_group()
     _ = group.add_argument(
         "-l",
@@ -90,13 +96,12 @@ def parse_args_and_fetch_packages(
     remote = args.remote_repo if not args.local else None
     logging.basicConfig(format=LOGGING_FORMAT, level=args.verbose)
     repo = Repo(paths.RECIPE_DIR, paths.REPO_DIR)
-    env_packages: str | None | list[str] = os.environ.get("RECIPE_FILTER", None)
-    if env_packages is not None:
-        assert isinstance(env_packages, str)
-        env_packages = env_packages.split(" ")
+    recipe_filter: str | None | list[str] = args.filter
+    if recipe_filter is not None:
+        assert isinstance(recipe_filter, str)
+        recipe_filter = recipe_filter.split(" ")
 
-    print("RECIPE_FILTER", env_packages)
-    results = repo.fetch_packages(remote, recipe_filter=env_packages)
+    results = repo.fetch_packages(remote, recipe_filter=recipe_filter)
     return args, repo, results
 
 
@@ -133,10 +138,16 @@ def main() -> None:  # pylint: disable=R0914,R0912
         # recipe we are actually building.
         name = os.path.basename(next(iter(generic_recipe.values())).path)
         if missing[name]:
-            with Builder(os.path.join(paths.WORK_DIR, name), paths.REPO_DIR) as builder:
+            with Builder(
+                os.path.join(paths.WORK_DIR, name), paths.REPO_DIR
+            ) as builder:
                 rmtree(builder.work_dir, ignore_errors=True)
-                recipe_bundle = parse_recipe(os.path.join(paths.RECIPE_DIR, name))
-                build_matrix: Optional[Dict[str, Optional[List[Package]]]] = None
+                recipe_bundle = parse_recipe(
+                    os.path.join(paths.RECIPE_DIR, name)
+                )
+                build_matrix: Optional[Dict[str, Optional[List[Package]]]] = (
+                    None
+                )
                 old_build_matrix = missing[name]
                 if old_build_matrix:
                     build_matrix = {}

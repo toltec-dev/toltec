@@ -59,22 +59,40 @@ jobs:
       - name: Build packages
         run: make repo-new
         env:
-          FLAGS: --remote-repo https://toltec-dev.org/${{ github.base_ref }}
+          FLAGS: --remote-repo https://toltec-dev.org/${{ github.base_ref }} --filter "${{ matrix.recipes }}"
           CLEANUP: 1
-          RECIPE_FILTER: ${{ matrix.recipes }}
-      - name: Save the build output
+      - name: Upload all ipk
         uses: actions/upload-artifact@v4
         with:
-          name: repo
+          name: recipes-${{ matrix.recipes }}
+          path: build/repo/**/*.ipk
+  experimental:
+    name: Generate dependency chains
+    runs-on: ubuntu-24.04
+    needs: [pr]
+    if: ${{ contains(github.event.pull_request.labels.*.name, 'experimental') }}
+    steps:
+      - name: Checkout the Git repository
+        uses: actions/checkout@v4
+      - name: Setup Toltec dependencies
+        uses: ./.github/actions/setup
+      - name: Cache repo
+        uses: actions/cache@v4
+        with:
           path: build/repo
+          key: ${{ github.base_ref }}-${{ hashFiles('package/*/package') }}
+      - name: Download all packages
+        uses: actions/download-artifact@v5
+        with:
+          path: build/repo
+          pattern: recipes-*
+          merge-multiple: true
       - name: Build packages for experimental
-        if: ${{ contains(github.event.pull_request.labels.*.name, 'experimental') }}
         run: make repo
         env:
           FLAGS: --remote-repo https://toltec-dev.org/${{ github.base_ref }}
           CLEANUP: 1
       - name: Sync packages with the remote repository
-        if: ${{ contains(github.event.pull_request.labels.*.name, 'experimental') }}
         uses: ./.github/actions/sync-repository
         with:
           local-path: build/repo/
