@@ -141,7 +141,6 @@ def main() -> None:  # pylint: disable=R0914,R0912
             with Builder(
                 os.path.join(paths.WORK_DIR, name), paths.REPO_DIR
             ) as builder:
-                rmtree(builder.work_dir, ignore_errors=True)
                 recipe_bundle = parse_recipe(
                     os.path.join(paths.RECIPE_DIR, name)
                 )
