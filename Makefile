@@ -122,7 +122,7 @@ format-fix: .venv/bin/activate
 	black --line-length 80 scripts
 
 lint: .venv/bin/activate
-	@echo "==> Linting Bash scripts"
+# 	@echo "==> Linting Bash scripts"
 # 	shellcheck $$(shfmt -f .) -P SCRIPTDIR
 	@echo "==> Typechecking Python files"
 	. .venv/bin/activate; \

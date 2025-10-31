@@ -37,23 +37,105 @@ flags=(patch_rm2fb)
 
 source=(
     https://github.com/alex0809/netsurf-reMarkable/archive/11ba4e18c65c687693c03d58da329e90662282e8.zip
+    https://gitlab.freedesktop.org/freetype/freetype/-/archive/VER-2-10-4/freetype-VER-2-10-4.tar.gz
     netsurf.draft
-    ssl-links.patch
 )
 sha256sums=(
     18813be8d3492bdfc6d498ee62e32c691a329b64388970c04ca4ce8b3e656241
+    4d47fca95debf8eebde5d27e93181f05b4758701ab5ce3e7b3c54b937e8f0962
     SKIP
-    SKIP
+)
+noextract=(
+    libiconv-1.16.tar.gz
+    freetype-VER-2-10-4.tar.gz
+    2.0.90
 )
 
 prepare() {
-    patch -d "$srcdir" -p1 < "$srcdir"/ssl-links.patch
+    set -e
+    (
+        # toltecmk times out when trying to download this, but manual curl works fine
+        if [ -f ../libiconv-1.16.tar.gz ] && ! echo "e6a1b1b589654277ee790cce3734f07876ac4ccfaecbee8afa0b649cf529cc04  ../libiconv-1.16.tar.gz" | sha256sum -c; then
+            rm ../libiconv-1.16.tar.gz
+        fi
+        if ! [ -f ../libiconv-1.16.tar.gz ]; then
+            curl https://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.16.tar.gz -o ../libiconv-1.16.tar.gz
+        fi
+        echo "e6a1b1b589654277ee790cce3734f07876ac4ccfaecbee8afa0b649cf529cc04  ../libiconv-1.16.tar.gz" | sha256sum -c
+        mkdir libiconv
+        cd libiconv
+        tar --strip-components=1 -xf ../libiconv-1.16.tar.gz
+    ) &
+
+    (
+        if [ -f ../libjpeg-turbo.tar.gz ] && ! echo "6a965adb02ad898b2ae48214244618fe342baea79db97157fdc70d8844ac6f09  ../libjpeg-turbo.tar.gz" | sha256sum -c; then
+            rm ../libjpeg-turbo.tar.gz
+        fi
+        if ! [ -f libjpeg-turbo.tar.gz ]; then
+            curl https://codeload.github.com/libjpeg-turbo/libjpeg-turbo/tar.gz/refs/tags/2.0.90 -o ../libjpeg-turbo.tar.gz
+        fi
+        mkdir libjpeg-turbo
+        cd libjpeg-turbo
+        tar --strip-components=1 -xf ../libjpeg-turbo.tar.gz
+    ) &
+
+    (
+        mkdir freetype
+        cd freetype
+        tar --strip-components=1 -xf ../freetype-VER-2-10-4.tar.gz
+    ) &
+    wait $(jobs -p)
 }
 
 build() {
+    set -e
     ln -s /usr/bin/which /bin
-    MAKEFLAGS="-j$(nproc)" scripts/install_dependencies.sh
-    MAKEFLAGS="-j$(nproc)" TARGET_WORKSPACE=$(pwd)/build scripts/build.sh
+    export MAKEFLAGS="-j$(nproc)"
+    export DEBIAN_FRONTEND=noninteractive
+
+    (
+        # Build libiconv 1.16
+        cd libiconv
+        ./configure \
+            --prefix="$SYSROOT/usr" \
+            --host="$CHOST" \
+            --enable-static \
+            --disable-shared
+        make
+        make install
+    ) &
+    (
+        # Build FreeType 2.10.4
+        cd freetype
+        bash autogen.sh
+        ./configure \
+            --without-zlib \
+            --without-png \
+            --enable-static=yes \
+            --enable-shared=no \
+            --without-bzip2 \
+            --host=arm-linux-gnueabihf \
+            --host="$CHOST" \
+            --disable-freetype-config
+        make
+        DESTDIR="$SYSROOT" make install
+    ) &
+
+    (
+        # Build libjpeg-turbo 2.0.90
+        cd libjpeg-turbo
+        cmake \
+            -DCMAKE_SYSROOT="$SYSROOT" \
+            -DCMAKE_TOOLCHAIN_FILE="/usr/share/cmake/$CHOST.cmake" \
+            -DCMAKE_INSTALL_LIBDIR="$SYSROOT/lib" \
+            -DCMAKE_INSTALL_INCLUDEDIR="$SYSROOT/usr/include" \
+            -DENABLE_SHARED=FALSE
+        make
+        make install
+    ) &
+
+    wait $(jobs -p)
+    TARGET_WORKSPACE=$(pwd)/build scripts/build.sh
 }
 
 package() {
