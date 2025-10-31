@@ -120,8 +120,23 @@ check-installed() {
 # Install a local wget binary which supports TLS (the original one
 # installed on the reMarkable does not) in the PATH
 wget-bootstrap() {
-    local wget_remote=http://toltec-dev.org/thirdparty/bin/wget-v1.21.1-2
-    local wget_checksum=3130886a020a56b7471ed60f3742db26acdced4b27fed5be22f9892b77589bc5
+    local wget_remote
+    local wget_checksum
+
+    case "$(uname -m)" in
+        "armv7l")
+            wget_remote=http://toltec-dev.org/thirdparty/bin/wget-v1.21.1-3
+            wget_checksum=3130886a020a56b7471ed60f3742db26acdced4b27fed5be22f9892b77589bc5
+            ;;
+        "aarch64")
+            wget_remote=http://toltec-dev.org/thirdparty/bin/wget-aarch64-v1.21.1-3
+            wget_checksum=5480e42cd48bafa5d9a4276fa1359c9c6d79ceed3ea0eb8e4a06c0e61fa34cf0
+            ;;
+        *)
+            echo "ERROR: Unsupported device architecture"
+            exit 1
+            ;;
+    esac
 
     if [[ ! -x $wget_path ]]; then
         if [[ -e $wget_path ]]; then
@@ -189,13 +204,6 @@ main() {
     # (otherwise it could get wiped out by the error-cleanup hook below)
     check-installed
 
-    # Fetch temporary wget and opkg binaries used for bootstrapping
-    wget-bootstrap
-    opkg-bootstrap
-
-    # Remove those binaries in any case when the script exits
-    trap cleanup EXIT
-
     # Make sure root partition and /etc are editable, and that changes will persist
     if ! [ -w / ]; then
         log "Remounting / as rw"
@@ -205,6 +213,13 @@ main() {
         log "Unmounting overlay on /etc"
         umount -R /etc
     fi
+
+    # Fetch temporary wget and opkg binaries used for bootstrapping
+    wget-bootstrap
+    opkg-bootstrap
+
+    # Remove those binaries in any case when the script exits
+    trap cleanup EXIT
 
     # Download and install the latest toltec-bootstrap package (without
     # its dependencies) to use toltecctl definitions
