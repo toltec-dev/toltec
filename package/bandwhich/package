@@ -2,7 +2,7 @@
 # Copyright (c) 2024 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
-archs=(rm1 rm2)
+archs=(rm1 rm2 rmpp rmppm)
 pkgnames=(bandwhich)
 pkgdesc="CLI network utilization tool"
 url=https://github.com/imsnif/bandwhich
@@ -12,7 +12,9 @@ section="utils"
 maintainer="gbyl <gbyl@users.noreply.github.com>"
 license=MIT
 
-image=rust:v4.0
+image=rust:v3.2
+image_rmpp=rust:v4.0
+image_rmppm=rust:v4.0
 source=("https://github.com/imsnif/bandwhich/archive/refs/tags/v${pkgver%-*}.zip")
 sha256sums=(92f33ddac849161d0d10aef23b027a531c6604f1b96078ed59f0baeed9f91ae5)
 
@@ -21,5 +23,18 @@ build() {
 }
 
 package() {
-    install -D -m 755 "$srcdir"/target/armv7-unknown-linux-gnueabihf/release/bandwhich "$pkgdir"/opt/bin/bandwhich
+    local target
+    case $arch in
+        rm1 | rm2)
+            target=armv7-unknown-linux-gnueabihf
+            ;;
+        rmpp | rmppm)
+            target=aarch64-unknown-linux-gnu
+            ;;
+        *)
+            echo "Unhandled arch: $arch"
+            exit 1
+            ;;
+    esac
+    install -D -m 755 "$srcdir"/target/"$target"/release/bandwhich "$pkgdir"/opt/bin/bandwhich
 }
