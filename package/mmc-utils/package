@@ -3,12 +3,12 @@
 # SPDX-License-Identifier: MIT
 
 archs=(rm1 rm2 rmpp rmppm)
-pkgnames=(mmc-utils)
+pkgnames=(mmc-utils mmc-utils-doc)
 pkgdesc="A tool for monitoring the eMMC protocol"
 url=https://git.kernel.org/pub/scm/utils/mmc/mmc-utils.git/
 pkgver=1.0-3
 timestamp=2021-08-12T19:41:07Z
-section="devel"
+section="utils"
 maintainer="Alistair Francis <alistair@alistair23.me>"
 license=GPL-2.0-only
 
@@ -42,9 +42,18 @@ build() {
 
     cd "$srcdir"/mmc-utils
     make -j4
-    DESTDIR="$srcdir"/install make install
 }
 
-package() {
-    cp -a "$srcdir"/install "$pkgdir"
+mmc-utils() {
+    package() {
+        install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/mmc-utils/mmc
+    }
+}
+
+mmc-utils-doc() {
+    installdepends=(man-db)
+    pkgdesc="Man files for mmc-utils"
+    package() {
+        install -D -m 644 <(gzip -c "$srcdir"/mmc-utils/man/mmc.1) "$pkgdir"/opt/share/man/man1/mmc1.gz
+    }
 }
