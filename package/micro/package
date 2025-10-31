@@ -2,11 +2,11 @@
 # Copyright (c) 2020 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
-archs=(rm1 rm2)
+archs=(rm1 rm2 rmpp rmppm)
 pkgnames=(micro)
 pkgdesc="Modern and intuitive terminal-based text editor"
 url=https://micro-editor.github.io/
-pkgver=2.0.14-1
+pkgver=2.0.14-2
 timestamp=2024-08-27T18:13:07Z
 section="utils"
 maintainer="Eeems <eeems@eeems.email>"
@@ -14,6 +14,12 @@ license=MIT
 
 source=("https://github.com/zyedidia/micro/releases/download/v2.0.14/micro-2.0.14-linux-arm.tar.gz")
 sha256sums=(9f490d88bd30a548af99a905f50244dc6c80f3c7a3c6f98faeb5b0a7329f7dea)
+
+source_rmpp=("https://github.com/zyedidia/micro/releases/download/v2.0.14/micro-2.0.14-linux-arm64.tar.gz")
+sha256sums_rmpp=(2e01b3ea62cdea3e62eb3ee99f6bffe84de06f689cf479173c4e7221b6613d06)
+
+source_rmppm=("https://github.com/zyedidia/micro/releases/download/v2.0.14/micro-2.0.14-linux-arm64.tar.gz")
+sha256sums_rmppm=(2e01b3ea62cdea3e62eb3ee99f6bffe84de06f689cf479173c4e7221b6613d06)
 
 package() {
     install -Dm644 "$srcdir"/LICENSE "$pkgdir/opt/usr/share/licenses/$pkgname/LICENSE"
