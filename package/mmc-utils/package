@@ -54,6 +54,6 @@ mmc-utils-doc() {
     installdepends=(man-db)
     pkgdesc="Man files for mmc-utils"
     package() {
-        install -D -m 644 <(gzip -c "$srcdir"/mmc-utils/man/mmc.1) "$pkgdir"/opt/share/man/man1/mmc1.gz
+        install -D -m 644 <(gzip -c "$srcdir"/mmc-utils/man/mmc.1) "$pkgdir"/opt/share/man/man1/mmc.1.gz
     }
 }
