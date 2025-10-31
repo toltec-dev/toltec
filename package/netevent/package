@@ -12,7 +12,9 @@ section=utils
 maintainer="Salvatore Stella <etn45p4m@gmail.com>"
 license=GPL-2.0-only
 
-image=base:v4.0
+image=base:v3.2
+image_rmpp=base:v4.0
+image_rmppm=base:v4.0
 source=(
     "https://github.com/Blub/netevent/archive/refs/tags/${pkgver%-*}.tar.gz"
 )

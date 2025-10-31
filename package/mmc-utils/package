@@ -13,6 +13,8 @@ maintainer="Alistair Francis <alistair@alistair23.me>"
 license=GPL-2.0-only
 
 image=base:v3.2
+image_rmpp=base:v4.0
+image_rmppm=base:v4.0
 preparedepends=(build:git)
 source=(
     0001-Makefile-Remove-Werror.patch
@@ -38,9 +40,11 @@ build() {
     export CC="${CROSS_COMPILE}gcc"
     export STRIP="${CROSS_COMPILE}strip"
 
-    make -C "$srcdir"/mmc-utils -j4
+    cd "$srcdir"/mmc-utils
+    make -j4
+    DESTDIR="$srcdir"/install make install
 }
 
 package() {
-    DESTDIR="$pkgdir" make -C "$srcdir"/mmc-utils install
+    cp -a "$srcdir"/install "$pkgdir"
 }
