@@ -71,24 +71,88 @@ configure() {
             fi
             ;;
         rmpp | rmppos3v22)
-            # TODO ensure root is rw
-            # TODO ensure etc overlay is unmounted
+            if is-active etc-dropbear.mount; then
+                systemctl stop etc-dropbear.mount
+            fi
+            disable-unit var-volatile-etc.service
+            sed -i -E 's|(/dev/root\s+/\s+auto\s+)ro(\s+)|\1rw\2|' /etc/fstab
+            systemctl start etc-dropbear.mount
+            mount -o remount,rw /
             ;;
         rmppm | rmppmos3v22)
-            # TODO ensure root is rw
-            # TODO ensure etc overlay is unmounted
+            if is-active etc-dropbear.mount; then
+                systemctl stop etc-dropbear.mount
+            fi
+            disable-unit var-volatile-etc.service
+            sed -i -E 's|(/dev/root\s+/\s+auto\s+)ro(\s+)|\1rw\2|' /etc/fstab
+            systemctl start etc-dropbear.mount
+            mount -o remount,rw /
             ;;
     esac
 }
 
 postremove() {
-    if is-masked sys-subsystem-net-devices-usb1.device; then
-        systemctl unmask sys-subsystem-net-devices-usb1.device
-    fi
-    if is-masked busybox-ifplugd@usb1.service; then
-        systemctl unmask busybox-ifplugd@usb1.service
-    fi
-    if ! is-enabled update-engine.service; then
-        systemctl enable update-engine
-    fi
+    case "$arch" in
+        rmall | rmallos2 | rmallos3 | rmallos3v22)
+            if is-masked sys-subsystem-net-devices-usb1.device; then
+                systemctl unmask sys-subsystem-net-devices-usb1.device
+            fi
+            if is-masked busybox-ifplugd@usb1.service; then
+                systemctl unmask busybox-ifplugd@usb1.service
+            fi
+            if ! is-enabled update-engine.service; then
+                systemctl enable update-engine
+            fi
+            ;;
+        rm1 | rm1os2 | rm1os3 | rm1os3v22)
+            if is-masked sys-subsystem-net-devices-usb1.device; then
+                systemctl unmask sys-subsystem-net-devices-usb1.device
+            fi
+            if is-masked busybox-ifplugd@usb1.service; then
+                systemctl unmask busybox-ifplugd@usb1.service
+            fi
+            if ! is-enabled update-engine.service; then
+                systemctl enable update-engine
+            fi
+            ;;
+        rm2 | rm2os2 | rm2os3 | rm2os3v22)
+            if is-masked sys-subsystem-net-devices-usb1.device; then
+                systemctl unmask sys-subsystem-net-devices-usb1.device
+            fi
+            if is-masked busybox-ifplugd@usb1.service; then
+                systemctl unmask busybox-ifplugd@usb1.service
+            fi
+            if ! is-enabled update-engine.service; then
+                systemctl enable update-engine
+            fi
+            ;;
+        rmpp | rmppos3v22)
+            if ! is-enabled var-volatile-etc.service; then
+                systemctl enable var-volatile-etc.service 2> /dev/null
+            fi
+            sed -i -E 's|(/dev/root\s+/\s+auto\s+)rw(\s+)|\1ro\2|' /etc/fstab
+            if is-active etc-dropbear.mount; then
+                systemctl stop etc-dropbear.mount
+            fi
+            if ! is-active systemctl enable var-volatile-etc.service; then
+                systemctl start var-volatile-etc.service
+            fi
+            systemctl start etc-dropbear.mount
+            mount -o remount,ro /
+            ;;
+        rmppm | rmppmos3v22)
+            if ! is-enabled var-volatile-etc.service; then
+                systemctl enable var-volatile-etc.service 2> /dev/null
+            fi
+            sed -i -E 's|(/dev/root\s+/\s+auto\s+)rw(\s+)|\1ro\2|' /etc/fstab
+            if is-active etc-dropbear.mount; then
+                systemctl stop etc-dropbear.mount
+            fi
+            if ! is-active systemctl enable var-volatile-etc.service; then
+                systemctl start var-volatile-etc.service
+            fi
+            systemctl start etc-dropbear.mount
+            mount -o remount,ro /
+            ;;
+    esac
 }

@@ -125,19 +125,29 @@ preremove() {
 }
 
 postremove() {
-    systemctl daemon-reload
+    case $arch in
+        rm1 | rm2)
+            systemctl daemon-reload
 
-    if [ -f /usr/bin/sync ] && is-masked sync.service; then
-        systemctl unmask sync.service
-    fi
-    if [ -f /usr/bin/rm-sync ] && is-masked rm-sync.service; then
-        systemctl unmask rm-sync.service
-    fi
+            if [ -f /usr/bin/sync ] && is-masked sync.service; then
+                systemctl unmask sync.service
+            fi
+            if [ -f /usr/bin/rm-sync ] && is-masked rm-sync.service; then
+                systemctl unmask rm-sync.service
+            fi
 
-    if is-enabled xochitl.service && is-enabled launcher.service; then
-        # If xochitl is currently the active launcher, make sure the
-        # launcher.service alias is removed
-        systemctl disable xochitl.service 2> /dev/null
-        systemctl enable xochitl.service 2> /dev/null
-    fi
+            if is-enabled xochitl.service && is-enabled launcher.service; then
+                # If xochitl is currently the active launcher, make sure the
+                # launcher.service alias is removed
+                systemctl disable xochitl.service 2> /dev/null
+                systemctl enable xochitl.service 2> /dev/null
+            fi
+            ;;
+        rmpp | rmppm) ;;
+        *)
+            echo "Unhandled arch: $arch"
+            exit 1
+            ;;
+    esac
+
 }
