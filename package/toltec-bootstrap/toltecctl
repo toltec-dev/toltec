@@ -931,6 +931,16 @@ status() {
     install_state="$(install-state)"
     local version_status=0
     check-version "$(get-branch)" &> /dev/null || version_status=$?
+    local extra=""
+    if command -v launcherctl > /dev/null; then
+        extra="$extra\n$(launcherctl status)\n"
+    fi
+    if command -v rmfakecloudctl > /dev/null; then
+        extra="$extra\nrmfakecloud $(rmfakecloudctl status | grep -v Run)\n"
+    fi
+    if command -v rcctl > /dev/null; then
+        extra="$extra\nEntware Services:\n$(rcctl status)\n"
+    fi
 
     # Output status
     echo -ne "Enabled: \033[1m"
@@ -975,6 +985,7 @@ status() {
     get-model-human-readable-name
     echo -n "OS: "
     get-release-version
+    echo -en "$extra"
 }
 
 help() {
