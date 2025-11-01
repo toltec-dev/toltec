@@ -2,27 +2,29 @@
 # Copyright (c) 2021 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
-archs=(rm1 rm2)
+archs=(rm1 rm2 rmpp rmppm)
 pkgnames=(rmfakecloud-proxy)
 pkgdesc="Connect Xochitl to a rmfakecloud server"
 _url=https://github.com/ddvk/rmfakecloud-proxy
 url="$_url"
-_upver=0.0.3
-pkgver="$_upver-7"
-timestamp=2022-02-26T22:59Z
+_upver=0.0.8
+pkgver="$_upver-1"
+timestamp=2025-08-20T15:50:55Z
 section="utils"
 maintainer="Mattéo Delabre <spam@delab.re>"
 license=MIT
 installdepends=(procps-ng-pgrep findutils)
 
 image=golang:v3.2
+image_rmpp=golang:v4.0
+image_rmppm=golang:v4.0
 source=(
     "https://github.com/ddvk/rmfakecloud-proxy/archive/v$_upver.zip"
     rmfakecloudctl
     rmfakecloud-proxy.service
 )
 sha256sums=(
-    eaa3fdcce250e23f368a4c9ddcfb99ff178decf31b2a7f84501dfc6fdb2e6d8f
+    81778d159a5d2d5e2f6d585c159e21f84ccc3b8dacdd5cda785aa47aa9b7658d
     SKIP
     SKIP
 )
@@ -33,8 +35,18 @@ build() {
 package main
 const Version = "rmfakecloud-proxy ${_upver%-*} ($GOOS-$GOARCH) $GOVERSION\n$_url"
 GO
-
-    GOARCH=arm GOARM=7 go build -ldflags="-w -s" -o dist/rmfakecloud-proxy
+    case $arch in
+        rm1 | rm2)
+            GOARCH=arm GOARM=7 go build -ldflags="-w -s" -o dist/rmfakecloud-proxy
+            ;;
+        rmpp | rmppm)
+            GOARCH=arm64 go build -ldflags="-w -s" -o dist/rmfakecloud-proxy
+            ;;
+        *)
+            echo "Unhandled arch: $arch"
+            exit 1
+            ;;
+    esac
 }
 
 package() {
