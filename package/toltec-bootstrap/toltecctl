@@ -883,14 +883,10 @@ uninstall() {
         return 1
     fi
 
-    touch /tmp/toltec-uninstalling
-
     # Remove installed packages in reverse dependency order
     list-installed-ordered | while read -r pkgname; do
         "$opkg_path" remove --force-removal-of-essential-packages --force-depends --force-remove "$pkgname"
     done
-
-    rm /tmp/toltec-uninstalling
 
     systemctl daemon-reload
     rm -f "$opkg_path"
@@ -907,6 +903,19 @@ uninstall() {
 
     # Re-enable xochitl if needed
     systemctl enable xochitl
+
+    case $(identify-model) in
+        rmpp | rmppm)
+            if is-active etc-dropbear.mount; then
+                systemctl stop etc-dropbear.mount
+            fi
+            if ! is-active var-volatile-etc.service; then
+                systemctl start var-volatile-etc.service
+            fi
+            systemctl start etc-dropbear.mount
+            mount -o remount,ro /
+            ;;
+    esac
 }
 
 # The current toltec install state

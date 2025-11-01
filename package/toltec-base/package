@@ -92,10 +92,6 @@ configure() {
 }
 
 postremove() {
-    local uninstalling=0
-    if [ -f /tmp/toltec-uninstalling ]; then
-        uninstalling=1
-    fi
     case "$arch" in
         rmall | rmallos2 | rmallos3 | rmallos3v22)
             if is-masked sys-subsystem-net-devices-usb1.device; then
@@ -135,32 +131,12 @@ postremove() {
                 systemctl enable var-volatile-etc.service 2> /dev/null
             fi
             sed -i -E 's|(/dev/root\s+/\s+auto\s+)rw(\s+)|\1ro\2|' /etc/fstab
-            if [ $uninstalling -eq 1 ]; then
-                if is-active etc-dropbear.mount; then
-                    systemctl stop etc-dropbear.mount
-                fi
-                if ! is-active var-volatile-etc.service; then
-                    systemctl start var-volatile-etc.service
-                fi
-                systemctl start etc-dropbear.mount
-                mount -o remount,ro /
-            fi
             ;;
         rmppm | rmppmos3v22)
             if ! is-enabled var-volatile-etc.service; then
                 systemctl enable var-volatile-etc.service 2> /dev/null
             fi
             sed -i -E 's|(/dev/root\s+/\s+auto\s+)rw(\s+)|\1ro\2|' /etc/fstab
-            if [ $uninstalling -eq 1 ]; then
-                if is-active etc-dropbear.mount; then
-                    systemctl stop etc-dropbear.mount
-                fi
-                if ! is-active var-volatile-etc.service; then
-                    systemctl start var-volatile-etc.service
-                fi
-                systemctl start etc-dropbear.mount
-                mount -o remount,ro /
-            fi
             ;;
     esac
 }
