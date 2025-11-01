@@ -302,6 +302,7 @@ $proxy_listen dev.ping.remarkable.com
 $proxy_listen dev.tectonic.remarkable.com
 $proxy_listen dev.internal.cloud.remarkable.com
 $proxy_listen eu.internal.tctn.cloud.remarkable.com
+$proxy_listen webapp-prod.cloud.remarkable.engineering
 EOF
 }
 
@@ -319,6 +320,7 @@ uninstall-hosts() {
     sed -i '/ dev.tectonic.remarkable.com$/d' "$hosts_path"
     sed -i '/ dev.internal.cloud.remarkable.com$/d' "$hosts_path"
     sed -i '/ eu.internal.tctn.cloud.remarkable.com$/d' "$hosts_path"
+    sed -i '/ webapp-prod.cloud.remarkable.engineering$/d' "$hosts_path"
 }
 
 # Try to make a full install of rmfakecloud-proxy
