@@ -596,6 +596,22 @@ CONF
 
 # Create the Opkg configuration file for fetching Entware packages
 create-entware-conf() {
+    local arch
+    local repo
+    case "$(uname -m)" in
+        "armv7l")
+            arch="armv7-3.2"
+            repo="armv7sf-k3.2"
+            ;;
+        "aarch64")
+            arch="aarch64-3.10"
+            repo="aarch64-k3.10"
+            ;;
+        *)
+            echo "Unsupported device architecture"
+            exit 1
+            ;;
+    esac
     mkdir -p "$opkg_conf_dir"
     cat > "$opkg_conf_dir"/10-entware.conf << CONF
 # Entware repository configuration
@@ -605,8 +621,8 @@ create-entware-conf() {
 # then run \`toltecctl generate-opkg-conf\` to regenerate '$opkg_conf'
 
 arch all 100
-arch armv7-3.2 160
-src/gz entware https://bin.entware.net/armv7sf-k3.2
+arch $arch 160
+src/gz entware https://bin.entware.net/$repo
 CONF
 }
 
