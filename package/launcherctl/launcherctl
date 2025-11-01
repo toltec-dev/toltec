@@ -41,6 +41,10 @@ enabled_launchers() {
 query() {
     launcher="$1"
     shift
+    if ! [ -f "${data_dir}/${launcher}" ]; then
+        echo "Launcher ${launcher} does not exist"
+        return 1
+    fi
     "${data_dir}/${launcher}" "$@"
 }
 check_enabled_launchers() {

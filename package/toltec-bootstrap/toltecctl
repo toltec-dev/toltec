@@ -914,7 +914,6 @@ uninstall() {
 # no - opt.mount is not enabled, or does not exist
 install-state() {
     local unit_name
-    local enabled
     unit_name="$(systemd-escape --path "$toltec_dest").mount"
     if ! systemctl --quiet is-enabled "$unit_name" 2> /dev/null; then
         echo "no"
@@ -927,11 +926,16 @@ install-state() {
 
 # Output toltec installation status
 status() {
+    # Get information that takes some time
+    local install_state
+    install_state="$(install-state)"
+    local version_status=0
+    check-version "$(get-branch)" &> /dev/null || version_status=$?
+
+    # Output status
     echo -ne "Enabled: \033[1m"
-    local enabled=false
-    case "$(install-state)" in
+    case "${install_state}" in
         yes)
-            enabled=true
             echo -ne "\e[32mYes"
             ;;
         no)
@@ -952,12 +956,9 @@ status() {
         echo -e "  \e[33mWarning:\e[0m /etc is overlay"
     fi
     echo -ne "Supported: \033[1m"
-    local rc
-    rc=0
-    check-version "$(get-branch)" &> /dev/null || rc=$?
-    if [ $rc -eq 0 ]; then
+    if [ $version_status -eq 0 ]; then
         echo -ne "\e[32mYes"
-    elif [ $rc -eq 2 ] || [ $rc -eq 3 ]; then
+    elif [ $version_status -eq 2 ] || [ $version_status -eq 3 ]; then
         echo -ne "\e[33mUnknown"
     else
         echo -ne "\e[31mNo"
