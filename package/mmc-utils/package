@@ -2,7 +2,7 @@
 # Copyright (c) 2021 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
-archs=(rm1 rm2 rmpp rmppm)
+archs=(rm1 rm2)
 pkgnames=(mmc-utils mmc-utils-doc)
 pkgdesc="A tool for monitoring the eMMC protocol"
 url=https://git.kernel.org/pub/scm/utils/mmc/mmc-utils.git/
@@ -13,8 +13,6 @@ maintainer="Alistair Francis <alistair@alistair23.me>"
 license=GPL-2.0-only
 
 image=base:v3.2
-image_rmpp=base:v4.0
-image_rmppm=base:v4.0
 preparedepends=(build:git)
 source=(
     0001-Makefile-Remove-Werror.patch
