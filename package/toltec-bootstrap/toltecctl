@@ -631,6 +631,17 @@ get-branch() {
     awk "$awk_get_branch" "$opkg_conf_dir/15-toltec.conf" | head -n1 || true
 }
 
+# Convert a version string into a number that can be sorted
+#
+# Arguments:
+#
+# $1 - Version number
+#
+# Output: Sortable version number
+function version {
+    echo "$@" | awk -F. '{ printf("%d%03d%03d%03d\n", $1,$2,$3,$4); }'
+}
+
 # Compare two version numbers
 #
 # Arguments:
@@ -638,9 +649,9 @@ get-branch() {
 # $1 - Version number to compare
 # $2 - Version number to compare
 #
-# Output: True if the first number is larger than the second
+# Output: True if the first number is larger or equal to than the second
 compare-versions() {
-    [ "$(echo -e "${1}\n${2}" | sort | head -n1)" != "$1" ]
+    [ "$(version $1)" -ge "$(version $2)" ]
 }
 
 # Identify which toltec version this should be limited to
