@@ -1004,7 +1004,20 @@ Manage your Toltec install. Available commands:
     generate-opkg-conf      Rebuild the Opkg configuration file.
     switch-branch [BRANCH]  Change the current branch to BRANCH.
     reenable                Re-enable Toltec after a system update.
-    uninstall               Permanently remove Toltec."
+    uninstall               Permanently remove Toltec.
+    info                    Get information about the device."
+}
+
+help-info() {
+    echo "Usage: $(basename "$0") info COMMAND
+Get information about your device. Available commands:
+
+    help                    Display this message and exit.
+    branch                  Get the current toltec branch
+    enabled                 Get the status of the toltec install.
+    model                   Get the model of the device
+    os                      Get the installed OS version on the device.
+    supported               Get the supported state of this OS."
 }
 
 if [[ $0 = "${BASH_SOURCE[0]}" ]]; then
@@ -1150,6 +1163,59 @@ MSG
 
         help | -h | --help)
             help
+            ;;
+
+        info)
+            if [[ $# -eq 0 ]]; then
+                help-info
+                exit 1
+            fi
+            subaction="$1"
+            shift
+
+            case "$subaction" in
+                help | --help)
+                    help-info
+                    ;;
+
+                enabled)
+                    install-state
+                    ;;
+
+                supported)
+                    version_status=0
+                    check-version "$(get-branch)" &> /dev/null || version_status=$?
+                    if [ $version_status -eq 0 ]; then
+                        echo yes
+                    elif [ $version_status -eq 2 ] || [ $version_status -eq 3 ]; then
+                        echo unknown
+                    else
+                        echo no
+                    fi
+                    ;;
+
+                branch)
+                    if [ -f "$opkg_conf" ]; then
+                        get-branch
+                    else
+                        echo "unknown"
+                    fi
+                    ;;
+
+                os)
+                    get-release-version
+                    ;;
+
+                model)
+                    identify-model
+                    ;;
+
+                *)
+                    log ERROR "Invalid command '$action $subaction'\n"
+                    help-info
+                    exit 1
+                    ;;
+            esac
             ;;
 
         *)
