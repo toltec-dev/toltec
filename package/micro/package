@@ -12,8 +12,11 @@ section="utils"
 maintainer="Eeems <eeems@eeems.email>"
 license=MIT
 
-source=("https://github.com/zyedidia/micro/releases/download/v2.0.14/micro-2.0.14-linux-arm.tar.gz")
-sha256sums=(9f490d88bd30a548af99a905f50244dc6c80f3c7a3c6f98faeb5b0a7329f7dea)
+source_rm1=("https://github.com/zyedidia/micro/releases/download/v2.0.14/micro-2.0.14-linux-arm.tar.gz")
+sha256sums_rm1=(9f490d88bd30a548af99a905f50244dc6c80f3c7a3c6f98faeb5b0a7329f7dea)
+
+source_rm2=("https://github.com/zyedidia/micro/releases/download/v2.0.14/micro-2.0.14-linux-arm.tar.gz")
+sha256sums_rm2=(9f490d88bd30a548af99a905f50244dc6c80f3c7a3c6f98faeb5b0a7329f7dea)
 
 source_rmpp=("https://github.com/zyedidia/micro/releases/download/v2.0.14/micro-2.0.14-linux-arm64.tar.gz")
 sha256sums_rmpp=(2e01b3ea62cdea3e62eb3ee99f6bffe84de06f689cf479173c4e7221b6613d06)
