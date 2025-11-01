@@ -94,10 +94,14 @@ configure() {
             # Make sure to disable and stop the old version
             disable-unit manual-sync.service
 
-            if [ -f /usr/bin/rm-sync ] && ! is-active manual-sync@rm-sync.service; then
-                systemctl enable --now manual-sync@rm-sync.service
-            elif [ -f /usr/bin/sync ] && ! is-active manual-sync@sync.service; then
-                systemctl enable --now manual-sync@sync.service
+            if [ -f /usr/bin/rm-sync ]; then
+                if ! is-active manual-sync@rm-sync.service; then
+                    systemctl enable --now manual-sync@rm-sync.service
+                fi
+            elif [ -f /usr/bin/sync ]; then
+                if ! is-active manual-sync@sync.service; then
+                    systemctl enable --now manual-sync@sync.service
+                fi
             fi
 
             if is-enabled xochitl.service && ! is-enabled launcher.service; then
