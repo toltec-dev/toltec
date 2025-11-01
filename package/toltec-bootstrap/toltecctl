@@ -939,7 +939,11 @@ status() {
         extra="$extra\nrmfakecloud $(rmfakecloudctl status | grep -v Run)\n"
     fi
     if command -v rcctl > /dev/null; then
-        extra="$extra\nEntware Services:\n$(rcctl status)\n"
+        local status
+        status=$(rcctl status)
+        if [[ "$status" != "" ]]; then
+            extra="$extra\nEntware Services:\n$status\n"
+        fi
     fi
 
     # Output status
