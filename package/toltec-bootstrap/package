@@ -56,7 +56,7 @@ configure() {
     fi
 
     switch-branch "$(get-branch)"
-    echo "Your Opkg configuration has been upgraded"
+    echo "Your opkg configuration has been upgraded"
     if generate-opkg-conf; then
         echo
         echo "! The upgrade is not finished! Please run \`opkg update\`"

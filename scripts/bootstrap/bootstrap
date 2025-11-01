@@ -173,7 +173,7 @@ wget-bootstrap() {
 # Install a temporary Opkg binary in PATH to be able to install
 # bootstrapping packages
 opkg-bootstrap() {
-    log "Bootstrapping Opkg"
+    log "Bootstrapping opkg"
     mkdir -p /opt/tmp
 
     if [[ ! -x $opkg_path ]]; then
@@ -244,6 +244,9 @@ main() {
         if [ $# -eq 0 ] || [[ "$1" != "--force" ]]; then
             exit 1
         fi
+    fi
+    if [[ "$1" == "--force" ]]; then
+        shift
     fi
 
     log "Installing Toltec and Entware"
