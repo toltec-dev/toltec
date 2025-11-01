@@ -2,6 +2,7 @@
 # Copyright (c) 2021 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
+archs=(rm1 rm2 rmpp rmppm)
 pkgnames=(xochitl)
 pkgdesc="Read documents and take notes"
 url=https://remarkable.com
@@ -55,45 +56,63 @@ package() {
     install -D -m 644 -t "$pkgdir"/opt/usr/share/applications "$srcdir"/xochitl.oxide
     install -D -T -m 755 "$srcdir"/launcherctl-xochitl "$pkgdir"/opt/share/launcherctl/"$pkgname"
 
-    install -D -m 644 -t "$pkgdir"/etc/systemd/system/xochitl.service.d \
-        "$srcdir"/toltec-wrapper.conf
-    install -D -m 644 -t "$pkgdir"/etc/systemd/system/remarkable-shutdown.service.d \
-        "$srcdir"/toltec-after-launcher.conf
-    install -D -m 644 -t "$pkgdir"/etc/systemd/system/remarkable-reboot.service.d \
-        "$srcdir"/toltec-after-launcher.conf
-    install -D -m 644 -t "$pkgdir"/etc/systemd/system \
-        "$srcdir"/manual-sync@.service
+    case $arch in
+        rm1 | rm2)
+            install -D -m 644 -t "$pkgdir"/etc/systemd/system/xochitl.service.d \
+                "$srcdir"/toltec-wrapper.conf
+            install -D -m 644 -t "$pkgdir"/etc/systemd/system/remarkable-shutdown.service.d \
+                "$srcdir"/toltec-after-launcher.conf
+            install -D -m 644 -t "$pkgdir"/etc/systemd/system/remarkable-reboot.service.d \
+                "$srcdir"/toltec-after-launcher.conf
+            install -D -m 644 -t "$pkgdir"/etc/systemd/system \
+                "$srcdir"/manual-sync@.service
+            ;;
+        rmpp | rmppm) ;;
+        *)
+            echo "Unhandled arch: $arch"
+            exit 1
+            ;;
+    esac
 }
 
 configure() {
-    systemctl daemon-reload
+    case $arch in
+        rm1 | rm2)
+            systemctl daemon-reload
 
-    # sync.service and rm-sync.service interfere with launchers
-    # we use manual-sync@.service instead
-    if [ -f /usr/bin/sync ] && ! is-masked sync.service; then
-        systemctl mask sync.service
-    fi
+            # sync.service and rm-sync.service interfere with launchers
+            # we use manual-sync@.service instead
+            if [ -f /usr/bin/sync ] && ! is-masked sync.service; then
+                systemctl mask sync.service
+            fi
 
-    if [ -f /usr/bin/rm-sync ] && ! is-masked rm-sync.service; then
-        systemctl mask rm-sync.service
-    fi
+            if [ -f /usr/bin/rm-sync ] && ! is-masked rm-sync.service; then
+                systemctl mask rm-sync.service
+            fi
 
-    # manual-sync.service has been changed to manual-sync@.service
-    # Make sure to disable and stop the old version
-    disable-unit manual-sync.service
+            # manual-sync.service has been changed to manual-sync@.service
+            # Make sure to disable and stop the old version
+            disable-unit manual-sync.service
 
-    if [ -f /usr/bin/rm-sync ] && ! is-active manual-sync@rm-sync.service; then
-        systemctl enable --now manual-sync@rm-sync.service
-    elif [ -f /usr/bin/sync ] && ! is-active manual-sync@sync.service; then
-        systemctl enable --now manual-sync@sync.service
-    fi
+            if [ -f /usr/bin/rm-sync ] && ! is-active manual-sync@rm-sync.service; then
+                systemctl enable --now manual-sync@rm-sync.service
+            elif [ -f /usr/bin/sync ] && ! is-active manual-sync@sync.service; then
+                systemctl enable --now manual-sync@sync.service
+            fi
 
-    if is-enabled xochitl.service && ! is-enabled launcher.service; then
-        # This package changes xochitl.service to alias it to launcher.service
-        # when enabled. If xochitl was previously enabled, force the creation
-        # of this alias by re-enabling the service
-        systemctl enable xochitl.service 2> /dev/null
-    fi
+            if is-enabled xochitl.service && ! is-enabled launcher.service; then
+                # This package changes xochitl.service to alias it to launcher.service
+                # when enabled. If xochitl was previously enabled, force the creation
+                # of this alias by re-enabling the service
+                systemctl enable xochitl.service 2> /dev/null
+            fi
+            ;;
+        rmpp | rmppm) ;;
+        *)
+            echo "Unhandled arch: $arch"
+            exit 1
+            ;;
+    esac
 }
 
 preremove() {
