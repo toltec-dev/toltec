@@ -21,18 +21,13 @@ section="utils"
 maintainer="Eeems <eeems@eeems.email>"
 license=MIT
 installdepends=(toltec-bootstrap)
-conflicts_rm1os2=()
+
 replaces_rm1os2=()
-conflicts_rm2os2=()
+conflicts_rm1os2=("${replaces_rm1os2[@]}")
+
 replaces_rm2os2=()
-conflicts_rm1os3=(
-    ddvk-hacks
-    fuse
-    wireguard
-    innernet-client
-    gocryptfs
-    remarkable-stylus
-)
+conflicts_rm2os2=("${replaces_rm2os2[@]}")
+
 replaces_rm1os3=(
     ddvk-hacks
     fuse
@@ -41,14 +36,8 @@ replaces_rm1os3=(
     gocryptfs
     remarkable-stylus
 )
-conflicts_rm1os3v22=(
-    ddvk-hacks
-    fuse
-    wireguard
-    innernet-client
-    gocryptfs
-    remarkable-stylus
-)
+conflicts_rm1os3=("${replaces_rm1os3[@]}")
+
 replaces_rm1os3v22=(
     ddvk-hacks
     fuse
@@ -57,15 +46,8 @@ replaces_rm1os3v22=(
     gocryptfs
     remarkable-stylus
 )
-conflicts_rm2os3=(
-    ddvk-hacks
-    fuse
-    wireguard
-    innernet-client
-    gocryptfs
-    remarkable-stylus
-    open-remarkable-shutdown
-)
+conflicts_rm1os3v22=("${replaces_rm1os3v22[@]}")
+
 replaces_rm2os3=(
     ddvk-hacks
     fuse
@@ -75,15 +57,8 @@ replaces_rm2os3=(
     remarkable-stylus
     open-remarkable-shutdown
 )
-conflicts_rm2os3v22=(
-    ddvk-hacks
-    fuse
-    wireguard
-    innernet-client
-    gocryptfs
-    remarkable-stylus
-    open-remarkable-shutdown
-)
+conflicts_rm2os3=("${replaces_rm2os3[@]}")
+
 replaces_rm2os3v22=(
     ddvk-hacks
     fuse
@@ -93,10 +68,13 @@ replaces_rm2os3v22=(
     remarkable-stylus
     open-remarkable-shutdown
 )
-conflicts_rmppos3v22=()
+conflicts_rm2os3v22=("${replaces_rm2os3v22[@]}")
+
 replaces_rmppos3v22=()
-conflicts_rmppmos3v22=()
+conflicts_rmppos3v22=("${replaces_rmppos3v22[@]}")
+
 replaces_rmppmos3v22=()
+conflicts_rmppmos3v22=("${replaces_rmppmos3v22[@]}")
 
 source=()
 sha256sums=()

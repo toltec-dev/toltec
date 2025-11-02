@@ -43,7 +43,7 @@ package() {
 }
 
 configure() {
-    addgroup keyd
+    grep -qw ^keyd /etc/group || addgroup keyd
     systemctl daemon-reload
     if is-active keyd; then
         systemctl restart keyd
@@ -58,7 +58,9 @@ configure() {
 
 preremove() {
     disable-unit keyd
-    delgroup keyd
+    if grep -qw ^keyd /etc/group; then
+        delgroup keyd
+    fi
 }
 
 postremove() {

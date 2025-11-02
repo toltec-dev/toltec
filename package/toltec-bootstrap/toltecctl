@@ -656,7 +656,7 @@ get-branch() {
 #
 # Output: Sortable version number
 function version {
-    echo "$@" | awk -F. '{ printf("%d%03d%03d%03d\n", $1,$2,$3,$4); }'
+    echo "$@" | awk -F. '{ printf("%d%04d%04d%04d\n", $1,$2,$3,$4); }'
 }
 
 # Compare two version numbers
@@ -709,11 +709,11 @@ switch-branch() {
     model="$(identify-model)"
     version="$(identify-support-version)"
 
-    if [[ $model = "unknown" ]]; then
+    if [[ $model == "unknown" ]]; then
         log ERROR "You’re running an unsupported or unrecognised device"
         exit 1
     fi
-    if [[ $version = "unknown" ]]; then
+    if [[ $version == "unknown" ]]; then
         log ERROR "You're running an unsupported or unrecognised OS version"
         exit 1
     fi
