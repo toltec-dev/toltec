@@ -906,10 +906,10 @@ uninstall() {
 
     case $(identify-model) in
         rmpp | rmppm)
-            if is-active etc-dropbear.mount; then
+            if systemctl --quiet is-active etc-dropbear.mount 2> /dev/null; then
                 systemctl stop etc-dropbear.mount
             fi
-            if ! is-active var-volatile-etc.service; then
+            if ! systemctl --quiet is-active var-volatile-etc.service 2> /dev/null; then
                 systemctl start var-volatile-etc.service
             fi
             systemctl start etc-dropbear.mount
