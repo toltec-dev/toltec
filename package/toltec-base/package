@@ -23,16 +23,53 @@ archs=(
 pkgnames=(toltec-base)
 pkgdesc="Metapackage defining the base set of packages in a Toltec install"
 url=https://toltec-dev.org/
-pkgver=1.4-2
-timestamp=2023-12-27T08:30Z
+pkgver=1.5-1
+timestamp=2025-11-02T00:00Z
 section="utils"
 maintainer="Eeems <eeems@eeems.email>"
 license=MIT
-installdepends=(toltec-bootstrap toltec-deletions toltec-completion launcherctl wget-ssl ca-certificates entware-rc)
-installdepends_rm1os2=(open-remarkable-shutdown)
-installdepends_rm1os3=(open-remarkable-shutdown)
-installdepends_rm2os2=(rm2-suspend-fix)
-installdepends_rm2os3=(rm2-suspend-fix)
+
+installdepends=(
+    toltec-bootstrap
+    toltec-deletions
+    toltec-completion
+    launcherctl
+    wget-ssl
+    ca-certificates
+    entware-rc
+)
+
+installdepends_rm1=(open-remarkable-shutdown)
+installdepends_rm1os2=(
+    "${installdepends_rm1[@]}"
+)
+installdepends_rm1os3=(
+    "${installdepends_rm1[@]}"
+)
+installdepends_rm1os3v22=(
+    "${installdepends_rm1[@]}"
+)
+
+installdepends_rm2=(rm2-suspend-fix)
+installdepends_rm2os2=(
+    "${installdepends_rm2[@]}"
+)
+installdepends_rm2os3=(
+    "${installdepends_rm2[@]}"
+)
+installdepends_rm2os3v22=(
+    "${installdepends_rm2[@]}"
+)
+
+installdepends_rmpp=()
+installdepends_rmppos3v22=(
+    "${installdepends_rmpp[@]}"
+)
+
+installdepends_rmppm=()
+installdepends_rmppmos3v22=(
+    "${installdepends_rmppm[@]}"
+)
 
 source=(opt-usr-bin.sh)
 sha256sums=(SKIP)

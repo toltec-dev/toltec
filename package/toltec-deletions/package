@@ -15,8 +15,8 @@ archs=(
 pkgnames=(toltec-deletions)
 pkgdesc="Metapackage to handle package deletions between OS versions"
 url=https://toltec-dev.org/
-pkgver=0.1-9
-timestamp=2023-12-03T04:51:58Z
+pkgver=0.2-1
+timestamp=2025-11-02T00:00Z
 section="utils"
 maintainer="Eeems <eeems@eeems.email>"
 license=MIT
@@ -39,12 +39,16 @@ replaces_rm1os3=(
 conflicts_rm1os3=("${replaces_rm1os3[@]}")
 
 replaces_rm1os3v22=(
-    ddvk-hacks
-    fuse
-    wireguard
-    innernet-client
-    gocryptfs
-    remarkable-stylus
+    "${replaces_rm1os3[@]}"
+    oxide
+    oxide-extra
+    oxide-utils
+    inject_evdev
+    liboxide
+    liboxide-dev
+    libsentry
+    reterm
+    signature-rm
 )
 conflicts_rm1os3v22=("${replaces_rm1os3v22[@]}")
 
@@ -60,13 +64,16 @@ replaces_rm2os3=(
 conflicts_rm2os3=("${replaces_rm2os3[@]}")
 
 replaces_rm2os3v22=(
-    ddvk-hacks
-    fuse
-    wireguard
-    innernet-client
-    gocryptfs
-    remarkable-stylus
-    open-remarkable-shutdown
+    "${replaces_rm2os3[@]}"
+    oxide
+    oxide-extra
+    oxide-utils
+    inject_evdev
+    liboxide
+    liboxide-dev
+    libsentry
+    reterm
+    signature-rm
 )
 conflicts_rm2os3v22=("${replaces_rm2os3v22[@]}")
 
