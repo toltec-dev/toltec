@@ -11,8 +11,14 @@ section="devel"
 maintainer="Tom Parker-Shemilt <palfrey@tevps.net>"
 license=GPL-2.0-or-later
 image=base:v3.3
-source=("https://github.com/Martchus/cpp-utilities/archive/refs/tags/v5.31.0.zip")
-sha256sums=(cbdf3ef53c47fc3c1d8ee20bb1f65290db878408530afe46a285b401af2839a2)
+source=(
+    https://github.com/Martchus/cpp-utilities/archive/refs/tags/v5.31.0.zip
+    targets.cmake.patch
+)
+sha256sums=(
+    cbdf3ef53c47fc3c1d8ee20bb1f65290db878408530afe46a285b401af2839a2
+    SKIP
+)
 
 build() {
     cmake -B build \
@@ -43,6 +49,7 @@ libcpp-utilities-dev() {
         install -d "$pkgdir"/opt/lib
         cp -r "$srcdir"/install/opt/lib/pkgconfig "$pkgdir"/opt/lib
         cp -r "$srcdir"/install/opt/share "$pkgdir"/opt
+        (cd $pkgdir/opt/share/c++utilities/cmake && patch -p0 < $srcdir/targets.cmake.patch)
         cp -r "$srcdir"/install/opt/include "$pkgdir"/opt
     }
 }

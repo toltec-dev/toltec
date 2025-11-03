@@ -12,7 +12,7 @@ maintainer="Tom Parker-Shemilt <palfrey@tevps.net>"
 license=GPL-2.0-or-later
 image=base:v3.3
 makedepends=(build:cmake host:libcpp-utilities-dev host:libcpp-utilities host:libqtforkawesome-dev host:libqtforkawesome)
-installdepends=(libcpp-utilities libqtforkawesome)
+installdepends=(libcpp-utilities libqtforkawesome syncthing)
 source=(
     https://github.com/Martchus/syncthingtray/archive/refs/tags/v2.0.2.zip
 )

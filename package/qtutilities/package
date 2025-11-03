@@ -16,7 +16,6 @@ sha256sums=(7a1047622c1a92760aaf448eee7c4a1b3c30c65bffdce7de1322c402ca0e9e1a)
 makedepends=(build:cmake build:qtbase5-dev build:qttools5-dev host:libcpp-utilities-dev host:libcpp-utilities)
 
 build() {
-    mkdir /opt/include # FIXME: Workaround for INTERFACE_INCLUDE_DIRECTORIES error in c++utilities
     cmake -B build \
         -DCMAKE_TOOLCHAIN_FILE="/usr/share/cmake/$CHOST.cmake" \
         -DQt5Gui_DIR="/usr/lib/x86_64-linux-gnu/cmake/Qt5Gui" \
