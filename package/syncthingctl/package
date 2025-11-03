@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+# Copyright (c) 2025 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgnames=(syncthingctl)
+pkgdesc="CLI that orchestrates syncthing"
+url="https://martchus.github.io/syncthingtray/"
+pkgver=2.0.2-1
+timestamp=2025-09-26T16:18Z
+section=utils
+maintainer="Tom Parker-Shemilt <palfrey@tevps.net>"
+license=GPL-2.0-or-later
+image=base:v3.3
+makedepends=(build:cmake host:libcpp-utilities-dev host:libcpp-utilities host:libqtforkawesome-dev host:libqtforkawesome)
+installdepends=(libcpp-utilities libqtforkawesome)
+source=(
+    https://github.com/Martchus/syncthingtray/archive/refs/tags/v2.0.2.zip
+)
+sha256sums=(
+    01910e27a6f945b6a50de5c06390616ed2e83a82c10046ecfe2cc660b1c52976
+)
+
+build() {
+    cmake -B build \
+        -DCMAKE_TOOLCHAIN_FILE="/usr/share/cmake/$CHOST.cmake" \
+        -DCMAKE_INSTALL_PREFIX="/opt"
+    cmake --build build
+    cmake --build build --target install -- DESTDIR=../install
+}
+
+package() {
+    echo "foo"
+    exit 1
+}

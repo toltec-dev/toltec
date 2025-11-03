@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+# Copyright (c) 2021 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgnames=(libcpp-utilities libcpp-utilities-dev)
+pkgdesc="Common C++ classes and routines used by Martchus' applications"
+url=https://github.com/Martchus/cpp-utilities
+pkgver=5.31.0-1
+timestamp=2025-09-26T16:18Z
+section="devel"
+maintainer="Tom Parker-Shemilt <palfrey@tevps.net>"
+license=GPL-2.0-or-later
+image=base:v3.3
+source=("https://github.com/Martchus/cpp-utilities/archive/refs/tags/v5.31.0.zip")
+sha256sums=(cbdf3ef53c47fc3c1d8ee20bb1f65290db878408530afe46a285b401af2839a2)
+
+build() {
+    cmake -B build \
+        -DCMAKE_TOOLCHAIN_FILE="/usr/share/cmake/$CHOST.cmake" \
+        -DCMAKE_INSTALL_PREFIX="/opt" \
+        -DBUILD_SHARED_LIBS=ON
+    cmake --build build
+    cmake --build build --target install -- DESTDIR=../install
+}
+
+libcpp-utilities() {
+    package() {
+        install -d "$pkgdir"/opt/lib "$pkgdir"/usr/lib
+        cp --no-dereference "$srcdir"/install/opt/lib/lib*.so* "$pkgdir"/opt/lib
+
+        for file in "$pkgdir"/opt/lib/lib*.so*; do
+            base="${file#"$pkgdir"}"
+            ln -s "$base" "${file/\/opt/\/usr}"
+        done
+    }
+}
+
+libcpp-utilities-dev() {
+    pkgdesc="$pkgdesc - development files"
+    installdepends=("libcpp-utilities=$pkgver")
+
+    package() {
+        install -d "$pkgdir"/opt/lib
+        cp -r "$srcdir"/install/opt/lib/pkgconfig "$pkgdir"/opt/lib
+        cp -r "$srcdir"/install/opt/share "$pkgdir"/opt
+        cp -r "$srcdir"/install/opt/include "$pkgdir"/opt
+    }
+}

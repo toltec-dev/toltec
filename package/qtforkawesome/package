@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+# Copyright (c) 2021 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgnames=(libqtforkawesome libqtforkawesome-dev)
+pkgdesc="Library that bundles ForkAwesome for use within Qt applications"
+url=https://github.com/Martchus/qtforkawesome
+pkgver=0.3.1-1
+timestamp=2025-09-26T16:18Z
+section="devel"
+maintainer="Tom Parker-Shemilt <palfrey@tevps.net>"
+license=GPL-2.0-or-later
+image=base:v3.3
+source=("https://github.com/Martchus/qtforkawesome/archive/refs/tags/v0.3.1.zip")
+sha256sums=(9e75bffe10aaf01373c3983e64323c9d1bc0f41f932ed8c00c8c43a7a48bfcc5)
+makedepends=(build:cmake host:libcpp-utilities-dev host:libcpp-utilities host:libqtutilities host:libqtutilities-dev)
+
+build() {
+    cmake -B build \
+        -DCMAKE_TOOLCHAIN_FILE="/usr/share/cmake/$CHOST.cmake" \
+        -DCMAKE_INSTALL_PREFIX="/opt" \
+        -DBUILD_SHARED_LIBS=ON
+    cmake --build build
+    cmake --build build --target install -- DESTDIR=../install
+}
+
+libqtforkawesome() {
+    package() {
+        install -d "$pkgdir"/opt/lib "$pkgdir"/usr/lib
+        cp --no-dereference "$srcdir"/install/opt/lib/lib*.so* "$pkgdir"/opt/lib
+
+        for file in "$pkgdir"/opt/lib/lib*.so*; do
+            base="${file#"$pkgdir"}"
+            ln -s "$base" "${file/\/opt/\/usr}"
+        done
+    }
+}
+
+libqtforkawesome-dev() {
+    pkgdesc="$pkgdesc - development files"
+    installdepends=("libqtforkawesome=$pkgver")
+
+    package() {
+        install -d "$pkgdir"/opt/lib
+        cp -r "$srcdir"/install/opt/lib/pkgconfig "$pkgdir"/opt/lib
+        cp -r "$srcdir"/install/opt/share "$pkgdir"/opt
+        cp -r "$srcdir"/install/opt/include "$pkgdir"/opt
+    }
+}
