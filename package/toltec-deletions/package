@@ -88,7 +88,8 @@ sha256sums=()
 
 package() {
     # This should be fully reinstalled on reenable
-    # So add a file to root
+    # So add a file to root. Do not use the normal /opt/share/toltec/reenable.d,
+    # As this needs to be a reinstall instead of a re-configure
     mkdir -p "$pkgdir"/usr/share/toltec/reenable.d
     touch "$pkgdir"/usr/share/toltec/reenable.d/toltec-deletions
 }
