@@ -1,0 +1,82 @@
+From 82415ec8c4f714f7e8e2dbd578ddca85f56ea57e Mon Sep 17 00:00:00 2001
+From: Martchus <martchus@gmx.net>
+Date: Sat, 18 Jan 2025 16:35:47 +0100
+Subject: [PATCH] Avoid QString allocations in icon engine and Qt Quick image
+ provider
+
+* Use QStringView unconditionally to make things easier, this means Qt 5.10
+  is now definitely required
+* Use QColor overload that takes QStringView (seems available as of Qt
+  5.10)
+* Add `iconFromId()` overload that takes QStringView (breaks code that took
+  the address of that function but that is supposedly acceptable)
+---
+ iconengineplugin/iconengine.cpp      |  8 +++-----
+ qtforkawesome/utils.cpp              | 13 ++++++++++++-
+ qtforkawesome/utils.h                |  3 +++
+ qtquickforkawesome/imageprovider.cpp |  8 +++-----
+ 4 files changed, 21 insertions(+), 11 deletions(-)
+
+diff --git a/iconengineplugin/iconengine.cpp b/iconengineplugin/iconengine.cpp
+index aa0597c..05bfe7f 100644
+--- a/iconengineplugin/iconengine.cpp
++++ b/iconengineplugin/iconengine.cpp
+@@ -5,8 +5,6 @@
+
+ #include "resources/config.h"
+
+-#include <qtutilities/misc/compat.h>
+-
+ #include <QGuiApplication>
+ #include <QPainter>
+ #include <QPalette>
+@@ -90,12 +88,12 @@ void IconEngine::addFile(const QString &fileName, const QSize &, QIcon::Mode mod
+     if (!fileName.endsWith(QLatin1String(".fa"), Qt::CaseInsensitive)) {
+         return;
+     }
+-    const auto parts = QtUtilities::midRef(fileName, 0, fileName.size() - 3).split(QChar(':'));
++    const auto parts = QStringView(fileName).mid(0, fileName.size() - 3).split(QChar(':'));
+     if (parts.empty()) {
+         return;
+     }
+-    m_char = static_cast<IconBaseType>(iconFromId(parts.at(0).toString()));
+-    m_color = parts.size() > 1 ? QColor(parts.at(1).toString()) : QColor();
++    m_char = static_cast<IconBaseType>(iconFromId(parts.at(0)));
++    m_color = parts.size() > 1 ? QColor(parts.at(1)) : QColor();
+ }
+
+ QString IconEngine::key() const
+diff --git a/qtquickforkawesome/imageprovider.cpp b/qtquickforkawesome/imageprovider.cpp
+index 15e4689..9e751f4 100644
+--- a/qtquickforkawesome/imageprovider.cpp
++++ b/qtquickforkawesome/imageprovider.cpp
+@@ -3,8 +3,6 @@
+ #include <qtforkawesome/renderer.h>
+ #include <qtforkawesome/utils.h>
+
+-#include <qtutilities/misc/compat.h>
+-
+ #include <QGuiApplication>
+ #include <QPalette>
+
+@@ -22,17 +20,17 @@ QuickImageProvider::QuickImageProvider(
+
+ QPixmap QuickImageProvider::requestPixmap(const QString &id, QSize *size, const QSize &requestedSize)
+ {
+-    const auto parts = QtUtilities::splitRef(id, QChar(':'));
++    const auto parts = QStringView(id).split(QChar(':'));
+     if (parts.empty()) {
+         return QPixmap();
+     }
+-    const auto icon = iconFromId(parts.front().toString());
++    const auto icon = iconFromId(parts.front());
+     if (!isIconValid(icon)) {
+         return QPixmap();
+     }
+     auto color = m_defaultColor;
+     if (parts.size() > 1) {
+-        if (const auto specifiedColor = QColor(parts.at(1).toString()); specifiedColor.isValid()) {
++        if (const auto specifiedColor = QColor(parts.at(1)); specifiedColor.isValid()) {
+             color = specifiedColor;
+         }
+     }
