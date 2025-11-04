@@ -11,13 +11,14 @@ section=utils
 maintainer="Tom Parker-Shemilt <palfrey@tevps.net>"
 license=GPL-2.0-or-later
 image=qt:v3.3
-makedepends=(build:cmake host:libcpp-utilities-dev host:libcpp-utilities host:libqtforkawesome-dev host:libqtforkawesome host:libqtutilities host:libqtutilities-dev)
-installdepends=(libcpp-utilities libqtutilities libqtforkawesome syncthing)
+makedepends=(build:cmake host:libcpp-utilities-dev host:libcpp-utilities host:libqtutilities host:libqtutilities-dev)
+installdepends=(libcpp-utilities libqtutilities syncthing)
+# We need commit version for Qt version and qtforkawesome removal patches
 source=(
-    https://github.com/Martchus/syncthingtray/archive/refs/tags/v2.0.2.zip
+    https://github.com/Martchus/syncthingtray/archive/67a4ced74d79b5152e438464f60b7da6f40f9a4a.zip
 )
 sha256sums=(
-    01910e27a6f945b6a50de5c06390616ed2e83a82c10046ecfe2cc660b1c52976
+    9c51b2c0e4e3671e75cb9bde2b0cbb2b4db5794ddfe2a05ea42bfb1ca476f400
 )
 
 build() {
@@ -27,12 +28,15 @@ build() {
         -DENABLE_QT_TRANSLATIONS=OFF \
         -DUSE_BOOST_PROCESS=OFF \
         -DNO_MODEL=ON \
-        -DNO_FILE_ITEM_ACTION_PLUGIN=ON
+        -DNO_FILE_ITEM_ACTION_PLUGIN=ON \
+        -DNO_PLASMOID=ON \
+        -DNO_WIDGETS=ON \
+        -DNO_TRAY=ON
     cmake --build build
     cmake --build build --target install -- DESTDIR=../install
 }
 
 package() {
-    echo "foo"
-    exit 1
+    install -D -m 755 -t "$pkgdir"/opt/bin \
+        "$srcdir"/install/opt/bin/syncthingctl
 }
