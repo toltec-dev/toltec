@@ -39,8 +39,8 @@ build() {
     export CXX="${CROSS_COMPILE}g++"
     export AR="${CROSS_COMPILE}ar"
     export STRIP="${CROSS_COMPILE}strip"
-    make -j$(nproc)
-    make -j$(nproc) selftest
+    make -j"$(nproc)"
+    make -j"$(nproc)" selftest
 }
 
 zerotier() {

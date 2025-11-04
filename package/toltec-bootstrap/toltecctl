@@ -668,7 +668,7 @@ function version {
 #
 # Output: True if the first number is larger or equal to than the second
 compare-versions() {
-    [ "$(version $1)" -ge "$(version $2)" ]
+    [ "$(version "$1")" -ge "$(version "$2")" ]
 }
 
 # Identify which toltec version this should be limited to

@@ -139,7 +139,7 @@ rm2fb-client() {
     package() {
         libname="librm2fb_client.so.$_libver"
         install -D -m 644 -t "$pkgdir"/opt/lib "$srcdir"/install/lib/"$libname"
-        install -D -m 644 -t "$pkgdir"/opt/lib "$srcdir"/install/lib/"librm2fb_client_no_hook.so"
+        install -D -m 644 -t "$pkgdir"/opt/lib "$srcdir"/install/lib/librm2fb_client_no_hook.so
         install -d "$pkgdir"/usr/lib
         ln -s /opt/lib/"$libname" "$pkgdir"/usr/lib/"$libname"
 

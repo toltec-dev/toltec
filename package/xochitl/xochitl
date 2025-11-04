@@ -13,11 +13,11 @@ done
 # If for some reason, sync.service is no longer masked, re-mask it
 # The package install should have handled this, but something may
 # have changed it.
-if [[ "x$(systemctl is-enabled sync.service)" != "xmasked" ]]; then
+if [[ "$(systemctl is-enabled sync.service)" != "masked" ]]; then
     systemctl mask sync.service
 fi
 
-if [[ "x$(systemctl is-enabled rm-sync.service)" != "xmasked" ]]; then
+if [[ "$(systemctl is-enabled rm-sync.service)" != "masked" ]]; then
     systemctl mask rm-sync.service
 fi
 

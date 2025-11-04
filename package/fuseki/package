@@ -13,7 +13,7 @@ maintainer="Tom Parker-Shemilt <palfrey@tevps.net>"
 license=AGPL-3.0-or-later
 image=rust:v3.3
 source=(
-    https://github.com/palfrey/fuseki/archive/refs/tags/${pkgver%-*}.zip
+    "https://github.com/palfrey/fuseki/archive/refs/tags/${pkgver%-*}.zip"
     fuseki-runner.draft
     fuseki-runner
 )

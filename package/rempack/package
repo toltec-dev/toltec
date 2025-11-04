@@ -9,7 +9,7 @@ archs=(rmall)
 url="https://github.com/rexxar-tc/rempack"
 pkgver=1.1.4-1
 timestamp=2025-03-09T21:13:27
-section=admin
+section="admin"
 maintainer="Brant Martin <toltec@brantmartin.com>"
 license=MIT
 image=base:v3.1
@@ -25,7 +25,7 @@ sha256sums=(
     SKIP
 )
 build() {
-    cd $srcdir
+    cd "$srcdir"
     mkdir output
     cmake -S . -B output --preset "Release Native"
     cmake --build output --target rempack

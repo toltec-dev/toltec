@@ -49,7 +49,7 @@ build() {
     fi
     local threads
     threads="$(echo -e "8\n$(nproc)" | sort -n | tail -n1)"
-    ARCH=arm make -j${threads:-8}
+    ARCH=arm make -j"${threads:-8}"
 }
 
 package() {

@@ -36,7 +36,7 @@ build() {
         | xargs -r -0 sed -i 's/linux-oe-g++/linux-arm-remarkable-g++/g'
     local threads
     threads="$(echo -e "8\n$(nproc)" | sort -n | tail -n1)"
-    CMAKE_TOOLCHAIN_FILE="/usr/share/cmake/$CHOST.cmake" make FEATURES=sentry release -j${threads:-8}
+    CMAKE_TOOLCHAIN_FILE="/usr/share/cmake/$CHOST.cmake" make FEATURES=sentry release -j"${threads:-8}"
 }
 
 oxide() {

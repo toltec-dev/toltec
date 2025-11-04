@@ -13,3 +13,6 @@ disable=SC2034
 # Do not warn about undeclared variables since recipes may use build variables
 # such as `srcdir` or `pkgdir`
 disable=SC2154
+
+# Do not warn about unused functions, such as package() or build()
+disable=SC2329
