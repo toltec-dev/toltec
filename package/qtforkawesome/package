@@ -11,23 +11,21 @@ section="devel"
 maintainer="Tom Parker-Shemilt <palfrey@tevps.net>"
 license=GPL-2.0-or-later
 image=qt:v3.3
+# We need the commit version for https://github.com/Martchus/qtforkawesome/commit/bebb422f4c7bd605a335f40f88e289588757ceef which fixes the Qt compatibility
 source=(
-    "https://github.com/Martchus/qtforkawesome/archive/refs/tags/v0.3.1.zip"
+    "https://github.com/Martchus/qtforkawesome/archive/42fe0be74ad6ee075d91f2b96d9bc3eb7717c9d5.zip"
     "https://raw.githubusercontent.com/ForkAwesome/Fork-Awesome/1e3849530d0266ece3a883649e1398414b92241d/fonts/forkawesome-webfont.ttf"
     "https://raw.githubusercontent.com/ForkAwesome/Fork-Awesome/0237ab8eafeeacb896e008f744be6d9d717f44b0/src/icons/icons.yml"
-    "qt5-split.patch"
 )
-noextract=(qt5-split.patch icons.yml forkawesome-webfont.ttf)
+noextract=(icons.yml forkawesome-webfont.ttf)
 sha256sums=(
-    9e75bffe10aaf01373c3983e64323c9d1bc0f41f932ed8c00c8c43a7a48bfcc5
+    0f7a2fdcbefb7d9b7528128ad83be85da1cfff6d84d627539dd827a36012fc7f
     4f319287827e35f841069eb471c092eccf97d2f7830aa4d8bd7301ded418bf49
     1e588fc6c93737add8443a98d2bbd6b75537d173da6b613e37aaff3fc1f80c92
-    SKIP
 )
 makedepends=(build:cmake host:libcpp-utilities-dev host:libcpp-utilities host:libqtutilities host:libqtutilities-dev build:libyaml-libyaml-perl)
 
 build() {
-    patch -p1 -R < ./qt5-split.patch
     cmake -B build \
         -DCMAKE_TOOLCHAIN_FILE="/usr/share/cmake/$CHOST.cmake" \
         -DCMAKE_INSTALL_PREFIX="/opt" \
