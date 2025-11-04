@@ -38,7 +38,7 @@ debian-chroot() {
         mkdir -p "$pkgdir"/opt/etc/
         ln -s /home/root/.config/debian-chroot.conf \
             "$pkgdir"/opt/etc/debian-chroot.conf
-        # shellcheck disable=SC1091
+        # shellcheck disable=SC1091,SC1090
         source "$srcdir"/debian-chroot.conf
         mkdir -p "$pkgdir"/opt/lib/
         ln -s "$chroot_path" "$pkgdir"/opt/lib/debian-chroot
@@ -48,7 +48,7 @@ debian-chroot() {
         debian-chroot true
     }
     preremove() {
-        # shellcheck disable=SC1091
+        # shellcheck disable=SC1091,SC1090
         source /home/root/.config/debian-chroot.conf
         if lsof "$chroot_path" 2> /dev/null | grep "$chroot_path"; then
             echo "Error: debian-chroot has running processes"
@@ -60,7 +60,7 @@ debian-chroot() {
         cp /home/root/.config/debian-chroot.conf /tmp/_debian-chroot.conf
     }
     postremove() {
-        # shellcheck disable=SC1091
+        # shellcheck disable=SC1091,SC1090
         source /tmp/_debian-chroot.conf
         rm -rf "$chroot_path"
         rm /tmp/_debian-chroot.conf
