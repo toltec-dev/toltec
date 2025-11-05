@@ -85,7 +85,9 @@ prepare() {
         cd freetype
         tar --strip-components=1 -xf ../freetype-VER-2-10-4.tar.gz
     ) &
-    wait "$(jobs -p)"
+
+    # shellcheck disable=SC2046
+    wait $(jobs -p)
 }
 
 build() {
@@ -136,7 +138,8 @@ build() {
         make install
     ) &
 
-    wait "$(jobs -p)"
+    # shellcheck disable=SC2046
+    wait $(jobs -p)
     TARGET_WORKSPACE=$(pwd)/build scripts/build.sh
 }
 
