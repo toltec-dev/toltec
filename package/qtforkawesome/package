@@ -5,21 +5,20 @@
 pkgnames=(libqtforkawesome libqtforkawesome-dev)
 pkgdesc="Library that bundles ForkAwesome for use within Qt applications"
 url=https://github.com/Martchus/qtforkawesome
-pkgver=0.3.1-1
-timestamp=2025-11-04T20:30Z
+pkgver=0.3.2-1
+timestamp=2025-11-04T20:54Z
 section="devel"
 maintainer="Tom Parker-Shemilt <palfrey@tevps.net>"
 license=GPL-2.0-or-later
 image=qt:v3.3
-# We need the commit version for https://github.com/Martchus/qtforkawesome/commit/bebb422f4c7bd605a335f40f88e289588757ceef which fixes the Qt compatibility
 source=(
-    "https://github.com/Martchus/qtforkawesome/archive/42fe0be74ad6ee075d91f2b96d9bc3eb7717c9d5.zip"
+    "https://github.com/Martchus/qtforkawesome/archive/refs/tags/v0.3.2.zip"
     "https://raw.githubusercontent.com/ForkAwesome/Fork-Awesome/1e3849530d0266ece3a883649e1398414b92241d/fonts/forkawesome-webfont.ttf"
     "https://raw.githubusercontent.com/ForkAwesome/Fork-Awesome/0237ab8eafeeacb896e008f744be6d9d717f44b0/src/icons/icons.yml"
 )
 noextract=(icons.yml forkawesome-webfont.ttf)
 sha256sums=(
-    0f7a2fdcbefb7d9b7528128ad83be85da1cfff6d84d627539dd827a36012fc7f
+    945fee08e5de7521571f4abb2fbe37fd3013079b3ffeb1cc6c36aaff538c6d47
     4f319287827e35f841069eb471c092eccf97d2f7830aa4d8bd7301ded418bf49
     1e588fc6c93737add8443a98d2bbd6b75537d173da6b613e37aaff3fc1f80c92
 )

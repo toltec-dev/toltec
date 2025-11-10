@@ -5,20 +5,19 @@
 pkgnames=(syncthingctl)
 pkgdesc="CLI that orchestrates syncthing"
 url="https://martchus.github.io/syncthingtray/"
-pkgver=2.0.2-1
-timestamp=2025-11-04T08:50Z
+pkgver=2.0.3-1
+timestamp=2025-11-04T22:54:13Z
 section=utils
 maintainer="Tom Parker-Shemilt <palfrey@tevps.net>"
 license=GPL-2.0-or-later
 image=qt:v3.3
 makedepends=(build:cmake host:libcpp-utilities-dev host:libcpp-utilities host:libqtutilities host:libqtutilities-dev)
 installdepends=(libcpp-utilities libqtutilities syncthing)
-# We need commit version for Qt version and qtforkawesome removal patches
 source=(
-    https://github.com/Martchus/syncthingtray/archive/67a4ced74d79b5152e438464f60b7da6f40f9a4a.zip
+    https://github.com/Martchus/syncthingtray/archive/refs/tags/v2.0.3.zip
 )
 sha256sums=(
-    9c51b2c0e4e3671e75cb9bde2b0cbb2b4db5794ddfe2a05ea42bfb1ca476f400
+    8edeb6e6934ba54f175dccf0e3f7063aa01c2f07bf2e2361334bfe004e3a92ce
 )
 
 build() {
