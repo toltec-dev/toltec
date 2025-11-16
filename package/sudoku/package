@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Copyright (c) 2024 HookedBehemoth
-# SPDX-License-Identifier: GPL-3.0-only
+# Copyright (c) 2025 The Toltec Contributors
+# SPDX-License-Identifier: MIT
 
 archs=(rm1 rm2)
 pkgnames=(sudoku)
