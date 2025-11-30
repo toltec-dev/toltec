@@ -30,8 +30,8 @@ sha256sums=(
 
 image=base:v3.3
 image_rm1os3v22=base:v4.0
-image_rm2os3v22=$rm1os3v22
-image_rmppos3v22=$rm1os3v22
+image_rm2os3v22=$image_rm1os3v22
+image_rmppos3v22=$image_rm1os3v22
 image_rmppmos3v22=$image_rmppos3v22
 
 build() {
