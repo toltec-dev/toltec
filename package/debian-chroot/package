@@ -5,18 +5,18 @@
 pkgnames=(debian-chroot debootstrap)
 section="utils"
 # Each package has it's own timestamp override below
-timestamp=2023-12-22T19:37Z
+timestamp=2025-11-30T03:37:52Z
 maintainer="Eeems <eeems@eeems.email>"
 installdepends=(display)
 flags=(nostrip)
 
 source=(
-    https://github.com/Eeems-org/remarkable-debian-chroot/archive/ea12a1bf851f412e8df4b59fe072bce26bb72571.zip
+    https://github.com/Eeems-org/remarkable-debian-chroot/archive/92356654e185e42b6d179d2ede6eab75778c76eb.zip
     https://salsa.debian.org/installer-team/debootstrap/-/archive/1.0.133/debootstrap-1.0.133.tar.gz
     debian-chroot.conf
 )
 sha256sums=(
-    3fcd571ba1aa1a5c55a32767c34e6939e0c0e8ad9213425c6d66d25300fe24b8
+    210e0e8f59d88154b8290f2b04ca76e7f72d7e56fb075dd919f8d4e7558d52c2
     734af3492eea99de940853e2c00e1a9ebd65c463362155f613aa24b9cc3336a0
     SKIP
 )
@@ -24,8 +24,8 @@ sha256sums=(
 debian-chroot() {
     pkgdesc="A minimal Debian chroot for the reMarkable tablet"
     url=https://github.com/Eeems-Org/remarkable-debian-chroot
-    pkgver=0.0.0-1
-    timestamp=2023-12-22T19:37Z
+    pkgver=0.0.0-2
+    timestamp=2025-11-30T03:37:52Z
     license=MIT
     installdepends=(debootstrap lsof)
     package() {
