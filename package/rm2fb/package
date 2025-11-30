@@ -52,46 +52,52 @@ rm2fb-server() {
     replaces=(rm2fb)
 
     package() {
-        if [[ $arch = rm2 ]]; then
-            libname="librm2fb_server.so.$_libver"
-            install -D -m 644 -t "$pkgdir"/opt/lib "$srcdir"/src/server/"$libname"
-            ln -s "$libname" "$pkgdir"/opt/lib/"${libname%.*.*}"
-            ln -s "$libname" "$pkgdir"/opt/lib/"${libname%.*}"
-            install -D -m 644 -t "$pkgdir"/lib/systemd/system "$srcdir"/rm2fb.service
-        fi
+        case "$arch" in
+            rm2os2 | rm2os3)
+                libname="librm2fb_server.so.$_libver"
+                install -D -m 644 -t "$pkgdir"/opt/lib "$srcdir"/src/server/"$libname"
+                ln -s "$libname" "$pkgdir"/opt/lib/"${libname%.*.*}"
+                ln -s "$libname" "$pkgdir"/opt/lib/"${libname%.*}"
+                install -D -m 644 -t "$pkgdir"/lib/systemd/system "$srcdir"/rm2fb.service
+                ;;
+        esac
     }
 
     configure() {
-        if [[ $arch = rm2 ]]; then
-            systemctl daemon-reload
-            if systemctl enable rm2fb --now; then
-                # Restart xochitl if it's running
-                if is-active xochitl; then
-                    # Reset the crash count so we don't trigger remarkable-fail
-                    echo "0" > /tmp/crashnum
-                    systemctl restart xochitl
+        case "$arch" in
+            rm2os2 | rm2os3)
+                systemctl daemon-reload
+                if systemctl enable rm2fb --now; then
+                    # Restart xochitl if it's running
+                    if is-active xochitl; then
+                        # Reset the crash count so we don't trigger remarkable-fail
+                        echo "0" > /tmp/crashnum
+                        systemctl restart xochitl
+                    fi
+                else
+                    disable-unit rm2fb.service
+                    echo "Failed to start rm2fb. Keeping it disabled for now."
+                    echo "Please check the logs and open an issue:"
+                    echo "  https://github.com/toltec-dev/toltec/issues/new"
+                    exit 1
                 fi
-            else
-                disable-unit rm2fb.service
-                echo "Failed to start rm2fb. Keeping it disabled for now."
-                echo "Please check the logs and open an issue:"
-                echo "  https://github.com/toltec-dev/toltec/issues/new"
-                exit 1
-            fi
-        fi
+                ;;
+        esac
     }
 
     preremove() {
-        if [[ $arch = rm2 ]]; then
-            disable-unit rm2fb.service
-            echo -n "make sure "
-            if ! is-enabled xochitl.service; then
-                echo "to re-enable xochitl with 'systemctl enable xochitl --now'"
-                echo -n "and "
-            fi
-            echo "to disable / uninstall any launchers like draft, oxide or remux before"
-            echo "rebooting your tablet to complete the uninstallation"
-        fi
+        case "$arch" in
+            rm2os2 | rm2os3)
+                disable-unit rm2fb.service
+                echo -n "make sure "
+                if ! is-enabled xochitl.service; then
+                    echo "to re-enable xochitl with 'systemctl enable xochitl --now'"
+                    echo -n "and "
+                fi
+                echo "to disable / uninstall any launchers like draft, oxide or remux before"
+                echo "rebooting your tablet to complete the uninstallation"
+                ;;
+        esac
     }
 }
 
@@ -116,11 +122,13 @@ rm2fb-client() {
 
         install -D -m 755 -t "$pkgdir"/opt/bin "$srcdir"/rm2fb-client
 
-        if [[ $arch = rm2 ]]; then
-            install -D -m 644 -t "$pkgdir"/opt/etc/xochitl.env.d "$srcdir"/rm2fb-preload.env
-            install -D -m 644 -t "$pkgdir"/etc/systemd/system/draft.service.d "$srcdir"/rm2fb-preload.conf
-            install -D -m 644 -t "$pkgdir"/etc/systemd/system/remux.service.d "$srcdir"/rm2fb-preload.conf
-            install -D -m 644 -t "$pkgdir"/etc/systemd/system/tarnish.service.d "$srcdir"/rm2fb-preload.conf
-        fi
+        case "$arch" in
+            rm2os2 | rm2os3)
+                install -D -m 644 -t "$pkgdir"/opt/etc/xochitl.env.d "$srcdir"/rm2fb-preload.env
+                install -D -m 644 -t "$pkgdir"/etc/systemd/system/draft.service.d "$srcdir"/rm2fb-preload.conf
+                install -D -m 644 -t "$pkgdir"/etc/systemd/system/remux.service.d "$srcdir"/rm2fb-preload.conf
+                install -D -m 644 -t "$pkgdir"/etc/systemd/system/tarnish.service.d "$srcdir"/rm2fb-preload.conf
+                ;;
+        esac
     }
 }
