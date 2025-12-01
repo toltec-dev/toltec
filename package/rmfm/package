@@ -14,7 +14,9 @@ license=Unlicense
 installdepends=(node simple)
 
 source=(
-    https://forgejo.sny.sh/sun/rmFM/archive/1.5.1.zip
+    https://rmfm.vercel.app/1.5.1.zip
+    # Actual upstream is https://forgejo.sny.sh/sun/rmFM/archive/1.5.1.zip
+    # But we are using a mirror to avoid downtime
     path_fix.patch
 )
 sha256sums=(
