@@ -2,6 +2,7 @@
 # Copyright (c) 2023 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
+archs=(rm1 rm2)
 pkgnames=(
     splashscreen-starting-wavey-lines
     splashscreen-suspended-wavey-lines

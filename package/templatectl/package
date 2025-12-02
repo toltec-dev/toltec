@@ -2,6 +2,7 @@
 # Copyright (c) 2021 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
+archs=(rm1 rm2)
 pkgnames=(templatectl)
 pkgdesc="Tool to add/remove templates for xochitl"
 url=https://github.com/PeterGrace/templatectl

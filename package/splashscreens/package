@@ -2,6 +2,7 @@
 # Copyright (c) 2023 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
+archs=(rm1 rm2)
 pkgnames=(
     splashscreen-batteryempty-barnsley_fern
     splashscreen-poweroff-barnsley_fern
