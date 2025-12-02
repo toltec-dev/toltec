@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+export XDG_RUNTIME_DIR=/tmp/runtime-root
+
+exec /opt/bin/syncthingctl.real $@
