@@ -42,7 +42,7 @@ installdepends=(
 installdepends_rm1=(open-remarkable-shutdown)
 installdepends_rm1os2=("${installdepends_rm1[@]}")
 installdepends_rm1os3=("${installdepends_rm1[@]}")
-installdepends_rm1os3v22=("${installdepends_rm1[@]}")
+installdepends_rm1os3v22=()
 
 installdepends_rm2=(rm2-suspend-fix)
 installdepends_rm2os2=("${installdepends_rm2[@]}")
