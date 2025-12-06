@@ -39,20 +39,16 @@ installdepends=(
     entware-rc
 )
 
-installdepends_rm1=(open-remarkable-shutdown)
-installdepends_rm1os2=("${installdepends_rm1[@]}")
+installdepends_rm1os2=(open-remarkable-shutdown)
 installdepends_rm1os3=("${installdepends_rm1[@]}")
 installdepends_rm1os3v22=()
 
-installdepends_rm2=(rm2-suspend-fix)
-installdepends_rm2os2=("${installdepends_rm2[@]}")
+installdepends_rm2os2=(rm2-suspend-fix)
 installdepends_rm2os3=("${installdepends_rm2[@]}")
 installdepends_rm2os3v22=("${installdepends_rm2[@]}")
 
-installdepends_rmpp=()
 installdepends_rmppos3v22=("${installdepends_rmpp[@]}")
 
-installdepends_rmppm=()
 installdepends_rmppmos3v22=("${installdepends_rmppm[@]}")
 
 source=(opt-usr-bin.sh)
@@ -71,11 +67,11 @@ configure() {
     echo "Disabling automatic update"
     disable-unit update-engine.service
     case "$arch" in
-        rmall | rmallos2 | rmallos3 | rmallos3v22)
+        rm1 | rm2 | rmpp | rmppm | rmall | rmallos2 | rmallos3 | rmallos3v22)
             echo "Warning: rmall version of toltec-base should not be installed"
             echo "Please run opkg install --force-reinstall toltec-base"
             ;;
-        rm1 | rm1os2 | rm1os3 | rm1os3v22)
+        rm1os2 | rm1os3 | rm1os3v22)
             if ! is-masked sys-subsystem-net-devices-usb1.device; then
                 systemctl mask sys-subsystem-net-devices-usb1.device
             fi
@@ -83,7 +79,7 @@ configure() {
                 systemctl mask busybox-ifplugd@usb1.service
             fi
             ;;
-        rm2 | rm2os2 | rm2os3 | rm2os3v22)
+        rm2os2 | rm2os3 | rm2os3v22)
             if is-masked sys-subsystem-net-devices-usb1.device; then
                 systemctl unmask sys-subsystem-net-devices-usb1.device
             fi
@@ -91,7 +87,7 @@ configure() {
                 systemctl unmask busybox-ifplugd@usb1.service
             fi
             ;;
-        rmpp | rmppos3v22)
+        rmppos3v22)
             if is-active etc-dropbear.mount; then
                 systemctl stop etc-dropbear.mount
             fi
@@ -100,7 +96,7 @@ configure() {
             systemctl start etc-dropbear.mount
             mount -o remount,rw /
             ;;
-        rmppm | rmppmos3v22)
+        rmppmos3v22)
             if is-active etc-dropbear.mount; then
                 systemctl stop etc-dropbear.mount
             fi
@@ -114,7 +110,9 @@ configure() {
 
 postremove() {
     case "$arch" in
-        rmall | rmallos2 | rmallos3 | rmallos3v22)
+        rm1 | rm2 | rmpp | rmppm | rmall | rmallos2 | rmallos3 | rmallos3v22)
+            ;;
+        rm1os2 | rm1os3 | rm1os3v22)
             if is-masked sys-subsystem-net-devices-usb1.device; then
                 systemctl unmask sys-subsystem-net-devices-usb1.device
             fi
@@ -125,7 +123,7 @@ postremove() {
                 systemctl enable update-engine
             fi
             ;;
-        rm1 | rm1os2 | rm1os3 | rm1os3v22)
+        rm2os2 | rm2os3 | rm2os3v22)
             if is-masked sys-subsystem-net-devices-usb1.device; then
                 systemctl unmask sys-subsystem-net-devices-usb1.device
             fi
@@ -136,24 +134,7 @@ postremove() {
                 systemctl enable update-engine
             fi
             ;;
-        rm2 | rm2os2 | rm2os3 | rm2os3v22)
-            if is-masked sys-subsystem-net-devices-usb1.device; then
-                systemctl unmask sys-subsystem-net-devices-usb1.device
-            fi
-            if is-masked busybox-ifplugd@usb1.service; then
-                systemctl unmask busybox-ifplugd@usb1.service
-            fi
-            if ! is-enabled update-engine.service; then
-                systemctl enable update-engine
-            fi
-            ;;
-        rmpp | rmppos3v22)
-            if ! is-enabled var-volatile-etc.service; then
-                systemctl enable var-volatile-etc.service 2> /dev/null
-            fi
-            sed -i -E 's|(/dev/root\s+/\s+auto\s+)rw(\s+)|\1ro\2|' /etc/fstab
-            ;;
-        rmppm | rmppmos3v22)
+        rmppos3v22 | rmppmos3v22)
             if ! is-enabled var-volatile-etc.service; then
                 systemctl enable var-volatile-etc.service 2> /dev/null
             fi
