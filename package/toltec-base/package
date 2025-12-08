@@ -110,8 +110,7 @@ configure() {
 
 postremove() {
     case "$arch" in
-        rm1 | rm2 | rmpp | rmppm | rmall | rmallos2 | rmallos3 | rmallos3v22)
-            ;;
+        rm1 | rm2 | rmpp | rmppm | rmall | rmallos2 | rmallos3 | rmallos3v22) ;;
         rm1os2 | rm1os3 | rm1os3v22)
             if is-masked sys-subsystem-net-devices-usb1.device; then
                 systemctl unmask sys-subsystem-net-devices-usb1.device
