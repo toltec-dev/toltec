@@ -2,4 +2,4 @@
 
 export XDG_RUNTIME_DIR=/tmp/runtime-root
 
-exec /opt/libexec/syncthingctl $@
+exec /opt/libexec/syncthingctl "$@"

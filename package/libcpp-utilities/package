@@ -2,17 +2,24 @@
 # Copyright (c) 2021 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
+archs=(
+    rm1os2
+    rm1os3
+    rm2os2
+    rm2os3
+)
 pkgnames=(libcpp-utilities libcpp-utilities-dev)
 pkgdesc="Common C++ classes and routines used by Martchus' applications"
 url=https://github.com/Martchus/cpp-utilities
-pkgver=5.31.0-1
+_srcver=5.31.0
+pkgver=$_srcver-2
 timestamp=2025-09-20T23:53Z
 section="devel"
 maintainer="Tom Parker-Shemilt <palfrey@tevps.net>"
 license=GPL-2.0-or-later
 image=base:v3.3
 source=(
-    https://github.com/Martchus/cpp-utilities/archive/refs/tags/v5.31.0.zip
+    "https://github.com/Martchus/cpp-utilities/archive/refs/tags/v$_srcver.zip"
     targets.cmake.patch
 )
 sha256sums=(
@@ -49,7 +56,7 @@ libcpp-utilities-dev() {
         install -d "$pkgdir"/opt/lib
         cp -r "$srcdir"/install/opt/lib/pkgconfig "$pkgdir"/opt/lib
         cp -r "$srcdir"/install/opt/share "$pkgdir"/opt
-        (cd $pkgdir/opt/share/c++utilities/cmake && patch -p0 < $srcdir/targets.cmake.patch)
+        (cd "$pkgdir/opt/share/c++utilities/cmake" && patch -p0 < "$srcdir/targets.cmake.patch")
         cp -r "$srcdir"/install/opt/include "$pkgdir"/opt
     }
 }

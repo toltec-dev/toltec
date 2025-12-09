@@ -2,17 +2,24 @@
 # Copyright (c) 2021 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
+archs=(
+    rm1os2
+    rm1os3
+    rm2os2
+    rm2os3
+)
 pkgnames=(libqtutilities libqtutilities-dev)
 pkgdesc="Common Qt related C++ classes and routines used by Martchus' applications"
 url=https://github.com/Martchus/qtutilities
-pkgver=6.18.2-1
+_srcver=6.18.2
+pkgver=$_srcver-2
 timestamp=2025-09-24T09:03Z
 section="devel"
 maintainer="Tom Parker-Shemilt <palfrey@tevps.net>"
 license=GPL-2.0-or-later
 image=qt:v3.3
 source=(
-    https://github.com/Martchus/qtutilities/archive/refs/tags/v6.18.2.zip
+    "https://github.com/Martchus/qtutilities/archive/refs/tags/v$_srcver.zip"
     targets.cmake.patch
 )
 sha256sums=(
@@ -52,7 +59,7 @@ libqtutilities-dev() {
         install -d "$pkgdir"/opt/lib
         cp -r "$srcdir"/install/opt/lib/pkgconfig "$pkgdir"/opt/lib
         cp -r "$srcdir"/install/opt/share "$pkgdir"/opt
-        (cd $pkgdir/opt/share/qtutilities/cmake && patch -p0 < $srcdir/targets.cmake.patch)
+        (cd "$pkgdir/opt/share/qtutilities/cmake" && patch -p0 < "$srcdir/targets.cmake.patch")
         cp -r "$srcdir"/install/opt/include "$pkgdir"/opt
     }
 }

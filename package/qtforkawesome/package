@@ -2,17 +2,24 @@
 # Copyright (c) 2021 The Toltec Contributors
 # SPDX-License-Identifier: MIT
 
+archs=(
+    rm1os2
+    rm1os3
+    rm2os2
+    rm2os3
+)
 pkgnames=(libqtforkawesome libqtforkawesome-dev)
 pkgdesc="Library that bundles ForkAwesome for use within Qt applications"
 url=https://github.com/Martchus/qtforkawesome
-pkgver=0.3.2-1
+_srcver=0.3.2
+pkgver=$_srcver-2
 timestamp=2025-11-04T20:54Z
 section="devel"
 maintainer="Tom Parker-Shemilt <palfrey@tevps.net>"
 license=GPL-2.0-or-later
 image=qt:v3.3
 source=(
-    "https://github.com/Martchus/qtforkawesome/archive/refs/tags/v0.3.2.zip"
+    "https://github.com/Martchus/qtforkawesome/archive/refs/tags/v$_srcver.zip"
     "https://raw.githubusercontent.com/ForkAwesome/Fork-Awesome/1e3849530d0266ece3a883649e1398414b92241d/fonts/forkawesome-webfont.ttf"
     "https://raw.githubusercontent.com/ForkAwesome/Fork-Awesome/0237ab8eafeeacb896e008f744be6d9d717f44b0/src/icons/icons.yml"
 )
@@ -29,10 +36,10 @@ build() {
         -DCMAKE_TOOLCHAIN_FILE="/usr/share/cmake/$CHOST.cmake" \
         -DCMAKE_INSTALL_PREFIX="/opt" \
         -DBUILD_SHARED_LIBS=ON \
-        -DFORK_AWESOME_ICON_DEFINITIONS=$(realpath $srcdir/icons.yml)
+        -DFORK_AWESOME_ICON_DEFINITIONS="$(realpath "$srcdir/icons.yml")"
     cmake --build build
     rm -f build/qtforkawesome/forkawesome-webfont.ttf
-    cp $(realpath $srcdir/forkawesome-webfont.ttf) build/qtforkawesome/forkawesome-webfont.ttf
+    cp "$(realpath "$srcdir/forkawesome-webfont.ttf")" build/qtforkawesome/forkawesome-webfont.ttf
     cmake --build build --target install -- DESTDIR=../install
 }
 
