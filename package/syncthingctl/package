@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+# Copyright (c) 2025 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgnames=(syncthingctl)
+pkgdesc="CLI that orchestrates syncthing"
+url="https://martchus.github.io/syncthingtray/"
+pkgver=2.0.3-1
+timestamp=2025-11-04T22:54:13Z
+section=utils
+maintainer="Tom Parker-Shemilt <palfrey@tevps.net>"
+license=GPL-2.0-or-later
+image=qt:v3.3
+makedepends=(build:cmake host:libcpp-utilities-dev host:libcpp-utilities host:libqtutilities host:libqtutilities-dev)
+installdepends=(libcpp-utilities libqtutilities syncthing)
+source=(
+    https://github.com/Martchus/syncthingtray/archive/refs/tags/v2.0.3.zip
+    syncthingctl
+)
+sha256sums=(
+    8edeb6e6934ba54f175dccf0e3f7063aa01c2f07bf2e2361334bfe004e3a92ce
+    SKIP
+)
+
+build() {
+    cmake -B build \
+        -DCMAKE_TOOLCHAIN_FILE="/usr/share/cmake/$CHOST.cmake" \
+        -DCMAKE_INSTALL_PREFIX="/opt" \
+        -DENABLE_QT_TRANSLATIONS=OFF \
+        -DUSE_BOOST_PROCESS=OFF \
+        -DNO_MODEL=ON \
+        -DNO_FILE_ITEM_ACTION_PLUGIN=ON \
+        -DNO_PLASMOID=ON \
+        -DNO_WIDGETS=ON \
+        -DNO_TRAY=ON
+    cmake --build build
+    cmake --build build --target install -- DESTDIR=../install
+}
+
+package() {
+    install -D -m 755 "$srcdir"/syncthingctl "$pkgdir"/opt/bin/syncthingctl
+    install -D -m 755 "$srcdir"/install/opt/bin/syncthingctl "$pkgdir"/opt/libexec/syncthingctl
+}
