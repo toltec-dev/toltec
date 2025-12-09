@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+# Copyright (c) 2021 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgnames=(libqtutilities libqtutilities-dev)
+pkgdesc="Common Qt related C++ classes and routines used by Martchus' applications"
+url=https://github.com/Martchus/qtutilities
+pkgver=6.18.2-1
+timestamp=2025-09-24T09:03Z
+section="devel"
+maintainer="Tom Parker-Shemilt <palfrey@tevps.net>"
+license=GPL-2.0-or-later
+image=qt:v3.3
+source=(
+    https://github.com/Martchus/qtutilities/archive/refs/tags/v6.18.2.zip
+    targets.cmake.patch
+)
+sha256sums=(
+    7a1047622c1a92760aaf448eee7c4a1b3c30c65bffdce7de1322c402ca0e9e1a
+    SKIP
+)
+makedepends=(build:cmake host:libcpp-utilities-dev host:libcpp-utilities)
+
+build() {
+    cmake -B build \
+        -DCMAKE_TOOLCHAIN_FILE="/usr/share/cmake/$CHOST.cmake" \
+        -DCMAKE_INSTALL_PREFIX="/opt" \
+        -DBUILD_SHARED_LIBS=ON \
+        -DENABLE_QT_TRANSLATIONS=OFF \
+        -DWIDGETS_GUI=OFF
+    cmake --build build
+    cmake --build build --target install -- DESTDIR=../install
+}
+
+libqtutilities() {
+    package() {
+        install -d "$pkgdir"/opt/lib "$pkgdir"/usr/lib
+        cp --no-dereference "$srcdir"/install/opt/lib/lib*.so* "$pkgdir"/opt/lib
+
+        for file in "$pkgdir"/opt/lib/lib*.so*; do
+            base="${file#"$pkgdir"}"
+            ln -s "$base" "${file/\/opt/\/usr}"
+        done
+    }
+}
+
+libqtutilities-dev() {
+    pkgdesc="$pkgdesc - development files"
+    installdepends=("libqtutilities=$pkgver")
+
+    package() {
+        install -d "$pkgdir"/opt/lib
+        cp -r "$srcdir"/install/opt/lib/pkgconfig "$pkgdir"/opt/lib
+        cp -r "$srcdir"/install/opt/share "$pkgdir"/opt
+        (cd $pkgdir/opt/share/qtutilities/cmake && patch -p0 < $srcdir/targets.cmake.patch)
+        cp -r "$srcdir"/install/opt/include "$pkgdir"/opt
+    }
+}

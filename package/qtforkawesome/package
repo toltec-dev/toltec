@@ -1,0 +1,61 @@
+#!/usr/bin/env bash
+# Copyright (c) 2021 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgnames=(libqtforkawesome libqtforkawesome-dev)
+pkgdesc="Library that bundles ForkAwesome for use within Qt applications"
+url=https://github.com/Martchus/qtforkawesome
+pkgver=0.3.2-1
+timestamp=2025-11-04T20:54Z
+section="devel"
+maintainer="Tom Parker-Shemilt <palfrey@tevps.net>"
+license=GPL-2.0-or-later
+image=qt:v3.3
+source=(
+    "https://github.com/Martchus/qtforkawesome/archive/refs/tags/v0.3.2.zip"
+    "https://raw.githubusercontent.com/ForkAwesome/Fork-Awesome/1e3849530d0266ece3a883649e1398414b92241d/fonts/forkawesome-webfont.ttf"
+    "https://raw.githubusercontent.com/ForkAwesome/Fork-Awesome/0237ab8eafeeacb896e008f744be6d9d717f44b0/src/icons/icons.yml"
+)
+noextract=(icons.yml forkawesome-webfont.ttf)
+sha256sums=(
+    945fee08e5de7521571f4abb2fbe37fd3013079b3ffeb1cc6c36aaff538c6d47
+    4f319287827e35f841069eb471c092eccf97d2f7830aa4d8bd7301ded418bf49
+    1e588fc6c93737add8443a98d2bbd6b75537d173da6b613e37aaff3fc1f80c92
+)
+makedepends=(build:cmake host:libcpp-utilities-dev host:libcpp-utilities host:libqtutilities host:libqtutilities-dev build:libyaml-libyaml-perl)
+
+build() {
+    cmake -B build \
+        -DCMAKE_TOOLCHAIN_FILE="/usr/share/cmake/$CHOST.cmake" \
+        -DCMAKE_INSTALL_PREFIX="/opt" \
+        -DBUILD_SHARED_LIBS=ON \
+        -DFORK_AWESOME_ICON_DEFINITIONS=$(realpath $srcdir/icons.yml)
+    cmake --build build
+    rm -f build/qtforkawesome/forkawesome-webfont.ttf
+    cp $(realpath $srcdir/forkawesome-webfont.ttf) build/qtforkawesome/forkawesome-webfont.ttf
+    cmake --build build --target install -- DESTDIR=../install
+}
+
+libqtforkawesome() {
+    package() {
+        install -d "$pkgdir"/opt/lib "$pkgdir"/usr/lib
+        cp --no-dereference "$srcdir"/install/opt/lib/lib*.so* "$pkgdir"/opt/lib
+
+        for file in "$pkgdir"/opt/lib/lib*.so*; do
+            base="${file#"$pkgdir"}"
+            ln -s "$base" "${file/\/opt/\/usr}"
+        done
+    }
+}
+
+libqtforkawesome-dev() {
+    pkgdesc="$pkgdesc - development files"
+    installdepends=("libqtforkawesome=$pkgver")
+
+    package() {
+        install -d "$pkgdir"/opt/lib
+        cp -r "$srcdir"/install/opt/lib/pkgconfig "$pkgdir"/opt/lib
+        cp -r "$srcdir"/install/opt/share "$pkgdir"/opt
+        cp -r "$srcdir"/install/opt/include "$pkgdir"/opt
+    }
+}

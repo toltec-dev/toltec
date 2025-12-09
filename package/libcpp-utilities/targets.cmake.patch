@@ -1,0 +1,20 @@
+--- c++utilitiesTargets.cmake.orig	2025-11-03 20:33:08.016186953 +0000
++++ c++utilitiesTargets.cmake	2025-11-03 20:33:55.701608765 +0000
+@@ -55,7 +55,7 @@
+ 
+ set_target_properties(c++utilities PROPERTIES
+   INTERFACE_COMPILE_DEFINITIONS "CPP_UTILITIES_USE_NATIVE_FILE_BUFFER"
+-  INTERFACE_INCLUDE_DIRECTORIES "/opt/include"
++  INTERFACE_INCLUDE_DIRECTORIES "${_IMPORT_PREFIX}/include"
+ )
+ 
+ # Create imported target c++utilities-headers
+@@ -63,7 +63,7 @@
+ 
+ set_target_properties(c++utilities-headers PROPERTIES
+   INTERFACE_COMPILE_DEFINITIONS "CPP_UTILITIES_USE_NATIVE_FILE_BUFFER"
+-  INTERFACE_INCLUDE_DIRECTORIES "/opt/include"
++  INTERFACE_INCLUDE_DIRECTORIES "${_IMPORT_PREFIX}/include"
+ )
+ 
+ if(CMAKE_VERSION VERSION_LESS 3.0.0)
