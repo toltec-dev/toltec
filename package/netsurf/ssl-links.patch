@@ -1,0 +1,23 @@
+# From https://github.com/alex0809/netsurf-reMarkable/pull/39
+From 97d45f3e8fd7320ef3ffbd94c7e796d4e076acfe Mon Sep 17 00:00:00 2001
+From: Leonid Belyaev <lennybelyaev@gmail.com>
+Date: Mon, 17 Feb 2025 19:21:51 -0500
+Subject: [PATCH] curl follows links for openssl
+
+---
+ scripts/install_dependencies.sh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/scripts/install_dependencies.sh b/scripts/install_dependencies.sh
+index be1adc699..ae771b639 100755
+--- a/scripts/install_dependencies.sh
++++ b/scripts/install_dependencies.sh
+@@ -22,7 +22,7 @@ export DEBIAN_FRONTEND=noninteractive \
+ export DEBIAN_FRONTEND=noninteractive \
+     && mkdir openssl \
+     && cd openssl \
+-    && curl https://www.openssl.org/source/openssl-1.1.1k.tar.gz -o openssl.tar.gz \
++    && curl -L https://www.openssl.org/source/openssl-1.1.1k.tar.gz -o openssl.tar.gz \
+     && echo "892a0875b9872acd04a9fde79b1f943075d5ea162415de3047c327df33fbaee5  openssl.tar.gz" > sha256sums \
+     && sha256sum -c sha256sums \
+     && tar --strip-components=1 -xf openssl.tar.gz \

@@ -5,8 +5,8 @@
 pkgnames=(netsurf)
 pkgdesc="Lightweight web browser"
 url=https://github.com/alex0809/netsurf-reMarkable
-pkgver=0.4.0-3
-timestamp=2021-05-31T11:15+00:00
+pkgver=0.4.0-4
+timestamp=2024-09-04T21:14+00:00
 maintainer="Alex Friesenhahn <rm-dev@alexfriesenhahn.de>"
 archs=(rmall)
 license=GPL-2.0-or-later
@@ -32,17 +32,23 @@ installdepends=(
     dejavu-fonts-ttf-DejaVuSansMono
     dejavu-fonts-ttf-DejaVuSansMono-Bold
 )
-image=base:v2.1
+image=base:v3.2
 flags=(patch_rm2fb)
 
 source=(
-    https://github.com/alex0809/netsurf-reMarkable/archive/refs/tags/v0.4.tar.gz
+    https://github.com/alex0809/netsurf-reMarkable/archive/11ba4e18c65c687693c03d58da329e90662282e8.zip
     netsurf.draft
+    ssl-links.patch
 )
 sha256sums=(
-    a688ffc634fbbab463f92153b048e643fa6a5a1f92c492ff2005079a73a8de90
+    18813be8d3492bdfc6d498ee62e32c691a329b64388970c04ca4ce8b3e656241
+    SKIP
     SKIP
 )
+
+prepare() {
+    patch -d "$srcdir" -p1 < "$srcdir"/ssl-links.patch
+}
 
 build() {
     ln -s /usr/bin/which /bin
