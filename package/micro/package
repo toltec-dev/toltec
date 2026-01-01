@@ -5,14 +5,14 @@
 pkgnames=(micro)
 pkgdesc="Modern and intuitive terminal-based text editor"
 url=https://micro-editor.github.io/
-pkgver=2.0.14-1
-timestamp=2024-08-27T18:13:07Z
+pkgver=2.0.15-1
+timestamp=2025-12-31T12:02:53Z
 section="utils"
 maintainer="Eeems <eeems@eeems.email>"
 license=MIT
 
-source=("https://github.com/zyedidia/micro/releases/download/v2.0.14/micro-2.0.14-linux-arm.tar.gz")
-sha256sums=(9f490d88bd30a548af99a905f50244dc6c80f3c7a3c6f98faeb5b0a7329f7dea)
+source=("https://github.com/zyedidia/micro/releases/download/v2.0.15/micro-2.0.15-linux-arm.tar.gz")
+sha256sums=(54e5bc8a786ca103ec7e3c6d81c2799e21b21660e92edfbbdaa0561a6e601797)
 
 package() {
     install -Dm644 "$srcdir"/LICENSE "$pkgdir/opt/usr/share/licenses/$pkgname/LICENSE"
