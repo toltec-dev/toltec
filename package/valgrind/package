@@ -1,0 +1,25 @@
+pkgnames=(valgrind)
+pkgdesc="Instrumentation framework for building dynamic analysis tools"
+section="devel"
+pkgver="3.21.0-1"
+timestamp="2023-04-28T02:49:00Z"
+maintainer="Eeems <eeems@eeems.email>"
+url=https://valgrind.org
+license=GPL-2.0-only
+source=(https://sourceware.org/pub/valgrind/valgrind-3.21.0.tar.bz2)
+sha256sums=(10ce1618bb3e33fad16eb79552b0a3e1211762448a0d7fce11c8a6243b9ac971)
+image=base:v2.3
+makedepends=(build:gawk build:automake)
+
+build() {
+    export CC=arm-linux-gnueabihf-gcc
+    ./autogen.sh --host armv7-linux-gnueabihf
+    ./configure --prefix=/opt --host=armv7-linux-gnueabihf --target=armv7-linux-gnueabihf
+    make
+    mkdir -p out
+    make DESTDIR=$(pwd)/out install
+}
+
+package() {
+    mv "$srcdir"/out/opt "$pkgdir"/
+}
