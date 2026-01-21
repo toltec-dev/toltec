@@ -4,6 +4,9 @@
 
 set -euo pipefail
 
+# Path to this script
+toltecctl_path=$(realpath "$0")
+
 # Path where Toltec resides (will be mounted to $toltec_dest)
 toltec_src=/home/root/.entware
 
@@ -15,7 +18,7 @@ toltec_share=/home/root/.local/share/toltec
 # Path to static opkg build
 opkg_path=/home/root/.local/bin/opkg
 # Path to opkg install status file
-opkg_status="/opt/lib/opkg/status"
+opkg_status="$toltec_dest/lib/opkg/status"
 
 # Path to Opkg configuration
 opkg_conf="$toltec_src"/etc/opkg.conf
@@ -123,7 +126,7 @@ get-release-version() {
 # 3 - unable to install standalone wget
 check-version() {
     local wget
-    if [[ "$(install-state)" != "yes" ]] || [[ "$(command -v wget)" != "/opt/bin/wget" ]]; then
+    if [[ "$(install-state)" != "yes" ]] || [[ "$(command -v wget)" != "$toltec_dest/bin/wget" ]]; then
         if ! install-standalone-wget; then
             return 2
         fi
@@ -197,9 +200,9 @@ add-bind-mount() {
     unit_name="$(basename "$unit_path")"
 
     if [[ -e $unit_path ]]; then
-        echo "Bind mount configuration for '$2' already exists, updating"
+        log INFO "Bind mount configuration for '$2' already exists, updating"
     else
-        echo "Mounting '$1' over '$2'"
+        log INFO "Mounting '$1' over '$2'"
     fi
 
     cat > "$unit_path" << UNIT
@@ -234,14 +237,16 @@ remove-bind-mount() {
     unit_name="$(basename "$unit_path")"
 
     if [[ ! -e $unit_path ]]; then
-        echo "No existing bind mount for '$1'"
+        log INFO "No existing bind mount for '$1'"
         return
     fi
 
-    echo "Removing mount over '$1'"
+    log INFO "Removing mount over '$1'"
     systemctl disable "$unit_name"
-    systemctl stop "$unit_name"
+    # Don't error, as umount -l will handle the failure
+    systemctl stop "$unit_name" || true
     if mountpoint -q "$1"; then
+        log WARN "Failed to unmount '$1', lazy unmount instead"
         umount -l "$1"
     fi
     rm "$unit_path"
@@ -460,7 +465,7 @@ reinstall-root() {
         if [[ -v "on_root_packages[$pkgname]" ]]; then
             reinstall_packages[$pkgname]=1
         fi
-    done < <(gunzip -c /opt/var/opkg-lists/* | grep "^Package:" | awk '{print $2}')
+    done < <(gunzip -c "$toltec_dest"/var/opkg-lists/* | grep "^Package:" | awk '{print $2}')
 
     # Workaround: Checking the size of an empty array when the nounset option
     # is active may throw an error on some Bash versions, so we disable it
@@ -480,6 +485,7 @@ clean-path() {
         sed -i "/^$bashrc_start_marker\$/,/^$bashrc_end_marker\$/d" "$bashrc_path"
         sed -i "/^$bashrc_old_start_marker\$/!b;n;d" "$bashrc_path"
         sed -i "/^$bashrc_old_start_marker\$/d" "$bashrc_path"
+        # TODO - rewrite this to use $toltec_dest instead of /opt
         sed -i '/^\(export \)\?PATH="\?\.*\/opt\/bin:\/opt\/sbin.*"\?$/d' "$bashrc_path"
     fi
 }
@@ -492,7 +498,7 @@ set-path() {
     clean-path
     cat >> "$bashrc_path" << SHELL
 $bashrc_start_marker
-PATH="/opt/bin:/opt/sbin:/home/root/.local/bin:\$PATH"
+PATH="$toltec_dest/bin:$toltec_dest/sbin:/home/root/.local/bin:\$PATH"
 $bashrc_end_marker
 SHELL
 
@@ -541,9 +547,9 @@ generate-opkg-conf() {
 # then run \`toltecctl generate-opkg-conf\` to regenerate this file
 
 dest root /
-dest ram /opt/tmp
-lists_dir ext /opt/var/opkg-lists
-option tmp_dir /opt/tmp
+dest ram $toltec_dest/tmp
+lists_dir ext $toltec_dest/var/opkg-lists
+option tmp_dir $toltec_dest/tmp
 
 CONF
 
@@ -672,10 +678,10 @@ CONF
 
 # Re-enable Toltec install after system update
 reenable() {
-    log INFO "Mounting /opt"
+    log INFO "Mounting $toltec_dest"
     add-bind-mount "$toltec_src" "$toltec_dest"
     switch-branch "$(get-branch)"
-    log INFO "Generating /opt/etc/opkg.conf"
+    log INFO "Generating $toltec_dest/etc/opkg.conf"
     generate-opkg-conf || true
     log INFO "Opkg update"
     opkg update
@@ -683,12 +689,12 @@ reenable() {
     reinstall-base
     log INFO "Reinstalling packages with files on the root partition"
     reinstall-root
-    if [ -d /opt/share/toltec/reenable.d ]; then
-        find /opt/share/toltec/reenable.d -maxdepth 1 -mindepth 1 -print0 \
+    if [ -d "$toltec_dest"/share/toltec/reenable.d ]; then
+        find "$toltec_dest"/share/toltec/reenable.d -maxdepth 1 -mindepth 1 -print0 \
             | xargs -0rn1 basename \
             | while read -r pkg; do
                 local script
-                script="/opt/lib/opkg/info/${pkg}.postinst"
+                script="$toltec_dest/lib/opkg/info/${pkg}.postinst"
                 if [ -f "$script" ]; then
                     log INFO "Reconfiguring ${pkg}"
                     "$script" configure || true
@@ -720,7 +726,7 @@ list-installed-ordered() {
 # Install standalone opkg binary
 install-standalone-opkg() {
     local wget
-    if [[ "$(install-state)" != "yes" ]] || [[ "$(command -v wget)" != "/opt/bin/wget" ]]; then
+    if [[ "$(install-state)" != "yes" ]] || [[ "$(command -v wget)" != "$toltec_dest/bin/wget" ]]; then
         if ! install-standalone-wget; then
             return 2
         fi
@@ -775,31 +781,122 @@ install-standalone-wget() {
 
 # Remove Toltec completely
 uninstall() {
+    if ! [ -d "$toltec_src" ] && ! [ -d "$toltec_dest" ]; then
+        log INFO "Toltec does not appear to be installed"
+        exit 0
+    fi
+
     # Fetch standalone opkg used to uninstall packages
     if ! install-standalone-opkg; then
         return 1
     fi
+    local clean=true     # did package uninstall complete without issue?
+    local success=true   # did uninstall complete without issue?
+    local complete=false # did we actually complete the uninstall, or exit early?
+
+    broken-state() {
+        echo "  Your system may be in a broken state. Please review the logs"
+        echo "  before rebooting your device. If you need assistance, you can"
+        echo "  get help on the community discord channel."
+    }
+
+    handle-error() {
+        local error_code=$?
+        log ERROR "line $1: $BASH_COMMAND"
+        log ERROR "Uninstall did not complete properly"
+        broken-state
+        exit $error_code
+    }
+    set -o functrace
+    trap 'handle-error ${LINENO}' ERR
+    handle-exit() {
+        if ! $complete && $success && $clean; then
+            log ERROR "Uninstall did not complete properly"
+            broken-state
+            exit 1
+        fi
+    }
+    trap 'handle-exit' EXIT
+
+    if [[ "$toltecctl_path" != *_backup ]]; then
+        log INFO "Creating backup of toltecctl at ${toltecctl_path}_backup"
+        rm -f "${toltecctl_path}_backup"
+        cp "$toltecctl_path" "${toltecctl_path}_backup"
+    fi
+
+    if ! [ -f "$toltec_dest"/etc/opkg.conf ]; then
+        if [ -f "$toltec_src"/etc/opkg.conf ] && ! mountpoint -q "$toltec_dest"; then
+            log INFO "Mounting $toltec_dest"
+            add-bind-mount "$toltec_src" "$toltec_dest"
+        fi
+        log ERROR "Current install seems to be partially removed, unable to automatically removed."
+        broken-state
+        complete=true
+        exit 1
+    fi
 
     # Remove installed packages in reverse dependency order
-    list-installed-ordered | while read -r pkgname; do
-        "$opkg_path" remove --force-removal-of-essential-packages --force-depends --force-remove "$pkgname"
-    done
+    while read -r pkgname; do
+        if ! "$opkg_path" remove --force-depends "$pkgname"; then
+            echo "Failed to remove $pkgname, forcing removal..."
+            "$opkg_path" remove --force-removal-of-essential-packages --force-depends --force-remove "$pkgname"
+            clean=false
+        fi
+    done << EOF
+$(list-installed-ordered)
+EOF
 
-    systemctl daemon-reload
+    if ! systemctl daemon-reload; then
+        log WARN "Failed to reload systemd state"
+    fi
     rm -f "$opkg_path"
 
-    # Remove mount point
+    set +e # Don't exit on error, next check will validate if it worked
     remove-bind-mount "$toltec_dest"
-    rmdir "$toltec_dest"
+    set -e
+
+    case "$(install-state)" in
+        no) ;;
+        *)
+            log ERROR "$toltec_dest bind mount still is active"
+            success=false
+            ;;
+    esac
+
+    if ! rmdir "$toltec_dest"; then
+        log ERROR "Failed to remove mount point"
+        success=false
+    fi
 
     # Unset PATH
     clean-path
 
     # Remove Toltec data
-    rm -r "$toltec_src"
+    if ! rm -r "$toltec_src"; then
+        log ERROR "Failed to remove toltec data directory"
+        success=false
+    fi
 
     # Re-enable xochitl if needed
-    systemctl enable xochitl
+    if ! systemctl enable xochitl; then
+        log ERROR "Failed to enable the user interface."
+        success=false
+    fi
+    if ! $clean; then
+        log ERROR "There were errors removing some of the toltec packages."
+        success=false
+    fi
+    if ! $success; then
+        log ERROR "Uninstall failed"
+        broken-state
+        complete=true
+        exit 1
+    fi
+    if [[ "$toltecctl_path" != *_backup ]]; then
+        rm -f "$toltecctl_path"
+    fi
+    rm -f "${toltecctl_path}_backup"
+    complete=true
 }
 
 # The current toltec install state

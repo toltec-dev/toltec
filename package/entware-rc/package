@@ -6,12 +6,12 @@ archs=(rmall)
 pkgnames=(entware-rc)
 pkgdesc="Manage entware installed services"
 url=https://toltec-dev.org/
-pkgver=0.1-1
+pkgver=0.1.1-1
 timestamp=2024-05-22T22:59:03Z
 section="utils"
 maintainer="Eeems <eeems@eeems.email>"
 license=MIT
-installdepends=()
+installdepends=('findutils')
 
 source=(
     entware-rc@.service
