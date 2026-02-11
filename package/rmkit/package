@@ -152,7 +152,7 @@ remux() {
     pkgver=0.3.0-8
     section="launchers"
 
-    installdepends=(procps-ng-ps)
+    installdepends+=(procps-ng-ps)
 
     package() {
         install -D -m 755 "$srcdir"/src/build/remux "$pkgdir"/opt/bin/remux
