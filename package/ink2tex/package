@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+# Copyright (c) 2026 The Toltec Contributors
+# SPDX-License-Identifier: MIT
+
+pkgnames=(ink2tex)
+pkgdesc="Offline handwritten math to LaTeX (rm2 only)"
+url=https://github.com/Mx0FFFF/ink2tex
+pkgver=0.2.0-1
+timestamp=2026-07-13T00:00:00Z
+section="math"
+maintainer="Mx0FFFF <mx0ffffff@gmail.com>"
+license="MIT OR Apache-2.0"
+archs=(rm2)
+
+image=rust:v3.3
+source=(https://github.com/Mx0FFFF/ink2tex/archive/refs/tags/v0.2.0.zip)
+sha256sums=(7dc9701f6d5ddbf009feaa3ed9c9fb7516a2645d565e2a4c739a15a434cac926)
+
+build() {
+	cargo build --release --target armv7-unknown-linux-gnueabihf -p ink2tex-rm
+}
+
+package() {
+	install -D -m 755 "$srcdir"/target/armv7-unknown-linux-gnueabihf/release/ink2tex-rm \
+		"$pkgdir"/opt/bin/ink2tex
+	install -D -m 644 "$srcdir"/train/model.iwt "$pkgdir"/opt/usr/share/ink2tex/model.iwt
+	install -D -m 644 "$srcdir"/train/model.labels.txt \
+		"$pkgdir"/opt/usr/share/ink2tex/model.labels.txt
+	install -D -m 644 "$srcdir"/train/expr.iwt "$pkgdir"/opt/usr/share/ink2tex/expr.iwt
+	install -D -m 644 "$srcdir"/train/expr.labels.txt \
+		"$pkgdir"/opt/usr/share/ink2tex/expr.labels.txt
+	install -D -m 644 "$srcdir"/train/expr.counts.txt \
+		"$pkgdir"/opt/usr/share/ink2tex/expr.counts.txt
+	# Weights are trained on ODbL databases; the notice must ship with them.
+	install -D -m 644 "$srcdir"/ATTRIBUTION.md "$pkgdir"/opt/usr/share/ink2tex/ATTRIBUTION.md
+}
+
+configure() {
+	echo "Draw one symbol:      ink2tex --recognize"
+	echo "Write a line of math: ink2tex --expr"
+}
