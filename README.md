@@ -1,3 +1,5 @@
+# We recommend using  [vellum](https://github.com/vellum-dev/vellum) and [remanager](https://remanager.io/) for third party software on the latest OS versions
+
 ## Toltec
 
 ![Status of the stable repository](https://github.com/toltec-dev/toltec/workflows/stable/badge.svg)
