@@ -1,4 +1,4 @@
-# We recommend using  [vellum](https://github.com/vellum-dev/vellum) and [remanager](https://remanager.io/) for third party software on the latest OS versions
+# We recommend using  [vellum](https://github.com/vellum-dev/vellum) and [reManager](https://remanager.io/) for third party software on the latest OS versions
 
 ## Toltec
 
